@@ -10,12 +10,6 @@
     "postinstall": "npm run build"
   },
   "dependencies": {
-    "fancybox": "fancyapps/fancybox#v2.1.6",
-    "ngmodal": "adamalbrecht/ngModal#v1.2.0",
-    "spinjs": "https://github.com/fgnass/spin.js.git#1.2.8",
-    "timepicker": "https://github.com/trentrichardson/jQuery-Timepicker-Addon.git#v0.9.9"
-  },
-  "devDependencies": {
     "coffee-loader": "^0.7.3",
     "coffee-script": "^1.9.1",
     "css-loader": "^0.28.4",
