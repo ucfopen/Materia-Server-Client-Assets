@@ -112,7 +112,7 @@ let js = {
     // Builds a json file with asset hashes for each js file
     new HashAssetsPlugin({
       filename: 'asset_hash.js.json',
-      keyTemplate: `/themes/default/assets/js/[name]${minExt}.js`,
+      keyTemplate: `js/[name]${minExt}.js`,
       prettyPrint: true,
       path: './dist',
 
@@ -158,7 +158,7 @@ let styles = {
     // Builds a json file with asset hashes for each css file
     new HashAssetsPlugin({
       filename: 'asset_hash.css.json',
-      keyTemplate: `/themes/default/assets/css/[name].css`,
+      keyTemplate: `css/[name].css`,
       prettyPrint: true,
       path: './dist',
     }),
