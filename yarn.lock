@@ -991,10 +991,6 @@ extsprintf@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.0.2.tgz#e1080e0658e300b06294990cc70e1502235fd550"
 
-fancybox@fancyapps/fancybox#v2.1.6:
-  version "2.1.5"
-  resolved "https://codeload.github.com/fancyapps/fancybox/tar.gz/c00852a5394ef18517598bfa3b9e885cdf5c7450"
-
 fast-deep-equal@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-1.0.0.tgz#96256a3bc975595eb36d82e9929d060d893439ff"
@@ -1869,10 +1865,6 @@ ng-annotate@1.2.1:
     stringmap "~0.2.2"
     stringset "~0.2.1"
     tryor "~0.1.2"
-
-ngmodal@adamalbrecht/ngModal#v1.2.0:
-  version "1.0.0-alpha.3"
-  resolved "https://codeload.github.com/adamalbrecht/ngModal/tar.gz/ed6be1e9929b1acdac63985c26a8022125b82b79"
 
 node-gyp@^3.3.1:
   version "3.6.2"
@@ -2910,10 +2902,6 @@ spdx-license-ids@^1.0.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-1.2.2.tgz#c9df7a3424594ade6bd11900d596696dc06bac57"
 
-"spinjs@https://github.com/fgnass/spin.js.git#1.2.8":
-  version "0.0.0"
-  resolved "https://github.com/fgnass/spin.js.git#841e6157c7c64f5415bf9b74b420e104470cb359"
-
 sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
@@ -3095,10 +3083,6 @@ tar@^2.0.0, tar@^2.2.1:
     block-stream "*"
     fstream "^1.0.2"
     inherits "2"
-
-"timepicker@https://github.com/trentrichardson/jQuery-Timepicker-Addon.git#v0.9.9":
-  version "0.0.0"
-  resolved "https://github.com/trentrichardson/jQuery-Timepicker-Addon.git#19fa33319ac3a1e00f96d69cfe84a0fff73abc69"
 
 timers-browserify@^2.0.2:
   version "2.0.2"
