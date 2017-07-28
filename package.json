@@ -10,23 +10,21 @@
     "postinstall": "npm run build && frontend-dependencies"
   },
   "dependencies": {
-    "fancybox": "fancyapps/fancybox#v2.1.6",
-    "frontend-dependencies": "^0.2.1",
-    "ngmodal": "adamalbrecht/ngModal#v1.2.0",
-    "spinjs": "https://github.com/fgnass/spin.js.git#1.2.8",
-    "timepicker": "https://github.com/trentrichardson/jQuery-Timepicker-Addon.git#v0.9.9"
-  },
-  "devDependencies": {
     "coffee-loader": "^0.7.3",
     "coffee-script": "^1.9.1",
     "css-loader": "^0.28.4",
     "extract-text-webpack-plugin": "^3.0.0",
+    "fancybox": "fancyapps/fancybox#v2.1.6",
+    "frontend-dependencies": "^0.2.1",
     "hash-assets-webpack-plugin": "^0.3.2",
     "ng-annotate-loader": "^0.6.1",
+    "ngmodal": "adamalbrecht/ngModal#v1.2.0",
     "node-sass": "^4.5.3",
     "resolve-url-loader": "^2.1.0",
     "sass-loader": "^6.0.6",
+    "spinjs": "https://github.com/fgnass/spin.js.git#1.2.8",
     "style-loader": "^0.18.2",
+    "timepicker": "https://github.com/trentrichardson/jQuery-Timepicker-Addon.git#v0.9.9",
     "webpack": "^3.3.0"
   },
   "frontendDependencies": {
