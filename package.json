@@ -7,7 +7,7 @@
     "build": "env NODE_ENV=production webpack -p",
     "build-watch": "webpack --watch",
     "build-dev": "webpack",
-    "postinstall": "frontend-dependencies"
+    "postinstall": "npm run build && frontend-dependencies"
   },
   "dependencies": {
     "fancybox": "fancyapps/fancybox#v2.1.6",
