@@ -43,6 +43,7 @@ Namespace('Materia').Engine = do ->
 			, 300
 
 		_widgetClass = widgetClass
+		_sendPostMessage 'initialize'
 		_sendPostMessage 'start', null
 
 	sendStorage = ->
@@ -65,8 +66,7 @@ Namespace('Materia').Engine = do ->
 
 	setHeight = (h) ->
 		unless h
-			html = document.documentElement
-			h = Math.max html.clientHeight, html.scrollHeight, html.offsetHeight
+			h = $('html').height()
 		if h isnt _lastHeight
 			_sendPostMessage 'setHeight', [h]
 			_lastHeight = h
