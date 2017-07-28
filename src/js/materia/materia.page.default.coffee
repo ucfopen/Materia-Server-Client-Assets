@@ -1,7 +1,7 @@
 # Namespace function for defining namespaces
 app = angular.module 'materia', ['ngModal']
 app.config ($sceDelegateProvider) ->
-	$sceDelegateProvider.resourceUrlWhitelist [ STATIC_CROSSDOMAIN + "**", BASE_URL + "**" ]
+	$sceDelegateProvider.resourceUrlWhitelist [ 'self', STATIC_CROSSDOMAIN + "**", BASE_URL + "**" ]
 
 window.API_LINK = '/api/json/'
 
