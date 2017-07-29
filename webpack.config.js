@@ -8,7 +8,7 @@ let minExt = env == 'production' ? '.min' : ''
 
 let js = {
   entry: {
-    'student': [
+    'student.js': [
       './src/js/ng-constants.coffee',
       './src/js/services/srv-user.coffee',
       './src/js/services/srv-api.coffee',
@@ -36,7 +36,7 @@ let js = {
       './src/js/directives/dir-selecteddisplay.coffee',
       './src/js/directives/dir-sidebarselection.coffee',
     ],
-    'author': [
+    'author.js': [
       './src/js/filters/filter-escape.coffee',
       './src/js/filters/filter-highlight.coffee',
       './src/js/services/srv-api.coffee',
@@ -74,7 +74,7 @@ let js = {
       './src/js/directives/dir-selecteddisplay.coffee',
       './src/js/directives/dir-sidebarselection.coffee',
     ],
-    'materia':[
+    'materia.js':[
       './src/js/materia/materia-namespace.coffee',
       './src/js/materia/materia.coms.json.coffee',
       './src/js/materia/materia.creatorcore.coffee',
@@ -95,6 +95,21 @@ let js = {
       './src/js/materia/materia.validate.textfield.coffee',
       './src/js/controllers/ctrl-alert.coffee',
     ],
+    'materia.coms.json.js': [
+      './src/js/materia/materia.coms.json.coffee',
+    ],
+    'materia.namespace.js': [
+      './src/js/materia/materia-namespace.coffee',
+    ],
+    'materia.creatorcore.js': [
+      './src/js/materia/materia.creatorcore.coffee',
+    ],
+    'materia.enginecore.js': [
+      './src/js/materia/materia.enginecore.coffee',
+    ],
+    'materia.score.js': [
+      './src/js/materia/materia.score.coffee',
+    ],
   },
   module: {
     rules: [
@@ -106,13 +121,13 @@ let js = {
   },
   output: {
     path: path.resolve('dist', 'js'),
-    filename: `[name]${minExt}.js`
+    filename: '[name]'
   },
   plugins: [
     // Builds a json file with asset hashes for each js file
     new HashAssetsPlugin({
       filename: 'asset_hash.js.json',
-      keyTemplate: `js/[name]${minExt}.js`,
+      keyTemplate: 'js/[name]',
       prettyPrint: true,
       path: './dist',
 
