@@ -1,6 +1,5 @@
 app = angular.module 'materia'
 app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
-
 	$scope.alert = Alert
 
 	HEARTBEAT_INTERVAL = 30000
@@ -57,7 +56,7 @@ app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
 		types = widget_info.meta_data.supported_data
 		#the value passed on needs to be a list of one or two elements, i.e.
 		#?type=QA or ?type=MC or ?type=QA,MC
-		showEmbedDialog '/questions/import/?type='+encodeURIComponent(types.join())
+		showEmbedDialog "#{BASE_URL}questions/import/?type=#{encodeURIComponent(types.join())}"
 		null # else Safari will give the .swf data that it can't handle
 
 	$scope.onPublishPressed = ->
@@ -270,7 +269,7 @@ app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
 			$scope.returnPlace = "my widgets"
 		else
 			# new
-			$scope.returnUrl = BASE_URL+'widgets'
+			$scope.returnUrl = "#{BASE_URL}widgets"
 			$scope.returnPlace = "widget catalog"
 		$scope.$apply()
 
@@ -304,7 +303,7 @@ app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
 
 	# Note this is psuedo public as it's exposed to flash
 	showMediaImporter = (types) ->
-		showEmbedDialog '/media/import#' + types.join(',')
+		showEmbedDialog "#{BASE_URL}media/import##{types.join(',')}"
 		$scope.modal = true
 		setTimeout (->
 			$scope.$apply()
@@ -402,7 +401,6 @@ app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
 				for element in media
 					anArray.push element
 				sendToCreator 'onMediaImportComplete', [anArray]
-
 
 	# synchronise the asynchronous events
 	if inst_id?
