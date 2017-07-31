@@ -66,7 +66,7 @@ Namespace('Materia').Engine = do ->
 
 	setHeight = (h) ->
 		unless h
-			h = $('html').height()
+			h = parseInt(window.getComputedStyle(document.documentElement).height, 10)
 		if h isnt _lastHeight
 			_sendPostMessage 'setHeight', [h]
 			_lastHeight = h
