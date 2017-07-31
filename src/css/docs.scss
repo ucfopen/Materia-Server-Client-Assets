@@ -12,7 +12,6 @@
 
 	margin:0 auto;
 	z-index:100;
-	
 	min-height: 400px;
 	text-align: left;
 	font-size: 14px;
@@ -20,11 +19,11 @@
 	overflow: auto;
 
 	width: 685px;
-	background: url('../img/question_mark_circle.png') 780px 30px no-repeat;
-	background: url('../img/question_mark_circle.png') 780px 30px no-repeat,
-	url('../img/repeat_border_diag_bottom.png') 0 100% repeat-x;
+	background: url('../../img/question_mark_circle.png') 780px 30px no-repeat;
+	background: url('../../img/question_mark_circle.png') 780px 30px no-repeat,
+	url('../../img/repeat_border_diag_bottom.png') 0 100% repeat-x;
 
-	background-color: #fff;	
+	background-color: #fff;
 	margin-bottom: 60px;
 
 	padding: 40px 215px 20px 60px;
@@ -37,7 +36,7 @@
 	padding: 0 0 5px 0;
 	padding-bottom: 20px;
 	margin: 0 0 30px 0;
-	border-bottom: dotted black 1px;	
+	border-bottom: dotted black 1px;
 }
 
 .docs .container h2 {
@@ -98,22 +97,21 @@
 }
 
 .get_flash {
-	background: url('../img/get_flashplayer.gif');
+	background: url('../../img/get_flashplayer.gif');
 	width: 160px;
 	display: block;
 	margin: 0 auto;
 	text-indent: -9999px;
 	background-repeat: no-repeat;
-	height: 41px;	
+	height: 41px;
 }
 
 .get_flash:active {
-	background-position:0 2px;	
+	background-position:0 2px;
 }
 
 .docs .container dl dt {
 	font-weight: bold;
-	
 	font-family: 'Lato', arial, serif;
 }
 .docs .container dl dd {
