@@ -45,7 +45,7 @@ body, html {
 	-moz-border-radius: 12px;
 	border-radius: 12px;
 	height: 19px;
-	background: #fff url('../img/magnifyingglass.png') 5px 50% no-repeat;
+	background: #fff url('../../img/magnifyingglass.png') 5px 50% no-repeat;
 	padding-left: 23px;
 	padding-right: 10px;
 	outline: none;
@@ -95,7 +95,7 @@ h1{
 	position: absolute;
 	z-index:3;
 	font-size: 14px;
-	padding: 10px 15px;	
+	padding: 10px 15px;
 	margin-left: 15px;
 	margin-top: 15px;
 }
@@ -228,7 +228,7 @@ $dropzone_margin: 18px;
 		border-radius: 12px;
 
 		padding-left: 18px;
-		background-image: url(../img/magnifyingglass.png);
+		background-image: url(../../img/magnifyingglass.png);
 		background-repeat: no-repeat;
 		background-position: 5px 2px;
 	}
@@ -286,19 +286,19 @@ $dropzone_margin: 18px;
 	}
 
 	.sort-asc{
-		width: 0; 
-		height: 0; 
+		width: 0;
+		height: 0;
 		border-left: $arr_size solid transparent;
 		border-right: $arr_size solid transparent;
-		
+
 		border-bottom: $arr_size solid black;
 	}
 	.sort-desc{
-		width: 0; 
-		height: 0; 
+		width: 0;
+		height: 0;
 		border-left: $arr_size solid transparent;
 		border-right: $arr_size solid transparent;
-		
+
 		border-top: $arr_size solid #f00;
 	}
 }
@@ -376,6 +376,4 @@ $dropzone_margin: 18px;
 	-moz-user-select: none;
 	-o-user-select: none;
 	user-select: none;
-}  
-
-
+}

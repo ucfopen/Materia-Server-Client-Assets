@@ -16,15 +16,15 @@
 }
 .arrow, .action_button .arrow_right {
 	display:inline-block;
-	background:url(../img/arrow.png) no-repeat bottom;
+	background:url(../../img/arrow.png) no-repeat bottom;
 }
 
 .action_button .arrow_right {
-	background:url(../img/arrow_right.png) no-repeat bottom;
+	background:url(../../img/arrow_right.png) no-repeat bottom;
 }
 
 .widget .green:hover .arrow_right {
-	background:url(../img/button_arrow_circle_green_hover.png) no-repeat bottom;
+	background:url(../../img/button_arrow_circle_green_hover.png) no-repeat bottom;
 }
 .widget_detail {
 	position:relative;
@@ -92,7 +92,7 @@
 .thumbnail_explination {
 	color: #b5b5b5;
 	font-size: .7em;
-	background: url(../img/mag_glass.png) left bottom no-repeat;
+	background: url(../../img/mag_glass.png) left bottom no-repeat;
 	padding: 0 0 0 13px;
 	margin-top: 5px;
 }
@@ -232,22 +232,22 @@
 	overflow: visible;
 }
 .spotlight .store_main section.enigma {
-	background: url(../img/spotlight/enigma.png) right 10px no-repeat;
+	background: url(../../img/spotlight/enigma.png) right 10px no-repeat;
 	padding-right: 490px;
 	width: 415px;
 }
 .spotlight .store_main section.crossword {
-	background: url(../img/spotlight/crossword.png) left 10px no-repeat;
+	background: url(../../img/spotlight/crossword.png) left 10px no-repeat;
 	padding-left: 425px;
 	width: 507px;
 }
 .spotlight .store_main section.adventure {
-	background: url(../img/spotlight/adventure.png) right center no-repeat;
+	background: url(../../img/spotlight/adventure.png) right center no-repeat;
 	padding-right: 350px;
 	width: 558px;
 }
 .spotlight .store_main section.html5 {
-	background: url(../img/spotlight/materia-html5.png) -30px -8px no-repeat;
+	background: url(../../img/spotlight/materia-html5.png) -30px -8px no-repeat;
 	padding-left: 400px;
 	width: 530px;
 }

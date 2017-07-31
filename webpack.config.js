@@ -3,12 +3,19 @@ const path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const HashAssetsPlugin = require('hash-assets-webpack-plugin');
 
-let env = process.env.NODE_ENV || 'development';
-let minExt = env == 'production' ? '.min' : ''
+// Create object with:
+// Key = output name, Value = sass file
+// for every scss file in the directory
+// EX: { 'css/<filename>.css' : './src/css/filename.scss', ...}
+let css = {}
+glob.sync('./src/css/*.scss').forEach(function(file){
+  css['css/'+path.basename(file, '.scss')+'.css'] = file
+})
 
-let js = {
-  entry: {
-    'student.js': [
+module.exports = {
+  stats: {children: false}, // reduce noising webpack print output
+  entry: Object.assign(css, {
+    'js/student.js': [
       './src/js/ng-constants.coffee',
       './src/js/services/srv-user.coffee',
       './src/js/services/srv-api.coffee',
@@ -36,7 +43,7 @@ let js = {
       './src/js/directives/dir-selecteddisplay.coffee',
       './src/js/directives/dir-sidebarselection.coffee',
     ],
-    'author.js': [
+    'js/author.js': [
       './src/js/filters/filter-escape.coffee',
       './src/js/filters/filter-highlight.coffee',
       './src/js/services/srv-api.coffee',
@@ -74,7 +81,7 @@ let js = {
       './src/js/directives/dir-selecteddisplay.coffee',
       './src/js/directives/dir-sidebarselection.coffee',
     ],
-    'materia.js':[
+    'js/materia.js':[
       './src/js/materia/materia-namespace.coffee',
       './src/js/materia/materia.coms.json.coffee',
       './src/js/materia/materia.creatorcore.coffee',
@@ -95,68 +102,33 @@ let js = {
       './src/js/materia/materia.validate.textfield.coffee',
       './src/js/controllers/ctrl-alert.coffee',
     ],
-    'materia.coms.json.js': [
+    'js/materia.coms.json.js': [
       './src/js/materia/materia.coms.json.coffee',
     ],
-    'materia.namespace.js': [
+    'js/materia.namespace.js': [
       './src/js/materia/materia-namespace.coffee',
     ],
-    'materia.creatorcore.js': [
+    'js/materia.creatorcore.js': [
       './src/js/materia/materia.creatorcore.coffee',
     ],
-    'materia.enginecore.js': [
+    'js/materia.enginecore.js': [
       './src/js/materia/materia.enginecore.coffee',
     ],
-    'materia.score.js': [
+    'js/materia.score.js': [
       './src/js/materia/materia.score.coffee',
     ],
-  },
+  }),
   module: {
     rules: [
       {
         test: /\.coffee$/,
         use: [ 'ng-annotate-loader', 'coffee-loader' ]
-      }
-    ]
-  },
-  output: {
-    path: path.resolve('dist', 'js'),
-    filename: '[name]'
-  },
-  plugins: [
-    // Builds a json file with asset hashes for each js file
-    new HashAssetsPlugin({
-      filename: 'asset_hash.js.json',
-      keyTemplate: 'js/[name]',
-      prettyPrint: true,
-      path: './dist',
-
-    }),
-  ]
-};
-
-// Create object with:
-// Key = output name, Value = sass file
-// for every scss file in the directory
-// EX: { 'filename' : './src/css/filename.scss', ...}
-let cssFiles = {}
-glob.sync('./src/css/*.scss').forEach(function(file){
-  cssFiles[path.basename(file, '.scss')] = file
-})
-
-// process all the sass files
-let styles = {
-  stats: {
-    children: false
-  },
-  entry: cssFiles,
-  module: {
-    rules: [
+      },
       {
         test: /\.scss$/,
         use: ExtractTextPlugin.extract({
           use: [
-            'css-loader?url=false',
+            'css-loader?url=false', // disable the css-loaders' function of locating image urls
             'sass-loader'
           ]
         })
@@ -164,20 +136,18 @@ let styles = {
     ]
   },
   output: {
-    path: path.resolve('dist' ,'css'),
-    filename: `[name].css`
+    path: path.resolve('dist'),
+    filename: '[name]'
   },
   plugins: [
-    // Pulls the css out the generated webpack files
-    new ExtractTextPlugin(`[name].css`),
-    // Builds a json file with asset hashes for each css file
+    new ExtractTextPlugin('[name]'), // pull the css out of webpack
+    // Builds a json file with asset hashes for each js file
     new HashAssetsPlugin({
-      filename: 'asset_hash.css.json',
-      keyTemplate: `css/[name].css`,
+      filename: 'asset_hash.json',
+      keyTemplate: '[name]',
       prettyPrint: true,
       path: './dist',
+
     }),
   ]
-}
-
-module.exports = [js, styles]
+};
