@@ -21,14 +21,11 @@
 .store section.store_bottom section section{
 	width: 218px;
 	border: #D6D6D6 1px solid;
-	  
-/*       -moz-box-shadow: 1px 3px 10px #888;
-	   -webkit-box-shadow: 1px 3px 10px #888;*/
-	   box-shadow: 1px 5px 10px #888;
+	box-shadow: 1px 5px 10px #888;
 	border-top:none;
 	font-family: Lato;
 	height: 270px;
-	background: #fff url(../../img/bar-top.png) top repeat-x;
+	background: #fff url(../../../img/bar-top.png) top repeat-x;
 	padding:15px;
 }
 .store section.store_bottom section section h3 {
@@ -57,9 +54,6 @@
 	font-weight:bold;
 	font-size:.8em;
 }
-.shadow {
-}
-
 
 .store_main {
 	padding: 0px;
@@ -71,7 +65,7 @@
 	width: 960px;
 	height: 320px;
 	margin: 0 auto;
-	border:rgba(0,0,0,0.11) 1px solid;   
+	border:rgba(0,0,0,0.11) 1px solid;
 	-moz-box-shadow: 1px 3px 10px #888;
 	-webkit-box-shadow: 1px 3px 10px #888;
 	box-shadow: 1px 3px 10px #888;
