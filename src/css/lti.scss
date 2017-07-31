@@ -64,7 +64,6 @@ header
 	background: #68d053;
 }
 
-
 a
 {
 	color: #0093E7;
@@ -130,13 +129,8 @@ header > h1
 	position: absolute;
 	top: 0;
 	left: 30px;
-	background: white url(../img/materia_tmp_logo.png) 0% 0% no-repeat;
+	background: white url(../../img/materia_tmp_logo.png) 0% 0% no-repeat;
 }
-
-
-
-
-
 
 #select-widget
 {
@@ -144,15 +138,10 @@ header > h1
 	margin-top: 50px;
 }
 
-
-
 #error-container
 {
 	padding:0px 30px;
 }
-
-
-
 
 #search
 {
@@ -164,7 +153,7 @@ header > h1
 	-moz-border-radius: 12px;
 	border-radius: 12px;
 	height: 19px;
-	background: #fff url('../img/magnifyingglass.png') 5px 50% no-repeat;
+	background: #fff url('../../img/magnifyingglass.png') 5px 50% no-repeat;
 	padding-left:23px;
 	padding-right: 10px;
 	outline: none;
@@ -388,7 +377,7 @@ header > h1
 }
 
 .arrow_right {
-	background:url(../img/button_arrow_circle_green.png) no-repeat bottom;
+	background:url(../../img/button_arrow_circle_green.png) no-repeat bottom;
 	position:absolute;
 	top: -7px;
 	left:-36px;
@@ -398,19 +387,19 @@ header > h1
 	z-index: 600;
 }
 .preview-button:hover .arrow_right {
-	background: url(../img/button_arrow_circle_green_hover.png) no-repeat bottom;
+	background: url(../../img/button_arrow_circle_green_hover.png) no-repeat bottom;
 }
 .ie8 .arrow_right {
-	background:url(../img/ie9_button_arrow_circle_green.png) no-repeat bottom;
+	background:url(../../img/ie9_button_arrow_circle_green.png) no-repeat bottom;
 }
 .ie8 .preview-button:hover .arrow_right {
-	background: url(../img/ie9_button_arrow_circle_green_hover.png) no-repeat bottom;
+	background: url(../../img/ie9_button_arrow_circle_green_hover.png) no-repeat bottom;
 }
 .ie9 .arrow_right {
-	background:url(../img/ie9_button_arrow_circle_green.png) no-repeat bottom;
+	background:url(../../img/ie9_button_arrow_circle_green.png) no-repeat bottom;
 }
 .ie9 .preview-button:hover .arrow_right {
-	background: url(../img/ie9_button_arrow_circle_green_hover.png) no-repeat bottom;
+	background: url(../../img/ie9_button_arrow_circle_green_hover.png) no-repeat bottom;
 }
 
 #progress .widget-info {
@@ -458,7 +447,6 @@ header > h1
 
 /* jQuery UI: */
 .ui-progressbar {
-	// background: url('/assets/img/progressbar-bg.gif');
 	background: #b2aeb7;
 	height: 20px;
 	border-radius: 11px;

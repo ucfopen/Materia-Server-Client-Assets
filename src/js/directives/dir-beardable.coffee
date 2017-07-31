@@ -14,7 +14,7 @@ app.directive 'beardable', ->
 				link = document.createElement "link"
 				link.id = "beard_css"
 				link.rel = "stylesheet"
-				link.href = "/themes/default/assets/css/beard_mode.css"
+				link.href = "#{STATIC_CROSSDOMAIN}assets/css/beard_mode.css"
 				document.head.appendChild link
 			else if hasBeardCss
 				css = document.getElementById('beard_css')

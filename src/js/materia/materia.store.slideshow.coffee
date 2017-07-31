@@ -21,17 +21,17 @@ Namespace('Materia.Store').SlideShow = do ->
 		id = showing.attr('id')
 		changeTo = $("#spolight_"+slideNo)
 		changeToId = changeTo.attr('id')
-		
+
 		num = id.split('_').pop()
 		changeNum = changeToId.split('_').pop()
-		
+
 		if num > changeNum
 			showing.hide('slide', {direction : 'right', speed: 'slow'})
 			changeTo.show('slide', {direction : 'left', speed: 'slow'})
 		else
 			showing.hide('slide', {direction : 'left', speed: 'slow'})
 			changeTo.show('slide', {direction : 'right', speed: 'slow'})
-	
+
 	# Changes the spotlight to the next one in the list
 	spotlightChange = ->
 		# Checks to see if the next child is hidden (won't be if it's the last child in the list)
@@ -42,11 +42,11 @@ Namespace('Materia.Store').SlideShow = do ->
 			nextObj = $('.main_container').children(':visible').next()
 			obj.hide('slide', {direction : 'left', speed: 'slow'})
 			nextObj.show('slide', {direction : 'right', speed: 'slow'})
-			
+
 			# Spits the id so the buttons know which one needs to be highlighted.
 			num = nextObj.attr('id').split('_')
 			num = num.pop()
-			
+
 			# Sends that button
 			spotlightSelected($("#slide_"+num).next())
 		# This does the same as above except it gets the first child (hits if the element is the last in the list).

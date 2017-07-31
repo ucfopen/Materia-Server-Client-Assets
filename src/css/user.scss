@@ -12,7 +12,7 @@
 	border:rgba(0,0,0,0.22) 1px solid;
 	-moz-box-shadow: 1px 3px 10px #888;
 	-webkit-box-shadow: 1px 3px 10px #888;
-	box-shadow: 1px 3px 10px #888;	
+	box-shadow: 1px 3px 10px #888;
 }
 
 .user section.page {
@@ -22,7 +22,7 @@
 	z-index:100;
 	width: 575px; /*625px*/
 	padding: 30px 60px 30px 145px;
-	background: url('../img/user_page_background.gif') 0 0 repeat-y;
+	background: url('../../img/user_page_background.gif') 0 0 repeat-y;
 	background-color: #fff;
 	min-height: 400px;
 }
@@ -34,7 +34,7 @@
 	z-index:100;
 	width: 575px; /*625px*/
 	padding: 30px 60px 30px 145px;
-	background: url('../img/repeat_border_diag_bottom.png') 0 100% repeat-x;
+	background: url('../../img/repeat_border_diag_bottom.png') 0 100% repeat-x;
 	background-color: #fff;
 	min-height: 400px;
 }
@@ -45,7 +45,7 @@
 	font-size: 38px;
 	border-bottom: dotted #000 1px;
 	margin: 0;
-	padding: 0 0 5px 0;	
+	padding: 0 0 5px 0;
 }
 
 .user h2 span {
@@ -96,10 +96,7 @@
 
 	.user .avatar_big a.external {
 		padding-right: 18px;
-		background: url('../img/external_link_arrow.png') right center no-repeat;
-		
-		/* unhide this to hide avatar link */
-		/* display:none; */
+		background: url('../../img/external_link_arrow.png') right center no-repeat;
 	}
 
 .user .rank {
@@ -112,7 +109,7 @@
 	margin: 0;
 	font-family: 'Lato', arial, serif;
 	font-weight: 600;
-	color: #0093e7;	
+	color: #0093e7;
 	line-height: 35px;
 	text-align: right;
 	margin-top:5px;
@@ -124,17 +121,17 @@
 		color: #969696;
 		text-decoration:underline;
 	}
-	
+
 	.user .rank a:hover {
 		color: #969696;
 		text-decoration:none;
-	}	
+	}
 
 .user ul.user_information {
 	padding:0;
 	font-size: 13px;
 	font-weight: bold;
-	font-family: 'Lato', arial, serif;	
+	font-family: 'Lato', arial, serif;
 }
 
 .user ul.user_information li {
@@ -162,13 +159,12 @@
 .user h3 {
 	color: #000;
 	font-weight: 700;
-	font-family: 'Lato', arial, serif;	
+	font-family: 'Lato', arial, serif;
 	height: 25px;
 }
 
 .user h3.loading {
-	background: transparent url('../img/loading_icon_black_on_white.gif') no-repeat bottom center;
-	
+	background: transparent url('../../img/loading_icon_black_on_white.gif') no-repeat bottom center;
 }
 
 .user .activity {
@@ -191,7 +187,7 @@
 }
 
 .user .message_loading {
-	background: url('../img/profile_load_more_activity.gif');
+	background: url('../../img/profile_load_more_activity.gif');
 	width: 16px;
 	height: 16px;
 	margin:0 5px 0 0;
@@ -209,7 +205,7 @@
 	background-color:#dddddd;
 	border:1px solid #cecece;
 	color:#777777;
-	font-family: 'Lato', arial, serif;	
+	font-family: 'Lato', arial, serif;
 	font-size:14px;
 	font-weight:bold;
 	padding:12px 0px;
@@ -285,7 +281,7 @@
 	font-size: 28px;
 	min-height: 28px;
 	font-weight: 700;
-	font-family: 'Lato', arial, serif;	
+	font-family: 'Lato', arial, serif;
 	text-align:center;
 	overflow: hidden;
 
@@ -316,13 +312,13 @@
 
 	font-size: 11px;
 	font-weight: 700;
-	font-family: 'Lato', arial, serif;	
+	font-family: 'Lato', arial, serif;
 }
 
 .user .activity_log .widget {
 	display:block;
 	text-align:left;
-	font-family: 'LatoBlack', arial, serif;	
+	font-family: 'LatoBlack', arial, serif;
 	color: #7b7b7b;
 	font-size: 11px;
 	font-weight: 700;
@@ -334,7 +330,6 @@
 }
 
 .user .activity_log  .title {
-	
 	font-family: 'Lato', arial, serif;
 	font-size: 17px;
 	position:absolute;
@@ -358,7 +353,7 @@
 	top: 175px;
 	width: 83px;
 	margin:0;
-	padding: 0;	
+	padding: 0;
 	list-style-type:none;
 
 }
@@ -396,25 +391,25 @@
 }
 
 .user .main_navigation li.selected.settings a {
-	background-image: url('../img/user_page_icons_sprite.png');
+	background-image: url('../../img/user_page_icons_sprite.png');
 	background-repeat: no-repeat;
 	background-position: 89px -18px;
 }
 
 .user .main_navigation li.selected.profile a {
-	background-image: url('../img/user_page_icons_sprite.png');
+	background-image: url('../../img/user_page_icons_sprite.png');
 	background-repeat: no-repeat;
 	background-position: 89px 10px;
 }
 
 .user .main_navigation li.settings a {
-	background-image: url('../img/user_page_icons_sprite.png');
+	background-image: url('../../img/user_page_icons_sprite.png');
 	background-repeat: no-repeat;
 	background-position: 89px -75px;
 }
 
 .user .main_navigation li.profile a {
-	background-image: url('../img/user_page_icons_sprite.png');
+	background-image: url('../../img/user_page_icons_sprite.png');
 	background-repeat: no-repeat;
 	background-position: 89px -46px;
 }
