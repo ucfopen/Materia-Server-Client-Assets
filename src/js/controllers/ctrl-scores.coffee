@@ -225,7 +225,7 @@ app.controller 'scorePageController', ($scope, widgetSrv, scoreSrv) ->
 		# return if preview
 		return if isPreview
 
-		$LAB.script("/assets/js/lib/jquery.jqplot.min.cat.js").wait ->
+		$LAB.script("/js/lib/jquery.jqplot.min.cat.js").wait ->
 
 			# ========== BUILD THE GRAPH =============
 			Materia.Coms.Json.send 'score_summary_get', [widgetInstance.id], (data) ->
