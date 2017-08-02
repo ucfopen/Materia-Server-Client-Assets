@@ -225,7 +225,17 @@ app.controller 'scorePageController', ($scope, widgetSrv, scoreSrv) ->
 		# return if preview
 		return if isPreview
 
-		$LAB.script("/js/lib/jquery.jqplot.min.cat.js").wait ->
+		# Dynamically load jqplot libraries at run time
+		jqplotBase = '//cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.0/'
+		$LAB.script("#{jqplotBase}jquery.jqplot.min.js")
+		.wait()
+		.script("#{jqplotBase}plugins/jqplot.barRenderer.min.js")
+		.script("#{jqplotBase}plugins/jqplot.canvasTextRenderer.min.js")
+		.script("#{jqplotBase}plugins/jqplot.canvasAxisTickRenderer.min.js")
+		.script("#{jqplotBase}plugins/jqplot.categoryAxisRenderer.min.js")
+		.script("#{jqplotBase}plugins/jqplot.cursor.min.js")
+		.script("#{jqplotBase}plugins/jqplot.highlighter.min.js")
+		.wait ->
 
 			# ========== BUILD THE GRAPH =============
 			Materia.Coms.Json.send 'score_summary_get', [widgetInstance.id], (data) ->
