@@ -5,7 +5,7 @@ const HashAssetsPlugin = require('hash-assets-webpack-plugin');
 
 
 // sass hangs if you don't set this
-process.env.UV_THREADBOOL_SIZE = 100
+// process.env.UV_THREADBOOL_SIZE = 100
 
 // Create object with:
 // Key = output name, Value = sass file
