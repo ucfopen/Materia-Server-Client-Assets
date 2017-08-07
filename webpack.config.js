@@ -44,7 +44,6 @@ module.exports = {
       jsPath+'/directives/dir-scoregraph.coffee',
       jsPath+'/directives/dir-scoretable.coffee',
       jsPath+'/directives/dir-selecteddisplay.coffee',
-      jsPath+'/directives/dir-sidebarselection.coffee',
     ],
     'js/author.js': [
       jsPath+'/filters/filter-escape.coffee',
@@ -82,7 +81,6 @@ module.exports = {
       jsPath+'/directives/dir-scoregraph.coffee',
       jsPath+'/directives/dir-scoretable.coffee',
       jsPath+'/directives/dir-selecteddisplay.coffee',
-      jsPath+'/directives/dir-sidebarselection.coffee',
     ],
     'js/materia.js':[
       jsPath+'/materia/materia-namespace.coffee',
