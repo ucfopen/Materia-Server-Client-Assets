@@ -4,10 +4,9 @@
   "author": "University of Central Florida, Center for Distributed Learning",
   "homepage": "https://ucfopen.github.io/Materia-Docs",
   "scripts": {
-    "build": "UV_THREADPOOL_SIZE=100 webpack -p",
+    "build": "webpack -p",
     "build-watch": "webpack --watch",
-    "build-dev": "webpack",
-    "postinstall": "npm run build"
+    "build-dev": "webpack"
   },
   "dependencies": {
     "coffee-loader": "^0.7.3",
