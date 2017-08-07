@@ -1,14 +1,10 @@
 const glob = require('glob');
 const path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const HashAssetsPlugin = require('hash-assets-webpack-plugin');
 
 const jsPath = path.join(__dirname, 'src', 'js')
 const cssPath = path.join(__dirname, 'src', 'css')
 const outPath = path.join(__dirname, 'dist')
-
-// sass hangs if you don't set this
-// process.env.UV_THREADBOOL_SIZE = 100
 
 // Create object with:
 // Key = output name, Value = sass file
@@ -148,13 +144,5 @@ module.exports = {
   },
   plugins: [
     new ExtractTextPlugin('[name]'), // pull the css out of webpack
-    // Builds a json file with asset hashes for each js file
-    new HashAssetsPlugin({
-      filename: 'asset_hash.json',
-      keyTemplate: '[name]',
-      prettyPrint: true,
-      path: './dist',
-
-    }),
   ]
 };
