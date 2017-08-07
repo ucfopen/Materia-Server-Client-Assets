@@ -4,7 +4,7 @@
   "author": "University of Central Florida, Center for Distributed Learning",
   "homepage": "https://github.com/ucfcdl/Materia",
   "scripts": {
-    "build": "webpack -p",
+    "build": "UV_THREADPOOL_SIZE=100 webpack -p",
     "build-watch": "webpack --watch",
     "build-dev": "webpack",
     "postinstall": "npm run build"
