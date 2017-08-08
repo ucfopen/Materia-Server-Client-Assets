@@ -179,6 +179,11 @@ nav {
 		border-bottom: 1px solid #d3d3d3;
 	}
 
+	&:hover > span {
+		display: inline-block;
+		height: 27px;
+	}
+
 	&:hover > ul {
 		display: flex;
 
