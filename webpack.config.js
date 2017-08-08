@@ -1,18 +1,17 @@
 const glob = require('glob');
 const path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const HashAssetsPlugin = require('hash-assets-webpack-plugin');
 
-
-// sass hangs if you don't set this
-// process.env.UV_THREADBOOL_SIZE = 100
+const jsPath = path.join(__dirname, 'src', 'js')
+const cssPath = path.join(__dirname, 'src', 'css')
+const outPath = path.join(__dirname, 'dist')
 
 // Create object with:
 // Key = output name, Value = sass file
 // for every scss file in the directory
 // EX: { 'css/<filename>.css' : './src/css/filename.scss', ...}
 let css = {}
-glob.sync('./src/css/*.scss').forEach(function(file){
+glob.sync(path.join(cssPath, '*.scss')).forEach(function(file){
   css['css/'+path.basename(file, '.scss')+'.css'] = file
 })
 
@@ -20,106 +19,104 @@ module.exports = {
   stats: {children: false}, // reduce noising webpack print output
   entry: Object.assign(css, {
     'js/student.js': [
-      './src/js/ng-constants.coffee',
-      './src/js/services/srv-user.coffee',
-      './src/js/services/srv-api.coffee',
-      './src/js/services/srv-datetime.coffee',
-      './src/js/services/srv-widget.coffee',
-      './src/js/services/srv-selectedwidget.coffee',
-      './src/js/services/srv-scores.coffee',
-      './src/js/controllers/ctrl-page.coffee',
-      './src/js/controllers/ctrl-current-user.coffee',
-      './src/js/controllers/ctrl-notification.coffee',
-      './src/js/controllers/ctrl-login.coffee',
-      './src/js/controllers/ctrl-profile.coffee',
-      './src/js/controllers/ctrl-scores.coffee',
-      './src/js/controllers/ctrl-settings.coffee',
-      './src/js/controllers/ctrl-help.coffee',
-      './src/js/controllers/ctrl-player.coffee',
-      './src/js/directives/dir-beardable.coffee',
-      './src/js/directives/dir-datatable.coffee',
-      './src/js/directives/dir-date-validation.coffee',
-      './src/js/directives/dir-fancybox.coffee',
-      './src/js/directives/dir-ngenter.coffee',
-      './src/js/directives/dir-scoredata.coffee',
-      './src/js/directives/dir-scoregraph.coffee',
-      './src/js/directives/dir-scoretable.coffee',
-      './src/js/directives/dir-selecteddisplay.coffee',
-      './src/js/directives/dir-sidebarselection.coffee',
+      jsPath+'/ng-constants.coffee',
+      jsPath+'/services/srv-user.coffee',
+      jsPath+'/services/srv-api.coffee',
+      jsPath+'/services/srv-datetime.coffee',
+      jsPath+'/services/srv-widget.coffee',
+      jsPath+'/services/srv-selectedwidget.coffee',
+      jsPath+'/services/srv-scores.coffee',
+      jsPath+'/controllers/ctrl-page.coffee',
+      jsPath+'/controllers/ctrl-current-user.coffee',
+      jsPath+'/controllers/ctrl-notification.coffee',
+      jsPath+'/controllers/ctrl-login.coffee',
+      jsPath+'/controllers/ctrl-profile.coffee',
+      jsPath+'/controllers/ctrl-scores.coffee',
+      jsPath+'/controllers/ctrl-settings.coffee',
+      jsPath+'/controllers/ctrl-help.coffee',
+      jsPath+'/controllers/ctrl-player.coffee',
+      jsPath+'/directives/dir-beardable.coffee',
+      jsPath+'/directives/dir-datatable.coffee',
+      jsPath+'/directives/dir-date-validation.coffee',
+      jsPath+'/directives/dir-fancybox.coffee',
+      jsPath+'/directives/dir-ngenter.coffee',
+      jsPath+'/directives/dir-scoredata.coffee',
+      jsPath+'/directives/dir-scoregraph.coffee',
+      jsPath+'/directives/dir-scoretable.coffee',
+      jsPath+'/directives/dir-selecteddisplay.coffee',
     ],
     'js/author.js': [
-      './src/js/filters/filter-escape.coffee',
-      './src/js/filters/filter-highlight.coffee',
-      './src/js/services/srv-api.coffee',
-      './src/js/services/srv-beard.coffee',
-      './src/js/services/srv-datetime.coffee',
-      './src/js/services/srv-scores.coffee',
-      './src/js/services/srv-selectedwidget.coffee',
-      './src/js/services/srv-user.coffee',
-      './src/js/services/srv-widget.coffee',
-      './src/js/controllers/ctrl-page.coffee',
-      './src/js/controllers/ctrl-current-user.coffee',
-      './src/js/controllers/ctrl-notification.coffee',
-      './src/js/controllers/ctrl-create.coffee',
-      './src/js/controllers/ctrl-lti.coffee',
-      './src/js/controllers/ctrl-media-import.coffee',
-      './src/js/controllers/ctrl-my-widgets.coffee',
-      './src/js/controllers/ctrl-question-import.coffee',
-      './src/js/controllers/ctrl-spotlight.coffee',
-      './src/js/controllers/ctrl-widget-catalog.coffee',
-      './src/js/controllers/ctrl-widget-details.coffee',
-      './src/js/controllers/ctrl-selectedwidget.coffee',
-      './src/js/controllers/ctrl-widget-settings.coffee',
-      './src/js/controllers/ctrl-export-scores.coffee',
-      './src/js/controllers/ctrl-collaboration.coffee',
-      './src/js/controllers/ctrl-sidebar.coffee',
-      './src/js/controllers/ctrl-login.coffee',
-      './src/js/directives/dir-beardable.coffee',
-      './src/js/directives/dir-datatable.coffee',
-      './src/js/directives/dir-date-validation.coffee',
-      './src/js/directives/dir-fancybox.coffee',
-      './src/js/directives/dir-ngenter.coffee',
-      './src/js/directives/dir-scoredata.coffee',
-      './src/js/directives/dir-scoregraph.coffee',
-      './src/js/directives/dir-scoretable.coffee',
-      './src/js/directives/dir-selecteddisplay.coffee',
-      './src/js/directives/dir-sidebarselection.coffee',
+      jsPath+'/filters/filter-escape.coffee',
+      jsPath+'/filters/filter-highlight.coffee',
+      jsPath+'/services/srv-api.coffee',
+      jsPath+'/services/srv-beard.coffee',
+      jsPath+'/services/srv-datetime.coffee',
+      jsPath+'/services/srv-scores.coffee',
+      jsPath+'/services/srv-selectedwidget.coffee',
+      jsPath+'/services/srv-user.coffee',
+      jsPath+'/services/srv-widget.coffee',
+      jsPath+'/controllers/ctrl-page.coffee',
+      jsPath+'/controllers/ctrl-current-user.coffee',
+      jsPath+'/controllers/ctrl-notification.coffee',
+      jsPath+'/controllers/ctrl-create.coffee',
+      jsPath+'/controllers/ctrl-lti.coffee',
+      jsPath+'/controllers/ctrl-media-import.coffee',
+      jsPath+'/controllers/ctrl-my-widgets.coffee',
+      jsPath+'/controllers/ctrl-question-import.coffee',
+      jsPath+'/controllers/ctrl-spotlight.coffee',
+      jsPath+'/controllers/ctrl-widget-catalog.coffee',
+      jsPath+'/controllers/ctrl-widget-details.coffee',
+      jsPath+'/controllers/ctrl-selectedwidget.coffee',
+      jsPath+'/controllers/ctrl-widget-settings.coffee',
+      jsPath+'/controllers/ctrl-export-scores.coffee',
+      jsPath+'/controllers/ctrl-collaboration.coffee',
+      jsPath+'/controllers/ctrl-sidebar.coffee',
+      jsPath+'/controllers/ctrl-login.coffee',
+      jsPath+'/directives/dir-beardable.coffee',
+      jsPath+'/directives/dir-datatable.coffee',
+      jsPath+'/directives/dir-date-validation.coffee',
+      jsPath+'/directives/dir-fancybox.coffee',
+      jsPath+'/directives/dir-ngenter.coffee',
+      jsPath+'/directives/dir-scoredata.coffee',
+      jsPath+'/directives/dir-scoregraph.coffee',
+      jsPath+'/directives/dir-scoretable.coffee',
+      jsPath+'/directives/dir-selecteddisplay.coffee',
     ],
     'js/materia.js':[
-      './src/js/materia/materia-namespace.coffee',
-      './src/js/materia/materia.coms.json.coffee',
-      './src/js/materia/materia.creatorcore.coffee',
-      './src/js/materia/materia.enginecore.coffee',
-      './src/js/materia/materia.flashcheck.coffee',
-      './src/js/materia/materia.image.coffee',
-      './src/js/materia/materia.mywidgets.statistics.coffee',
-      './src/js/materia/materia.mywidgets.tasks.coffee',
-      './src/js/materia/materia.page.default.coffee',
-      './src/js/materia/materia.score.coffee',
-      './src/js/materia/materia.scores.scoregraphics.coffee',
-      './src/js/materia/materia.set.throbber.coffee',
-      './src/js/materia/materia.storage.manager.coffee',
-      './src/js/materia/materia.storage.table.coffee',
-      './src/js/materia/materia.store.slideshow.coffee',
-      './src/js/materia/materia.user.coffee',
-      './src/js/materia/materia.util.coffee',
-      './src/js/materia/materia.validate.textfield.coffee',
-      './src/js/controllers/ctrl-alert.coffee',
+      jsPath+'/materia/materia-namespace.coffee',
+      jsPath+'/materia/materia.coms.json.coffee',
+      jsPath+'/materia/materia.creatorcore.coffee',
+      jsPath+'/materia/materia.enginecore.coffee',
+      jsPath+'/materia/materia.flashcheck.coffee',
+      jsPath+'/materia/materia.image.coffee',
+      jsPath+'/materia/materia.mywidgets.statistics.coffee',
+      jsPath+'/materia/materia.mywidgets.tasks.coffee',
+      jsPath+'/materia/materia.page.default.coffee',
+      jsPath+'/materia/materia.score.coffee',
+      jsPath+'/materia/materia.scores.scoregraphics.coffee',
+      jsPath+'/materia/materia.set.throbber.coffee',
+      jsPath+'/materia/materia.storage.manager.coffee',
+      jsPath+'/materia/materia.storage.table.coffee',
+      jsPath+'/materia/materia.store.slideshow.coffee',
+      jsPath+'/materia/materia.user.coffee',
+      jsPath+'/materia/materia.util.coffee',
+      jsPath+'/materia/materia.validate.textfield.coffee',
+      jsPath+'/controllers/ctrl-alert.coffee',
     ],
     'js/materia.coms.json.js': [
-      './src/js/materia/materia.coms.json.coffee',
+      jsPath+'/materia/materia.coms.json.coffee',
     ],
     'js/materia.namespace.js': [
-      './src/js/materia/materia-namespace.coffee',
+      jsPath+'/materia/materia-namespace.coffee',
     ],
     'js/materia.creatorcore.js': [
-      './src/js/materia/materia.creatorcore.coffee',
+      jsPath+'/materia/materia.creatorcore.coffee',
     ],
     'js/materia.enginecore.js': [
-      './src/js/materia/materia.enginecore.coffee',
+      jsPath+'/materia/materia.enginecore.coffee',
     ],
     'js/materia.score.js': [
-      './src/js/materia/materia.score.coffee',
+      jsPath+'/materia/materia.score.coffee',
     ],
   }),
   module: {
@@ -140,18 +137,10 @@ module.exports = {
     ]
   },
   output: {
-    path: path.resolve('dist'),
+    path: outPath,
     filename: '[name]'
   },
   plugins: [
     new ExtractTextPlugin('[name]'), // pull the css out of webpack
-    // Builds a json file with asset hashes for each js file
-    new HashAssetsPlugin({
-      filename: 'asset_hash.json',
-      keyTemplate: '[name]',
-      prettyPrint: true,
-      path: './dist',
-
-    }),
   ]
 };
