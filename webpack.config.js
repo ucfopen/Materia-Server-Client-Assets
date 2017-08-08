@@ -104,10 +104,10 @@ module.exports = {
       jsPath+'/controllers/ctrl-alert.coffee',
     ],
     'js/admin.js':[
-      './src/js/controllers/ctrl-admin-user.coffee',
-      './src/js/controllers/ctrl-admin-widget.coffee',
-      './src/js/materia/materia.coms.admin.coffee',
-      './src/js/services/srv-admin.coffee',
+      jsPath+'/controllers/ctrl-admin-user.coffee',
+      jsPath+'/controllers/ctrl-admin-widget.coffee',
+      jsPath+'/materia/materia.coms.admin.coffee',
+      jsPath+'/services/srv-admin.coffee',
     ],
     'js/materia.coms.json.js': [
       jsPath+'/materia/materia.coms.json.coffee',
