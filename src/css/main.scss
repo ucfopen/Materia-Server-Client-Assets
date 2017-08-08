@@ -158,6 +158,37 @@ nav {
 	}
 }
 
+.nav_expandable {
+	color: #0093e7;
+	font-family: 'Lato', arial, serif;
+	font-size:17px;
+	font-weight:bold;
+	height: 27px;
+	position: relative;
+	margin-left: 20px;
+
+	ul {
+		display: none;
+		background-color: #ffffff;
+		padding: 0;
+		position: absolute;
+		bottom: -100%;
+		left: -10px;
+		border-left: 1px solid #d3d3d3;
+		border-right: 1px solid #d3d3d3;
+		border-bottom: 1px solid #d3d3d3;
+	}
+
+	&:hover > ul {
+		display: flex;
+
+		li {
+			padding: 0 10px 5px;
+			height: auto;
+		}
+	}
+}
+
 .logout a {
 	position:absolute;
 	right:20px;
