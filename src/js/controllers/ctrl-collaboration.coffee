@@ -5,7 +5,9 @@ app.controller 'CollaborationController', ($scope, $timeout, selectedWidgetSrv, 
 	$scope.alert = Alert
 
 	# make these constants available to the page so we populate dropdowns with the correct values
-	$scope.ACCESS = ACCESS
+	$scope.ACCESS =
+		VISIBLE: ACCESS.VISIBLE
+		FULL: ACCESS.FULL
 
 	LEFT = 37
 	UP = 38
