@@ -1,8 +1,11 @@
 # The collaboration modal on the My Widgets page
 app = angular.module 'materia'
-app.controller 'CollaborationController', ($scope, $timeout, selectedWidgetSrv, widgetSrv, userServ, Alert) ->
+app.controller 'CollaborationController', ($scope, $timeout, selectedWidgetSrv, widgetSrv, userServ, ACCESS, OBJECT, Alert) ->
 
 	$scope.alert = Alert
+
+	# make these constants available to the page so we populate dropdowns with the correct values
+	$scope.ACCESS = ACCESS
 
 	LEFT = 37
 	UP = 38
@@ -131,7 +134,7 @@ app.controller 'CollaborationController', ($scope, $timeout, selectedWidgetSrv, 
 			first: user.first
 			last: user.last
 			gravatar: user.gravatar
-			access: 0
+			access: ACCESS.VISIBLE
 
 		setTimeout ->
 			$scope.$parent.setupPickers()
@@ -171,7 +174,7 @@ app.controller 'CollaborationController', ($scope, $timeout, selectedWidgetSrv, 
 				perms: access
 
 		$scope.perms.widget = user_ids
-		Materia.Coms.Json.send 'permissions_set', [0,widget_id, permObj], (returnData) ->
+		Materia.Coms.Json.send 'permissions_set', [OBJECT.WIDGET_INSTANCE, widget_id, permObj], (returnData) ->
 			if returnData == true
 				$scope.$emit 'collaborators.update', ''
 				$scope.show.collaborationModal = no
@@ -184,10 +187,10 @@ app.controller 'CollaborationController', ($scope, $timeout, selectedWidgetSrv, 
 			$scope.$apply()
 
 	$scope.checkForWarning = (user) ->
-		if user.isCurrentUser and user.access <= 30
+		if user.isCurrentUser and user.access <= ACCESS.FULL
 			user.warning = true
 
 	$scope.cancelDemote = (user) ->
 		user.warning = no
 		user.remove = no
-		user.access = 30
+		user.access = ACCESS.FULL

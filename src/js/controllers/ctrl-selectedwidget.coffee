@@ -60,10 +60,10 @@ app.controller 'SelectedWidgetController', ($scope, $q, widgetSrv,selectedWidget
 		$scope.show.olderScores = true
 
 	$scope.showCopyDialog = ->
-		$scope.show.copyModal = true if $scope.selected.accessLevel != 0
+		$scope.show.copyModal = true if $scope.selected.accessLevel != ACCESS.VISIBLE
 
 	$scope.showDelete = ->
-		$scope.show.deleteDialog = !$scope.show.deleteDialog if $scope.selected.accessLevel != 0
+		$scope.show.deleteDialog = !$scope.show.deleteDialog if $scope.selected.accessLevel != ACCESS.VISIBLE
 
 	$scope.showCollaboration = ->
 		user_ids = []
