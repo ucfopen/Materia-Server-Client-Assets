@@ -46,6 +46,7 @@ module.exports = {
       jsPath+'/directives/dir-selecteddisplay.coffee',
     ],
     'js/author.js': [
+      jsPath+'/ng-constants.coffee',
       jsPath+'/filters/filter-escape.coffee',
       jsPath+'/filters/filter-highlight.coffee',
       jsPath+'/services/srv-api.coffee',
@@ -104,6 +105,7 @@ module.exports = {
       jsPath+'/controllers/ctrl-alert.coffee',
     ],
     'js/admin.js':[
+      jsPath+'/ng-constants.coffee',
       jsPath+'/controllers/ctrl-admin-user.coffee',
       jsPath+'/controllers/ctrl-admin-widget.coffee',
       jsPath+'/materia/materia.coms.admin.coffee',
