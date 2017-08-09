@@ -1,5 +1,5 @@
 app = angular.module 'materia'
-app.service 'selectedWidgetSrv', ($rootScope, $q, OBJECT) ->
+app.service 'selectedWidgetSrv', ($rootScope, $q, OBJECT_TYPES) ->
 
 	STORAGE_TABLE_MAX_ROWS_SHOWN = 100
 
@@ -55,7 +55,7 @@ app.service 'selectedWidgetSrv', ($rootScope, $q, OBJECT) ->
 
 	getUserPermissions = ->
 		deferred = $q.defer()
-		Materia.Coms.Json.send 'permissions_get', [OBJECT.WIDGET_INSTANCE, _widget.id], (perms) ->
+		Materia.Coms.Json.send 'permissions_get', [OBJECT_TYPES.WIDGET_INSTANCE, _widget.id], (perms) ->
 			permsObject =
 				user : perms.user_perms
 				widget: perms.widget_user_perms
