@@ -7,7 +7,7 @@ app.constant 'PLAYER',
 	RETRY_SLOW: 10000
 	EMBED_TARGET: 'container' # id of the container to put the flash in
 
-app.constant 'OBJECT',
+app.constant 'OBJECT_TYPE',
 	QUESTION: 1
 	ASSET: 2
 	WIDGET: 3

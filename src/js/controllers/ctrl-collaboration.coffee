@@ -1,6 +1,6 @@
 # The collaboration modal on the My Widgets page
 app = angular.module 'materia'
-app.controller 'CollaborationController', ($scope, $timeout, selectedWidgetSrv, widgetSrv, userServ, ACCESS, OBJECT, Alert) ->
+app.controller 'CollaborationController', ($scope, $timeout, selectedWidgetSrv, widgetSrv, userServ, ACCESS, OBJECT_TYPES, Alert) ->
 
 	$scope.alert = Alert
 
@@ -176,7 +176,7 @@ app.controller 'CollaborationController', ($scope, $timeout, selectedWidgetSrv, 
 				perms: access
 
 		$scope.perms.widget = user_ids
-		Materia.Coms.Json.send 'permissions_set', [OBJECT.WIDGET_INSTANCE, widget_id, permObj], (returnData) ->
+		Materia.Coms.Json.send 'permissions_set', [OBJECT_TYPES.WIDGET_INSTANCE, widget_id, permObj], (returnData) ->
 			if returnData == true
 				$scope.$emit 'collaborators.update', ''
 				$scope.show.collaborationModal = no
