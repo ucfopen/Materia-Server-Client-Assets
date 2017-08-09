@@ -1,5 +1,5 @@
 app = angular.module 'materia'
-app.controller 'MyWidgetsController', ($scope, $q, $window, widgetSrv, userServ, selectedWidgetSrv, beardServ, Alert) ->
+app.controller 'MyWidgetsController', ($scope, $q, $window, widgetSrv, userServ, selectedWidgetSrv, beardServ, ACCESS, Alert) ->
 	$scope.alert = Alert
 	$scope.baseUrl = BASE_URL
 	$scope.widgets =
@@ -8,7 +8,7 @@ app.controller 'MyWidgetsController', ($scope, $q, $window, widgetSrv, userServ,
 		widget: null
 		perms: {}
 		scores: {}
-		accessLevel: 0
+		accessLevel: ACCESS.VISIBLE
 		shareable: false
 		editable: true
 		hasScores: false
@@ -141,7 +141,7 @@ app.controller 'MyWidgetsController', ($scope, $q, $window, widgetSrv, userServ,
 		$scope.show.exportModal = false
 		$scope.show.olderScores = false
 
-		$scope.selected.accessLevel = 0
+		$scope.selected.accessLevel = ACCESS.VISIBLE
 		$scope.selected.editable = true
 		$scope.selected.shareable = false
 		$scope.selected.hasScores = false
@@ -157,11 +157,11 @@ app.controller 'MyWidgetsController', ($scope, $q, $window, widgetSrv, userServ,
 	# Second half of populateDisplay
 	# This allows us to update the display before the callback of scores finishes, which speeds up UI
 	populateAccess = ->
-		# accessLevel == 0 is effectively read-only
+		# accessLevel == ACCESS.VISIBLE is effectively read-only
 		if $scope.perms.user[$scope.user.id]?[0]?
 			$scope.selected.accessLevel = Number $scope.perms.user[$scope.user.id][0]
 
-		$scope.selected.editable = ($scope.selected.accessLevel > 0 and parseInt($scope.selected.widget.widget.is_editable) is 1)
+		$scope.selected.editable = ($scope.selected.accessLevel > ACCESS.VISIBLE and parseInt($scope.selected.widget.widget.is_editable) is 1)
 
 		if $scope.selected.editable
 			$scope.selected.edit = "/widgets/#{$scope.selected.widget.widget.dir}create\##{$scope.selected.widget.id}"
@@ -170,7 +170,7 @@ app.controller 'MyWidgetsController', ($scope, $q, $window, widgetSrv, userServ,
 
 		countCollaborators()
 
-		$scope.selected.shareable = $scope.selected.accessLevel != 0
+		$scope.selected.shareable = $scope.selected.accessLevel != ACCESS.VISIBLE
 
 		populateAvailability($scope.selected.widget.open_at, $scope.selected.widget.close_at)
 		populateAttempts($scope.selected.widget.attempts)
