@@ -1,22 +1,20 @@
 app = angular.module('materia')
 app.service 'adminSrv', ->
 
-	Materia.Coms.Admin.setGateway '/api/admin/'
-
 	getWidgets = (callback) ->
-		Materia.Coms.Admin.send 'GET', 'widgets', null, callback
+		Materia.Coms.Json.get '/api/admin/widgets', callback
 
-	saveWidget = (obj, callback) ->
-		Materia.Coms.Admin.send 'POST', 'widget', obj, callback
+	saveWidget = (widget, callback) ->
+		Materia.Coms.Json.post "/api/admin/widget/#{widget.id}", widget, callback
 
 	searchUsers = (str, callback) ->
-		Materia.Coms.Admin.send 'GET', 'users', {'search':str}, callback
+		Materia.Coms.Json.get "/api/admin/user_search/#{str}", callback
 
-	lookupUser = (user, callback) ->
-		Materia.Coms.Admin.send 'GET', 'user', {'id':user}, callback
+	lookupUser = (userId, callback) ->
+		Materia.Coms.Json.get "/api/admin/user/#{userId}", callback
 
 	saveUser = (obj, callback) ->
-		Materia.Coms.Admin.send 'POST', 'user', obj, callback
+		Materia.Coms.Json.post "/api/admin/user/#{obj.id}", obj, callback
 
 	getWidgets: getWidgets
 	saveWidget: saveWidget
