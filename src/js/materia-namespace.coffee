@@ -7,5 +7,3 @@ window.Namespace = (ns) ->
 		o[a[i]] = o[a[i]] || {}
 		o = o[a[i]]
 	o
-
-
