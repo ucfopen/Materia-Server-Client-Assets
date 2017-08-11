@@ -19,14 +19,14 @@ module.exports = {
   stats: {children: false}, // reduce noising webpack print output
   entry: Object.assign(css, {
     'js/student.js': [
-      jsPath+'/ng-constants.coffee',
+      jsPath+'/materia-constants.coffee',
+      jsPath+'/materia-namespace.coffee',
       jsPath+'/services/srv-user.coffee',
       jsPath+'/services/srv-api.coffee',
       jsPath+'/services/srv-datetime.coffee',
       jsPath+'/services/srv-widget.coffee',
       jsPath+'/services/srv-selectedwidget.coffee',
       jsPath+'/services/srv-scores.coffee',
-      jsPath+'/controllers/ctrl-page.coffee',
       jsPath+'/controllers/ctrl-current-user.coffee',
       jsPath+'/controllers/ctrl-notification.coffee',
       jsPath+'/controllers/ctrl-login.coffee',
@@ -46,7 +46,8 @@ module.exports = {
       jsPath+'/directives/dir-selecteddisplay.coffee',
     ],
     'js/author.js': [
-      jsPath+'/ng-constants.coffee',
+      jsPath+'/materia-constants.coffee',
+      jsPath+'/materia-namespace.coffee',
       jsPath+'/filters/filter-escape.coffee',
       jsPath+'/filters/filter-highlight.coffee',
       jsPath+'/services/srv-api.coffee',
@@ -56,7 +57,6 @@ module.exports = {
       jsPath+'/services/srv-selectedwidget.coffee',
       jsPath+'/services/srv-user.coffee',
       jsPath+'/services/srv-widget.coffee',
-      jsPath+'/controllers/ctrl-page.coffee',
       jsPath+'/controllers/ctrl-current-user.coffee',
       jsPath+'/controllers/ctrl-notification.coffee',
       jsPath+'/controllers/ctrl-create.coffee',
@@ -84,7 +84,7 @@ module.exports = {
       jsPath+'/directives/dir-selecteddisplay.coffee',
     ],
     'js/materia.js':[
-      jsPath+'/materia/materia-namespace.coffee',
+      jsPath+'/materia-namespace.coffee',
       jsPath+'/materia/materia.coms.json.coffee',
       jsPath+'/materia/materia.creatorcore.coffee',
       jsPath+'/materia/materia.enginecore.coffee',
@@ -105,25 +105,30 @@ module.exports = {
       jsPath+'/controllers/ctrl-alert.coffee',
     ],
     'js/admin.js':[
-      jsPath+'/ng-constants.coffee',
+      jsPath+'/materia-constants.coffee',
+      jsPath+'/materia-namespace.coffee',
       jsPath+'/controllers/ctrl-admin-user.coffee',
       jsPath+'/controllers/ctrl-admin-widget.coffee',
       jsPath+'/materia/materia.coms.admin.coffee',
       jsPath+'/services/srv-admin.coffee',
     ],
     'js/materia.coms.json.js': [
+      jsPath+'/materia-namespace.coffee',
       jsPath+'/materia/materia.coms.json.coffee',
     ],
     'js/materia.namespace.js': [
-      jsPath+'/materia/materia-namespace.coffee',
+      jsPath+'/materia-namespace.coffee',
     ],
     'js/materia.creatorcore.js': [
+      jsPath+'/materia-namespace.coffee',
       jsPath+'/materia/materia.creatorcore.coffee',
     ],
     'js/materia.enginecore.js': [
+      jsPath+'/materia-namespace.coffee',
       jsPath+'/materia/materia.enginecore.coffee',
     ],
     'js/materia.score.js': [
+      jsPath+'/materia-namespace.coffee',
       jsPath+'/materia/materia.score.coffee',
     ],
   }),
