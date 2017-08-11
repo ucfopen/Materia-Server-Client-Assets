@@ -109,7 +109,7 @@ module.exports = {
       jsPath+'/materia-namespace.coffee',
       jsPath+'/controllers/ctrl-admin-user.coffee',
       jsPath+'/controllers/ctrl-admin-widget.coffee',
-      jsPath+'/materia/materia.coms.admin.coffee',
+      jsPath+'/materia/materia.coms.json.coffee',
       jsPath+'/services/srv-admin.coffee',
     ],
     'js/materia.coms.json.js': [
