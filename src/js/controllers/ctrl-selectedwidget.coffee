@@ -1,6 +1,6 @@
 # Handles the widget currently selected (on the big screeny thing)
 app = angular.module 'materia'
-app.controller 'SelectedWidgetController', ($scope, $q, widgetSrv,selectedWidgetSrv, userServ, $anchorScroll, Alert) ->
+app.controller 'SelectedWidgetController', ($scope, $q, widgetSrv,selectedWidgetSrv, userServ, $anchorScroll, ACCESS, Alert) ->
 
 	$scope.alert = Alert
 
