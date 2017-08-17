@@ -58,7 +58,7 @@ app.directive 'scoreTable', (selectedWidgetSrv, $window) ->
 			$scope.selectedUser = $scope.users[id]
 
 		$scope.showScorePage = (scoreId) ->
-			$window.open  "scores/#{widgetId}/#single-#{scoreId}"
+			$window.open  "#{BASE_URL}scores/#{widgetId}/#single-#{scoreId}"
 			return true
 
 		$scope.searchStudentActivity = (query) ->
