@@ -131,6 +131,12 @@ module.exports = {
       jsPath+'/materia-namespace.coffee',
       jsPath+'/materia/materia.score.coffee',
     ],
+    'js/materia.storage.manager.js': [
+      jsPath+'/materia/materia.storage.manager.coffee',
+    ],
+    'js/materia.storage.table.js': [
+      jsPath+'/materia/materia.storage.table.coffee',
+    ],
   }),
   module: {
     rules: [
