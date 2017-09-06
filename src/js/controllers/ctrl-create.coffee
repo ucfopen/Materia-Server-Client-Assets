@@ -119,9 +119,9 @@ app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
 	initCreator = ->
 		dfd = $.Deferred().resolve()
 		if inst_id?
-			sendToCreator 'initExistingWidget', [instance.name, instance.widget, keepQSet.data, keepQSet.version, BASE_URL]
+			sendToCreator 'initExistingWidget', [instance.name, instance.widget, keepQSet.data, keepQSet.version, BASE_URL, MEDIA_URL]
 		else
-			sendToCreator 'initNewWidget', [widget_info, BASE_URL]
+			sendToCreator 'initNewWidget', [widget_info, BASE_URL, MEDIA_URL]
 		dfd.promise()
 
 	# Send messages to the creator, handles flash and html creators
