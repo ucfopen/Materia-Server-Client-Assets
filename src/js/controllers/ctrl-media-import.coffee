@@ -104,15 +104,13 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 		upload: (fileData, keyData) ->
 			fd = new FormData()
 
-			# Normalize jpeg extension
-			splitFileKey = keyData.file_key.split('.')
-			if(splitFileKey[1].toUpperCase() == 'JPG')
-				splitFileKey[1] = 'jpeg'
-
-			keyData.file_key = splitFileKey.join('.')
-
 			# for s3 uploading
 			if keyData?
+				# Normalize jpeg extension
+				splitFileKey = keyData.file_key.split('.')
+				splitFileKey[1] = if splitFileKey[1].toUpperCase() == 'JPG' then 'jpeg' else splitFileKey[1]
+				keyData.file_key = splitFileKey.join('.')
+
 				fd.append("key", keyData.file_key)
 				fd.append("acl", 'public-read')
 				fd.append("Policy", keyData.policy)
@@ -156,7 +154,6 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 			request.send(fd)
 
 		verifyUpload: (keyData, fileData, attempt = 0) ->
-			console.log 'Attempt', attempt, 'will be sent in', attempt*1000,'seconds.'
 			if attempt > 4
 				error = 'Error in the thumbnail generation lambda handler.'
 				alert "There was an issue uploading this asset to Materia - Please try again."
