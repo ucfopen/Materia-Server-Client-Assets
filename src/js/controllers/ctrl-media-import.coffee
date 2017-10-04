@@ -166,7 +166,6 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 				if request_to_S3.readyState == XMLHttpRequest.DONE
 					if request_to_S3.status == 200 or request_to_S3.status == 201
 						@saveUploadStatus fileData.ext, keyData.file_key, true
-						console.log request_to_S3.responseText
 					else if request_to_S3.status == 404
 						@verifyUpload keyData, fileData, attempt + 1
 					else
@@ -342,7 +341,7 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 								thumbUrl += "#{data}/thumbnail"
 							return "<img src='#{thumbUrl}'>"
 						else if full.type is 'mp3' or full.type is 'wav'
-							return '<img src="/assets/img/audio.png">'
+							return '<img src="/img/audio.png">'
 						else
 							return ''
 					searchable: false,
