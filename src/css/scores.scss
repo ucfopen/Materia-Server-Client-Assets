@@ -352,7 +352,7 @@ body.scores .details ul {
 	body.scores .details ul li {
 		display:table-row;
 		background: #e3e5e8;
-		word-break: word-break;
+		word-break: break-word;
 	}
 
 		body.scores .details ul li div, body.scores .details ul li h3 {
