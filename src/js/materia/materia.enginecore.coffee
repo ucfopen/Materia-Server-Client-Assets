@@ -49,7 +49,7 @@ Namespace('Materia').Engine = do ->
 		_sendPostMessage 'alert', {title: title, msg: msg, type: type}
 
 	getImageAssetUrl = (mediaId) ->
-		"#{_mediaUel}/#{mediaId}"
+		"#{_mediaUrl}/#{mediaId}"
 
 	end = (showScoreScreenAfter = yes) ->
 		_sendPostMessage 'end', showScoreScreenAfter
