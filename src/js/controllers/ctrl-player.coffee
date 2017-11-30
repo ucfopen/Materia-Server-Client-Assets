@@ -42,7 +42,7 @@ app.controller 'playerCtrl', ($scope, $sce, $timeout, widgetSrv, userServ, PLAYE
 	$scope.isPreview = false
 	# Controls whether or not the widget iframe will allow fullscreen behavior (disabled by default)
 	$scope.allowFullScreen = false
-
+	# Stores player state information to be stored into session (if the widget requests it)
 	saveData = null
 
 	for word in checkForContext
@@ -102,20 +102,12 @@ app.controller 'playerCtrl', ($scope, $sce, $timeout, widgetSrv, userServ, PLAYE
 		dfd.promise()
 
 	startPersistentStorage = ->
-
-		dfd = $.Deferred().resolve()
-		setInterval ->
-	
-			if saveData is null
-				saveData = {}
-				saveData.play_id = play_id
-				saveData.gameData = null
-
-				sessionStorage.materiaWidgetSave = location.href
-
-			sessionStorage.play_id = play_id
-		, 5000
-		dfd.promise()
+		unless instance.widget.meta_data.features.includes('PersistenceEnabled') then return
+		if saveData is null
+			saveData = {}
+			sessionStorage.materiaGamePlayId = play_id
+			sessionStorage.materiaGameInstId = instance.id
+			sessionStorage.materiaWidgetSave = location.href
 
 	sendWidgetInit = ->
 		dfd = $.Deferred().resolve()
@@ -266,28 +258,30 @@ app.controller 'playerCtrl', ($scope, $sce, $timeout, widgetSrv, userServ, PLAYE
 					dfd.resolve()
 
 					if sessionStorage.materiaWidgetSave and sessionStorage.materiaWidgetSave is location.href
-						resumePlaySession()
+						getGameDataFromSession()
 				else
 					dfd.reject 'Unable to start play session.'
 
 		dfd.promise()
 
-	resumePlaySession = ->
-		play_id = sessionStorage.play_id
-
+	getGameDataFromSession = ->
 		saveData = {}
-		saveData.play_id = play_id
+		saveData.play_id = sessionStorage.materiaGamePlayId
+		saveData.inst_id = sessionStorage.materiaGameInstId
 		saveData.gameData = sessionStorage.materiaGameData
+		saveData.materiaWidgetSave = sessionStorage.materiaWidgetSave
 
 	saveGameData = (data) ->
 		sessionStorage.materiaGameData = data
 
 	requestGameData = ->
-		if saveData
+		if saveData and saveData.materiaWidgetSave is location.href and saveData.inst_id is instance.id
 			$scope.$apply ->
 				$scope.resume.msg = 'You may have recently played this widget and closed it on accident. Restore where you left off?'
 				$scope.resume.title = 'Previous Widget Play Available'
 				$scope.resume.callback = ->
+
+					play_id = saveData.play_id
 					sendToWidget 'resumeGameData', saveData.gameData
 					$scope.resume.msg = null	
 
