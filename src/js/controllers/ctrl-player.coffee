@@ -1,7 +1,8 @@
 app = angular.module 'materia'
-app.controller 'playerCtrl', ($scope, $sce, $timeout, widgetSrv, userServ, PLAYER, Alert) ->
+app.controller 'playerCtrl', ($scope, $sce, $timeout, widgetSrv, userServ, PLAYER, Alert, Resume) ->
 
 	$scope.alert = Alert
+	$scope.resume = Resume
 
 	# Keep track of a promise
 	embedDoneDfD = null
@@ -41,6 +42,8 @@ app.controller 'playerCtrl', ($scope, $sce, $timeout, widgetSrv, userServ, PLAYE
 	$scope.isPreview = false
 	# Controls whether or not the widget iframe will allow fullscreen behavior (disabled by default)
 	$scope.allowFullScreen = false
+
+	saveData = null
 
 	for word in checkForContext
 		if word == 'preview'
@@ -96,6 +99,22 @@ app.controller 'playerCtrl', ($scope, $sce, $timeout, widgetSrv, userServ, PLAYE
 				if result != true and instance.guest_access is false
 					_alert 'Your play session is no longer valid! This may be due to logging out, your session expiring, or trying to access another Materia account simultaneously. You\'ll need to reload the page to start over.', 'Invalid session', true
 		, 30000
+		dfd.promise()
+
+	startPersistentStorage = ->
+
+		dfd = $.Deferred().resolve()
+		setInterval ->
+	
+			if saveData is null
+				saveData = {}
+				saveData.play_id = play_id
+				saveData.gameData = null
+
+				sessionStorage.materiaWidgetSave = location.href
+
+			sessionStorage.play_id = play_id
+		, 5000
 		dfd.promise()
 
 	sendWidgetInit = ->
@@ -191,6 +210,8 @@ app.controller 'playerCtrl', ($scope, $sce, $timeout, widgetSrv, userServ, PLAYE
 					when 'sendPendingLogs' then sendAllPendingLogs()
 					when 'alert'           then _alert msg.data, 'Warning!', false
 					when 'setHeight'       then setHeight msg.data[0]
+					when 'saveGameData'	   then saveGameData msg.data
+					when 'requestGameData' then requestGameData()
 					when 'initialize'      then
 					else                   throw new Error "Unknown PostMessage received from player core: #{msg.type}"
 			else
@@ -243,10 +264,34 @@ app.controller 'playerCtrl', ($scope, $sce, $timeout, widgetSrv, userServ, PLAYE
 
 				if play_id?
 					dfd.resolve()
+
+					if sessionStorage.materiaWidgetSave and sessionStorage.materiaWidgetSave is location.href
+						resumePlaySession()
 				else
 					dfd.reject 'Unable to start play session.'
 
 		dfd.promise()
+
+	resumePlaySession = ->
+		play_id = sessionStorage.play_id
+
+		saveData = {}
+		saveData.play_id = play_id
+		saveData.gameData = sessionStorage.materiaGameData
+
+	saveGameData = (data) ->
+		sessionStorage.materiaGameData = data
+
+	requestGameData = ->
+		if saveData
+			$scope.$apply ->
+				$scope.resume.msg = 'You may have recently played this widget and closed it on accident. Restore where you left off?'
+				$scope.resume.title = 'Previous Widget Play Available'
+				$scope.resume.callback = ->
+					sendToWidget 'resumeGameData', saveData.gameData
+					$scope.resume.msg = null	
+
+		else return false
 
 	getQuestionSet = ->
 		dfd = $.Deferred()
@@ -399,6 +444,7 @@ app.controller 'playerCtrl', ($scope, $sce, $timeout, widgetSrv, userServ, PLAYE
 			.pipe(embed)
 			.pipe(sendWidgetInit)
 			.pipe(startHeartBeat)
+			.pipe(startPersistentStorage)
 			.fail(onLoadFail)
 
 # Tiny directive that handles applying the "allowfullscreen" attribute to the player iframe

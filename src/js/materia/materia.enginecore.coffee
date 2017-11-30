@@ -2,6 +2,7 @@ Namespace('Materia').Engine = do ->
 	_baseUrl = null
 	_widgetClass = null
 	_instance = null
+	_qset = null
 	_resizeInterval = null
 	_lastHeight = -1
 
@@ -11,6 +12,9 @@ Namespace('Materia').Engine = do ->
 			when 'initWidget'
 				_baseUrl = msg.data[2]
 				_initWidget msg.data[0], msg.data[1]
+			when 'resumeGameData'
+				if !_widgetClass then return
+				_widgetClass.resume _instance, _qset.data, _qset.version, msg.data
 			else
 				throw new Error "Error: Engine Core received unknown post message: #{msg.type}"
 
@@ -21,6 +25,7 @@ Namespace('Materia').Engine = do ->
 	_initWidget = (qset, instance) ->
 		_widgetClass.start instance, qset.data, qset.version
 		_instance = instance;
+		_qset = qset
 
 	start = (widgetClass) ->
 		# setup the postmessage listener
@@ -67,6 +72,13 @@ Namespace('Materia').Engine = do ->
 	escapeScriptTags = (text) ->
 		text.replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
+	saveGameData = (data) ->
+		_sendPostMessage 'saveGameData', JSON.stringify(data)
+
+	resumeGameData = ->
+		_sendPostMessage 'requestGameData'		
+
+
 	start:start
 	addLog:addLog
 	alert:alert
@@ -77,3 +89,5 @@ Namespace('Materia').Engine = do ->
 	disableResizeInterval:disableResizeInterval
 	setHeight:setHeight # allows the widget to resize its iframe container to fit the height of its contents
 	escapeScriptTags:escapeScriptTags
+	saveGameData:saveGameData
+	resumeGameData:resumeGameData

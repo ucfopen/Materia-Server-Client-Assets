@@ -649,7 +649,7 @@ dl.blurb dt {
 .loading_popup, .register_popup {
 	font-weight: bold;
 }
-#popup.alert
+#popup.alert, #popup.resume
 {
 	padding: 0;
 	background-color: #FFFFFF;
@@ -659,7 +659,7 @@ dl.blurb dt {
 	text-align: center;
 	width: 350px;
 }
-#popup.alert h1
+#popup.alert h1, #popup.resume h1
 {
 	background: #6390dc;
 	background-image: -webkit-linear-gradient(top, #7ba7f2, #4373c1);
@@ -680,13 +680,13 @@ dl.blurb dt {
 	font-size: 22px;
 	text-align: left;
 }
-#popup.alert p
+#popup.alert p, #popup.resume p
 {
 	margin: 20px;
 	font-size: 12px;
 	text-align: left;
 }
-#popup.alert button
+#popup.alert button, #popup.resume p
 {
 	margin: 1em auto 2em;
 	font-size: 16px;
@@ -1340,6 +1340,20 @@ span.subtitle {
 
 .alert .action_button {
 	display: block;
+}
+
+.resume .ng-modal-dialog {
+	text-align: center;
+}
+
+.resume .action_button, .resume .cancel_button {
+	display: inline-block;
+	text-align: center;
+}
+.resume .cancel_button {
+	border: none;
+	font-size: 16px;
+	cursor:pointer;
 }
 
 /* hack fix to ngModal plugin to disable closing halting alerts */

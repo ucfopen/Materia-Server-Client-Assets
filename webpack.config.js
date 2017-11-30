@@ -103,6 +103,7 @@ module.exports = {
       jsPath+'/materia/materia.util.coffee',
       jsPath+'/materia/materia.validate.textfield.coffee',
       jsPath+'/controllers/ctrl-alert.coffee',
+      jsPath+'/controllers/ctrl-resume.coffee'
     ],
     'js/admin.js':[
       jsPath+'/materia-constants.coffee',
