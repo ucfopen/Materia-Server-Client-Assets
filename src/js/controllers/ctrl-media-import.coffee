@@ -169,7 +169,10 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 					else if request_to_S3.status == 404
 						@verifyUpload keyData, fileData, attempt + 1
 					else
-						alert request_to_S3.status
+						error = 'Error in the thumbnail generation lambda handler.'
+						alert "There was an issue uploading this asset to Materia - Please try again."
+						@saveUploadStatus fileData.ext, keyData.file_key, false, error
+						return
 
 			request_to_S3.open 'HEAD', @config.mediaUrl+"/"+keyData.file_key
 
