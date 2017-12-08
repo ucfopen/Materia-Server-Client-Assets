@@ -81,8 +81,8 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 			allowedTypes = ['image/jpeg', 'image/png', 'audio/mp3', 'audio/wav']
 			mime = dataUrl.split(";")[0].split(":")[1]
 			if !mime? or allowedTypes.indexOf(mime) == -1
-				alert "Unfortunately, the file type being uploaded is not supported.
-				Please retry with one of the following types: #{allowedTypes.join(', ')}."
+				alert "The selected file type is not supported.
+				The allowed types are: #{allowedTypes.join(', ')}."
 				return null
 			return mime
 
