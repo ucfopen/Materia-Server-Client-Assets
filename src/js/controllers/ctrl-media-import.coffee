@@ -78,12 +78,16 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 			dataReader.readAsDataURL file
 
 		getMimeType: (dataUrl)->
-			allowedTypes = ['image/jpeg', 'image/png', 'audio/mp3', 'audio/wav']
 			mime = dataUrl.split(";")[0].split(":")[1]
-			if !mime? or allowedTypes.indexOf(mime) == -1
-				alert "The selected file type is not supported.
-				The allowed types are: #{allowedTypes.join(', ')}."
+
+			# used to see if the file type is allowed
+			fileExtension = if !mime? then null else mime.split("/")[1]
+
+			if !fileExtension? or $scope.fileType.indexOf(fileExtension) == -1
+				alert "This widget does not support selected file type is not supported.
+				The allowed types are: #{$scope.fileType.join(', ')}."
 				return null
+
 			return mime
 
 		# converts image data uri to a blob for uploading
