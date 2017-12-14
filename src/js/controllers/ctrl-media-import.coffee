@@ -1,12 +1,205 @@
 app = angular.module 'materia'
+
+app.directive 'fileOnChange', ->
+	return {
+		restrict: 'A',
+		link: (scope, element, attrs) ->
+			onChangeHandler = scope.$eval(attrs.fileOnChange)
+			element.bind 'change', onChangeHandler
+			element.bind 'drop', onChangeHandler
+	}
+
 app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) ->
-	selectedAssets = []
-	data = []
-	assetIndices = []
-	dt = null
-	uploading = false
-	creator = null
-	_coms = null
+	selectedAssets  = []
+	data            = []
+	assetIndices    = []
+	dt              = null
+	uploading       = false
+	creator         = null
+	_coms           = null
+	_s3enabled      = S3_ENABLED # explicitly localize globals
+	_mediaUploadUrl = MEDIA_UPLOAD_URL
+	_mediaUrl       = MEDIA_URL
+	_baseUrl        = BASE_URL
+
+	class Uploader
+		constructor: (@config) ->
+
+		# when file is selected in browser
+		onFileChange: (event) =>
+			#accounts for drag'n'drop
+			fileList = event.target.files
+			if !fileList?[0]?
+				fileList = event.dataTransfer.files
+			# just picks the first selected image
+			if fileList?[0]?
+				@getFileData fileList[0], (fileData) =>
+					if fileData?
+
+						# if s3 is enabled, get keys and then upload, o/w just upload
+						if @config.s3enabled
+							_coms.send 'upload_keys_get', [fileData.name, fileData.size], (keyData) =>
+								@upload fileData, keyData if keyData
+						else
+							@upload fileData
+
+		$dropArea = $('.drag-wrapper')
+
+		$dropArea.on 'drag dragstart dragend dragover dragenter dragleave drop', (e)->
+			e.preventDefault()
+		.on 'dragover dragenter', ()->
+			$dropArea.addClass 'drag-is-dragover'
+		.on 'dragleave dragend drop', ()->
+			$dropArea.removeClass 'drag-is-dragover'
+
+		# get the data of the image
+		getFileData: (file, callback) ->
+			dataReader = new FileReader
+
+			# File size is measured in bytes
+			if file.size > 60000000
+				alert "The file being uploaded has a size greater than 60MB. Please choose a file that
+				is no greater than 60MB."
+				return null
+
+			dataReader.onload = (event) =>
+				src = event.target.result
+				mime = @getMimeType(src)
+				return null if !mime?
+				fileData =
+					name: file.name
+					mime: mime
+					ext:  file.name.split('.').pop()
+					size: file.size
+					src:  src
+
+				callback fileData
+
+			dataReader.readAsDataURL file
+
+		getMimeType: (dataUrl)->
+			allowedTypes = ['image/jpeg', 'image/png', 'audio/mp3', 'audio/wav']
+			mime = dataUrl.split(";")[0].split(":")[1]
+			if !mime? or allowedTypes.indexOf(mime) == -1
+				alert "The selected file type is not supported.
+				The allowed types are: #{allowedTypes.join(', ')}."
+				return null
+			return mime
+
+		# converts image data uri to a blob for uploading
+		dataURItoBlob: (dataURI, mime)  ->
+			# convert base64/URLEncoded data component to raw binary data held in a string
+			dataParts = dataURI.split(',')
+			if dataParts[0].indexOf('base64') >= 0
+				byteString = atob(dataParts[1])
+			else
+				byteString = unescape(dataParts[1])
+
+			intArray = new Uint8Array(byteString.length)
+			for i of byteString
+				intArray[i] = byteString.charCodeAt(i)
+			return new Blob([intArray], {type: mime})
+
+		# upload to either local server or s3
+		upload: (fileData, keyData) ->
+			fd = new FormData()
+
+			# for s3 uploading
+			if keyData?
+				# Normalize jpeg extension
+				splitFileKey = keyData.file_key.split('.')
+				splitFileKey[1] = if splitFileKey[1].toUpperCase() == 'JPG' then 'jpeg' else splitFileKey[1]
+				keyData.file_key = splitFileKey.join('.')
+
+				fd.append("key", keyData.file_key)
+				fd.append("acl", 'public-read')
+				fd.append("Policy", keyData.policy)
+				fd.append("Signature", keyData.signature)
+				fd.append("AWSAccessKeyId", keyData.AWSAccessKeyId)
+			else
+				fd.append("name", fileData.name)
+
+			fd.append("Content-Type", fileData.mime)
+			fd.append("success_action_status", '201')
+			fd.append("file", @dataURItoBlob(fileData.src, fileData.mime), fileData.name)
+
+			request = new XMLHttpRequest()
+
+			request.onload = (oEvent) =>
+				if keyData? # s3 upload
+					success = request.status == 200 or request.status == 201
+
+					if(!success)
+						# Parse the Error message received from amazonaws
+						parser = new DOMParser()
+						doc = parser.parseFromString(request.response, 'application/xml')
+						upload_error = doc.getElementsByTagName("Error")[0].childNodes[1].innerHTML
+
+						@saveUploadStatus fileData.ext, keyData.file_key, success, upload_error
+						alert "There was an issue uploading this asset to Materia - Please try again later."
+						return null
+
+					# Checks to see if the images made it to the S3 bucket serving media
+					@verifyUpload keyData, fileData
+				else # local upload
+					res = JSON.parse request.response #parse response string
+					if res.error
+						alert 'Error code '+res.error.code+': '+res.error.message
+						$window.parent.Materia.Creator.onMediaImportComplete null
+					else
+						# reload media to select newly uploaded file
+						loadAllMedia res.id # todo: wait, but why? for file info?
+
+			request.open("POST", @config.uploadUrl)
+			request.send(fd)
+
+		verifyUpload: (keyData, fileData, attempt = 0) ->
+			if attempt > 4
+				error = 'Error in the thumbnail generation lambda handler.'
+				alert "There was an issue uploading this asset to Materia - Please try again."
+				@saveUploadStatus fileData.ext, keyData.file_key, false, error
+				return
+
+			request_to_S3 = new XMLHttpRequest()
+
+			request_to_S3.onreadystatechange = () =>
+				if request_to_S3.readyState == XMLHttpRequest.DONE
+					if request_to_S3.status == 200 or request_to_S3.status == 201
+						@saveUploadStatus fileData.ext, keyData.file_key, true
+					else if request_to_S3.status == 404
+						@verifyUpload keyData, fileData, attempt + 1
+					else
+						error = 'Error in the thumbnail generation lambda handler.'
+						alert "There was an issue uploading this asset to Materia - Please try again."
+						@saveUploadStatus fileData.ext, keyData.file_key, false, error
+						return
+
+			request_to_S3.open 'HEAD', @config.mediaUrl+"/"+keyData.file_key
+
+			# Wait longer for each attempt to avoid too many HEAD requests
+			setTimeout (->
+				request_to_S3.send()
+				return
+			), attempt * 1000
+
+		saveUploadStatus: (fileType, fileURI, s3_upload_success, error = null) ->
+			re = /\-(\w{5})\./
+			fileID = fileURI.match(re)[1] # id is in first capture group
+			_coms.send 'upload_success_post', [fileID, s3_upload_success, error], (update_success) ->
+				if s3_upload_success
+					res =
+						id: fileURI
+						type: fileType
+					$window.parent.Materia.Creator.onMediaImportComplete([res])
+
+	config =
+		s3enabled: _s3enabled
+		uploadUrl: _mediaUploadUrl
+		mediaUrl: _mediaUrl
+	uploader = new Uploader(config)
+
+	# SCOPE VARS
+	# ==========
 	$scope.fileType = location.hash.substring(1).split(',')
 	$scope.cols = ['Title','Type','Date'] # the column names used for sorting datatable
 
@@ -15,11 +208,14 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 	$scope.dt_cols = [#columns expected from result, index 0-5
 		{ "data": "id"},
 		{ "data": "wholeObj" }, # stores copy of whole whole object as column for ui purposes
+		{ "data": "remote_url" },
 		{ "data": "title" },
 		{ "data": "type" },
 		{ "data": "file_size" },
 		{ "data": "created_at" }
 	]
+
+	$scope.uploadFile = uploader.onFileChange
 
 	# load up the media objects, optionally pass file id to skip labeling that file
 	loadAllMedia = (file_id) ->
@@ -42,7 +238,14 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 				$('#question-table').dataTable().fnClearTable()
 				# augment result for custom datatables ui
 				for res, index in result
+					if res.remote_url? and res.status != "upload_success"
+						continue;
+
 					if res.type in $scope.fileType
+						# the id used for asset url is actually remote_url
+						# if it exists, use it instead
+						res.id = res.remote_url ? res.id
+
 						# file uploaded - if this result's id matches, stop processing and select this asset now
 						if file_id? and res.id == file_id and res.type in $scope.fileType
 								$window.parent.Materia.Creator.onMediaImportComplete([res])
@@ -57,71 +260,17 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 						assetIndices.push(index)
 						modResult.push(res)
 
-				$('#question-table').dataTable().fnAddData(modResult)
+				# Only add to table if there are items to add
+				if modResult.length > 0
+					$('#question-table').dataTable().fnAddData(modResult)
 
 	getHash = ->
 		$window.location.hash.substring(1)
 
 	# init
 	init = ->
-		upl = $("#uploader")
-		upl.pluploadQueue
-			# General settings
-			runtimes : 'html5,html4'
-			url : '/media/upload/'
-			max_file_size : '60mb'
-			chunk_size : '2mb'
-			unique_names : false
-			rename : true
-			multiple_queues: false
 
-			# Specify what files to browse for
-			filters : [
-				title : "Media files"
-				extensions : $scope.fileType.join()
-			]
-
-			init:
-				StateChanged: (up) ->
-					uploading = (up.state == plupload.STARTED)
-
-					if (uploading)
-						document.title = 'Uploading...'
-					else
-						document.title = 'Media Catalog | Materia'
-						loadAllMedia()
-				# automatic upload on drop into queue
-				FilesAdded: (up) ->
-					up.start()
-					# render import form unclickable during upload
-					$('#import-form').css {
-						"pointer-events": "none"
-						opacity: "0.2"
-					}
-				# fired when the above is successful
-				FileUploaded: (up, file, response) ->
-					res = $.parseJSON response.response #parse response string
-					if res.error
-						up.removeFile file
-						alert 'Error code '+res.error.code+': '+res.error.message
-						$window.parent.Materia.Creator.onMediaImportComplete null
-					else
-						# reload media to select newly uploaded file
-						loadAllMedia res.id
-				Error: (up, args) ->
-					# Called when a error has occured
-					if args.code = -600 # http error
-						up.removeFile args.file
-						alert 'There was an unexpected error (500) - Try again later.'
-						$window.parent.Materia.Creator.onMediaImportComplete null
-						false
-
-		$("#uploader_browse", upl)
-			.text('Browse...')
-			.next().remove() # removes the adjacent "Start upload" button
-		$(".plupload_droptext", upl).text("Drag a file here to upload")
-
-		$($document).on 'click', '#question-table tbody tr[role=row]', (e) ->
+		$(document).on 'click', '#question-table tbody tr[role=row]', (e) ->
 			#get index of row in datatable and call onMediaImportComplete to exit
 			$(".row_selected").toggleClass('row_selected')
 			index = $('#question-table').dataTable().fnGetPosition(this)
@@ -144,7 +293,7 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 				el.show()
 
 		# on resize, re-fit the table size
-		$($window).resize ->
+		$(window).resize ->
 			dt.fnAdjustColumnSizing()
 
 		# setup the table
@@ -168,9 +317,34 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 				{# thumbnail column
 					render: (data, type, full, meta) ->
 						if full.type is 'jpg' or full.type is 'jpeg' or full.type is 'png' or full.type is 'gif'
-							return '<img src="/media/'+data+'/thumbnail">'
-						else if full.type is 'mp3'
-							return '<img src="/assets/img/audio.png">'
+							# todo: poll, since we don't know when lambda resizing is finished
+
+							thumbUrl = "#{_mediaUrl}/"
+
+							if _s3enabled
+								original_path_data = data.split('/')
+
+								# separates filename and extension
+								image_key = original_path_data.pop().split(".")
+
+								extension = image_key.pop()
+
+								# Maintains a standard extension
+								if(extension == 'jpg')
+									extension = 'jpeg'
+
+								# thumbnails in Materia are 75x75 dimensions
+								image_key.push('75x75'+'.'+extension)
+								original_path_data.push(image_key.join('-'))
+
+								# creates final thumbnail path
+								thumbId = original_path_data.join("/")
+								thumbUrl += "#{thumbId}"
+							else
+								thumbUrl += "#{data}/thumbnail"
+							return "<img src='#{thumbUrl}'>"
+						else if full.type is 'mp3' or full.type is 'wav'
+							return '<img src="/img/audio.png">'
 						else
 							return ''
 					searchable: false,

@@ -1,8 +1,10 @@
 Namespace('Materia').CreatorCore = do ->
-	_baseurl       = null
-	_creatorClass  = null
+	_baseurl        = null
+	_creatorClass   = null
+	_lastHeight     = -1
+	_mediaUrl       = null
 	_resizeInterval = null
-	_lastHeight = -1
+
 
 	PRESANITIZE_CHARACTERS =
 		'>': '',
@@ -12,9 +14,9 @@ Namespace('Materia').CreatorCore = do ->
 		msg = JSON.parse e.data
 		switch msg.type
 			when 'initNewWidget'
-				_initNewWidget msg.data[0], msg.data[1]
+				_initNewWidget msg.data[0], msg.data[1], msg.data[2], msg.data[3]
 			when 'initExistingWidget'
-				_initExistingWidget msg.data[0], msg.data[1], msg.data[2], msg.data[3], msg.data[4]
+				_initExistingWidget msg.data[0], msg.data[1], msg.data[2], msg.data[3], msg.data[4], msg.data[5], msg.data[6]
 			when 'onRequestSave'
 				_tellCreator 'onSaveClicked', [msg.data[0]]
 			when 'onSaveComplete'
@@ -35,12 +37,14 @@ Namespace('Materia').CreatorCore = do ->
 	_sendPostMessage = (type, data) ->
 		parent.postMessage JSON.stringify({type:type, data:data}), '*'
 
-	_initNewWidget = (widget, baseUrl) ->
+	_initNewWidget = (widget, baseUrl, mediaUrl) ->
 		_baseurl = baseUrl
+		_mediaUrl = mediaUrl
 		_tellCreator 'initNewWidget', [widget]
 
-	_initExistingWidget = (widget, title, qset, qsetVersion, baseUrl) ->
+	_initExistingWidget = (widget, title, qset, qsetVersion, baseUrl, mediaUrl) ->
 		_baseurl = baseUrl
+		_mediaUrl = mediaUrl
 		_tellCreator 'initExistingWidget', [widget, title, qset, qsetVersion]
 
 	start = (creatorClass) ->
@@ -62,7 +66,7 @@ Namespace('Materia').CreatorCore = do ->
 		_sendPostMessage 'alert', {title: title, msg: msg, type: type}
 
 	getMediaUrl = (mediaId) ->
-		_baseurl+'media/'+mediaId
+		"#{_mediaUrl}/#{mediaId}"
 
 	# replace a specified list of characters with their safe equivalents
 	_preSanitize = (text) ->
