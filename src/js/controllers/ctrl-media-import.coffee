@@ -242,7 +242,7 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 				$('#question-table').dataTable().fnClearTable()
 				# augment result for custom datatables ui
 				for res, index in result
-					if res.remote_url? and res.status != "upload_success"
+					if res.remote_url? and res.status != "upload_success" and res.status != "migrated_asset"
 						continue;
 
 					if res.type in $scope.fileType
