@@ -118,10 +118,18 @@ app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
 	# Starts the Creator, sending required widget data
 	initCreator = ->
 		dfd = $.Deferred().resolve()
+		
 		if inst_id?
-			sendToCreator 'initExistingWidget', [instance.name, instance.widget, keepQSet.data, keepQSet.version, BASE_URL, MEDIA_URL]
+			args = [instance.name, instance.widget, keepQSet.data, keepQSet.version, BASE_URL]
+			if widgetType isnt '.swf' then args.push MEDIA_URL # Passing MEDIA_URL breaks the SWF, so omit it for Flash widgets! The intent is to sunset Flash support relatively soon after this code is committed.
+
+			sendToCreator 'initExistingWidget', args
 		else
-			sendToCreator 'initNewWidget', [widget_info, BASE_URL, MEDIA_URL]
+			args = [widget_info, BASE_URL]
+			if widgetType isnt '.swf' then args.push MEDIA_URL #  Passing MEDIA_URL breaks the SWF, so omit it for Flash widgets! The intent is to sunset Flash support relatively soon after this code is committed.
+
+			sendToCreator 'initNewWidget', args
+
 		dfd.promise()
 
 	# Send messages to the creator, handles flash and html creators
