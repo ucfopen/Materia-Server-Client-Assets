@@ -1,57 +1,83 @@
-body, html {
+body,
+html {
 	font-family: 'Lato', arial, serif;
 }
 
-.dataTables_wrapper{
+.drag-header {
+	text-align: center;
+	margin-top: 10px;
+}
+
+.drag-text {
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	left: 50%;
+}
+
+.drag-wrapper {
+	position: relative;
+	height: 333px;
+	margin: 40px;
+	border: 5px dashed #dadada;
+	outline: #f5f5f5 solid 30px;
+	background: #f5f5f5;
+}
+
+.drag-is-dragover {
+	background-color: grey;
+}
+
+.dataTables_wrapper {
 	position: relative;
 	clear: both;
 	margin: 0px auto;
 	background: #fff;
 }
 
-#question-table tbody tr img{
+#question-table tbody tr img {
 	max-height: 75px;
 }
 
 //targets the sub-table holding the image data
-#question-table .sub-table{
-	.subtable-title{
+#question-table .sub-table {
+	.subtable-title {
 		font-weight: bold;
 		width: 140px;
 		word-wrap: break-word;
 	}
-	.subtable-date{
+	.subtable-date {
 		width: 43px;
 		vertical-align: top;
 	}
-	.subtable-gray{
+	.subtable-gray {
 		color: #6b6b6b;
 	}
 }
 
-#question-table_wrapper{
+#question-table_wrapper {
 	height: 90%;
 }
 
-#question-table_filter{
-	background:#fff;
-	padding:6px 10px;
+#question-table_filter {
+	background: #fff;
+	padding: 6px 10px;
 }
 
-#question-table_filter input[type="text"]{
+#question-table_filter input[type="text"] {
 	width: 124px;
 	border: solid 1px #b0b0b0;
 	-webkit-border-radius: 12px;
 	-moz-border-radius: 12px;
 	border-radius: 12px;
 	height: 19px;
-	background: #fff url('../../../img/magnifyingglass.png') 5px 50% no-repeat;
+	background: #fff url('../img/magnifyingglass.png') 5px 50% no-repeat;
 	padding-left: 23px;
 	padding-right: 10px;
 	outline: none;
 }
-h1{
-	position:absolute;
+h1 {
+	position: absolute;
 	font-size: 18px;
 	font-weight: 550;
 	text-shadow: 0 1px #fbfbfb;
@@ -62,13 +88,13 @@ h1{
 	margin: 0px;
 }
 
-.dataTables_scroll{
+.dataTables_scroll {
 	height: 99.45%;
 
-	.dataTables_scrollHead{
+	.dataTables_scrollHead {
 		display: none;
 	}
-	.dataTables_scrollBody{
+	.dataTables_scrollBody {
 		height: inherit;
 	}
 }
@@ -83,7 +109,7 @@ h1{
 	color: #545454;
 }
 
-.gray:hover{
+.gray:hover {
 	background-image: -webkit-linear-gradient(top, #b8b8b8, #e4e4e4);
 	background-image: -moz-linear-gradient(top, #b8b8b8, #e4e4e4);
 	background-image: -o-linear-gradient(top, #b8b8b8, #e4e4e4);
@@ -91,26 +117,25 @@ h1{
 	text-decoration: none;
 }
 
-#upload-cancel-button{
+#upload-cancel-button {
 	position: absolute;
-	z-index:3;
+	z-index: 3;
 	font-size: 14px;
 	padding: 10px 15px;
 	margin-left: 15px;
 	margin-top: 15px;
 }
 
-#import-form .actions{
+#import-form .actions {
 	margin: 0 auto;
 	text-align: center;
-
 }
 
 #import-form input.action_button {
 	margin-top: 16px;
 }
 
-.dataTables_info{
+.dataTables_info {
 	clear: none;
 	position: absolute;
 	top: 13px;
@@ -120,27 +145,27 @@ h1{
 	text-align: right;
 }
 
-table.dataTable thead th{
-	border-bottom:1px solid #DDD;
-	padding:10px 18px;
+table.dataTable thead th {
+	border-bottom: 1px solid #ddd;
+	padding: 10px 18px;
 	color: #666;
 }
 
-#uploader-form{
+#uploader-form {
 	display: block;
 	position: absolute;
 	height: 100%;
 }
 
-#modal-cover{
+#modal-cover {
 	position: absolute;
-	top:0px;
-	left:0px;
-	bottom:0px;
-	right:0px;
-	background:rgba(0,0,0,.7);
+	top: 0px;
+	left: 0px;
+	bottom: 0px;
+	right: 0px;
+	background: rgba(0, 0, 0, .7);
 	z-index: 2;
-	display:none;
+	display: none;
 }
 
 //parent window (800px x 500px) from create.scss
@@ -151,7 +176,9 @@ $win_width: 800px;
 $pane_height: 450px; //height curtailed to prevent overflow (and thus scrolling) for now
 $pane_width: 362px; //width of each pane
 $pane_margin: 15px; //margin from parent iframe
-$divwidth: $win_width - 2*($pane_width + $pane_margin); //width of middle divider pane
+$divwidth: $win_width - 2*(
+		$pane_width + $pane_margin
+	); //width of middle divider pane
 $pane_header_margin: 17px;
 
 $sortbar_height: 45px;
@@ -160,20 +187,20 @@ $sortbar_marginleft: 6px;
 $sortbar_marginright: 10px;
 $arr_size: 4px;
 
-//plupload vars
 $footer_height: 38px;
 $dropzone_height: 379px;
 $dropzone_margin: 18px;
 
 //panes
 //classes were used for consistency because left-pane already had an id
-#left-pane{ //contains plupload
+#left-pane {
+	//where the uploads happen
 	left: $pane_margin;
 	width: $pane_width;
 	height: $pane_height;
 	position: absolute;
 
-	&:after{
+	&:after {
 		color: #dadada;
 		content: "or";
 		position: absolute;
@@ -183,7 +210,7 @@ $dropzone_margin: 18px;
 		top: $pane_header_margin;
 	}
 
-	&:before{
+	&:before {
 		content: "";
 		border-left: thin solid #dadada;
 		height: $dropzone_height + $footer_height + $dropzone_margin;
@@ -197,20 +224,20 @@ $dropzone_margin: 18px;
 	}
 }
 
-#close-button{
-  background: transparent;
-  float: right;
-  position: relative;
+#close-button {
+	background: transparent;
+	float: right;
+	position: relative;
 
-  &:after{
-  	  content: 'X';
-  	  font-size: 15px;
-  	  color: black;
-  }
-
+	&:after {
+		content: 'X';
+		font-size: 15px;
+		color: black;
+	}
 }
 
-.right-pane{//contains datatable
+.right-pane {
+	//contains datatable
 	right: $pane_margin;
 	width: $pane_width;
 	height: $pane_height;
@@ -218,8 +245,11 @@ $dropzone_margin: 18px;
 	margin: 0 auto;
 	box-shadow: none;
 
-	#search-box{
-		width: $pane_width -$sortbar_width - ($sortbar_marginleft + $sortbar_marginright) - $arr_size;
+	#search-box {
+		width: $pane_width -$sortbar_width -
+			(
+				$sortbar_marginleft + $sortbar_marginright
+			) - $arr_size;
 		height: 20px;
 		background: #fff;
 		border: 1px solid #b0b0b0;
@@ -228,25 +258,25 @@ $dropzone_margin: 18px;
 		border-radius: 12px;
 
 		padding-left: 18px;
-		background-image: url(../../../img/magnifyingglass.png);
+		background-image: url(../img/magnifyingglass.png);
 		background-repeat: no-repeat;
 		background-position: 5px 2px;
 	}
 }
 
-.pane-header{
+.pane-header {
 	position: relative;
 	text-align: center;
 	font-size: 16px;
 	width: 100%;
 	margin: $pane_header_margin auto ($pane_header_margin - 7) auto;
 	color: #484848;
-	font-family: Lato,arial,serif;
+	font-family: Lato, arial, serif;
 	font-weight: bold;
 }
 
 //bar at the top of catalog (right) pane that houses datatables sort listeners
-#sort-bar{
+#sort-bar {
 	background-color: transparent;
 	height: $sortbar_height;
 	margin-left: $sortbar_marginleft;
@@ -256,22 +286,22 @@ $dropzone_margin: 18px;
 	width: $sortbar_width;
 	z-index: 1;
 
-	#sort-cols{
+	#sort-cols {
 		padding: 1%;
 		width: 99%;
 
-		.col-cont{
+		.col-cont {
 			display: block;
 			float: left;
 			margin-right: 5%;
 			text-decoration: underline;
 			width: 25%;
 
-			.dt-sorting{
+			.dt-sorting {
 				cursor: pointer;
 				font-size: 15px;
 
-				&:hover{
+				&:hover {
 					font-weight: bold;
 				}
 			}
@@ -279,13 +309,13 @@ $dropzone_margin: 18px;
 	}
 
 	//sort-arrows depicting orderings
-	.arrows{
+	.arrows {
 		display: block;
 		float: right;
 		width: 5%;
 	}
 
-	.sort-asc{
+	.sort-asc {
 		width: 0;
 		height: 0;
 		border-left: $arr_size solid transparent;
@@ -293,7 +323,7 @@ $dropzone_margin: 18px;
 
 		border-bottom: $arr_size solid black;
 	}
-	.sort-desc{
+	.sort-desc {
 		width: 0;
 		height: 0;
 		border-left: $arr_size solid transparent;
@@ -303,68 +333,20 @@ $dropzone_margin: 18px;
 	}
 }
 
-//pupload customs
-#uploader_container{
-	padding: 0;
-
-	.plupload_header{
-		display: none;
-	}
-}
-
-#uploader-form{
-	.plupload_content{
-		.plupload_droptext{//dropping area
-			border-style: dashed;
-			border-width: thick;
-			border-color: #dadada;
-			color: #dadada;
-			padding: 0px;
-			margin: $dropzone_margin;
-			height: ($dropzone_height - $footer_height - $dropzone_margin);
-			line-height: ($dropzone_height - $footer_height - $dropzone_margin);
-			font-family: Lato,arial,serif;
-			font-size: large;
-		}
-	}
-
-	#uploader_filelist{
-		height: $dropzone_height;
-	}
-
-	.plupload_filelist_footer{
-		height: $footer_height;
-
-		.plupload_file_name{
-			overflow: visible;
-		}
-
-		.plupload_file_status{
-			top: 13px;
-			position: relative;
-		}
-	}
-}
-
-//hide total file size on bottom, and hide header on top
-.plupload_total_file_size, .plupload_filelist_header{
-	display: none;
-}
-
-.plupload_button.plupload_add{
+.select_file_button {
 	padding: 7px 23px 8px;
 	background: #ffba5d;
-	background-image: -webkit-linear-gradient(top,#ffce8c,#ffa42a);
-	background-image: -o-linear-gradient(top,#ffce8c,#ffa42a);
-	background-image: -moz-linear-gradient(top,#ffce8c,#ffa42a);
-	background-image: -ms-linear-gradient(top,#ffce8c,#ffa42a);
-	background-image: linear-gradient(top,#ffce8c,#ffa42a);
+	background-image: -webkit-linear-gradient(top, #ffce8c, #ffa42a);
+	background-image: -o-linear-gradient(top, #ffce8c, #ffa42a);
+	background-image: -moz-linear-gradient(top, #ffce8c, #ffa42a);
+	background-image: -ms-linear-gradient(top, #ffce8c, #ffa42a);
+	background-image: linear-gradient(top, #ffce8c, #ffa42a);
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 	border-radius: 6px;
 	border: 1px solid #fdb34f;
 	color: #694d28;
-	text-shadow: 1px 1px 1px rgba(255,255,255,.5);
+	text-shadow: 1px 1px 1px rgba(255, 255, 255, .5);
 	-moz-box-shadow: 1px 2px 4px #888;
 	-webkit-box-shadow: 1px 2px 4px #888;
 	box-shadow: 1px 2px 4px #888;
@@ -376,4 +358,5 @@ $dropzone_margin: 18px;
 	-moz-user-select: none;
 	-o-user-select: none;
 	user-select: none;
+	cursor: pointer;
 }

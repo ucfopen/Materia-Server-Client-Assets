@@ -69,32 +69,34 @@ app.controller 'SelectedWidgetController', ($scope, $q, widgetSrv,selectedWidget
 		user_ids = []
 		user_ids.push(user) for user of $scope.perms.widget
 
-		return if user_ids.length < 1 or $scope.perms.stale
+		return if $scope.perms.stale
 
 		$scope.perms.collaborators = []
+		$scope.show.collaborationModal = yes
 
 		Materia.Coms.Json.send 'user_get', [user_ids], (users) ->
-			users.sort (a,b) ->
-				if(a.first < b.first || (a.first == b.first && a.last < b.last) || (a.last == b.last && a.middle < b.middle))
-					return -1
-				return 1
-
 			$scope.studentAccessible = false
 
-			for user in users
-				if user.is_student then $scope.studentAccessible = true
-				user.access = $scope.perms.widget[user.id][0]
-				timestamp = parseInt($scope.perms.widget[user.id][1], 10)
-				user.expires = timestamp
-				user.expiresText = getExpiresText(timestamp)
-				user.gravatar = userServ.getAvatar user, 50
+			if users.length?
+				# sort the users
+				users.sort (a,b) ->
+					if(a.first < b.first || (a.first == b.first && a.last < b.last) || (a.last == b.last && a.middle < b.middle))
+						return -1
+					return 1
 
-			$scope.perms.collaborators = users
+				# setup each user
+				for user in users
+					if user.is_student then $scope.studentAccessible = true
+					user.access = $scope.perms.widget[user.id][0]
+					timestamp = parseInt($scope.perms.widget[user.id][1], 10)
+					user.expires = timestamp
+					user.expiresText = getExpiresText(timestamp)
+					user.gravatar = userServ.getAvatar user, 50
+
+				$scope.perms.collaborators = users
+
 			$scope.$apply()
-
 			$scope.setupPickers()
-
-		$scope.show.collaborationModal = yes
 
 	$scope.setupPickers = ->
 		# fill in the expiration link text & setup click event
