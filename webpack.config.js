@@ -96,8 +96,6 @@ module.exports = {
       jsPath+'/materia/materia.score.coffee',
       jsPath+'/materia/materia.scores.scoregraphics.coffee',
       jsPath+'/materia/materia.set.throbber.coffee',
-      jsPath+'/materia/materia.storage.manager.coffee',
-      jsPath+'/materia/materia.storage.table.coffee',
       jsPath+'/materia/materia.store.slideshow.coffee',
       jsPath+'/materia/materia.user.coffee',
       jsPath+'/materia/materia.util.coffee',
@@ -126,24 +124,28 @@ module.exports = {
     'js/materia.enginecore.js': [
       jsPath+'/materia-namespace.coffee',
       jsPath+'/materia/materia.enginecore.coffee',
+      jsPath+'/materia/materia.storage.manager.coffee',
+      jsPath+'/materia/materia.storage.table.coffee',
     ],
     'js/materia.score.js': [
       jsPath+'/materia-namespace.coffee',
       jsPath+'/materia/materia.score.coffee',
     ],
     'js/materia.storage.manager.js': [
-      jsPath+'/materia/materia.storage.manager.coffee',
+      jsPath+'/empty.js', // moved to engine core, still creates file to prevent 404 errors
     ],
     'js/materia.storage.table.js': [
-      jsPath+'/materia/materia.storage.table.coffee',
+      jsPath+'/empty.js', // moved to engine core, still creates file to prevent 404 errors
     ],
   }),
   module: {
     rules: [
+      // coffeescript
       {
         test: /\.coffee$/,
         use: [ 'ng-annotate-loader', 'coffee-loader' ]
       },
+      // SASS files
       {
         test: /\.scss$/,
         use: ExtractTextPlugin.extract({
@@ -151,6 +153,13 @@ module.exports = {
             'css-loader?url=false', // disable the css-loaders' function of locating image urls
             'sass-loader'
           ]
+        })
+      },
+      // hack to write empty files
+      {
+        test: /empty\.js/,
+        use: ExtractTextPlugin.extract({
+          use: ['css-loader']
         })
       }
     ]
