@@ -1,85 +1,115 @@
-# TODO: rip out redundant methods
-app = angular.module 'materia'
-app.service 'userServ', ($q, $rootScope) ->
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// TODO: rip out redundant methods
+const app = angular.module('materia');
+app.service('userServ', function($q, $rootScope) {
 
-	_me = null
+	let _me = null;
 
-	buildUser = (name = '', avatar = '', loggedIn = false, role = 'Student', notify = false) ->
-		name: name
-		avatar: avatar
-		loggedIn: loggedIn
-		role: role
-		notify: notify
+	const buildUser = function(name, avatar, loggedIn, role, notify) {
+		if (name == null) { name = ''; }
+		if (avatar == null) { avatar = ''; }
+		if (loggedIn == null) { loggedIn = false; }
+		if (role == null) { role = 'Student'; }
+		if (notify == null) { notify = false; }
+		return {
+			name,
+			avatar,
+			loggedIn,
+			role,
+			notify
+		};
+	};
 
-	getCurrentUserFromDom = ->
-		user = document.getElementById('current-user')
-		userData =
-			name: user.getAttribute("data-name")
-			avatar: user.getAttribute("data-avatar")
-			loggedIn: user.getAttribute("data-logged-in")
-			role: user.getAttribute("data-role")
+	const getCurrentUserFromDom = function() {
+		const user = document.getElementById('current-user');
+		const userData = {
+			name: user.getAttribute("data-name"),
+			avatar: user.getAttribute("data-avatar"),
+			loggedIn: user.getAttribute("data-logged-in"),
+			role: user.getAttribute("data-role"),
 			notify: user.getAttribute("data-notify")
-		buildUser userData.name, userData.avatar, userData.loggedIn == 'true', userData.role, userData.notify == 'true'
+		};
+		return buildUser(userData.name, userData.avatar, userData.loggedIn === 'true', userData.role, userData.notify === 'true');
+	};
 
-	getAvatar = (user, size = 24) ->
-		user.avatar.replace(/s=\d+/, "s=#{size}").replace(/size=\d+x\d+/, "size=#{size}x#{size}")
+	const getAvatar = function(user, size) {
+		if (size == null) { size = 24; }
+		return user.avatar.replace(/s=\d+/, `s=${size}`).replace(/size=\d+x\d+/, `size=${size}x${size}`);
+	};
 
-	getCurrentUserFromAPI = (callback) ->
+	const getCurrentUserFromAPI = callback => Materia.User.getCurrentUser(function(user) {});
 
-		Materia.User.getCurrentUser (user) ->
+	const updateSettings = (property, value) => _me[property] = value;
 
-	updateSettings = (property, value) ->
-		_me[property] = value
+	const getCurrentUser = from => {
+		if (from == null) { from = 'dom'; }
+		if ((_me == null)) {
+			switch (from) {
+				case 'dom':
+					_me = getCurrentUserFromDom();
+					break;
+				default:
+					_me = buildUser();
+			}
+		}
+		return _me;
+	};
 
-	getCurrentUser = (from = 'dom') =>
-		if not _me?
-			switch from
-				when 'dom'
-					_me = getCurrentUserFromDom()
-				else
-					_me = buildUser()
-		_me
+	const getCurrentUserAvatar = function(size) {
+		if (size == null) { size = 24; }
+		return getAvatar(_me, size);
+	};
 
-	getCurrentUserAvatar = (size = 24) ->
-		getAvatar _me, size
+	let _user = null;
 
-	_user = null
+	const get = function() {
+		const deferred = $q.defer();
 
-	get = ->
-		deferred = $q.defer()
+		if (!_user) {
+			deferred.resolve(grabCurrentUser());
+		} else {
+			deferred.resolve(_user);
+		}
 
-		if !_user
-			deferred.resolve grabCurrentUser()
-		else
-			deferred.resolve _user
+		return deferred.promise;
+	};
 
-		deferred.promise
+	const set = function(userToSet) {
+		_user = userToSet;
+		return $rootScope.$broadcast('user.update');
+	};
 
-	set = (userToSet) ->
-		_user = userToSet
-		$rootScope.$broadcast 'user.update'
+	var grabCurrentUser = () =>
+		Materia.User.getCurrentUser(function(user) {
+			set(user);
+			return user;
+		})
+	;
 
-	grabCurrentUser = ->
-		Materia.User.getCurrentUser (user) ->
-			set user
-			user
+	const checkValidSession = function(role) {
+		const deferred = $q.defer();
 
-	checkValidSession = (role) ->
-		deferred = $q.defer()
+		Materia.Coms.Json.send('session_author_verify', [role], data => deferred.resolve(data));
 
-		Materia.Coms.Json.send 'session_author_verify', [role], (data) ->
-			deferred.resolve data
-
-		deferred.promise
+		return deferred.promise;
+	};
 
 
-	# return public method references
-	getCurrentUser : getCurrentUser
-	getCurrentUserAvatar: getCurrentUserAvatar
-	getAvatar : getAvatar
-	updateSettings:updateSettings
-	get : get
-	set : set
-	grabCurrentUser : grabCurrentUser
-	checkValidSession : checkValidSession
+	// return public method references
+	return {
+		getCurrentUser,
+		getCurrentUserAvatar,
+		getAvatar,
+		updateSettings,
+		get,
+		set,
+		grabCurrentUser,
+		checkValidSession
+	};
+});
 

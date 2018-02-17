@@ -1,108 +1,134 @@
-Namespace('Materia').CreatorCore = do ->
-	_baseurl        = null
-	_creatorClass   = null
-	_lastHeight     = -1
-	_mediaUrl       = null
-	_resizeInterval = null
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+Namespace('Materia').CreatorCore = (function() {
+	let _baseurl        = null;
+	let _creatorClass   = null;
+	let _lastHeight     = -1;
+	let _mediaUrl       = null;
+	let _resizeInterval = null;
 
 
-	PRESANITIZE_CHARACTERS =
+	const PRESANITIZE_CHARACTERS = {
 		'>': '',
 		'<': ''
+	};
 
-	_onPostMessage = (e) ->
-		msg = JSON.parse e.data
-		switch msg.type
-			when 'initNewWidget'
-				_initNewWidget msg.data[0], msg.data[1], msg.data[2], msg.data[3]
-			when 'initExistingWidget'
-				_initExistingWidget msg.data[0], msg.data[1], msg.data[2], msg.data[3], msg.data[4], msg.data[5], msg.data[6]
-			when 'onRequestSave'
-				_tellCreator 'onSaveClicked', [msg.data[0]]
-			when 'onSaveComplete'
-				_tellCreator 'onSaveComplete', [msg.data[0], msg.data[1], msg.data[2], msg.data[3]]
-			when 'onMediaImportComplete'
-				_tellCreator 'onMediaImportComplete', [msg.data[0]]
-			when 'onQuestionImportComplete'
-				_tellCreator 'onQuestionImportComplete', [msg.data[0]]
-			else
-				alert 'Error, unknown message sent to creator core: '+msg.type
+	const _onPostMessage = function(e) {
+		const msg = JSON.parse(e.data);
+		switch (msg.type) {
+			case 'initNewWidget':
+				return _initNewWidget(msg.data[0], msg.data[1], msg.data[2], msg.data[3]);
+			case 'initExistingWidget':
+				return _initExistingWidget(msg.data[0], msg.data[1], msg.data[2], msg.data[3], msg.data[4], msg.data[5], msg.data[6]);
+			case 'onRequestSave':
+				return _tellCreator('onSaveClicked', [msg.data[0]]);
+			case 'onSaveComplete':
+				return _tellCreator('onSaveComplete', [msg.data[0], msg.data[1], msg.data[2], msg.data[3]]);
+			case 'onMediaImportComplete':
+				return _tellCreator('onMediaImportComplete', [msg.data[0]]);
+			case 'onQuestionImportComplete':
+				return _tellCreator('onQuestionImportComplete', [msg.data[0]]);
+			default:
+				return alert(`Error, unknown message sent to creator core: ${msg.type}`);
+		}
+	};
 
-	_tellCreator = (method, args) ->
-		if typeof _creatorClass[method] == 'function'
-			_creatorClass[method].apply undefined, args
-		else
-			alert 'Error, missing creator '+method+' called.'
+	var _tellCreator = function(method, args) {
+		if (typeof _creatorClass[method] === 'function') {
+			return _creatorClass[method].apply(undefined, args);
+		} else {
+			return alert(`Error, missing creator ${method} called.`);
+		}
+	};
 
-	_sendPostMessage = (type, data) ->
-		parent.postMessage JSON.stringify({type:type, data:data}), '*'
+	const _sendPostMessage = (type, data) => parent.postMessage(JSON.stringify({type, data}), '*');
 
-	_initNewWidget = (widget, baseUrl, mediaUrl) ->
-		_baseurl = baseUrl
-		_mediaUrl = mediaUrl
-		_tellCreator 'initNewWidget', [widget]
+	var _initNewWidget = function(widget, baseUrl, mediaUrl) {
+		_baseurl = baseUrl;
+		_mediaUrl = mediaUrl;
+		return _tellCreator('initNewWidget', [widget]);
+	};
 
-	_initExistingWidget = (widget, title, qset, qsetVersion, baseUrl, mediaUrl) ->
-		_baseurl = baseUrl
-		_mediaUrl = mediaUrl
-		_tellCreator 'initExistingWidget', [widget, title, qset, qsetVersion]
+	var _initExistingWidget = function(widget, title, qset, qsetVersion, baseUrl, mediaUrl) {
+		_baseurl = baseUrl;
+		_mediaUrl = mediaUrl;
+		return _tellCreator('initExistingWidget', [widget, title, qset, qsetVersion]);
+	};
 
-	start = (creatorClass) ->
-		# setup the postmessage listener
-		if addEventListener?
-			addEventListener 'message', _onPostMessage, false
-		else if attachEvent?
-			attachEvent 'onmessage', _onPostMessage
+	const start = function(creatorClass) {
+		// setup the postmessage listener
+		if (typeof addEventListener !== 'undefined' && addEventListener !== null) {
+			addEventListener('message', _onPostMessage, false);
+		} else if (typeof attachEvent !== 'undefined' && attachEvent !== null) {
+			attachEvent('onmessage', _onPostMessage);
+		}
 
-		if creatorClass.manualResize? and creatorClass.manualResize is false
-			_resizeInterval = setInterval () ->
-				setHeight()
-			, 300
+		if ((creatorClass.manualResize != null) && (creatorClass.manualResize === false)) {
+			_resizeInterval = setInterval(() => setHeight()
+			, 300);
+		}
 
-		_creatorClass = creatorClass
-		_sendPostMessage 'start', null
+		_creatorClass = creatorClass;
+		return _sendPostMessage('start', null);
+	};
 
-	alert = (title, msg, type = 1) ->
-		_sendPostMessage 'alert', {title: title, msg: msg, type: type}
+	var alert = function(title, msg, type) {
+		if (type == null) { type = 1; }
+		return _sendPostMessage('alert', {title, msg, type});
+	};
 
-	getMediaUrl = (mediaId) ->
-		"#{_mediaUrl}/#{mediaId}"
+	const getMediaUrl = mediaId => `${_mediaUrl}/${mediaId}`;
 
-	# replace a specified list of characters with their safe equivalents
-	_preSanitize = (text) ->
-		for k, v of PRESANITIZE_CHARACTERS
-			text = text.replace new RegExp(k, 'g'), v
-		return text
+	// replace a specified list of characters with their safe equivalents
+	const _preSanitize = function(text) {
+		for (let k in PRESANITIZE_CHARACTERS) {
+			const v = PRESANITIZE_CHARACTERS[k];
+			text = text.replace(new RegExp(k, 'g'), v);
+		}
+		return text;
+	};
 
-	showMediaImporter = (types = ['jpg','jpeg','gif','png']) ->
-		_sendPostMessage 'showMediaImporter', types
+	const showMediaImporter = function(types) {
+		if (types == null) { types = ['jpg','jpeg','gif','png']; }
+		return _sendPostMessage('showMediaImporter', types);
+	};
 
-	save = (title, qset, version = '1') ->
-		sanitizedTitle = _preSanitize title
-		_sendPostMessage 'save', [sanitizedTitle, qset, version]
+	const save = function(title, qset, version) {
+		if (version == null) { version = '1'; }
+		const sanitizedTitle = _preSanitize(title);
+		return _sendPostMessage('save', [sanitizedTitle, qset, version]);
+	};
 
-	cancelSave = (msg) ->
-		_sendPostMessage 'cancelSave', [msg]
+	const cancelSave = msg => _sendPostMessage('cancelSave', [msg]);
 
-	setHeight = (h) ->
-		unless h
-			h = $('html').height()
-		if h isnt _lastHeight
-			_sendPostMessage 'setHeight', [h]
-			_lastHeight = h
+	var setHeight = function(h) {
+		if (!h) {
+			h = $('html').height();
+		}
+		if (h !== _lastHeight) {
+			_sendPostMessage('setHeight', [h]);
+			return _lastHeight = h;
+		}
+	};
 
-	escapeScriptTags = (text) ->
-		text.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+	const escapeScriptTags = text => text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-	disableResizeInterval = -> clearInterval _resizeInterval
+	const disableResizeInterval = () => clearInterval(_resizeInterval);
 
-	# Public Methods
-	start:start
-	alert:alert
-	getMediaUrl:getMediaUrl
-	showMediaImporter:showMediaImporter
-	cancelSave:cancelSave
-	save:save
-	disableResizeInterval:disableResizeInterval
-	setHeight:setHeight # allows the creator to resize its iframe container to fit the height of its contents
-	escapeScriptTags:escapeScriptTags
+	// Public Methods
+	return {
+		start,
+		alert,
+		getMediaUrl,
+		showMediaImporter,
+		cancelSave,
+		save,
+		disableResizeInterval,
+		setHeight, // allows the creator to resize its iframe container to fit the height of its contents
+		escapeScriptTags
+	};
+})();

@@ -1,8 +1,16 @@
-app = angular.module 'materia'
-app.controller 'helpCtrl', ($scope, $sce) ->
-	Materia.Flashcheck.flashInstalled (version) ->
-		if version == false or version.major <= 10
-			$scope.noFlash = true
-		else
-			$scope.hasFlash = true
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const app = angular.module('materia');
+app.controller('helpCtrl', ($scope, $sce) =>
+	Materia.Flashcheck.flashInstalled(function(version) {
+		if ((version === false) || (version.major <= 10)) {
+			return $scope.noFlash = true;
+		} else {
+			return $scope.hasFlash = true;
+		}
+	})
+);
 

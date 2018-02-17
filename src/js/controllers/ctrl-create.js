@@ -1,429 +1,509 @@
-app = angular.module 'materia'
-app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
-	$scope.alert = Alert
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const app = angular.module('materia');
+app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) {
+	$scope.alert = Alert;
 
-	HEARTBEAT_INTERVAL = 30000
-	# How far from the top of the window that the creator frame starts
-	BOTTOM_OFFSET = 145
-	# Where to embed flash
-	EMBED_TARGET   = "container"
+	const HEARTBEAT_INTERVAL = 30000;
+	// How far from the top of the window that the creator frame starts
+	const BOTTOM_OFFSET = 145;
+	// Where to embed flash
+	const EMBED_TARGET   = "container";
 
-	creator       = null
-	embedDoneDfd  = null
-	heartbeat     = null
-	importerPopup = null
-	inst_id       = null
-	instance      = null
-	keepQSet      = null
-	saveMode      = false
-	type          = null
-	widget_id     = null
-	widget_info   = null
-	widgetType    = null
+	let creator       = null;
+	let embedDoneDfd  = null;
+	let heartbeat     = null;
+	const importerPopup = null;
+	let inst_id       = null;
+	let instance      = null;
+	let keepQSet      = null;
+	let saveMode      = false;
+	let type          = null;
+	let widget_id     = null;
+	let widget_info   = null;
+	let widgetType    = null;
 
-	# get the instance_id from the url if needed
-	inst_id = window.location.hash.substr(1) if window.location.hash
-	widget_id = window.location.href.match(/widgets\/([\d]+)/)[1]
+	// get the instance_id from the url if needed
+	if (window.location.hash) { inst_id = window.location.hash.substr(1); }
+	widget_id = window.location.href.match(/widgets\/([\d]+)/)[1];
 
-	# Model properties
-	$scope.saveStatus = 'idle'
-	$scope.saveText = "Save Draft"
-	$scope.previewText = "Preview"
-	$scope.publishText = "Publish..."
+	// Model properties
+	$scope.saveStatus = 'idle';
+	$scope.saveText = "Save Draft";
+	$scope.previewText = "Preview";
+	$scope.publishText = "Publish...";
 
-	$scope.invalid = false
-	$scope.modal = false
+	$scope.invalid = false;
+	$scope.modal = false;
 
-	# Model methods
-	# send a save request to the creator
-	$scope.requestSave = (mode) ->
-		# hide dialogs
-		$scope.popup = ""
+	// Model methods
+	// send a save request to the creator
+	$scope.requestSave = function(mode) {
+		// hide dialogs
+		$scope.popup = "";
 
-		saveMode = mode
-		$scope.saveStatus = 'saving'
-		switch saveMode
-			when 'publish'
-				$scope.previewText = "Saving..."
-			when 'save'
-				$scope.saveText = "Saving..."
+		saveMode = mode;
+		$scope.saveStatus = 'saving';
+		switch (saveMode) {
+			case 'publish':
+				$scope.previewText = "Saving...";
+				break;
+			case 'save':
+				$scope.saveText = "Saving...";
+				break;
+		}
 
-		sendToCreator 'onRequestSave', [mode]
+		return sendToCreator('onRequestSave', [mode]);
+	};
 
-	# Popup a question importer dialog
-	$scope.showQuestionImporter = ->
-		# must be loose comparison
-		types = widget_info.meta_data.supported_data
-		#the value passed on needs to be a list of one or two elements, i.e.
-		#?type=QA or ?type=MC or ?type=QA,MC
-		showEmbedDialog "#{BASE_URL}questions/import/?type=#{encodeURIComponent(types.join())}"
-		null # else Safari will give the .swf data that it can't handle
+	// Popup a question importer dialog
+	$scope.showQuestionImporter = function() {
+		// must be loose comparison
+		const types = widget_info.meta_data.supported_data;
+		//the value passed on needs to be a list of one or two elements, i.e.
+		//?type=QA or ?type=MC or ?type=QA,MC
+		showEmbedDialog(`${BASE_URL}questions/import/?type=${encodeURIComponent(types.join())}`);
+		return null; // else Safari will give the .swf data that it can't handle
+	};
 
-	$scope.onPublishPressed = ->
-		if inst_id? and instance? and !instance.is_draft
-			# Show the Update Dialog
-			$scope.popup = "update"
-		else
-			# Show the Publish Dialog
-			$scope.popup = "publish"
+	$scope.onPublishPressed = function() {
+		if ((inst_id != null) && (instance != null) && !instance.is_draft) {
+			// Show the Update Dialog
+			return $scope.popup = "update";
+		} else {
+			// Show the Publish Dialog
+			return $scope.popup = "publish";
+		}
+	};
 
-	$scope.cancelPublish = (e, instant = false) ->
-		$scope.popup = ""
+	$scope.cancelPublish = function(e, instant) {
+		if (instant == null) { instant = false; }
+		return $scope.popup = "";
+	};
 
-	$scope.cancelPreview = (e, instant = false) ->
-		$scope.popup = ""
+	$scope.cancelPreview = function(e, instant) {
+		if (instant == null) { instant = false; }
+		return $scope.popup = "";
+	};
 
-	# If Initialization Fails
-	onInitFail = (msg) ->
-		stopHeartBeat()
-		_alert "Failure: #{msg}" if msg.toLowerCase() != 'flash player required.'
+	// If Initialization Fails
+	const onInitFail = function(msg) {
+		stopHeartBeat();
+		if (msg.toLowerCase() !== 'flash player required.') { return _alert(`Failure: ${msg}`); }
+	};
 
-	# Every 30 seconds, renew/check the session
-	startHeartBeat = ->
-		dfd = $.Deferred().resolve()
-		heartbeat = setInterval ->
-			Materia.Coms.Json.send 'session_author_verify', [null, false], (data) ->
-				if data != true
-					_alert 'You have been logged out due to inactivity', 'Invalid Login', true, true
-					$scope.$apply()
-					stopHeartBeat()
-		, HEARTBEAT_INTERVAL
-
-		dfd.promise()
-
-	stopHeartBeat = ->
-		clearInterval heartbeat
-
-	# Gets widget info when not editing an existing instance
-	getWidgetInfo = ->
-		dfd = $.Deferred()
-		widgetSrv.getWidgetInfo widget_id, (widgets) ->
-			dfd.resolve widgets
-
-		dfd.promise()
-
-	# Gets the qset of a loaded instance
-	getQset = ->
-		dfd = $.Deferred()
-		Materia.Coms.Json.send 'question_set_get', [inst_id], (data) ->
-			if data?.title == "Permission Denied" or data.title == "error"
-				$scope.invalid = true
-				$scope.$apply()
-			else
-				keepQSet = data
-			dfd.resolve()
-
-		dfd.promise()
-
-	# Starts the Creator, sending required widget data
-	initCreator = ->
-		dfd = $.Deferred().resolve()
+	// Every 30 seconds, renew/check the session
+	const startHeartBeat = function() {
+		const dfd = $.Deferred().resolve();
+		heartbeat = setInterval(() =>
+			Materia.Coms.Json.send('session_author_verify', [null, false], function(data) {
+				if (data !== true) {
+					_alert('You have been logged out due to inactivity', 'Invalid Login', true, true);
+					$scope.$apply();
+					return stopHeartBeat();
+				}
+			})
 		
-		if inst_id?
-			args = [instance.name, instance.widget, keepQSet.data, keepQSet.version, BASE_URL]
-			if widgetType isnt '.swf' then args.push MEDIA_URL # Passing MEDIA_URL breaks the SWF, so omit it for Flash widgets! The intent is to sunset Flash support relatively soon after this code is committed.
+		, HEARTBEAT_INTERVAL);
 
-			sendToCreator 'initExistingWidget', args
-		else
-			args = [widget_info, BASE_URL]
-			if widgetType isnt '.swf' then args.push MEDIA_URL #  Passing MEDIA_URL breaks the SWF, so omit it for Flash widgets! The intent is to sunset Flash support relatively soon after this code is committed.
+		return dfd.promise();
+	};
 
-			sendToCreator 'initNewWidget', args
+	var stopHeartBeat = () => clearInterval(heartbeat);
 
-		dfd.promise()
+	// Gets widget info when not editing an existing instance
+	const getWidgetInfo = function() {
+		const dfd = $.Deferred();
+		widgetSrv.getWidgetInfo(widget_id, widgets => dfd.resolve(widgets));
 
-	# Send messages to the creator, handles flash and html creators
-	sendToCreator = (type, args) ->
-		switch widgetType
-			when '.swf'
-				creator[type].apply creator, args
-			when '.html'
-				creator.contentWindow.postMessage(JSON.stringify({type:type, data:args}), STATIC_CROSSDOMAIN)
+		return dfd.promise();
+	};
 
-	# build a my-widgets url to a specific widget
-	getMyWidgetsUrl = (instid) ->
-		"#{BASE_URL}my-widgets##{instid}"
+	// Gets the qset of a loaded instance
+	const getQset = function() {
+		const dfd = $.Deferred();
+		Materia.Coms.Json.send('question_set_get', [inst_id], function(data) {
+			if (((data != null ? data.title : undefined) === "Permission Denied") || (data.title === "error")) {
+				$scope.invalid = true;
+				$scope.$apply();
+			} else {
+				keepQSet = data;
+			}
+			return dfd.resolve();
+		});
 
-	# Embeds the creator
-	embed = (widgetData) ->
-		if widgetData?[0].widget
-			instance    = widgetData[0]
-			widget_info = instance.widget
-		else
-			widget_info = widgetData[0]
+		return dfd.promise();
+	};
 
-		$scope.nonEditable = widget_info.is_editable == "0"
+	// Starts the Creator, sending required widget data
+	const initCreator = function() {
+		let args;
+		const dfd = $.Deferred().resolve();
+		
+		if (inst_id != null) {
+			args = [instance.name, instance.widget, keepQSet.data, keepQSet.version, BASE_URL];
+			if (widgetType !== '.swf') { args.push(MEDIA_URL); } // Passing MEDIA_URL breaks the SWF, so omit it for Flash widgets! The intent is to sunset Flash support relatively soon after this code is committed.
 
-		dfd = $.Deferred()
-		widgetType = widget_info.creator.slice widget_info.creator.lastIndexOf('.')
+			sendToCreator('initExistingWidget', args);
+		} else {
+			args = [widget_info, BASE_URL];
+			if (widgetType !== '.swf') { args.push(MEDIA_URL); } //  Passing MEDIA_URL breaks the SWF, so omit it for Flash widgets! The intent is to sunset Flash support relatively soon after this code is committed.
 
-		# allow creator paths to be absolute urls
-		if (widget_info.creator.substring(0,4) == 'http')
-			creatorPath = widget_info.creator
-		# link to the static widget
-		else
-			creatorPath = WIDGET_URL+widget_info.dir+widget_info.creator
+			sendToCreator('initNewWidget', args);
+		}
 
-		type = creatorPath.split('.').pop()
-		$scope.loaded = true
-		$scope.type = type
-		$scope.$apply()
+		return dfd.promise();
+	};
 
-		switch type
-			when 'html'
-				embedHTML creatorPath, dfd
-			when 'swf'
-				embedFlash creatorPath, widget_info.flash_version, dfd
+	// Send messages to the creator, handles flash and html creators
+	var sendToCreator = function(type, args) {
+		switch (widgetType) {
+			case '.swf':
+				return creator[type].apply(creator, args);
+			case '.html':
+				return creator.contentWindow.postMessage(JSON.stringify({type, data:args}), STATIC_CROSSDOMAIN);
+		}
+	};
 
-		# Prevent closing accidentally
-		$(window).bind 'beforeunload', ->
-			importerPopup.close() if importerPopup?
+	// build a my-widgets url to a specific widget
+	const getMyWidgetsUrl = instid => `${BASE_URL}my-widgets#${instid}`;
 
-		dfd.promise()
+	// Embeds the creator
+	const embed = function(widgetData) {
+		let creatorPath;
+		if (widgetData != null ? widgetData[0].widget : undefined) {
+			instance    = widgetData[0];
+			widget_info = instance.widget;
+		} else {
+			widget_info = widgetData[0];
+		}
 
-	embedHTML = (htmlPath, dfd) ->
-		$scope.htmlPath = htmlPath + "?" + widget_info.created_at
-		$scope.$apply()
-		embedDoneDfd = dfd
+		$scope.nonEditable = widget_info.is_editable === "0";
 
-		onPostMessage = (e) ->
-			origin = "#{e.origin}/"
-			if origin == STATIC_CROSSDOMAIN or origin == BASE_URL
-				msg = JSON.parse e.data
-				switch msg.type
-					when 'start' # The creator notifies us when its ready
-						onCreatorReady()
-					when 'save' # The creator issued a save request
-						save msg.data[0], msg.data[1], msg.data[2] # instanceName, qset
-					when 'cancelSave' # the creator canceled a save request
-						onSaveCanceled msg.data[0] # msg
-					when 'showMediaImporter' # the creator wants to import media
-						showMediaImporter(msg.data)
-					when 'setHeight' # the height of the creator has changed
-						setHeight msg.data[0]
-					when 'alert'
-						_alert msg.data
-					else
-						_alert "Unknown message from creator: #{msg.type}"
-			else
-				_alert "Error, cross domain restricted for #{origin}"
+		const dfd = $.Deferred();
+		widgetType = widget_info.creator.slice(widget_info.creator.lastIndexOf('.'));
 
-		# setup the postmessage listener
-		if addEventListener?
-			addEventListener 'message', onPostMessage, false
+		// allow creator paths to be absolute urls
+		if (widget_info.creator.substring(0,4) === 'http') {
+			creatorPath = widget_info.creator;
+		// link to the static widget
+		} else {
+			creatorPath = WIDGET_URL+widget_info.dir+widget_info.creator;
+		}
 
-	embedFlash = (path, version, dfd) ->
-		# register global callbacks for ExternalInterface calls
-		window.__materia_flash_onCreatorReady = onCreatorReady
-		window.__materia_flash_importMedia    = showMediaImporter
-		window.__materia_flash_save           = save
-		window.__materia_flash_cancelSave     = onSaveCanceled
+		type = creatorPath.split('.').pop();
+		$scope.loaded = true;
+		$scope.type = type;
+		$scope.$apply();
 
-		# store this dfd so that we can keep things synchronous
-		# it will be resolved by the engine once it's loaded via onCreatorReady
-		embedDoneDfd = dfd
-		if swfobject.hasFlashPlayerVersion('1') == false
-			$scope.$apply -> $scope.type = "noflash"
-		else
-			# setup variable to send to flash
-			flashvars =
-				URL_WEB: BASE_URL
-				URL_GET_ASSET: "#{BASE_URL}media/"
-				widget_id: widget_id
-				inst_id: inst_id
+		switch (type) {
+			case 'html':
+				embedHTML(creatorPath, dfd);
+				break;
+			case 'swf':
+				embedFlash(creatorPath, widget_info.flash_version, dfd);
+				break;
+		}
 
-			params =
-				menu: 'false'
-				allowFullScreen: 'true'
+		// Prevent closing accidentally
+		$(window).bind('beforeunload', function() {
+			if (importerPopup != null) { return importerPopup.close(); }
+		});
+
+		return dfd.promise();
+	};
+
+	var embedHTML = function(htmlPath, dfd) {
+		$scope.htmlPath = htmlPath + "?" + widget_info.created_at;
+		$scope.$apply();
+		embedDoneDfd = dfd;
+
+		const onPostMessage = function(e) {
+			const origin = `${e.origin}/`;
+			if ((origin === STATIC_CROSSDOMAIN) || (origin === BASE_URL)) {
+				const msg = JSON.parse(e.data);
+				switch (msg.type) {
+					case 'start': // The creator notifies us when its ready
+						return onCreatorReady();
+					case 'save': // The creator issued a save request
+						return save(msg.data[0], msg.data[1], msg.data[2]); // instanceName, qset
+					case 'cancelSave': // the creator canceled a save request
+						return onSaveCanceled(msg.data[0]); // msg
+					case 'showMediaImporter': // the creator wants to import media
+						return showMediaImporter(msg.data);
+					case 'setHeight': // the height of the creator has changed
+						return setHeight(msg.data[0]);
+					case 'alert':
+						return _alert(msg.data);
+					default:
+						return _alert(`Unknown message from creator: ${msg.type}`);
+				}
+			} else {
+				return _alert(`Error, cross domain restricted for ${origin}`);
+			}
+		};
+
+		// setup the postmessage listener
+		if (typeof addEventListener !== 'undefined' && addEventListener !== null) {
+			return addEventListener('message', onPostMessage, false);
+		}
+	};
+
+	var embedFlash = function(path, version, dfd) {
+		// register global callbacks for ExternalInterface calls
+		window.__materia_flash_onCreatorReady = onCreatorReady;
+		window.__materia_flash_importMedia    = showMediaImporter;
+		window.__materia_flash_save           = save;
+		window.__materia_flash_cancelSave     = onSaveCanceled;
+
+		// store this dfd so that we can keep things synchronous
+		// it will be resolved by the engine once it's loaded via onCreatorReady
+		embedDoneDfd = dfd;
+		if (swfobject.hasFlashPlayerVersion('1') === false) {
+			return $scope.$apply(() => $scope.type = "noflash");
+		} else {
+			// setup variable to send to flash
+			const flashvars = {
+				URL_WEB: BASE_URL,
+				URL_GET_ASSET: `${BASE_URL}media/`,
+				widget_id,
+				inst_id
+			};
+
+			const params = {
+				menu: 'false',
+				allowFullScreen: 'true',
 				AllowScriptAccess: 'always'
+			};
 
-			attributes = {id: EMBED_TARGET, wmode: 'opaque' }
-			expressSwf = "#{BASE_URL}assets/flash/expressInstall.swf"
-			width      = '100%'
-			height     = '100%'
+			const attributes = {id: EMBED_TARGET, wmode: 'opaque' };
+			const expressSwf = `${BASE_URL}assets/flash/expressInstall.swf`;
+			let width      = '100%';
+			let height     = '100%';
 
-			# Needed to check for ie8 browsers to add a border to the swf object.
-			if ie8Browser?
-				width = '99.7%'
-				height = '99.7%'
+			// Needed to check for ie8 browsers to add a border to the swf object.
+			if (typeof ie8Browser !== 'undefined' && ie8Browser !== null) {
+				width = '99.7%';
+				height = '99.7%';
+			}
 
-			swfobject.embedSWF path, EMBED_TARGET, width, height, version, expressSwf, flashvars, params, attributes
+			return swfobject.embedSWF(path, EMBED_TARGET, width, height, version, expressSwf, flashvars, params, attributes);
+		}
+	};
 
-	# Resizes the swf according to the window height
-	resizeCreator = ->
-		$('.center').height $(window).height() - BOTTOM_OFFSET
-		# This fixes a bug in chrome where the iframe (#container)
-		# doesn't correctly fill 100% of the height. Doing this with
-		# just CSS doesn't work - it needs to be done in JS
-		$('#container').css('position', 'relative')
+	// Resizes the swf according to the window height
+	const resizeCreator = function() {
+		$('.center').height($(window).height() - BOTTOM_OFFSET);
+		// This fixes a bug in chrome where the iframe (#container)
+		// doesn't correctly fill 100% of the height. Doing this with
+		// just CSS doesn't work - it needs to be done in JS
+		return $('#container').css('position', 'relative');
+	};
 
-	# Show the buttons that interact with the creator
-	showButtons = ->
-		dfd = $.Deferred().resolve()
-		# change the buttons if this isnt a draft
-		if instance and !instance.is_draft
-			$scope.publishText = "Update"
-			$scope.updateMode = true
-		enableReturnLink()
-		$scope.showActionBar = true
-		$scope.$apply()
-		dfd.promise()
+	// Show the buttons that interact with the creator
+	const showButtons = function() {
+		const dfd = $.Deferred().resolve();
+		// change the buttons if this isnt a draft
+		if (instance && !instance.is_draft) {
+			$scope.publishText = "Update";
+			$scope.updateMode = true;
+		}
+		enableReturnLink();
+		$scope.showActionBar = true;
+		$scope.$apply();
+		return dfd.promise();
+	};
 
-	# Changes the Return link's functionality depending on use
-	enableReturnLink = ->
-		if inst_id?
-			# editing
-			$scope.returnUrl = getMyWidgetsUrl(inst_id)
-			$scope.returnPlace = "my widgets"
-		else
-			# new
-			$scope.returnUrl = "#{BASE_URL}widgets"
-			$scope.returnPlace = "widget catalog"
-		$scope.$apply()
+	// Changes the Return link's functionality depending on use
+	var enableReturnLink = function() {
+		if (inst_id != null) {
+			// editing
+			$scope.returnUrl = getMyWidgetsUrl(inst_id);
+			$scope.returnPlace = "my widgets";
+		} else {
+			// new
+			$scope.returnUrl = `${BASE_URL}widgets`;
+			$scope.returnPlace = "widget catalog";
+		}
+		return $scope.$apply();
+	};
 
-	onPreviewPopupBlocked = (url) ->
-		$scope.popup = "blocked"
-		$scope.previewUrl = url
-		$scope.$apply()
+	const onPreviewPopupBlocked = function(url) {
+		$scope.popup = "blocked";
+		$scope.previewUrl = url;
+		return $scope.$apply();
+	};
 
-	# When the creator says it's ready
-	# Note this is psuedo public as it's exposed to flash
-	onCreatorReady = ->
-		creator = $('#container').get(0)
-		# resize swf now and when window resizes
-		$(window).resize resizeCreator
-		resizeCreator()
+	// When the creator says it's ready
+	// Note this is psuedo public as it's exposed to flash
+	var onCreatorReady = function() {
+		creator = $('#container').get(0);
+		// resize swf now and when window resizes
+		$(window).resize(resizeCreator);
+		resizeCreator();
 
-		embedDoneDfd.resolve() # used to keep events synchronous
+		return embedDoneDfd.resolve(); // used to keep events synchronous
+	};
 
-	# Show an embedded dialog, as opposed to a popup
-	showEmbedDialog = (url) ->
-		$scope.iframeUrl = url
+	// Show an embedded dialog, as opposed to a popup
+	var showEmbedDialog = url => $scope.iframeUrl = url;
 
-	# move the embed dialog off to invisibility
-	hideEmbedDialog = ->
-		$scope.iframeUrl = ""
-		$scope.modal = false
-		setTimeout (->
-			$scope.$apply()
-			return
-		), 0
+	// move the embed dialog off to invisibility
+	const hideEmbedDialog = function() {
+		$scope.iframeUrl = "";
+		$scope.modal = false;
+		return setTimeout((function() {
+			$scope.$apply();
+		}), 0);
+	};
 
-	# Note this is psuedo public as it's exposed to flash
-	showMediaImporter = (types) ->
-		showEmbedDialog "#{BASE_URL}media/import##{types.join(',')}"
-		$scope.modal = true
-		setTimeout (->
-			$scope.$apply()
-			return
-		), 0
-		null # else Safari will give the .swf data that it can't handle
+	// Note this is psuedo public as it's exposed to flash
+	var showMediaImporter = function(types) {
+		showEmbedDialog(`${BASE_URL}media/import#${types.join(',')}`);
+		$scope.modal = true;
+		setTimeout((function() {
+			$scope.$apply();
+		}), 0);
+		return null; // else Safari will give the .swf data that it can't handle
+	};
 
-	# save called by the widget creator
-	# Note this is psuedo public as it's exposed to flash
-	save = (instanceName, qset, version = 1) ->
-		widgetSrv.saveWidget
-			widget_id: widget_id,
+	// save called by the widget creator
+	// Note this is psuedo public as it's exposed to flash
+	var save = function(instanceName, qset, version) {
+		if (version == null) { version = 1; }
+		return widgetSrv.saveWidget({
+			widget_id,
 			name: instanceName,
-			qset: {version:version, data:qset},
-			is_draft: saveMode != 'publish',
-			inst_id: inst_id
-			, (inst) ->
-				# did we get back an error message?
-				if inst?.msg?
-					onSaveCanceled inst
-					$scope.alert.fatal = inst.halt
-					$scope.$apply()
-				else if inst? and inst.id?
-					# update this creator's url
-					window.location.hash = '#'+inst.id if String(inst_id).length != 0
+			qset: {version, data:qset},
+			is_draft: saveMode !== 'publish',
+			inst_id
+		}
+			, function(inst) {
+				// did we get back an error message?
+				if ((inst != null ? inst.msg : undefined) != null) {
+					onSaveCanceled(inst);
+					$scope.alert.fatal = inst.halt;
+					return $scope.$apply();
+				} else if ((inst != null) && (inst.id != null)) {
+					// update this creator's url
+					if (String(inst_id).length !== 0) { window.location.hash = `#${inst.id}`; }
 
-					switch saveMode
-						when 'preview'
-							url = "#{BASE_URL}preview/#{inst.id}"
-							popup = window.open url
-							inst_id  = inst.id
-							if popup?
-								$timeout ->
-									onPreviewPopupBlocked(url) unless popup.innerHeight > 0
-								, 200
-							else
-								onPreviewPopupBlocked(url)
-						when 'publish'
-							window.location = getMyWidgetsUrl(inst.id)
-						when 'save'
-							$scope.saveText = "Saved!"
-							sendToCreator 'onSaveComplete', [inst.name, inst.widget, inst.qset.data, inst.qset.version]
-							inst_id  = inst.id
-							instance = inst
-							$scope.saveStatus = 'saved'
+					switch (saveMode) {
+						case 'preview':
+							var url = `${BASE_URL}preview/${inst.id}`;
+							var popup = window.open(url);
+							inst_id  = inst.id;
+							if (popup != null) {
+								$timeout(function() {
+									if (!(popup.innerHeight > 0)) { return onPreviewPopupBlocked(url); }
+								}
+								, 200);
+							} else {
+								onPreviewPopupBlocked(url);
+							}
+							break;
+						case 'publish':
+							window.location = getMyWidgetsUrl(inst.id);
+							break;
+						case 'save':
+							$scope.saveText = "Saved!";
+							sendToCreator('onSaveComplete', [inst.name, inst.widget, inst.qset.data, inst.qset.version]);
+							inst_id  = inst.id;
+							instance = inst;
+							$scope.saveStatus = 'saved';
+							break;
+					}
 
-					$scope.$apply()
-					setTimeout ->
-						$scope.saveText = "Save Draft"
-						$scope.saveStatus = 'idle'
-						$scope.$apply()
-					, 5000
+					$scope.$apply();
+					return setTimeout(function() {
+						$scope.saveText = "Save Draft";
+						$scope.saveStatus = 'idle';
+						return $scope.$apply();
+					}
+					, 5000);
+				}
+		});
+	};
 
-	# When the Creator cancels a save request
-	# Note this is psuedo public as it's exposed to flash
-	onSaveCanceled = (msg) ->
-		$scope.saveText = "Can Not Save!"
+	// When the Creator cancels a save request
+	// Note this is psuedo public as it's exposed to flash
+	var onSaveCanceled = function(msg) {
+		$scope.saveText = "Can Not Save!";
 
-		if msg?.msg?
-			if msg.halt?
-				_alert "Unfortunately, your progress was not saved because
-				#{msg.msg.toLowerCase()}. Any unsaved progress will be lost.", "Invalid Login", true, true
-				stopHeartBeat()
-		else
-			if msg then _alert "Unfortunately your progress was not saved because
-			#{msg.toLowerCase()}", 'Hold on a sec', false, false
+		if ((msg != null ? msg.msg : undefined) != null) {
+			if (msg.halt != null) {
+				_alert(`Unfortunately, your progress was not saved because \
+${msg.msg.toLowerCase()}. Any unsaved progress will be lost.`, "Invalid Login", true, true);
+				return stopHeartBeat();
+			}
+		} else {
+			if (msg) { return _alert(`Unfortunately your progress was not saved because \
+${msg.toLowerCase()}`, 'Hold on a sec', false, false); }
+		}
+	};
 
-	setHeight = (h) ->
-		$('#container').height h
+	var setHeight = h => $('#container').height(h);
 
-	_alert = (msg, title= null, fatal = false, enableLoginButton = false) ->
-		$scope.$apply ->
-			$scope.alert.msg = msg
-			$scope.alert.title = title if title isnt null
-			$scope.alert.fatal = fatal
-			$scope.alert.enableLoginButton = enableLoginButton
+	var _alert = function(msg, title= null, fatal, enableLoginButton) {
+		if (fatal == null) { fatal = false; }
+		if (enableLoginButton == null) { enableLoginButton = false; }
+		return $scope.$apply(function() {
+			$scope.alert.msg = msg;
+			if (title !== null) { $scope.alert.title = title; }
+			$scope.alert.fatal = fatal;
+			return $scope.alert.enableLoginButton = enableLoginButton;
+		});
+	};
 
-	# Exposed to the window object so that popups and frames can use this public functions
-	Namespace("Materia").Creator =
-		# Exposed to the question importer screen
-		onQuestionImportComplete: (questions) ->
-			hideEmbedDialog()
-			return if !questions
-			# assumes questions is already a JSON string
-			questions = JSON.parse questions
-			sendToCreator 'onQuestionImportComplete', [questions]
+	// Exposed to the window object so that popups and frames can use this public functions
+	Namespace("Materia").Creator = {
+		// Exposed to the question importer screen
+		onQuestionImportComplete(questions) {
+			hideEmbedDialog();
+			if (!questions) { return; }
+			// assumes questions is already a JSON string
+			questions = JSON.parse(questions);
+			return sendToCreator('onQuestionImportComplete', [questions]);
+		},
 
-		# Exposed to the media importer screen
-		onMediaImportComplete: (media) ->
-			hideEmbedDialog()
+		// Exposed to the media importer screen
+		onMediaImportComplete(media) {
+			hideEmbedDialog();
 
-			if media != null
-				# convert the sparce array that was converted into an object back to an array (ie9, you SUCK)
-				anArray = []
-				for element in media
-					anArray.push element
-				sendToCreator 'onMediaImportComplete', [anArray]
+			if (media !== null) {
+				// convert the sparce array that was converted into an object back to an array (ie9, you SUCK)
+				const anArray = [];
+				for (let element of Array.from(media)) {
+					anArray.push(element);
+				}
+				return sendToCreator('onMediaImportComplete', [anArray]);
+			}
+		}
+	};
 
-	# synchronise the asynchronous events
-	if inst_id?
-		getQset().then ->
-			if !$scope.invalid
-				$.when(widgetSrv.getWidget(inst_id))
+	// synchronise the asynchronous events
+	if (inst_id != null) {
+		return getQset().then(function() {
+			if (!$scope.invalid) {
+				return $.when(widgetSrv.getWidget(inst_id))
 					.pipe(embed)
 					.pipe(initCreator)
 					.pipe(showButtons)
 					.pipe(startHeartBeat)
-					.fail(onInitFail)
-	else
-		$.when(getWidgetInfo())
+					.fail(onInitFail);
+			}
+		});
+	} else {
+		return $.when(getWidgetInfo())
 			.pipe(embed)
 			.pipe(initCreator)
 			.pipe(showButtons)
 			.pipe(startHeartBeat)
-			.fail(onInitFail)
+			.fail(onInitFail);
+	}
+});

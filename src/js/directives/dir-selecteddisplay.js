@@ -1,11 +1,18 @@
-'use strict'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+'use strict';
 
-app = angular.module 'materia'
-app.directive 'selectedDisplay', (selectedWidgetSrv) -> # is $compile required?
-	# are these required?
-	# count = null
-	# widgetId = null
-	# instId  = null
+const app = angular.module('materia');
+app.directive('selectedDisplay', function(selectedWidgetSrv) { // is $compile required?
+	// are these required?
+	// count = null
+	// widgetId = null
+	// instId  = null
 
-	link = ($scope, $element, $attrs) ->
+	let link;
+	return link = function($scope, $element, $attrs) {};
+});
 		

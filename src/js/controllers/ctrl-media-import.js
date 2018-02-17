@@ -1,408 +1,484 @@
-app = angular.module 'materia'
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS203: Remove `|| {}` from converted for-own loops
+ * DS206: Consider reworking classes to avoid initClass
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const app = angular.module('materia');
 
-app.directive 'fileOnChange', ->
-	return {
+app.directive('fileOnChange', () =>
+	({
 		restrict: 'A',
-		link: (scope, element, attrs) ->
-			onChangeHandler = scope.$eval(attrs.fileOnChange)
-			element.bind 'change', onChangeHandler
-			element.bind 'drop', onChangeHandler
-	}
+		link(scope, element, attrs) {
+			const onChangeHandler = scope.$eval(attrs.fileOnChange);
+			element.bind('change', onChangeHandler);
+			return element.bind('drop', onChangeHandler);
+		}
+	})
+);
 
-app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) ->
-	selectedAssets  = []
-	data            = []
-	assetIndices    = []
-	dt              = null
-	uploading       = false
-	creator         = null
-	_coms           = null
-	_s3enabled      = S3_ENABLED # explicitly localize globals
-	_mediaUploadUrl = MEDIA_UPLOAD_URL
-	_mediaUrl       = MEDIA_URL
-	_baseUrl        = BASE_URL
+app.controller('mediaImportCtrl', function($scope, $sce, $timeout, $window, $document) {
+	let selectedAssets  = [];
+	let data            = [];
+	let assetIndices    = [];
+	let dt              = null;
+	const uploading       = false;
+	const creator         = null;
+	let _coms           = null;
+	const _s3enabled      = S3_ENABLED; // explicitly localize globals
+	const _mediaUploadUrl = MEDIA_UPLOAD_URL;
+	const _mediaUrl       = MEDIA_URL;
+	const _baseUrl        = BASE_URL;
 
-	class Uploader
-		constructor: (@config) ->
+	var Uploader = (function() {
+		let $dropArea = undefined;
+		Uploader = class Uploader {
+			static initClass() {
+	
+				$dropArea = $('.drag-wrapper');
+	
+				$dropArea.on('drag dragstart dragend dragover dragenter dragleave drop', e=> e.preventDefault()).on('dragover dragenter', ()=> $dropArea.addClass('drag-is-dragover')).on('dragleave dragend drop', ()=> $dropArea.removeClass('drag-is-dragover'));
+			}
+			constructor(config1) {
+				this.onFileChange = this.onFileChange.bind(this);
+				this.config = config1;
+			}
 
-		# when file is selected in browser
-		onFileChange: (event) =>
-			#accounts for drag'n'drop
-			fileList = event.target.files
-			if !fileList?[0]?
-				fileList = event.dataTransfer.files
-			# just picks the first selected image
-			if fileList?[0]?
-				@getFileData fileList[0], (fileData) =>
-					if fileData?
+			// when file is selected in browser
+			onFileChange(event) {
+				//accounts for drag'n'drop
+				let fileList = event.target.files;
+				if (((fileList != null ? fileList[0] : undefined) == null)) {
+					fileList = event.dataTransfer.files;
+				}
+				// just picks the first selected image
+				if ((fileList != null ? fileList[0] : undefined) != null) {
+					return this.getFileData(fileList[0], fileData => {
+						if (fileData != null) {
 
-						# if s3 is enabled, get keys and then upload, o/w just upload
-						if @config.s3enabled
-							_coms.send 'upload_keys_get', [fileData.name, fileData.size], (keyData) =>
-								@upload fileData, keyData if keyData
-						else
-							@upload fileData
+							// if s3 is enabled, get keys and then upload, o/w just upload
+							if (this.config.s3enabled) {
+								return _coms.send('upload_keys_get', [fileData.name, fileData.size], keyData => {
+									if (keyData) { return this.upload(fileData, keyData); }
+								});
+							} else {
+								return this.upload(fileData);
+							}
+						}
+					});
+				}
+			}
 
-		$dropArea = $('.drag-wrapper')
+			// get the data of the image
+			getFileData(file, callback) {
+				const dataReader = new FileReader;
 
-		$dropArea.on 'drag dragstart dragend dragover dragenter dragleave drop', (e)->
-			e.preventDefault()
-		.on 'dragover dragenter', ()->
-			$dropArea.addClass 'drag-is-dragover'
-		.on 'dragleave dragend drop', ()->
-			$dropArea.removeClass 'drag-is-dragover'
+				// File size is measured in bytes
+				if (file.size > 60000000) {
+					alert(`The file being uploaded has a size greater than 60MB. Please choose a file that \
+is no greater than 60MB.`
+					);
+					return null;
+				}
 
-		# get the data of the image
-		getFileData: (file, callback) ->
-			dataReader = new FileReader
+				dataReader.onload = event => {
+					const src = event.target.result;
+					const mime = this.getMimeType(src);
+					if ((mime == null)) { return null; }
+					const fileData = {
+						name: file.name,
+						mime,
+						ext:  file.name.split('.').pop(),
+						size: file.size,
+						src
+					};
 
-			# File size is measured in bytes
-			if file.size > 60000000
-				alert "The file being uploaded has a size greater than 60MB. Please choose a file that
-				is no greater than 60MB."
-				return null
+					return callback(fileData);
+				};
 
-			dataReader.onload = (event) =>
-				src = event.target.result
-				mime = @getMimeType(src)
-				return null if !mime?
-				fileData =
-					name: file.name
-					mime: mime
-					ext:  file.name.split('.').pop()
-					size: file.size
-					src:  src
+				return dataReader.readAsDataURL(file);
+			}
 
-				callback fileData
+			getMimeType(dataUrl){
+				const mime = dataUrl.split(";")[0].split(":")[1];
 
-			dataReader.readAsDataURL file
+				// used to see if the file type is allowed
+				const fileExtension = (mime == null) ? null : mime.split("/")[1];
 
-		getMimeType: (dataUrl)->
-			mime = dataUrl.split(";")[0].split(":")[1]
+				if ((fileExtension == null) || ($scope.fileType.indexOf(fileExtension) === -1)) {
+					alert(`This widget does not support selected file type is not supported. \
+The allowed types are: ${$scope.fileType.join(', ')}.`
+					);
+					return null;
+				}
 
-			# used to see if the file type is allowed
-			fileExtension = if !mime? then null else mime.split("/")[1]
+				return mime;
+			}
 
-			if !fileExtension? or $scope.fileType.indexOf(fileExtension) == -1
-				alert "This widget does not support selected file type is not supported.
-				The allowed types are: #{$scope.fileType.join(', ')}."
-				return null
+			// converts image data uri to a blob for uploading
+			dataURItoBlob(dataURI, mime)  {
+				// convert base64/URLEncoded data component to raw binary data held in a string
+				let byteString;
+				const dataParts = dataURI.split(',');
+				if (dataParts[0].indexOf('base64') >= 0) {
+					byteString = atob(dataParts[1]);
+				} else {
+					byteString = unescape(dataParts[1]);
+				}
 
-			return mime
+				const intArray = new Uint8Array(byteString.length);
+				for (let i in byteString) {
+					intArray[i] = byteString.charCodeAt(i);
+				}
+				return new Blob([intArray], {type: mime});
+			}
 
-		# converts image data uri to a blob for uploading
-		dataURItoBlob: (dataURI, mime)  ->
-			# convert base64/URLEncoded data component to raw binary data held in a string
-			dataParts = dataURI.split(',')
-			if dataParts[0].indexOf('base64') >= 0
-				byteString = atob(dataParts[1])
-			else
-				byteString = unescape(dataParts[1])
+			// upload to either local server or s3
+			upload(fileData, keyData) {
+				const fd = new FormData();
 
-			intArray = new Uint8Array(byteString.length)
-			for i of byteString
-				intArray[i] = byteString.charCodeAt(i)
-			return new Blob([intArray], {type: mime})
+				// for s3 uploading
+				if (keyData != null) {
+					// Normalize jpeg extension
+					const splitFileKey = keyData.file_key.split('.');
+					splitFileKey[1] = splitFileKey[1].toUpperCase() === 'JPG' ? 'jpeg' : splitFileKey[1];
+					keyData.file_key = splitFileKey.join('.');
 
-		# upload to either local server or s3
-		upload: (fileData, keyData) ->
-			fd = new FormData()
+					fd.append("key", keyData.file_key);
+					fd.append("acl", 'public-read');
+					fd.append("Policy", keyData.policy);
+					fd.append("Signature", keyData.signature);
+					fd.append("AWSAccessKeyId", keyData.AWSAccessKeyId);
+				} else {
+					fd.append("name", fileData.name);
+				}
 
-			# for s3 uploading
-			if keyData?
-				# Normalize jpeg extension
-				splitFileKey = keyData.file_key.split('.')
-				splitFileKey[1] = if splitFileKey[1].toUpperCase() == 'JPG' then 'jpeg' else splitFileKey[1]
-				keyData.file_key = splitFileKey.join('.')
+				fd.append("Content-Type", fileData.mime);
+				fd.append("success_action_status", '201');
+				fd.append("file", this.dataURItoBlob(fileData.src, fileData.mime), fileData.name);
 
-				fd.append("key", keyData.file_key)
-				fd.append("acl", 'public-read')
-				fd.append("Policy", keyData.policy)
-				fd.append("Signature", keyData.signature)
-				fd.append("AWSAccessKeyId", keyData.AWSAccessKeyId)
-			else
-				fd.append("name", fileData.name)
+				const request = new XMLHttpRequest();
 
-			fd.append("Content-Type", fileData.mime)
-			fd.append("success_action_status", '201')
-			fd.append("file", @dataURItoBlob(fileData.src, fileData.mime), fileData.name)
+				request.onload = oEvent => {
+					if (keyData != null) { // s3 upload
+						const success = (request.status === 200) || (request.status === 201);
 
-			request = new XMLHttpRequest()
+						if(!success) {
+							// Parse the Error message received from amazonaws
+							const parser = new DOMParser();
+							const doc = parser.parseFromString(request.response, 'application/xml');
+							const upload_error = doc.getElementsByTagName("Error")[0].childNodes[1].innerHTML;
 
-			request.onload = (oEvent) =>
-				if keyData? # s3 upload
-					success = request.status == 200 or request.status == 201
+							this.saveUploadStatus(fileData.ext, keyData.file_key, success, upload_error);
+							alert("There was an issue uploading this asset to Materia - Please try again later.");
+							return null;
+						}
 
-					if(!success)
-						# Parse the Error message received from amazonaws
-						parser = new DOMParser()
-						doc = parser.parseFromString(request.response, 'application/xml')
-						upload_error = doc.getElementsByTagName("Error")[0].childNodes[1].innerHTML
+						// Checks to see if the images made it to the S3 bucket serving media
+						return this.verifyUpload(keyData, fileData);
+					} else { // local upload
+						const res = JSON.parse(request.response); //parse response string
+						if (res.error) {
+							alert(`Error code ${res.error.code}: ${res.error.message}`);
+							return $window.parent.Materia.Creator.onMediaImportComplete(null);
+						} else {
+							// reload media to select newly uploaded file
+							return loadAllMedia(res.id); // todo: wait, but why? for file info?
+						}
+					}
+				};
 
-						@saveUploadStatus fileData.ext, keyData.file_key, success, upload_error
-						alert "There was an issue uploading this asset to Materia - Please try again later."
-						return null
+				request.open("POST", this.config.uploadUrl);
+				return request.send(fd);
+			}
 
-					# Checks to see if the images made it to the S3 bucket serving media
-					@verifyUpload keyData, fileData
-				else # local upload
-					res = JSON.parse request.response #parse response string
-					if res.error
-						alert 'Error code '+res.error.code+': '+res.error.message
-						$window.parent.Materia.Creator.onMediaImportComplete null
-					else
-						# reload media to select newly uploaded file
-						loadAllMedia res.id # todo: wait, but why? for file info?
+			verifyUpload(keyData, fileData, attempt) {
+				let error;
+				if (attempt == null) { attempt = 0; }
+				if (attempt > 4) {
+					error = 'Error in the thumbnail generation lambda handler.';
+					alert("There was an issue uploading this asset to Materia - Please try again.");
+					this.saveUploadStatus(fileData.ext, keyData.file_key, false, error);
+					return;
+				}
 
-			request.open("POST", @config.uploadUrl)
-			request.send(fd)
+				const request_to_S3 = new XMLHttpRequest();
 
-		verifyUpload: (keyData, fileData, attempt = 0) ->
-			if attempt > 4
-				error = 'Error in the thumbnail generation lambda handler.'
-				alert "There was an issue uploading this asset to Materia - Please try again."
-				@saveUploadStatus fileData.ext, keyData.file_key, false, error
-				return
+				request_to_S3.onreadystatechange = () => {
+					if (request_to_S3.readyState === XMLHttpRequest.DONE) {
+						if ((request_to_S3.status === 200) || (request_to_S3.status === 201)) {
+							return this.saveUploadStatus(fileData.ext, keyData.file_key, true);
+						} else if (request_to_S3.status === 404) {
+							return this.verifyUpload(keyData, fileData, attempt + 1);
+						} else {
+							error = 'Error in the thumbnail generation lambda handler.';
+							alert("There was an issue uploading this asset to Materia - Please try again.");
+							this.saveUploadStatus(fileData.ext, keyData.file_key, false, error);
+							return;
+						}
+					}
+				};
 
-			request_to_S3 = new XMLHttpRequest()
+				request_to_S3.open('HEAD', this.config.mediaUrl+"/"+keyData.file_key);
 
-			request_to_S3.onreadystatechange = () =>
-				if request_to_S3.readyState == XMLHttpRequest.DONE
-					if request_to_S3.status == 200 or request_to_S3.status == 201
-						@saveUploadStatus fileData.ext, keyData.file_key, true
-					else if request_to_S3.status == 404
-						@verifyUpload keyData, fileData, attempt + 1
-					else
-						error = 'Error in the thumbnail generation lambda handler.'
-						alert "There was an issue uploading this asset to Materia - Please try again."
-						@saveUploadStatus fileData.ext, keyData.file_key, false, error
-						return
+				// Wait longer for each attempt to avoid too many HEAD requests
+				return setTimeout((function() {
+					request_to_S3.send();
+				}), attempt * 1000);
+			}
 
-			request_to_S3.open 'HEAD', @config.mediaUrl+"/"+keyData.file_key
+			saveUploadStatus(fileType, fileURI, s3_upload_success, error = null) {
+				const re = /\-(\w{5})\./;
+				const fileID = fileURI.match(re)[1]; // id is in first capture group
+				return _coms.send('upload_success_post', [fileID, s3_upload_success, error], function(update_success) {
+					if (s3_upload_success) {
+						const res = {
+							id: fileURI,
+							type: fileType
+						};
+						return $window.parent.Materia.Creator.onMediaImportComplete([res]);
+					}
+				});
+			}
+		};
+		Uploader.initClass();
+		return Uploader;
+	})();
 
-			# Wait longer for each attempt to avoid too many HEAD requests
-			setTimeout (->
-				request_to_S3.send()
-				return
-			), attempt * 1000
-
-		saveUploadStatus: (fileType, fileURI, s3_upload_success, error = null) ->
-			re = /\-(\w{5})\./
-			fileID = fileURI.match(re)[1] # id is in first capture group
-			_coms.send 'upload_success_post', [fileID, s3_upload_success, error], (update_success) ->
-				if s3_upload_success
-					res =
-						id: fileURI
-						type: fileType
-					$window.parent.Materia.Creator.onMediaImportComplete([res])
-
-	config =
-		s3enabled: _s3enabled
-		uploadUrl: _mediaUploadUrl
+	const config = {
+		s3enabled: _s3enabled,
+		uploadUrl: _mediaUploadUrl,
 		mediaUrl: _mediaUrl
-	uploader = new Uploader(config)
+	};
+	const uploader = new Uploader(config);
 
-	# SCOPE VARS
-	# ==========
-	$scope.fileType = location.hash.substring(1).split(',')
-	$scope.cols = ['Title','Type','Date'] # the column names used for sorting datatable
+	// SCOPE VARS
+	// ==========
+	$scope.fileType = location.hash.substring(1).split(',');
+	$scope.cols = ['Title','Type','Date']; // the column names used for sorting datatable
 
-	# this column data is passed to view to automate table header creation,
-	# without which datatables will fail to function
-	$scope.dt_cols = [#columns expected from result, index 0-5
+	// this column data is passed to view to automate table header creation,
+	// without which datatables will fail to function
+	$scope.dt_cols = [//columns expected from result, index 0-5
 		{ "data": "id"},
-		{ "data": "wholeObj" }, # stores copy of whole whole object as column for ui purposes
+		{ "data": "wholeObj" }, // stores copy of whole whole object as column for ui purposes
 		{ "data": "remote_url" },
 		{ "data": "title" },
 		{ "data": "type" },
 		{ "data": "file_size" },
 		{ "data": "created_at" }
-	]
+	];
 
-	$scope.uploadFile = uploader.onFileChange
+	$scope.uploadFile = uploader.onFileChange;
 
-	# load up the media objects, optionally pass file id to skip labeling that file
-	loadAllMedia = (file_id) ->
-		# clear the table
-		selectedAssets = []
-		assetIndices = []
-		data = []
-		modResult = []
+	// load up the media objects, optionally pass file id to skip labeling that file
+	var loadAllMedia = function(file_id) {
+		// clear the table
+		selectedAssets = [];
+		assetIndices = [];
+		data = [];
+		const modResult = [];
 
-		$('#question-table').dataTable().fnClearTable()
-		# determine the types from the url hash string
-		mediaTypes = getHash()
-		if mediaTypes
-			mediaTypes = mediaTypes.split(',')
+		$('#question-table').dataTable().fnClearTable();
+		// determine the types from the url hash string
+		let mediaTypes = getHash();
+		if (mediaTypes) {
+			mediaTypes = mediaTypes.split(',');
+		}
 
-		# load and/or select file for labelling
-		_coms.send 'assets_get', [], (result) ->
-			if result and result.msg is undefined and result.length > 0
-				data = result
-				$('#question-table').dataTable().fnClearTable()
-				# augment result for custom datatables ui
-				for res, index in result
-					if res.remote_url? and res.status != "upload_success" and res.status != "migrated_asset"
+		// load and/or select file for labelling
+		return _coms.send('assets_get', [], function(result) {
+			if (result && (result.msg === undefined) && (result.length > 0)) {
+				data = result;
+				$('#question-table').dataTable().fnClearTable();
+				// augment result for custom datatables ui
+				for (let index = 0; index < result.length; index++) {
+					const res = result[index];
+					if ((res.remote_url != null) && (res.status !== "upload_success") && (res.status !== "migrated_asset")) {
 						continue;
+					}
 
-					if res.type in $scope.fileType
-						# the id used for asset url is actually remote_url
-						# if it exists, use it instead
-						res.id = res.remote_url ? res.id
+					if (Array.from($scope.fileType).includes(res.type)) {
+						// the id used for asset url is actually remote_url
+						// if it exists, use it instead
+						res.id = res.remote_url != null ? res.remote_url : res.id;
 
-						# file uploaded - if this result's id matches, stop processing and select this asset now
-						if file_id? and res.id == file_id and res.type in $scope.fileType
-								$window.parent.Materia.Creator.onMediaImportComplete([res])
+						// file uploaded - if this result's id matches, stop processing and select this asset now
+						if ((file_id != null) && (res.id === file_id) && Array.from($scope.fileType).includes(res.type)) {
+								$window.parent.Materia.Creator.onMediaImportComplete([res]);
+							}
 
-						# make entire object (barring id) an attr to use as column in datatables
-						temp = {}
-						for own attr of res
-							if attr!="id"
-								temp[attr]=res[attr]
-						res['wholeObj'] = temp
-						#Store data table index in asset-specific array for use when user clicks asset in GUI
-						assetIndices.push(index)
-						modResult.push(res)
+						// make entire object (barring id) an attr to use as column in datatables
+						const temp = {};
+						for (let attr of Object.keys(res || {})) {
+							if (attr!=="id") {
+								temp[attr]=res[attr];
+							}
+						}
+						res['wholeObj'] = temp;
+						//Store data table index in asset-specific array for use when user clicks asset in GUI
+						assetIndices.push(index);
+						modResult.push(res);
+					}
+				}
 
-				# Only add to table if there are items to add
-				if modResult.length > 0
-					$('#question-table').dataTable().fnAddData(modResult)
+				// Only add to table if there are items to add
+				if (modResult.length > 0) {
+					return $('#question-table').dataTable().fnAddData(modResult);
+				}
+			}
+		});
+	};
 
-	getHash = ->
-		$window.location.hash.substring(1)
+	var getHash = () => $window.location.hash.substring(1);
 
-	# init
-	init = ->
+	// init
+	const init = function() {
 
-		$(document).on 'click', '#question-table tbody tr[role=row]', (e) ->
-			#get index of row in datatable and call onMediaImportComplete to exit
-			$(".row_selected").toggleClass('row_selected')
-			index = $('#question-table').dataTable().fnGetPosition(this)
-			#translates GUI's index of asset chosen to that of data table index
-			selectedAssets = [data[assetIndices[index]]]
-			$window.parent.Materia.Creator.onMediaImportComplete(selectedAssets)
+		$(document).on('click', '#question-table tbody tr[role=row]', function(e) {
+			//get index of row in datatable and call onMediaImportComplete to exit
+			$(".row_selected").toggleClass('row_selected');
+			const index = $('#question-table').dataTable().fnGetPosition(this);
+			//translates GUI's index of asset chosen to that of data table index
+			selectedAssets = [data[assetIndices[index]]];
+			return $window.parent.Materia.Creator.onMediaImportComplete(selectedAssets);
+		});
 
-		# todo: add cancel button
-		$('#close-button').click (e) ->
-			e.stopPropagation()
-			$window.parent.Materia.Creator.onMediaImportComplete(null)
+		// todo: add cancel button
+		$('#close-button').click(function(e) {
+			e.stopPropagation();
+			return $window.parent.Materia.Creator.onMediaImportComplete(null);
+		});
 
-		# sorting buttons found in sort bar
-		$('.dt-sorting').click (e) ->
-			el = $(this).next() #get neighbor
-			if el.hasClass('sort-asc') || el.hasClass('sort-desc')
-				el.toggleClass "sort-asc sort-desc"
-			else
-				el.addClass "sort-asc"
-				el.show()
+		// sorting buttons found in sort bar
+		$('.dt-sorting').click(function(e) {
+			const el = $(this).next(); //get neighbor
+			if (el.hasClass('sort-asc') || el.hasClass('sort-desc')) {
+				return el.toggleClass("sort-asc sort-desc");
+			} else {
+				el.addClass("sort-asc");
+				return el.show();
+			}
+		});
 
-		# on resize, re-fit the table size
-		$(window).resize ->
-			dt.fnAdjustColumnSizing()
+		// on resize, re-fit the table size
+		$(window).resize(() => dt.fnAdjustColumnSizing());
 
-		# setup the table
-		dt = $('#question-table').dataTable {
-			paginate: false # don't paginate
-			lengthChange: true # resize the fields
-			autoWidth: false #
-			processing: true # show processing dialog
-			scrollY: "inherit"  # setup to be a scrollable table
-			language:
-				search: '' # hide search label
-				infoFiltered: ''
-				info: ''
+		// setup the table
+		dt = $('#question-table').dataTable({
+			paginate: false, // don't paginate
+			lengthChange: true, // resize the fields
+			autoWidth: false, //
+			processing: true, // show processing dialog
+			scrollY: "inherit",  // setup to be a scrollable table
+			language: {
+				search: '', // hide search label
+				infoFiltered: '',
+				info: '',
 				infoEmpty: ''
-			# columns to display
-			columns: $scope.dt_cols #see global vars up top
-			# special sorting options
-			sorting: [[5, "desc"]] #sort by date by default
-			# item renderers
+			},
+			// columns to display
+			columns: $scope.dt_cols, //see global vars up top
+			// special sorting options
+			sorting: [[5, "desc"]], //sort by date by default
+			// item renderers
 			columnDefs: [
-				{# thumbnail column
-					render: (data, type, full, meta) ->
-						if full.type is 'jpg' or full.type is 'jpeg' or full.type is 'png' or full.type is 'gif'
-							# todo: poll, since we don't know when lambda resizing is finished
+				{// thumbnail column
+					render(data, type, full, meta) {
+						if ((full.type === 'jpg') || (full.type === 'jpeg') || (full.type === 'png') || (full.type === 'gif')) {
+							// todo: poll, since we don't know when lambda resizing is finished
 
-							thumbUrl = "#{_mediaUrl}/"
+							let thumbUrl = `${_mediaUrl}/`;
 
-							if _s3enabled
-								original_path_data = data.split('/')
+							if (_s3enabled) {
+								const original_path_data = data.split('/');
 
-								# separates filename and extension
-								image_key = original_path_data.pop().split(".")
+								// separates filename and extension
+								const image_key = original_path_data.pop().split(".");
 
-								extension = image_key.pop()
+								let extension = image_key.pop();
 
-								# Maintains a standard extension
-								if(extension == 'jpg')
-									extension = 'jpeg'
+								// Maintains a standard extension
+								if(extension === 'jpg') {
+									extension = 'jpeg';
+								}
 
-								# thumbnails in Materia are 75x75 dimensions
-								image_key.push('75x75'+'.'+extension)
-								original_path_data.push(image_key.join('-'))
+								// thumbnails in Materia are 75x75 dimensions
+								image_key.push(`75x75.${extension}`);
+								original_path_data.push(image_key.join('-'));
 
-								# creates final thumbnail path
-								thumbId = original_path_data.join("/")
-								thumbUrl += "#{thumbId}"
-							else
-								thumbUrl += "#{data}/thumbnail"
-							return "<img src='#{thumbUrl}'>"
-						else if full.type is 'mp3' or full.type is 'wav'
-							return '<img src="/img/audio.png">'
-						else
-							return ''
+								// creates final thumbnail path
+								const thumbId = original_path_data.join("/");
+								thumbUrl += `${thumbId}`;
+							} else {
+								thumbUrl += `${data}/thumbnail`;
+							}
+							return `<img src='${thumbUrl}'>`;
+						} else if ((full.type === 'mp3') || (full.type === 'wav')) {
+							return '<img src="/img/audio.png">';
+						} else {
+							return '';
+						}
+					},
 					searchable: false,
 					sortable: true,
 					targets: 0
 				},
-				{# custom ui column containing a nested table of asset details
-					render: (data, type, full, meta) ->
-						if full.type in $scope.fileType
-							sub_table = document.createElement "table"
-							sub_table.width = "100%"
-							sub_table.className = "sub-table"
+				{// custom ui column containing a nested table of asset details
+					render(data, type, full, meta) {
+						if (Array.from($scope.fileType).includes(full.type)) {
+							const sub_table = document.createElement("table");
+							sub_table.width = "100%";
+							sub_table.className = "sub-table";
 
-							row = sub_table.insertRow()
-							cell = row.insertCell()
+							const row = sub_table.insertRow();
+							let cell = row.insertCell();
 
-							temp = document.createElement "div"
-							temp.className = "subtable-title"
-							temp.innerHTML = data.title.split('.')[0]
-							cell.appendChild temp
+							let temp = document.createElement("div");
+							temp.className = "subtable-title";
+							temp.innerHTML = data.title.split('.')[0];
+							cell.appendChild(temp);
 
-							temp = document.createElement "div"
-							temp.className = "subtable-type subtable-gray"
-							temp.innerHTML = data.type
-							cell.appendChild temp
+							temp = document.createElement("div");
+							temp.className = "subtable-type subtable-gray";
+							temp.innerHTML = data.type;
+							cell.appendChild(temp);
 
-							cell = row.insertCell()
-							cell.className = "subtable-date subtable-gray"
-							d = new Date(data.created_at * 1000)
-							cell.innerHTML = (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear()
+							cell = row.insertCell();
+							cell.className = "subtable-date subtable-gray";
+							const d = new Date(data.created_at * 1000);
+							cell.innerHTML = (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear();
 
-							return sub_table.outerHTML
-						else
-							return ''
+							return sub_table.outerHTML;
+						} else {
+							return '';
+						}
+					},
 					searchable: false,
 					sortable: false,
 					targets: 1
 				},
-				{# remaining columns are searchable but hidden
+				{// remaining columns are searchable but hidden
 					visible: false,
 					sortable: true,
 					targets: [2,3,4,5]
 				}
 			]
-		}
+		});
 
-		# add sort listeners to custom sort elements in sort-bar on view
-		dt.fnSortListener $("#sort-#{col}"), (i+2) for col,i in $scope.cols
+		// add sort listeners to custom sort elements in sort-bar on view
+		for (let i = 0; i < $scope.cols.length; i++) { const col = $scope.cols[i]; dt.fnSortListener($(`#sort-${col}`), (i+2)); }
 
-		# add id for custom styling
-		$('#question-table_filter input').attr('id', 'search-box')
+		// add id for custom styling
+		$('#question-table_filter input').attr('id', 'search-box');
 
-		_coms = Materia.Coms.Json
-		_coms.setGateway(API_LINK)
-		loadAllMedia()
+		_coms = Materia.Coms.Json;
+		_coms.setGateway(API_LINK);
+		return loadAllMedia();
+	};
 
-	$timeout init
+	return $timeout(init);
+});
