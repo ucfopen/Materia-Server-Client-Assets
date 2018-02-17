@@ -1,207 +1,247 @@
-app = angular.module 'materia'
-app.service 'selectedWidgetSrv', ($rootScope, $q, OBJECT_TYPES) ->
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const app = angular.module('materia');
+app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 
-	STORAGE_TABLE_MAX_ROWS_SHOWN = 100
+	const STORAGE_TABLE_MAX_ROWS_SHOWN = 100;
 
-	selectedData = null
-	storageData = null
-	instId = null
+	const selectedData = null;
+	const storageData = null;
+	const instId = null;
 
-	# Refactored variables
-	_widget = null
-	_dateRanges = null
-	_scoreData = null
-	_storageData = null
+	// Refactored variables
+	let _widget = null;
+	let _dateRanges = null;
+	let _scoreData = null;
+	let _storageData = null;
 
-	# get and set _widget
-	set = (widget) ->
-		_scoreData = null
-		_storageData = null
-		_widget = widget
-		$rootScope.$broadcast 'selectedWidget.update'
+	// get and set _widget
+	const set = function(widget) {
+		_scoreData = null;
+		_storageData = null;
+		_widget = widget;
+		return $rootScope.$broadcast('selectedWidget.update');
+	};
 
-	get = ->
-		_widget
+	const get = () => _widget;
 
-	getSelectedId = ->
-		_widget.id
+	const getSelectedId = () => _widget.id;
 
-	getScoreSummaries = ->
-		deferred = $q.defer()
+	const getScoreSummaries = function() {
+		const deferred = $q.defer();
 
-		if _scoreData then deferred.resolve _scoreData
-		else
-			Materia.Coms.Json.send 'score_summary_get', [_widget.id, true], (data) ->
+		if (_scoreData) { deferred.resolve(_scoreData);
+		} else {
+			Materia.Coms.Json.send('score_summary_get', [_widget.id, true], function(data) {
 
-				_scoreData =
-					list: []
-					map: {}
+				_scoreData = {
+					list: [],
+					map: {},
 					last: undefined
+				};
 
-				if data isnt null and data.length > 0
-					o = {}
-					last = data[0].id
-					for d in data
-						o[d.id] = d
+				if ((data !== null) && (data.length > 0)) {
+					const o = {};
+					const last = data[0].id;
+					for (let d of Array.from(data)) {
+						o[d.id] = d;
+					}
 
-					_scoreData =
-						list: data
-						map: o
+					_scoreData = {
+						list: data,
+						map: o,
 						last: data[0]
+					};
+				}
 
-				deferred.resolve _scoreData
+				return deferred.resolve(_scoreData);
+			});
+		}
 
-		deferred.promise
+		return deferred.promise;
+	};
 
-	getUserPermissions = ->
-		deferred = $q.defer()
-		Materia.Coms.Json.send 'permissions_get', [OBJECT_TYPES.WIDGET_INSTANCE, _widget.id], (perms) ->
-			permsObject =
-				user : perms.user_perms
+	const getUserPermissions = function() {
+		const deferred = $q.defer();
+		Materia.Coms.Json.send('permissions_get', [OBJECT_TYPES.WIDGET_INSTANCE, _widget.id], function(perms) {
+			const permsObject = {
+				user : perms.user_perms,
 				widget: perms.widget_user_perms
+			};
 
-			deferred.resolve permsObject
+			return deferred.resolve(permsObject);
+		});
 
-		deferred.promise
+		return deferred.promise;
+	};
 
-	getPlayLogsForSemester = (term, year) ->
-		deferred = $q.defer()
+	const getPlayLogsForSemester = function(term, year) {
+		const deferred = $q.defer();
 
-		Materia.Coms.Json.send 'play_logs_get', [_widget.id, term, year], (logs) ->
+		Materia.Coms.Json.send('play_logs_get', [_widget.id, term, year], function(logs) {
 
-			semesterKey = "#{year}#{term.toLowerCase()}"
+			const semesterKey = `${year}${term.toLowerCase()}`;
 
-			logsForSemester = []
+			const logsForSemester = [];
 
-			angular.forEach logs, (log, key) ->
+			angular.forEach(logs, function(log, key) {
 
-				timestamp = log.time
-				logMeta = getSemesterFromTimestamp(timestamp)
-				semesterString = logMeta.year + logMeta.semester.toLowerCase()
+				const timestamp = log.time;
+				const logMeta = getSemesterFromTimestamp(timestamp);
+				const semesterString = logMeta.year + logMeta.semester.toLowerCase();
 
-				if semesterString == semesterKey
-					logsForSemester.push log
+				if (semesterString === semesterKey) {
+					return logsForSemester.push(log);
+				}
+			});
 
-			deferred.resolve logsForSemester
-		deferred.promise
+			return deferred.resolve(logsForSemester);
+		});
+		return deferred.promise;
+	};
 
-	getDateRanges = ->
-		deferred = $q.defer()
-		unless _dateRanges?
-			Materia.Coms.Json.send 'semester_date_ranges_get', [], (data) ->
-				_dateRanges = data
-				deferred.resolve data
-		else
-			deferred.resolve _dateRanges
-		deferred.promise
+	const getDateRanges = function() {
+		const deferred = $q.defer();
+		if (_dateRanges == null) {
+			Materia.Coms.Json.send('semester_date_ranges_get', [], function(data) {
+				_dateRanges = data;
+				return deferred.resolve(data);
+			});
+		} else {
+			deferred.resolve(_dateRanges);
+		}
+		return deferred.promise;
+	};
 
-	# getCurrentSemester = ->
-	# 	return selectedData.year + ' ' + selectedData.term
+	// getCurrentSemester = ->
+	// 	return selectedData.year + ' ' + selectedData.term
 
-	getSemesterFromTimestamp = (timestamp) ->
-		for range in _dateRanges
-			return range if timestamp >= parseInt(range.start, 10) && timestamp <= parseInt(range.end, 10)
-		return undefined
+	var getSemesterFromTimestamp = function(timestamp) {
+		for (let range of Array.from(_dateRanges)) {
+			if ((timestamp >= parseInt(range.start, 10)) && (timestamp <= parseInt(range.end, 10))) { return range; }
+		}
+		return undefined;
+	};
 
-	getStorageData = ->
+	const getStorageData = function() {
 
-		deferred = $q.defer()
+		const deferred = $q.defer();
 
-		if _storageData? then deferred.resolve _storageData
-		else
-			Materia.Coms.Json.send 'play_storage_get', [_widget.id], (data) ->
+		if (_storageData != null) { deferred.resolve(_storageData);
+		} else {
+			Materia.Coms.Json.send('play_storage_get', [_widget.id], function(data) {
 
-				_storageData = {}
+				_storageData = {};
 
-				temp = {}
+				const temp = {};
 
-				# process semester data and organize by table name
-				angular.forEach data, (tableData, tableName) ->
+				// process semester data and organize by table name
+				angular.forEach(data, (tableData, tableName) => temp[tableName] = processDataIntoSemesters(tableData));
 
-					temp[tableName] = processDataIntoSemesters tableData
+				// have to loop through each table present in the storage data
+				angular.forEach(temp, (semesters, tableName) =>
 
-				# have to loop through each table present in the storage data
-				angular.forEach temp, (semesters, tableName) ->
+					// have to loop through each semester contained within each table
+					angular.forEach(semesters, function(semesterData, semesterId) {
 
-					# have to loop through each semester contained within each table
-					angular.forEach semesters, (semesterData, semesterId) ->
+						if (typeof _storageData[semesterId] === 'undefined') {
+							_storageData[semesterId] = {};
+						}
 
-						if typeof _storageData[semesterId] == 'undefined'
-							_storageData[semesterId] = {}
+						if (semesterData.length > STORAGE_TABLE_MAX_ROWS_SHOWN) {
+							_storageData[semesterId][tableName] = {truncated:true, total:semesterData.length, data:semesterData.slice(0, STORAGE_TABLE_MAX_ROWS_SHOWN)};
+						} else {
+							_storageData[semesterId][tableName] = {truncated:false, data:semesterData};
+						}
 
-						if semesterData.length > STORAGE_TABLE_MAX_ROWS_SHOWN
-							_storageData[semesterId][tableName] = {truncated:true, total:semesterData.length, data:semesterData.slice(0, STORAGE_TABLE_MAX_ROWS_SHOWN)}
-						else
-							_storageData[semesterId][tableName] = {truncated:false, data:semesterData}
+						return _storageData[semesterId][tableName].data = normalizeStorageDataColumns(_storageData[semesterId][tableName].data);
+					})
+				);
 
-						_storageData[semesterId][tableName].data = normalizeStorageDataColumns _storageData[semesterId][tableName].data
+				return deferred.resolve(_storageData);
+			});
+		}
 
-				deferred.resolve _storageData
+		return deferred.promise;
+	};
 
-		deferred.promise
+	var processDataIntoSemesters = function(logs) {
+		const semesters = {};
+		let timestamp = null;
 
-	processDataIntoSemesters = (logs) ->
-		semesters = {}
-		timestamp = null
+		angular.forEach(logs, function(log, index) {
 
-		angular.forEach logs, (log, index) ->
+			timestamp = log.play.time;
+			const logMeta = getSemesterFromTimestamp(timestamp);
+			const semesterString = logMeta.year + ' ' + logMeta.semester.toLowerCase();
 
-			timestamp = log.play.time
-			logMeta = getSemesterFromTimestamp timestamp
-			semesterString = logMeta.year + ' ' + logMeta.semester.toLowerCase()
+			if (!semesters[semesterString]) {
+				semesters[semesterString] = [];
+			}
+			return semesters[semesterString].push(log);
+		});
 
-			unless semesters[semesterString]
-				semesters[semesterString] = []
-			semesters[semesterString].push log
+		return semesters;
+	};
 
-		semesters
+	//  storage data doesn't really enforce a schema.
+	//  this function determines every field used throughout the
+	//  storage data and then applies that schema to each item.
+	var normalizeStorageDataColumns = function(rows) {
+		//  go through all the rows and collect the fields used:
+		curRow;
+		const fields = {};
+		for (var r of Array.from(rows)) {
+			var curRow = r.data;
+			for (let j of Array.from(curRow)) {
+				if (typeof j === 'undefined') {
+					j = null;
+				}
+			}
+		}
 
-	#  storage data doesn't really enforce a schema.
-	#  this function determines every field used throughout the
-	#  storage data and then applies that schema to each item.
-	normalizeStorageDataColumns = (rows) ->
-		#  go through all the rows and collect the fields used:
-		curRow
-		fields = {}
-		for r in rows
-			curRow = r.data
-			for j in curRow
-				if typeof j == 'undefined'
-					j = null
+		//  now go through each row again and add in the missing fields
+		for (r of Array.from(rows)) {
+			r.data = $.extend({}, fields, r.data);
+		}
 
-		#  now go through each row again and add in the missing fields
-		for r in rows
-			r.data = $.extend({}, fields, r.data)
+		return rows;
+	};
 
-		rows
+	const getMaxRows = () => STORAGE_TABLE_MAX_ROWS_SHOWN;
 
-	getMaxRows = ->
-		STORAGE_TABLE_MAX_ROWS_SHOWN
+	const updateAvailability = function(attempts, open_at, close_at, guest_access, embedded_only) {
+		_widget.attempts = attempts;
+		_widget.open_at = open_at;
+		_widget.close_at = close_at;
+		_widget.guest_access = guest_access;
+		_widget.embedded_only = embedded_only;
 
-	updateAvailability = (attempts, open_at, close_at, guest_access, embedded_only) ->
-		_widget.attempts = attempts
-		_widget.open_at = open_at
-		_widget.close_at = close_at
-		_widget.guest_access = guest_access
-		_widget.embedded_only = embedded_only
+		if (_widget.student_access && !guest_access) { _widget.student_access = false; }
 
-		if _widget.student_access and not guest_access then _widget.student_access = false
+		return $rootScope.$broadcast('selectedWidget.update');
+	};
 
-		$rootScope.$broadcast 'selectedWidget.update'
+	const notifyAccessDenied = () => $rootScope.$broadcast('selectedWidget.notifyAccessDenied');
 
-	notifyAccessDenied = ->
-		$rootScope.$broadcast 'selectedWidget.notifyAccessDenied'
-
-	set : set
-	get : get
-	getSelectedId: getSelectedId
-	getScoreSummaries: getScoreSummaries
-	getUserPermissions: getUserPermissions
-	getPlayLogsForSemester: getPlayLogsForSemester
-	getDateRanges: getDateRanges
-	getSemesterFromTimestamp: getSemesterFromTimestamp
-	getStorageData: getStorageData
-	getMaxRows : getMaxRows
-	updateAvailability: updateAvailability
-	notifyAccessDenied: notifyAccessDenied
+	return {
+		set,
+		get,
+		getSelectedId,
+		getScoreSummaries,
+		getUserPermissions,
+		getPlayLogsForSemester,
+		getDateRanges,
+		getSemesterFromTimestamp,
+		getStorageData,
+		getMaxRows,
+		updateAvailability,
+		notifyAccessDenied
+	};
+});
 

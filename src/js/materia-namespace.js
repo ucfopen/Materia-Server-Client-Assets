@@ -1,9 +1,17 @@
-window.Namespace = (ns) ->
-	a = ns.split('.')
-	o = window
-	len = a.length
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS202: Simplify dynamic range loops
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+window.Namespace = function(ns) {
+	const a = ns.split('.');
+	let o = window;
+	const len = a.length;
 
-	for i in [0...len]
-		o[a[i]] = o[a[i]] || {}
-		o = o[a[i]]
-	o
+	for (let i = 0, end = len, asc = 0 <= end; asc ? i < end : i > end; asc ? i++ : i--) {
+		o[a[i]] = o[a[i]] || {};
+		o = o[a[i]];
+	}
+	return o;
+};
