@@ -1,12 +1,25 @@
-Namespace('Materia.Set').Throbber = do ->
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+Namespace('Materia.Set').Throbber = (function() {
 	
-	startSpin = (element, opts) ->
-		if $? and $(element).spin?
-			$(element).spin opts
+	const startSpin = function(element, opts) {
+		if ((typeof $ !== 'undefined' && $ !== null) && ($(element).spin != null)) {
+			return $(element).spin(opts);
+		}
+	};
 
-	stopSpin = (element) ->
-		if $? and $(element).spin?
-			$(element).spin false
+	const stopSpin = function(element) {
+		if ((typeof $ !== 'undefined' && $ !== null) && ($(element).spin != null)) {
+			return $(element).spin(false);
+		}
+	};
 
-	startSpin : startSpin
-	stopSpin : stopSpin
+	return {
+		startSpin,
+		stopSpin
+	};
+})();

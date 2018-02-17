@@ -1,24 +1,33 @@
-'use strict'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+'use strict';
 
-app = angular.module 'materia'
-app.directive 'scoreData', (selectedWidgetSrv, $window) ->
-	restrict: 'A',
-	link: ($scope, $element, $attrs) ->
+const app = angular.module('materia');
+app.directive('scoreData', (selectedWidgetSrv, $window) =>
+	({
+		restrict: 'A',
+		link($scope, $element, $attrs) {
 
-		if $attrs.hasStorage == "false" then return false
+			if ($attrs.hasStorage === "false") { return false; }
 
-		id = $attrs.id.split("_")[1]
-		widgetId = selectedWidgetSrv.getSelectedId()
-		semester = $attrs.semester
+			const id = $attrs.id.split("_")[1];
+			const widgetId = selectedWidgetSrv.getSelectedId();
+			const { semester } = $attrs;
 
-		storage = selectedWidgetSrv.getStorageData()
-		storage.then (data) ->
+			const storage = selectedWidgetSrv.getStorageData();
+			return storage.then(function(data) {
 
-			$scope.tables = data[semester]
-			$scope.MAX_ROWS = selectedWidgetSrv.getMaxRows()
+				$scope.tables = data[semester];
+				$scope.MAX_ROWS = selectedWidgetSrv.getMaxRows();
 
-			$scope.tableNames = []
+				$scope.tableNames = [];
 
-			$scope.tableNames.push(tableName) for tableName, tableData of $scope.tables
+				for (let tableName in $scope.tables) { const tableData = $scope.tables[tableName]; $scope.tableNames.push(tableName); }
 
-			$scope.selectedTable = $scope.tableNames[0]
+				return $scope.selectedTable = $scope.tableNames[0];});
+		}
+	})
+);

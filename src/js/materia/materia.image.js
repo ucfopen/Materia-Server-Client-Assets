@@ -1,18 +1,26 @@
-Namespace('Materia').Image = do ->
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+Namespace('Materia').Image = (function() {
 
-	iconUrl = (widgetDir, size) ->
-		if window.devicePixelRatio is 2
-			WIDGET_URL+widgetDir+'img/icon-'+size+'@2x.png'
-		else
-			WIDGET_URL+widgetDir+'img/icon-'+size+'.png'
+	const iconUrl = function(widgetDir, size) {
+		if (window.devicePixelRatio === 2) {
+			return WIDGET_URL+widgetDir+'img/icon-'+size+'@2x.png';
+		} else {
+			return WIDGET_URL+widgetDir+'img/icon-'+size+'.png';
+		}
+	};
 
-	screenshotUrl = (widgetDir, size) ->
-			WIDGET_URL+widgetDir+'img/screen-shots/'+size+'.png'
+	const screenshotUrl = (widgetDir, size) => WIDGET_URL+widgetDir+'img/screen-shots/'+size+'.png';
 
-	screenshotThumbUrl = (widgetDir, size) ->
-		WIDGET_URL+widgetDir+'img/screen-shots/'+size+'-thumb.png'
+	const screenshotThumbUrl = (widgetDir, size) => WIDGET_URL+widgetDir+'img/screen-shots/'+size+'-thumb.png';
 
 
-	iconUrl : iconUrl
-	screenshotUrl : screenshotUrl
-	screenshotThumbUrl : screenshotThumbUrl
+	return {
+		iconUrl,
+		screenshotUrl,
+		screenshotThumbUrl
+	};
+})();

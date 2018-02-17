@@ -1,49 +1,70 @@
-'use strict'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+'use strict';
 
-app = angular.module 'materia'
-app.directive 'beardable', ->
-	restrict: 'A',
-	controller: ($scope, $element, $attrs) ->
+const app = angular.module('materia');
+app.directive('beardable', () =>
+	({
+		restrict: 'A',
+		controller($scope, $element, $attrs) {
 
-		beardMode = window.localStorage.beardMode is "true"
-		konami = ''
+			let beardMode = window.localStorage.beardMode === "true";
+			let konami = '';
 
-		updateBeardCss = ->
-			hasBeardCss = document.getElementById('beard_css')?
-			if beardMode and not hasBeardCss
-				link = document.createElement "link"
-				link.id = "beard_css"
-				link.rel = "stylesheet"
-				link.href = "#{STATIC_CROSSDOMAIN}css/beard_mode.css"
-				document.head.appendChild link
-			else if hasBeardCss
-				css = document.getElementById('beard_css')
-				css.parentElement.removeChild css
+			const updateBeardCss = function() {
+				const hasBeardCss = (document.getElementById('beard_css') != null);
+				if (beardMode && !hasBeardCss) {
+					const link = document.createElement("link");
+					link.id = "beard_css";
+					link.rel = "stylesheet";
+					link.href = `${STATIC_CROSSDOMAIN}css/beard_mode.css`;
+					return document.head.appendChild(link);
+				} else if (hasBeardCss) {
+					const css = document.getElementById('beard_css');
+					return css.parentElement.removeChild(css);
+				}
+			};
 
-		konamiListener = (event) ->
-			switch event.which or event.keyCode
-				when 38
-					konami = '' if konami isnt 'u'
-					konami += 'u'
-				when 40
-					konami += 'd'
-				when 37
-					konami += 'l'
-				when 39
-					konami += 'r'
-				when 66
-					konami += 'b'
-				when 65
-					konami += 'a'
-				else
-					konami = ''
+			const konamiListener = function(event) {
+				switch (event.which || event.keyCode) {
+					case 38:
+						if (konami !== 'u') { konami = ''; }
+						konami += 'u';
+						break;
+					case 40:
+						konami += 'd';
+						break;
+					case 37:
+						konami += 'l';
+						break;
+					case 39:
+						konami += 'r';
+						break;
+					case 66:
+						konami += 'b';
+						break;
+					case 65:
+						konami += 'a';
+						break;
+					default:
+						konami = '';
+				}
 
-			if konami == 'uuddlrlrba'
-				beardMode = !beardMode
-				updateBeardCss()
+				if (konami === 'uuddlrlrba') {
+					beardMode = !beardMode;
+					updateBeardCss();
 
-				window.localStorage.beardMode = beardMode
+					return window.localStorage.beardMode = beardMode;
+				}
+			};
 
-		window.addEventListener "keydown", konamiListener
+			window.addEventListener("keydown", konamiListener);
 
-		updateBeardCss()
+			return updateBeardCss();
+		}
+	})
+);

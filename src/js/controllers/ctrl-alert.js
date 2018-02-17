@@ -1,13 +1,21 @@
-# Controller and accessory factory for Materia's modal alert dialog
-app = angular.module 'materia'
-app.controller 'alertCtrl', ($scope, Alert) ->
-	$scope.alert = Alert
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// Controller and accessory factory for Materia's modal alert dialog
+const app = angular.module('materia');
+app.controller('alertCtrl', function($scope, Alert) {
+	$scope.alert = Alert;
 	
-	$scope.reloadPage = ->
-		 window.location.reload();
+	return $scope.reloadPage = () => window.location.reload();
+});
 
-app.factory 'Alert', ->
-	title: ''
-	msg: ''
-	fatal: false
-	enableLoginButton: false
+app.factory('Alert', () =>
+	({
+		title: '',
+		msg: '',
+		fatal: false,
+		enableLoginButton: false
+	})
+);
