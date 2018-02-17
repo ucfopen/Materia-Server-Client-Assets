@@ -1,11 +1,16 @@
-# TODO: rip out redundant methods
-app = angular.module 'materia'
-app.service 'beardServ', () ->
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+// TODO: rip out redundant methods
+const app = angular.module('materia');
+app.service('beardServ', function() {
 
-	beards = ['dusty_full', 'black_chops', 'grey_gandalf', 'red_soul']
+	const beards = ['dusty_full', 'black_chops', 'grey_gandalf', 'red_soul'];
 
-	getRandomBeard = ->
-		beards[Math.floor(Math.random() * beards.length)]
+	const getRandomBeard = () => beards[Math.floor(Math.random() * beards.length)];
 
-	getRandomBeard:getRandomBeard
+	return {getRandomBeard};
+});
 

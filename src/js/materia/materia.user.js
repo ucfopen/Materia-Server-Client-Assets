@@ -1,13 +1,23 @@
-Namespace('Materia').User = do ->
-	currentUser = null
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+Namespace('Materia').User = (function() {
+	let currentUser = null;
 
-	getCurrentUser = (callback) ->
-		if currentUser?
-			callback(currentUser)
-		else
-			# if we are unable to retrieve it then we need to pull it from the server:
-			Materia.Coms.Json.send 'user_get', null, (user) ->
-				currentUser = user
-				callback(currentUser)
+	const getCurrentUser = function(callback) {
+		if (currentUser != null) {
+			return callback(currentUser);
+		} else {
+			// if we are unable to retrieve it then we need to pull it from the server:
+			return Materia.Coms.Json.send('user_get', null, function(user) {
+				currentUser = user;
+				return callback(currentUser);
+			});
+		}
+	};
 
-	getCurrentUser: getCurrentUser
+	return {getCurrentUser};
+})();

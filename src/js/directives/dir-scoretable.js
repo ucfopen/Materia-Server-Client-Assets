@@ -1,90 +1,117 @@
-'use strict'
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS205: Consider reworking code to avoid use of IIFEs
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+'use strict';
 
-app = angular.module 'materia'
-app.directive 'scoreTable', (selectedWidgetSrv, $window) ->
-	restrict: 'A',
-	link: ($scope, $element, $attrs) ->
+const app = angular.module('materia');
+app.directive('scoreTable', (selectedWidgetSrv, $window) =>
+	({
+		restrict: 'A',
+		link($scope, $element, $attrs) {
 
-		widgetId = selectedWidgetSrv.getSelectedId()
-		tableSort = 'desc'
-		$scope.users = {}
-		userCount = []
-		users = {}
-		masterUserList = {}
-		$scope.selectedUser = null
+			const widgetId = selectedWidgetSrv.getSelectedId();
+			const tableSort = 'desc';
+			$scope.users = {};
+			const userCount = [];
+			const users = {};
+			let masterUserList = {};
+			$scope.selectedUser = null;
 
-		term = $attrs.term
-		year = $attrs.year
+			let { term } = $attrs;
+			const { year } = $attrs;
 
-		logs = selectedWidgetSrv.getPlayLogsForSemester term, year
-		logs.then (data) ->
+			const logs = selectedWidgetSrv.getPlayLogsForSemester(term, year);
+			logs.then(function(data) {
 
-			# process play logs into records for each user
-			angular.forEach data, (log, index) ->
+				// process play logs into records for each user
+				angular.forEach(data, function(log, index) {
 
-				uid = log.user_id
-				name = if log.last then "#{log.last}, #{log.first}" else "Guests"
+					const uid = log.user_id;
+					const name = log.last ? `${log.last}, ${log.first}` : "Guests";
 
-				unless users[uid]?
-					users[uid] =
-						uid : uid
-						name: name
-						scores : {}
+					if (users[uid] == null) {
+						users[uid] = {
+							uid,
+							name,
+							scores : {}
+						};
+					}
 
-				# make the score percentage readable
-				percent = 0
-				if log.done == "1"
-					percent = parseFloat(log.perc).toFixed(2).replace('.00', '')
+					// make the score percentage readable
+					let percent = 0;
+					if (log.done === "1") {
+						percent = parseFloat(log.perc).toFixed(2).replace('.00', '');
+					}
 
-				# make the play duration readable
-				duration = 0
-				mins = (log.elapsed - log.elapsed % 60) / 60
-				secs = log.elapsed % 60
+					// make the play duration readable
+					let duration = 0;
+					const mins = (log.elapsed - (log.elapsed % 60)) / 60;
+					const secs = log.elapsed % 60;
 
-				if mins != 0 then duration =  "#{mins}m #{secs}s"
-				else duration = "#{secs}s"
+					if (mins !== 0) { duration =  `${mins}m ${secs}s`;
+					} else { duration = `${secs}s`; }
 
-				users[uid].scores[log.time.toString()] =
-					date : new Date(log.time*1000).toDateString()
-					percent : percent
-					elapsed : duration
-					complete : log.done
-					id: log.id
+					return users[uid].scores[log.time.toString()] = {
+						date : new Date(log.time*1000).toDateString(),
+						percent,
+						elapsed : duration,
+						complete : log.done,
+						id: log.id
+					};
+				});
 
-			$scope.users = users
-			masterUserList = users
+				$scope.users = users;
+				return masterUserList = users;
+			});
 
-		$scope.setSelectedUser = (id) ->
-			$scope.selectedUser = $scope.users[id]
+			$scope.setSelectedUser = id => $scope.selectedUser = $scope.users[id];
 
-		$scope.showScorePage = (scoreId) ->
-			$window.open  "#{BASE_URL}scores/#{widgetId}/#single-#{scoreId}"
-			return true
+			$scope.showScorePage = function(scoreId) {
+				$window.open(`${BASE_URL}scores/${widgetId}/#single-${scoreId}`);
+				return true;
+			};
 
-		$scope.searchStudentActivity = (query) ->
+			return $scope.searchStudentActivity = function(query) {
 
-			if query == "" then return $scope.users = masterUserList
-			$scope.selectedUser = null
+				if (query === "") { return $scope.users = masterUserList; }
+				$scope.selectedUser = null;
 
-			sanitized = query.toLowerCase().replace(/,/g, ' ')
-			hits = {}
-			misses = {}
-			terms = sanitized.split ' '
+				const sanitized = query.toLowerCase().replace(/,/g, ' ');
+				const hits = {};
+				const misses = {};
+				const terms = sanitized.split(' ');
 
-			angular.forEach masterUserList, (user, index) ->
-				match = false
+				angular.forEach(masterUserList, function(user, index) {
+					let match = false;
 
-				for term in terms
-					if user.name.toLowerCase().indexOf(term) > -1
-						match = true
-					else
-						match = false
-						break
+					return (() => {
+						const result = [];
+						for (term of Array.from(terms)) {
+							if (user.name.toLowerCase().indexOf(term) > -1) {
+								match = true;
+							} else {
+								match = false;
+								break;
+							}
 
-					if match
-						hits[user.uid] = user
-					else
-						misses[user.uid] = user
+							if (match) {
+								result.push(hits[user.uid] = user);
+							} else {
+								result.push(misses[user.uid] = user);
+							}
+						}
+						return result;
+					})();
+				});
 
-			$scope.users = hits
+				return $scope.users = hits;
+			};
+		}
+	})
+);
 

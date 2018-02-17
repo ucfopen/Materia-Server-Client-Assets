@@ -1,13 +1,19 @@
-Namespace('Materia.MyWidgets').Tasks = do ->
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+Namespace('Materia.MyWidgets').Tasks = (function() {
 
-	init = (gateway) ->
+	const init = function(gateway) {};
 
-	copyWidget = (inst_id, newName, callback) ->
-		Materia.Coms.Json.send 'widget_instance_copy', [inst_id, newName], callback
+	const copyWidget = (inst_id, newName, callback) => Materia.Coms.Json.send('widget_instance_copy', [inst_id, newName], callback);
 
-	deleteWidget = (inst_id, callback) ->
-		Materia.Coms.Json.send 'widget_instance_delete', [inst_id], callback
+	const deleteWidget = (inst_id, callback) => Materia.Coms.Json.send('widget_instance_delete', [inst_id], callback);
 
-	init : init
-	copyWidget : copyWidget
-	deleteWidget : deleteWidget
+	return {
+		init,
+		copyWidget,
+		deleteWidget
+	};
+})();

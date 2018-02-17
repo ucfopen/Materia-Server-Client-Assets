@@ -1,41 +1,55 @@
-app = angular.module 'materia'
-app.controller 'notificationCtrl', ($scope, $sce) ->
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * DS207: Consider shorter variations of null checks
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const app = angular.module('materia');
+app.controller('notificationCtrl', function($scope, $sce) {
 	$scope.values =
-		notifications: []
-	$scope.clicked = false
+		{notifications: []};
+	$scope.clicked = false;
 
-	Materia.Coms.Json.send 'notifications_get', null, (notifications) ->
-		$scope.values.notifications = notifications
-		$scope.$apply()
+	Materia.Coms.Json.send('notifications_get', null, function(notifications) {
+		$scope.values.notifications = notifications;
+		$scope.$apply();
 
-		# @TODO: replace with css animations?
-		$(document).on 'click', '.notice .close', (event) ->
-			event.preventDefault()
-			$('.notice').slideToggle(150)
+		// @TODO: replace with css animations?
+		$(document).on('click', '.notice .close', function(event) {
+			event.preventDefault();
+			return $('.notice').slideToggle(150);
+		});
 
-		return false
+		return false;
+	});
 
-	$scope.trust = (notification) ->
-		$sce.trustAsHtml(notification)
+	$scope.trust = notification => $sce.trustAsHtml(notification);
 
-	$scope.clickNotification = ->
-		if $scope.clicked
-			$('#notices').slideUp ->
-				$('#notifications_link').removeClass 'selected'
-				if ie8Browser?
-					$('#swfplaceholder').hide()
-					$('object').css 'visibility', 'visible'
-		else
-			$object = $('object')
-			if ie8Browser?
-				$('#swfplaceholder').show() if $('#swfplaceholder').length > 0
-				$object.css 'visibility', 'hidden'
-			$('#notifications_link').addClass 'selected'
-			$('#notifications_link').show()
-			$('#notices').children().fadeIn()
-			$('#notices').slideDown ->
-		$scope.clicked = !$scope.clicked
+	$scope.clickNotification = function() {
+		if ($scope.clicked) {
+			$('#notices').slideUp(function() {
+				$('#notifications_link').removeClass('selected');
+				if (typeof ie8Browser !== 'undefined' && ie8Browser !== null) {
+					$('#swfplaceholder').hide();
+					return $('object').css('visibility', 'visible');
+				}
+			});
+		} else {
+			const $object = $('object');
+			if (typeof ie8Browser !== 'undefined' && ie8Browser !== null) {
+				if ($('#swfplaceholder').length > 0) { $('#swfplaceholder').show(); }
+				$object.css('visibility', 'hidden');
+			}
+			$('#notifications_link').addClass('selected');
+			$('#notifications_link').show();
+			$('#notices').children().fadeIn();
+			$('#notices').slideDown(function() {});
+		}
+		return $scope.clicked = !$scope.clicked;
+	};
 
-	$scope.removeNotification = (index) ->
-		Materia.Coms.Json.send 'notification_delete', [$scope.values.notifications[index].id]
-		$scope.values.notifications.splice(index, 1)
+	return $scope.removeNotification = function(index) {
+		Materia.Coms.Json.send('notification_delete', [$scope.values.notifications[index].id]);
+		return $scope.values.notifications.splice(index, 1);
+	};
+});
