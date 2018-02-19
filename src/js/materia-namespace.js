@@ -1,19 +1,22 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS202: Simplify dynamic range loops
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
+// Creates a nested namespace on window (non-destructive)
+//
+// Namespace('Some.Nested').wohoo = 5
+// creates:
+// {
+// 	Some: {
+// 		Nested: {
+//			wohoo: 5
+// 		}
+// 	}
+// }
 window.Namespace = function(ns) {
-	const a = ns.split('.');
-	let o = window;
-	const len = a.length;
+	let namespaces = ns.split('.');
+	let w = window;
 
-	for (let i = 0, end = len, asc = 0 <= end; asc ? i < end : i > end; asc ? i++ : i--) {
-		o[a[i]] = o[a[i]] || {};
-		o = o[a[i]];
-	}
-	return o;
+	namespaces.forEach(namespace => {
+		w[namespace] = w[namespace] || {}
+		w = w[namespace] // recurse down
+	})
+
+	return w
 };
