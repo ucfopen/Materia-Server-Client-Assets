@@ -1,5 +1,3 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
 const app = angular.module('materia');
 
 app.constant('PLAYER', {
@@ -28,5 +26,4 @@ app.constant('ACCESS', {
 	COPY: 25,
 	FULL: 30,
 	SHARE: 35
-}
-);
+})

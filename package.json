@@ -1,12 +1,24 @@
 {
   "name": "materia-client-assets",
-  "version": "0.2.2-alpha1",
+  "version": "0.2.2-alpha2",
   "author": "University of Central Florida, Center for Distributed Learning",
   "homepage": "https://ucfopen.github.io/Materia-Docs",
   "scripts": {
     "build": "webpack -p",
     "build-watch": "webpack --watch",
-    "build-dev": "webpack"
+    "build-dev": "webpack",
+    "prettier:run": "prettier --write='src/**/*.js'",
+    "prettier:debug": "prettier --debug-check='src/**/*.js'",
+    "precommit": "lint-staged"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "semi": false,
+    "useTabs": true,
+    "singleQuote": true
+  },
+  "lint-staged": {
+    "src/**/*.js": ["yarn prettier:run", "git add"]
   },
   "dependencies": {
     "babel-core": "^6.26.0",
@@ -16,7 +28,10 @@
     "babel-preset-es2015": "^6.24.1",
     "css-loader": "^0.28.4",
     "extract-text-webpack-plugin": "^3.0.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^6.1.1",
     "node-sass": "^4.5.3",
+    "prettier": "^1.10.2",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.20.2",
     "webpack": "^3.11.0"
