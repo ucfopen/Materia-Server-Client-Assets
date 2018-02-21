@@ -4,6 +4,7 @@
   "author": "University of Central Florida, Center for Distributed Learning",
   "homepage": "https://github.com/ucfcdl/Materia",
   "scripts": {
+    "test": "jest --verbose",
     "build": "webpack -p",
     "build-watch": "webpack --watch",
     "build-dev": "webpack",
@@ -18,9 +19,26 @@
     "singleQuote": true
   },
   "lint-staged": {
-    "src/**/*.js": ["yarn prettier:run", "git add"]
+    "src/**/*.js": [
+      "yarn prettier:run",
+      "git add"
+    ]
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "./testSetup.js",
+    "collectCoverageFrom":["src/**/*.{js,jsx}"],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": -10
+      }
+    }
   },
   "dependencies": {
+    "angular": "1.3.0",
+    "angular-mocks": "1.3.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-angularjs-annotate": "^0.8.2",
@@ -29,6 +47,8 @@
     "css-loader": "^0.28.4",
     "extract-text-webpack-plugin": "^3.0.0",
     "husky": "^0.14.3",
+    "jest": "^22.3.0",
+    "jquery": "1.8.2",
     "lint-staged": "^6.1.1",
     "node-sass": "^4.5.3",
     "prettier": "^1.10.2",

@@ -1,12 +1,12 @@
 const app = angular.module('materia')
 app.service('dateTimeServ', function() {
-	const parseObjectToDateString = function(time) {
+	const parseObjectToDateString = time => {
 		const timeObj = new Date(time * 1000)
 		const year = String(timeObj.getFullYear())
 		return timeObj.getMonth() + 1 + '/' + timeObj.getDate() + '/' + year.substr(2)
 	}
 
-	const parseTime = function(time) {
+	const parseTime = time => {
 		const timeObj = new Date(time * 1000)
 		let amPm = 'am'
 		let hour = timeObj.getHours()
