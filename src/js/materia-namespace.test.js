@@ -1,6 +1,6 @@
 describe('Namespace', function() {
 	beforeEach(() => {
-		const Namespace = require('./materia-namespace')
+		require('./materia-namespace')
 	})
 
 	it('exists on window', function() {
