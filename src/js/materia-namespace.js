@@ -10,8 +10,8 @@
 // 	}
 // }
 window.Namespace = function(ns) {
-	let namespaces = ns.split('.');
-	let w = window;
+	let namespaces = ns.split('.')
+	let w = window
 
 	namespaces.forEach(namespace => {
 		w[namespace] = w[namespace] || {}
@@ -19,4 +19,4 @@ window.Namespace = function(ns) {
 	})
 
 	return w
-};
+}

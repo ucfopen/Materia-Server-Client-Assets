@@ -40,16 +40,15 @@ module.exports = {
       jsPath+'/directives/dir-date-validation.js',
       jsPath+'/directives/dir-fancybox.js',
       jsPath+'/directives/dir-ngenter.js',
-      jsPath+'/directives/dir-scoredata.js',
       jsPath+'/directives/dir-scoregraph.js',
-      jsPath+'/directives/dir-scoretable.js',
-      jsPath+'/directives/dir-selecteddisplay.js',
+      jsPath+'/directives/dir-scoretable.js'
     ],
     'js/author.js': [
       jsPath+'/materia-constants.js',
       jsPath+'/materia-namespace.js',
       jsPath+'/filters/filter-escape.js',
       jsPath+'/filters/filter-highlight.js',
+      jsPath+'/filters/filter-multiword.js',
       jsPath+'/services/srv-api.js',
       jsPath+'/services/srv-beard.js',
       jsPath+'/services/srv-datetime.js',
@@ -78,10 +77,8 @@ module.exports = {
       jsPath+'/directives/dir-date-validation.js',
       jsPath+'/directives/dir-fancybox.js',
       jsPath+'/directives/dir-ngenter.js',
-      jsPath+'/directives/dir-scoredata.js',
       jsPath+'/directives/dir-scoregraph.js',
-      jsPath+'/directives/dir-scoretable.js',
-      jsPath+'/directives/dir-selecteddisplay.js',
+      jsPath+'/directives/dir-scoretable.js'
     ],
     'js/materia.js':[
       jsPath+'/materia-namespace.js',

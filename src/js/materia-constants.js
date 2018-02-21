@@ -1,4 +1,4 @@
-const app = angular.module('materia');
+const app = angular.module('materia')
 
 app.constant('PLAYER', {
 	LOG_INTERVAL: 10000, // How often to send logs to the server
@@ -6,16 +6,14 @@ app.constant('PLAYER', {
 	RETRY_FAST: 1000,
 	RETRY_SLOW: 10000,
 	EMBED_TARGET: 'container'
-}
-); // id of the container to put the flash in
+})
 
 app.constant('OBJECT_TYPES', {
 	QUESTION: 1,
 	ASSET: 2,
 	WIDGET: 3,
 	WIDGET_INSTANCE: 4
-}
-);
+})
 
 app.constant('ACCESS', {
 	VISIBLE: 1,
