@@ -12,7 +12,6 @@ app.directive('datatable', function($compile, $timeout) {
 	return {
 		restrict: 'A',
 		link($scope, $element, $attrs) {
-			console.log('*****************************')
 			$timeout(() => $($element).DataTable())
 		}
 	}
