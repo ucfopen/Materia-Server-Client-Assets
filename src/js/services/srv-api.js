@@ -10,7 +10,6 @@ app.service('apiServ', () => {
 
 	var showErorr = data => {
 		if (data.title === 'Invalid Login') {
-			// redirect to login page
 			window.location = BASE_URL + 'login'
 		}
 	}
