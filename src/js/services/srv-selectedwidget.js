@@ -8,7 +8,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const app = angular.module('materia')
-app.service('selectedWidgetSrv', ($rootScope, $q, OBJECT_TYPES) => {
+app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 	const STORAGE_TABLE_MAX_ROWS_SHOWN = 100
 
 	const selectedData = null
@@ -162,7 +162,6 @@ app.service('selectedWidgetSrv', ($rootScope, $q, OBJECT_TYPES) => {
 						)
 					})
 				)
-
 				deferred.resolve(_storageData)
 			})
 		}
@@ -195,9 +194,9 @@ app.service('selectedWidgetSrv', ($rootScope, $q, OBJECT_TYPES) => {
 		//  go through all the rows and collect the fields used:
 		const fields = {}
 		for (var r of rows) {
-			for (let j of r.data) {
-				if (typeof j === 'undefined') {
-					j = null
+			for (let j in r.data) {
+				if (typeof r.data[j] === 'undefined') {
+					r.j = null
 				}
 			}
 		}
