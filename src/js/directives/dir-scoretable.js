@@ -8,112 +8,101 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-'use strict';
+'use strict'
 
-const app = angular.module('materia');
-app.directive('scoreTable', (selectedWidgetSrv, $window) =>
-	({
+const app = angular.module('materia')
+app.directive('scoreTable', function(selectedWidgetSrv, $window) {
+	return {
 		restrict: 'A',
 		link($scope, $element, $attrs) {
+			const widgetId = selectedWidgetSrv.getSelectedId()
+			const tableSort = 'desc'
+			const userCount = []
+			const users = {}
+			const { year } = $attrs
+			let { term } = $attrs
+			let masterUserList = {}
+			$scope.users = {}
+			$scope.selectedUser = null
 
-			const widgetId = selectedWidgetSrv.getSelectedId();
-			const tableSort = 'desc';
-			$scope.users = {};
-			const userCount = [];
-			const users = {};
-			let masterUserList = {};
-			$scope.selectedUser = null;
-
-			let { term } = $attrs;
-			const { year } = $attrs;
-
-			const logs = selectedWidgetSrv.getPlayLogsForSemester(term, year);
+			const logs = selectedWidgetSrv.getPlayLogsForSemester(term, year)
 			logs.then(function(data) {
-
 				// process play logs into records for each user
 				angular.forEach(data, function(log, index) {
-
-					const uid = log.user_id;
-					const name = log.last ? `${log.last}, ${log.first}` : "Guests";
+					const uid = log.user_id
+					const name = log.last ? `${log.last}, ${log.first}` : 'Guests'
 
 					if (users[uid] == null) {
 						users[uid] = {
 							uid,
 							name,
-							scores : {}
-						};
+							scores: {}
+						}
 					}
 
 					// make the score percentage readable
-					let percent = 0;
-					if (log.done === "1") {
-						percent = parseFloat(log.perc).toFixed(2).replace('.00', '');
+					let percent = 0
+					if (log.done === '1') {
+						percent = parseFloat(log.perc)
+							.toFixed(2)
+							.replace('.00', '')
 					}
 
 					// make the play duration readable
-					let duration = 0;
-					const mins = (log.elapsed - (log.elapsed % 60)) / 60;
-					const secs = log.elapsed % 60;
+					let duration = 0
+					const mins = (log.elapsed - log.elapsed % 60) / 60
+					const secs = log.elapsed % 60
 
-					if (mins !== 0) { duration =  `${mins}m ${secs}s`;
-					} else { duration = `${secs}s`; }
+					if (mins !== 0) {
+						duration = `${mins}m ${secs}s`
+					} else {
+						duration = `${secs}s`
+					}
 
-					return users[uid].scores[log.time.toString()] = {
-						date : new Date(log.time*1000).toDateString(),
+					return (users[uid].scores[log.time.toString()] = {
+						date: new Date(log.time * 1000).toDateString(),
 						percent,
-						elapsed : duration,
-						complete : log.done,
+						elapsed: duration,
+						complete: log.done,
 						id: log.id
-					};
-				});
+					})
+				})
 
-				$scope.users = users;
-				return masterUserList = users;
-			});
+				masterUserList = $scope.users = users
+			})
 
-			$scope.setSelectedUser = id => $scope.selectedUser = $scope.users[id];
+			$scope.setSelectedUser = id => {
+				$scope.selectedUser = $scope.users[id]
+			}
 
 			$scope.showScorePage = function(scoreId) {
-				$window.open(`${BASE_URL}scores/${widgetId}/#single-${scoreId}`);
-				return true;
-			};
+				$window.open(`${BASE_URL}scores/${widgetId}/#single-${scoreId}`)
+				return true
+			}
 
-			return $scope.searchStudentActivity = function(query) {
+			$scope.searchStudentActivity = function(query) {
+				if (query === '') {
+					$scope.users = masterUserList
+					return
+				}
 
-				if (query === "") { return $scope.users = masterUserList; }
-				$scope.selectedUser = null;
+				$scope.selectedUser = null
+				const sanitized = query.toLowerCase().replace(/,/g, ' ')
+				const hits = {}
+				const terms = sanitized.split(' ')
 
-				const sanitized = query.toLowerCase().replace(/,/g, ' ');
-				const hits = {};
-				const misses = {};
-				const terms = sanitized.split(' ');
-
-				angular.forEach(masterUserList, function(user, index) {
-					let match = false;
-
-					return (() => {
-						const result = [];
-						for (term of Array.from(terms)) {
-							if (user.name.toLowerCase().indexOf(term) > -1) {
-								match = true;
-							} else {
-								match = false;
-								break;
-							}
-
-							if (match) {
-								result.push(hits[user.uid] = user);
-							} else {
-								result.push(misses[user.uid] = user);
-							}
+				// loop over mast users to check if any search word matches the user name
+				angular.forEach(masterUserList, user => {
+					let name = user.name.toLowerCase()
+					terms.forEach(term => {
+						if (name.includes(term)) {
+							hits[user.uid] = user
 						}
-						return result;
-					})();
-				});
+					})
+				})
 
-				return $scope.users = hits;
-			};
+				$scope.users = hits
+			}
 		}
-	})
-);
-
+	}
+})
