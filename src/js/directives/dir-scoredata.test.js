@@ -38,4 +38,17 @@ describe('scoreData Directive', function() {
 		expect(_scope.tableNames).toMatchObject(['table1', 'table2'])
 		expect(_scope.selectedTable).toBe('table1')
 	})
+
+	it('is short circuited when there is no storage', function() {
+		let html = '<div score-data id="data_66" data-semester="2050 Summer" data-has-storage="false" >'
+		let element = angular.element(html)
+		let compiled = _compile(element)(_scope)
+		_scope.$digest()
+		_scope.$apply()
+
+		expect(_scope.tables).not.toBeDefined()
+		expect(_scope.MAX_ROWS).not.toBeDefined()
+		expect(_scope.tableNames).not.toBeDefined()
+		expect(_scope.selectedTable).not.toBeDefined()
+	})
 })
