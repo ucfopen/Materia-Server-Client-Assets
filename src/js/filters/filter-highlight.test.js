@@ -35,4 +35,12 @@ describe('hightlight filter', function() {
 
 		expect(_$sce.getTrustedHtml(filter(body, ''))).toBe(body)
 	})
+
+	it('should escape source text', () => {
+		let body = 'a <a href="">link</a> here'
+
+		expect(_$sce.getTrustedHtml(filter(body, ''))).toBe(
+			'a &lt;a href=&quot;&quot;&gt;link&lt;&#x2F;a&gt; here'
+		)
+	})
 })

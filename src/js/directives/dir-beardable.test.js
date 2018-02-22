@@ -9,7 +9,7 @@ describe('beardable Directive', function() {
 	global.STATIC_CROSSDOMAIN = 'static_domain'
 	global.window.localStorage = { beardMode: 'false' }
 
-	let keyEvent = code => {
+	let keyEvent = (code, unsetWhich = false) => {
 		var e = new Event('keydown')
 		e.keyCode = code
 		e.which = code
@@ -18,6 +18,7 @@ describe('beardable Directive', function() {
 		e.shiftKey = false
 		e.metaKey = false
 		e.bubbles = true
+		if (unsetWhich) delete e.which
 		return e
 	}
 
@@ -31,6 +32,11 @@ describe('beardable Directive', function() {
 			_scope = $rootScope.$new()
 			_timeout = $timeout
 		})
+	})
+
+	afterEach(() => {
+		let css = document.getElementById('beard_css')
+		if (css) css.parentElement.removeChild(css)
 	})
 
 	it('is disabled when beardmode is off and listens for keydown', function() {
@@ -74,7 +80,7 @@ describe('beardable Directive', function() {
 		expect(document.getElementById('beard_css')).not.toBeNull()
 	})
 
-	it.only('disables with the right key events are entered', function() {
+	it('disables with the right key events are entered', function() {
 		global.window.localStorage.beardMode = 'true'
 		let element = angular.element(html)
 		let compiled = _compile(element)(_scope)
@@ -112,11 +118,11 @@ describe('beardable Directive', function() {
 		window.dispatchEvent(keyEvent(39))
 		window.dispatchEvent(keyEvent(66))
 		window.dispatchEvent(keyEvent(66)) // this second a should cause the final b to reset
-		window.dispatchEvent(keyEvent(65))
+		window.dispatchEvent(keyEvent(10))
 		expect(document.getElementById('beard_css')).toBeNull()
 
 		// start over
-		window.dispatchEvent(keyEvent(38))
+		window.dispatchEvent(keyEvent(38, true))
 		window.dispatchEvent(keyEvent(38))
 		window.dispatchEvent(keyEvent(40))
 		window.dispatchEvent(keyEvent(40))
