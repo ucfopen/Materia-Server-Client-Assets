@@ -1,7 +1,12 @@
 Namespace('Materia.Coms').Json = (function() {
 	let _gatewayURL = null
 
-	const setGateway = newGateway => (_gatewayURL = newGateway)
+	const _showError = data => {
+		if (data.title === 'Invalid Login') {
+			// redirect to login page
+			return (window.location = BASE_URL + 'login')
+		}
+	}
 
 	// prepare the callback interrupt
 	const _resposeErrorChecker = (data, callback, ignoreError) => {
@@ -45,6 +50,8 @@ Namespace('Materia.Coms').Json = (function() {
 			})
 	}
 
+	const setGateway = newGateway => (_gatewayURL = newGateway)
+
 	// older api, calls callback AND returns a promise
 	const send = (method, args, callback, ignoreError) => {
 		// find a deferred object from angular or jquery
@@ -73,15 +80,16 @@ Namespace('Materia.Coms').Json = (function() {
 			args = []
 		}
 
-		let formData = new FormData()
-		formData.append('data', JSON.stringify(args))
-		// returns deferred
-		fetch(_gatewayURL + method + '/', {
+		let body = new FormData()
+		body.append('data', JSON.stringify(args))
+		let options = {
 			method: 'POST',
 			credentials: 'same-origin',
 			cache: 'no-cache',
-			body: formData
-		})
+			body
+		}
+		// returns deferred
+		fetch(_gatewayURL + method + '/')
 			.then(res => res.text())
 			.then(body => {
 				if (body) body = JSON.parse(body)
@@ -106,13 +114,6 @@ Namespace('Materia.Coms').Json = (function() {
 			dataObject = {}
 		}
 		_sendRequest('POST', url, JSON.stringify(dataObject), callback, ignoreError)
-	}
-
-	const _showError = data => {
-		if (data.title === 'Invalid Login') {
-			// redirect to login page
-			return (window.location = BASE_URL + 'login')
-		}
 	}
 
 	// return true if jsonResult is an error object
