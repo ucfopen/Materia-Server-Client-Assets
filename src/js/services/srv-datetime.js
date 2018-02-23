@@ -30,13 +30,15 @@ app.service('dateTimeServ', function() {
 		return `${hour}:${minute}${amPm}`
 	}
 
-	const fixTime = (time, servTime) => {
-		const timeToFix = new Date(time).getTime()
-		const serverDateFromPage = servTime
+	// manipulates time by the current user's timezone offset from the server
+	// @TODO: this seems all wrong.  Server times should be UTC and all we have to do
+	// is convert that to local and back to UTC when sending
+	const fixTime = (time, serverUTCDateFromPage) => {
+		let timeToFix = new Date(time).getTime()
 
 		// calculate client/server time difference
-		const now = new Date()
-		const clientUTCDate = new Date(
+		let now = new Date()
+		let clientUTCDate = new Date(
 			now.getUTCFullYear(),
 			now.getUTCMonth(),
 			now.getUTCDate(),
@@ -44,14 +46,13 @@ app.service('dateTimeServ', function() {
 			now.getUTCMinutes(),
 			now.getUTCSeconds()
 		)
-		const serverUTCDate = new Date(serverDateFromPage)
-		const clientUTCTimestamp = clientUTCDate.getTime()
-		const serverUTCTimestamp = serverUTCDate.getTime()
-		const offset = serverUTCTimestamp - clientUTCTimestamp
-
-		const newDate = new Date(timeToFix + offset)
-		const fullHour = newDate.getHours()
-		const shortHour = fullHour % 12 === 0 ? 12 : fullHour % 12
+		let serverUTCDate = new Date(serverUTCDateFromPage)
+		let clientUTCTimestamp = clientUTCDate.getTime()
+		let serverUTCTimestamp = serverUTCDate.getTime()
+		let offset = serverUTCTimestamp - clientUTCTimestamp
+		let newDate = new Date(timeToFix + offset)
+		let fullHour = newDate.getHours()
+		let shortHour = fullHour % 12 === 0 ? 12 : fullHour % 12
 		let fixedDateStr = shortHour + ':' + String(`00${newDate.getMinutes()}`).slice(-2)
 
 		if (fullHour > 11) {
