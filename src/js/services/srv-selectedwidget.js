@@ -1,12 +1,3 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const app = angular.module('materia')
 app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 	const STORAGE_TABLE_MAX_ROWS_SHOWN = 100
@@ -135,7 +126,7 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 				// process semester data and organize by table name
 				angular.forEach(
 					data,
-					(tableData, tableName) => (temp[tableName] = processDataIntoSemesters(tableData))
+					(tableData, tableName) => (temp[tableName] = _processDataIntoSemesters(tableData))
 				)
 
 				// have to loop through each table present in the storage data
@@ -156,7 +147,7 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 							_storageData[semesterId][tableName] = { truncated: false, data: semesterData }
 						}
 
-						_storageData[semesterId][tableName].data = normalizeStorageDataColumns(
+						_storageData[semesterId][tableName].data = _normalizeStorageDataColumns(
 							_storageData[semesterId][tableName].data
 						)
 					})
@@ -168,7 +159,7 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		return deferred.promise
 	}
 
-	var processDataIntoSemesters = logs => {
+	var _processDataIntoSemesters = logs => {
 		const semesters = {}
 		let timestamp = null
 
@@ -189,7 +180,7 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 	//  storage data doesn't really enforce a schema.
 	//  this function determines every field used throughout the
 	//  storage data and then applies that schema to each item.
-	var normalizeStorageDataColumns = rows => {
+	var _normalizeStorageDataColumns = rows => {
 		//  go through all the rows and collect the fields used:
 		const fields = {}
 		for (var r of rows) {
