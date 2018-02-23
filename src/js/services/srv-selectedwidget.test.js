@@ -3,15 +3,17 @@ describe('selectedWidgetSrv', function() {
 	var _compile
 	var _scope
 	var sendMock
+	var _q
 
 	beforeEach(() => {
 		require('../materia-namespace')
 		require('../materia-constants')
 		require('./srv-selectedwidget')
 
-		inject(function($rootScope, selectedWidgetSrv) {
+		inject(function($rootScope, selectedWidgetSrv, $q) {
 			_scope = $rootScope
 			_service = selectedWidgetSrv
+			_q = $q
 		})
 
 		Namespace('Materia.Coms.Json').send = sendMock = jest.fn()
@@ -39,7 +41,6 @@ describe('selectedWidgetSrv', function() {
 	})
 
 	it('getSelectedId gets the widget id', function() {
-		// expect(_service.getSelectedId()).toBeNull()
 		_service.set({ id: 1 })
 		expect(_service.getSelectedId()).toBe(1)
 		_service.set({ id: 4 })
@@ -47,9 +48,43 @@ describe('selectedWidgetSrv', function() {
 	})
 
 	it('getScoreSummaries to call api', function() {
-		// expect(_service.getSelectedId()).toBeNull()
 		_service.set({ id: 5 })
 		_service.getScoreSummaries()
 		expect(sendMock).toHaveBeenCalledWith('score_summary_get', [5, true], expect.anything())
+	})
+
+	it('getScoreSummaries to return an angular promise', function() {
+		_service.set({ id: 5 })
+		expect(_service.getScoreSummaries()).toHaveProperty('$$state')
+	})
+
+	it.only('getScoreSummaries to process api results and caches them', function() {
+		_service.set({ id: 5 })
+		let promise = _service.getScoreSummaries()
+		let promiseSpy = jest.fn()
+		promise.then(promiseSpy)
+
+		// execute coms callback
+		let data = [{ id: 5 }, { id: 9 }]
+		sendMock.mock.calls[0][2](data)
+		_scope.$digest()
+
+		expect(sendMock).toHaveBeenCalledTimes(1)
+		expect(promiseSpy).toHaveBeenCalledWith({
+			last: { id: 5 },
+			list: [{ id: 5 }, { id: 9 }],
+			map: { '5': { id: 5 }, '9': { id: 9 } }
+		})
+
+		let promiseSpy2 = jest.fn()
+		promise = _service.getScoreSummaries()
+		promise.then(promiseSpy2)
+		_scope.$digest()
+		expect(sendMock).toHaveBeenCalledTimes(1)
+		expect(promiseSpy2).toHaveBeenCalledWith({
+			last: { id: 5 },
+			list: [{ id: 5 }, { id: 9 }],
+			map: { '5': { id: 5 }, '9': { id: 9 } }
+		})
 	})
 })
