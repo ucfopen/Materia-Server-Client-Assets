@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.service('apiServ', () => {
+app.service('apiServ', function($window) {
 	const gatewayURL = API_LINK
 
 	const filterError = data => {
@@ -10,7 +10,7 @@ app.service('apiServ', () => {
 
 	var showErorr = data => {
 		if (data.title === 'Invalid Login') {
-			window.location = BASE_URL + 'login'
+			$window.location = BASE_URL + 'login'
 		}
 	}
 
