@@ -18,9 +18,30 @@ glob.sync(path.join(cssPath, '*.scss')).forEach(function(file){
 module.exports = {
   stats: {children: false}, // reduce noising webpack print output
   entry: Object.assign(css, {
+    'js/materia.js':[
+      "core-js/library/es6/array",
+      "core-js/library/es6/promise",
+      "whatwg-fetch",
+      jsPath+'/materia-namespace.js',
+      jsPath+'/materia/materia.coms.json.js',
+      jsPath+'/materia/materia.creatorcore.js',
+      jsPath+'/materia/materia.enginecore.js',
+      jsPath+'/materia/materia.flashcheck.js',
+      jsPath+'/materia/materia.image.js',
+      jsPath+'/materia/materia.mywidgets.statistics.js',
+      jsPath+'/materia/materia.mywidgets.tasks.js',
+      jsPath+'/materia/materia.page.default.js',
+      jsPath+'/materia/materia.score.js',
+      jsPath+'/materia/materia.scores.scoregraphics.js',
+      jsPath+'/materia/materia.set.throbber.js',
+      jsPath+'/materia/materia.store.slideshow.js',
+      jsPath+'/materia/materia.user.js',
+      jsPath+'/materia/materia.util.js',
+      jsPath+'/materia/materia.validate.textfield.js',
+      jsPath+'/controllers/ctrl-alert.js',
+    ],
     'js/student.js': [
       jsPath+'/materia-constants.js',
-      jsPath+'/materia-namespace.js',
       jsPath+'/services/srv-user.js',
       jsPath+'/services/srv-api.js',
       jsPath+'/services/srv-datetime.js',
@@ -45,7 +66,6 @@ module.exports = {
     ],
     'js/author.js': [
       jsPath+'/materia-constants.js',
-      jsPath+'/materia-namespace.js',
       jsPath+'/filters/filter-escape.js',
       jsPath+'/filters/filter-highlight.js',
       jsPath+'/filters/filter-multiword.js',
@@ -80,39 +100,11 @@ module.exports = {
       jsPath+'/directives/dir-scoregraph.js',
       jsPath+'/directives/dir-scoretable.js'
     ],
-    'js/materia.js':[
-      jsPath+'/materia-namespace.js',
-      jsPath+'/materia/materia.coms.json.js',
-      jsPath+'/materia/materia.creatorcore.js',
-      jsPath+'/materia/materia.enginecore.js',
-      jsPath+'/materia/materia.flashcheck.js',
-      jsPath+'/materia/materia.image.js',
-      jsPath+'/materia/materia.mywidgets.statistics.js',
-      jsPath+'/materia/materia.mywidgets.tasks.js',
-      jsPath+'/materia/materia.page.default.js',
-      jsPath+'/materia/materia.score.js',
-      jsPath+'/materia/materia.scores.scoregraphics.js',
-      jsPath+'/materia/materia.set.throbber.js',
-      jsPath+'/materia/materia.store.slideshow.js',
-      jsPath+'/materia/materia.user.js',
-      jsPath+'/materia/materia.util.js',
-      jsPath+'/materia/materia.validate.textfield.js',
-      jsPath+'/controllers/ctrl-alert.js',
-    ],
     'js/admin.js':[
       jsPath+'/materia-constants.js',
-      jsPath+'/materia-namespace.js',
       jsPath+'/controllers/ctrl-admin-user.js',
       jsPath+'/controllers/ctrl-admin-widget.js',
-      jsPath+'/materia/materia.coms.json.js',
       jsPath+'/services/srv-admin.js',
-    ],
-    'js/materia.coms.json.js': [
-      jsPath+'/materia-namespace.js',
-      jsPath+'/materia/materia.coms.json.js',
-    ],
-    'js/materia.namespace.js': [
-      jsPath+'/materia-namespace.js',
     ],
     'js/materia.creatorcore.js': [
       jsPath+'/materia-namespace.js',
@@ -121,12 +113,12 @@ module.exports = {
     'js/materia.enginecore.js': [
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.enginecore.js',
+      jsPath+'/materia/materia.score.js',
       jsPath+'/materia/materia.storage.manager.js',
       jsPath+'/materia/materia.storage.table.js',
     ],
     'js/materia.score.js': [
-      jsPath+'/materia-namespace.js',
-      jsPath+'/materia/materia.score.js',
+      jsPath+'/empty.js', // moved to engine core, still creates file to prevent 404 errors
     ],
     'js/materia.storage.manager.js': [
       jsPath+'/empty.js', // moved to engine core, still creates file to prevent 404 errors
@@ -142,8 +134,15 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['env', 'es2015'],
-            plugins: [require('babel-plugin-angularjs-annotate')]
+            presets: [
+              'es2015',
+              ['env', {
+                targets: { browsers: ["last 2 versions", "ie >= 11"]},
+                debug: true
+              }]
+            ],
+            plugins: [
+              require('babel-plugin-angularjs-annotate'),]
           }
         }
       },
