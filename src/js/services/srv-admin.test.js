@@ -1,19 +1,14 @@
-describe('selectedWidgetSrv', function() {
+describe('adminSrv', function() {
 	var _service
-	var _compile
-	var _scope
 	var postMock
 	var getMock
-	var _q
 
 	beforeEach(() => {
 		require('../materia-namespace')
 		require('./srv-admin')
 
-		inject(function($rootScope, adminSrv, $q) {
-			_scope = $rootScope
+		inject(function(adminSrv) {
 			_service = adminSrv
-			_q = $q
 		})
 
 		Namespace('Materia.Coms.Json').post = postMock = jest.fn()
@@ -22,7 +17,7 @@ describe('selectedWidgetSrv', function() {
 		getMock.mockClear()
 	})
 
-	it('defines expected methods', function() {
+	it('defines expected methods', () => {
 		expect(_service.getWidgets).toBeDefined()
 		expect(_service.saveWidget).toBeDefined()
 		expect(_service.searchUsers).toBeDefined()
