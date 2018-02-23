@@ -26,7 +26,7 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		_scoreData = null
 		_storageData = null
 		_widget = widget
-		return $rootScope.$broadcast('selectedWidget.update')
+		$rootScope.$broadcast('selectedWidget.update')
 	}
 
 	const get = () => _widget
