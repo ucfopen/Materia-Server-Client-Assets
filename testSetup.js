@@ -25,6 +25,11 @@ global.testGetFilter = (filterName, load = true) => {
 	return filter
 }
 
+
+global.getMockApiData = (type) => {
+	return require(`./__test__/mockapi/${type}.json`)
+}
+
 // global.$ = require('jquery');
 
 beforeEach(() => { testResetAngular(); resetNamespace(); });
