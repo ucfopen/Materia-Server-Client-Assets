@@ -86,7 +86,6 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		Materia.Coms.Json.send('play_logs_get', [_widget.id, term, year], logs => {
 			const semesterKey = `${year}${term.toLowerCase()}`
 			const logsForSemester = []
-
 			angular.forEach(logs, (log, key) => {
 				const timestamp = log.time
 				const logMeta = getSemesterFromTimestamp(timestamp)
