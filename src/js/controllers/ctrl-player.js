@@ -306,7 +306,7 @@ app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userSer
 			dfd.reject('Flash Player required.')
 		}
 
-		widgetSrv.getWidget($scope.inst_id, function(widgetInstances) {
+		widgetSrv.getWidget($scope.inst_id).then(widgetInstances => {
 			if (widgetInstances.length < 1) {
 				dfd.reject('Unable to get widget info.')
 			}
