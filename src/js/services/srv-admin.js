@@ -1,5 +1,6 @@
 const app = angular.module('materia')
 app.service('adminSrv', function() {
+	// @TODO: upgrade to use $q
 	const getWidgets = callback => {
 		Materia.Coms.Json.get('/api/admin/widgets', callback)
 	}
