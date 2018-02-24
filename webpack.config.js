@@ -21,6 +21,7 @@ module.exports = {
     'js/materia.js':[
       "core-js/library/es6/array",
       "core-js/library/es6/promise",
+      "core-js/library/fn/object/assign",
       "whatwg-fetch",
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.coms.json.js',
