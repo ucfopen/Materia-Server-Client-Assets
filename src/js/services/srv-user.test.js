@@ -171,9 +171,8 @@ describe('selectedWidgetSrv', function() {
 			cb(user)
 		})
 
-		let promise = _service.get()
 		let promiseSpy = jest.fn()
-		promise.then(promiseSpy)
+		_service.get().then(promiseSpy)
 		_scope.$digest()
 
 		expect(promiseSpy).toHaveBeenCalledWith(user)
@@ -183,9 +182,8 @@ describe('selectedWidgetSrv', function() {
 		let user = { avatar: '', loggedIn: false, name: '', notify: false, role: '' }
 		_service.set(user)
 
-		let promise = _service.get()
 		let promiseSpy = jest.fn()
-		promise.then(promiseSpy)
+		_service.get().then(promiseSpy)
 		_scope.$digest()
 
 		expect(promiseSpy).toHaveBeenCalledWith(user)
@@ -196,9 +194,8 @@ describe('selectedWidgetSrv', function() {
 		let user = { avatar: '', loggedIn: false, name: '', notify: false, role: '' }
 		_service.set(user)
 
-		let promise = _service.get()
 		let promiseSpy = jest.fn()
-		promise.then(promiseSpy)
+		_service.get().then(promiseSpy)
 		_scope.$digest()
 
 		expect(promiseSpy).toHaveBeenCalledWith(user)
@@ -223,9 +220,8 @@ describe('selectedWidgetSrv', function() {
 	it('checkValidSession calls api', () => {
 		Materia.Coms.Json.send.mockImplementationOnce((name, data, cb) => cb('true'))
 
-		let promise = _service.checkValidSession('some-role')
 		let promiseSpy = jest.fn()
-		promise.then(promiseSpy)
+		_service.checkValidSession('some-role').then(promiseSpy)
 		_scope.$digest()
 
 		expect(promiseSpy).toHaveBeenCalledWith('true')

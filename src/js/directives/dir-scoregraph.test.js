@@ -36,7 +36,5 @@ describe('scoreGraph Directive', function() {
 		jest.runAllTimers()
 		expect(mock3).toHaveBeenCalledTimes(1)
 		expect(mock3).toHaveBeenCalledWith('chart_6', true)
-
-		// expect(true).toBe(false)
 	})
 })
