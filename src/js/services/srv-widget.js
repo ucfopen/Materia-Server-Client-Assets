@@ -19,7 +19,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 
 	const sortWidgets = () => _widgets.sort((a, b) => b.created_at - a.created_at)
 
-	const getWidgets = function() {
+	const getWidgets = () => {
 		const deferred = $q.defer()
 
 		if (_widgets.length === 0 || !gotAll) {
@@ -36,23 +36,26 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		return deferred.promise
 	}
 
-	const getWidget = function(id) {
+	const getWidget = (id = null) => {
 		const deferred = $q.defer()
 
-		if (_widgetIds[id] != null) {
-			deferred.resolve(_widgetIds[id])
-		} else if (_widgets.length !== 0) {
+		if (!id && _widgets.length !== 0) {
+			// return all widgets if no id was requested and we have some
 			deferred.resolve(_widgets)
+		} else if (id && _widgetIds[id] != null) {
+			// return the requested widget if we have it
+			deferred.resolve(_widgetIds[id])
 		} else {
+			// we dont have any widgets or the requested one, get it/them
 			_getFromServer(id).then(widgets => {
-				deferred.resolve(widgets)
+				deferred.resolve(id ? _widgetIds[id] : _widgets)
 			})
 		}
 
 		return deferred.promise
 	}
 
-	const getWidgetInfo = function(id) {
+	const getWidgetInfo = id => {
 		const deferred = $q.defer()
 		if (id !== null) id = [[id]]
 		Materia.Coms.Json.send('widgets_get', id, data => {
@@ -72,7 +75,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		return deferred.promise
 	}
 
-	const saveWidget = function(_params) {
+	const saveWidget = _params => {
 		const deferred = $q.defer()
 		const defaults = {
 			qset: null,
@@ -87,6 +90,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		let params = Object.assign({}, defaults, _params)
 
 		if (params.inst_id != null) {
+			// limit args to the the following params
 			let args = [
 				params.inst_id,
 				params.name,
@@ -104,6 +108,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 					let match = _widgets.findIndex(w => w.id === widget.id)
 					if (match !== -1) {
 						_widgets[match] = widget
+						_widgetIds[widget.id] = widget
 					}
 					deferred.resolve(widget)
 				}
@@ -123,51 +128,57 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		return deferred.promise
 	}
 
-	const addWidget = inst_id =>
-		getWidget(inst_id).then(function(widget) {
-			_widgets.push(widget[0])
+	// @TODO: rename to a more accurate name
+	// gets an instance by id fom the server
+	// sorts widgets
+	// broadcasts the update
+	// and updates the url @TODO: this shouldn't be part of this service
+	const addWidget = inst_id => {
+		return getWidget(inst_id).then(widget => {
+			_widgets.push(widget)
 			sortWidgets()
-			$rootScope.$broadcast('widgetList.update', '')
-			return updateHashUrl(widget[0].id)
+			$rootScope.$broadcast('widgetList.update')
+			updateHashUrl(widget.id)
 		})
+	}
 
-	const removeWidget = function(inst_id) {
+	const removeWidget = inst_id => {
 		let selectedIndex
 		let index = -1
-		_widgets = _widgets.filter(function(widget, i) {
+		_widgets = _widgets.filter((widget, i) => {
 			if (widget.id === inst_id) {
 				index = i
-				return null
-			} else {
-				return widget
+				return false
 			}
+			return true
 		})
 
 		if (index === -1) {
+			// not found
 			return
 		}
-
 		if (index === 0) {
+			// first item, when it's gone, select the first one again
 			selectedIndex = 0
-		} else if (index > 0) {
+		} else {
+			// select the item after the one we delete
 			selectedIndex = index - 1
 		}
 
-		const newWidget = _widgets[selectedIndex]
-		if (newWidget) {
-			updateHashUrl(newWidget.id)
+		const newSelectedWidget = _widgets[selectedIndex]
+		if (newSelectedWidget) {
+			updateHashUrl(newSelectedWidget.id)
 			sortWidgets()
 		}
-		return $rootScope.$broadcast('widgetList.update', '')
+		$rootScope.$broadcast('widgetList.update')
 	}
 
-	var _getFromServer = function(optionalId) {
+	var _getFromServer = optionalId => {
 		const deferred = $q.defer()
 		if (optionalId != null) {
 			optionalId = [[optionalId]]
 		}
-
-		Materia.Coms.Json.send('widget_instances_get', optionalId, function(widgets) {
+		Materia.Coms.Json.send('widget_instances_get', optionalId, widgets => {
 			_widgets = []
 
 			if (widgets != null && widgets.length != null) {
@@ -191,26 +202,23 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 
 	var updateHashUrl = widgetId => ($window.location.hash = `/${widgetId}`)
 
-	const convertAvailibilityDates = function(startDateInt, endDateInt) {
+	const convertAvailibilityDates = (startDateInt, endDateInt) => {
 		let endDate, endTime, open_at, startTime
 		startDateInt = ~~startDateInt
 		endDateInt = ~~endDateInt
+		endDate = endTime = 0
+		open_at = startTime = 0
 
 		if (endDateInt > 0) {
 			endDate = dateTimeServ.parseObjectToDateString(endDateInt)
 			endTime = dateTimeServ.parseTime(endDateInt)
-		} else {
-			endDate = endTime = 0
 		}
 
 		if (startDateInt > 0) {
 			open_at = dateTimeServ.parseObjectToDateString(startDateInt)
 			startTime = dateTimeServ.parseTime(startDateInt)
-		} else {
-			open_at = startTime = 0
 		}
 
-		// return start, end datetime
 		return {
 			start: {
 				date: open_at,
@@ -223,26 +231,21 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		}
 	}
 
-	const selectWidgetFromHashUrl = function() {
+	// @TODO navigation should be moved out of this method
+	const selectWidgetFromHashUrl = () => {
 		if ($window.location.hash) {
-			let found = false
 			let selID = $window.location.hash.substr(1)
 			if (selID.substr(0, 1) === '/') {
 				selID = selID.substr(1)
 			}
 
-			for (let widget of Array.from(_widgets)) {
-				if (widget.id === selID) {
-					found = true
-					break
+			getWidget(selID).then(widget => {
+				if (widget) {
+					selectedWidgetSrv.set(widget)
+				} else {
+					selectedWidgetSrv.notifyAccessDenied()
 				}
-			}
-
-			if (found) {
-				return getWidget(selID).then(inst => selectedWidgetSrv.set(inst))
-			} else {
-				return selectedWidgetSrv.notifyAccessDenied()
-			}
+			})
 		}
 	}
 
