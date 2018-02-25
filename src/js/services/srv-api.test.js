@@ -3,6 +3,7 @@ describe('apiServ', function() {
 	var mockWindow
 	var mockLocationSet
 	var mockLocationGet
+	var mockWindowEventListenr
 
 	beforeEach(() => {
 		// MOCK $window
@@ -14,9 +15,7 @@ describe('apiServ', function() {
 			set: mockLocationSet
 		})
 		let app = angular.module('materia')
-		app.factory('$window', () => {
-			return mockWindow
-		})
+		app.factory('$window', () => mockWindow)
 
 		require('../materia-namespace')
 		require('./srv-api')
