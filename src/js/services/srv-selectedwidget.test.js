@@ -66,9 +66,8 @@ describe('selectedWidgetSrv', function() {
 
 	it('getScoreSummaries to process api results and caches them', function() {
 		_service.set({ id: 5 })
-		let promise = _service.getScoreSummaries()
 		let promiseSpy = jest.fn()
-		promise.then(promiseSpy)
+		_service.getScoreSummaries().then(promiseSpy)
 
 		// execute coms callback
 		let data = [{ id: 5 }, { id: 9 }]
@@ -83,9 +82,9 @@ describe('selectedWidgetSrv', function() {
 		})
 
 		let promiseSpy2 = jest.fn()
-		promise = _service.getScoreSummaries()
-		promise.then(promiseSpy2)
+		_service.getScoreSummaries().then(promiseSpy2)
 		_scope.$digest()
+
 		expect(sendMock).toHaveBeenCalledTimes(1)
 		expect(promiseSpy2).toHaveBeenCalledWith({
 			last: { id: 5 },
@@ -107,14 +106,14 @@ describe('selectedWidgetSrv', function() {
 
 	it('getUserPermissions calls permissions_get api', () => {
 		_service.set({ id: 5 })
-		let promise = _service.getUserPermissions()
 		let promiseSpy = jest.fn()
-		promise.then(promiseSpy)
+		_service.getUserPermissions().then(promiseSpy)
 
 		// execute coms callback
 		let data = { user_perms: 4, widget_user_perms: 1 }
 		sendMock.mock.calls[0][2](data)
 		_scope.$digest()
+
 		expect(promiseSpy).toHaveBeenCalledWith({ user: 4, widget: 1 })
 	})
 
@@ -145,20 +144,18 @@ describe('selectedWidgetSrv', function() {
 		_scope.$digest()
 
 		// call the function
-		let promise = _service.getPlayLogsForSemester('Fall', 2016)
 		let promiseSpy = jest.fn()
-		promise.then(promiseSpy)
-
+		_service.getPlayLogsForSemester('Fall', 2016).then(promiseSpy)
 		_scope.$digest()
+
 		// all of play_logs_get mock content is in Fall of 2016
 		expect(promiseSpy).toHaveBeenCalledWith(getMockApiData('play_logs_get'))
 
 		// now try to get another semester that should be empty
-		let promise2 = _service.getPlayLogsForSemester('Summer', 2016)
 		let promiseSpy2 = jest.fn()
-		promise2.then(promiseSpy2)
-
+		_service.getPlayLogsForSemester('Summer', 2016).then(promiseSpy2)
 		_scope.$digest()
+
 		expect(promiseSpy2).toHaveBeenCalledWith([])
 	})
 
@@ -197,11 +194,10 @@ describe('selectedWidgetSrv', function() {
 			cb(getMockApiData('semester_date_ranges_get'))
 		})
 
-		let promise = _service.getDateRanges()
 		let promiseSpy = jest.fn()
-		promise.then(promiseSpy)
-
+		_service.getDateRanges().then(promiseSpy)
 		_scope.$digest()
+
 		expect(promiseSpy).toHaveBeenCalledWith(getMockApiData('semester_date_ranges_get'))
 	})
 
@@ -273,10 +269,8 @@ describe('selectedWidgetSrv', function() {
 			cb(getMockApiData('play_storage_get'))
 		})
 
-		let promise = _service.getStorageData()
 		let promiseSpy = jest.fn()
-		promise.then(promiseSpy)
-
+		_service.getStorageData().then(promiseSpy)
 		_scope.$digest()
 
 		expect(promiseSpy).toHaveBeenCalled()
