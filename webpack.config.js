@@ -134,6 +134,12 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
+        enfoce: 'pre',
+        exclude: /(node_modules|bower_components|\.test\.js)/,
+        use: ['webpack-strip-block']
+      },
+      {
+        test: /\.js$/,
         use: {
           loader: 'babel-loader',
           options: {

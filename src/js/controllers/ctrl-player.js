@@ -1,6 +1,7 @@
 const app = angular.module('materia')
 app.controller('playerCtrl', function(
 	$scope,
+	$location,
 	$q,
 	$interval,
 	$document,
@@ -32,7 +33,7 @@ app.controller('playerCtrl', function(
 	// Whether or not to show the score screen as soon as playlogs get synced
 	let scoreScreenPending = false
 	// Keep track of the timer id for the heartbeat so we can clear the timeout
-	let heartbeatIntervalId = -1
+	let heartbeatInterval = -1
 	// Calculates which screen to show (preview, embed, or normal)
 	let scoreScreenURL = null
 	// Whether or not to show the embed view
@@ -46,17 +47,11 @@ app.controller('playerCtrl', function(
 	// dom element where the widget is embedded
 	let embedTargetEl
 
-	const _alert = (msg, title = null, fatal) => {
-		if (fatal == null) {
-			fatal = false
-		}
-		return $scope.$apply(function() {
-			$scope.alert.msg = msg
-			if (title !== null) {
-				$scope.alert.title = title
-			}
-			return ($scope.alert.fatal = fatal)
-		})
+	const _alert = (msg, title = '', fatal = false) => {
+		$scope.alert.msg = msg
+		$scope.alert.title = title
+		$scope.alert.fatal = fatal
+		$scope.$apply()
 	}
 
 	const _sendAllPendingLogs = callback => {
@@ -97,10 +92,7 @@ app.controller('playerCtrl', function(
 		}
 	}
 
-	const _end = showScoreScreenAfter => {
-		if (showScoreScreenAfter == null) {
-			showScoreScreenAfter = true
-		}
+	const _end = (showScoreScreenAfter = true) => {
 		switch (endState) {
 			case 'sent':
 				if (showScoreScreenAfter) {
@@ -115,7 +107,7 @@ app.controller('playerCtrl', function(
 			default:
 				endState = 'pending'
 				// kill the heartbeat
-				clearInterval(heartbeatIntervalId)
+				$interval.cancel(heartbeatInterval)
 				// required to end a play
 				_addLog({ type: 2, item_id: 0, text: '', value: null })
 				// send anything remaining
@@ -133,7 +125,7 @@ app.controller('playerCtrl', function(
 	const _startHeartBeat = () => {
 		const deferred = $q.defer()
 		$interval(() => {
-			Materia.Coms.Json.send('session_play_verify', [play_id], result => {
+			Materia.Coms.Json.send('session_play_verify', [play_id]).then(result => {
 				if (result !== true && instance.guest_access === false) {
 					return _alert(
 						"Your play session is no longer valid! This may be due to logging out, your session expiring, or trying to access another Materia account simultaneously. You'll need to reload the page to start over.",
@@ -159,14 +151,14 @@ app.controller('playerCtrl', function(
 				: [qset, convertedInstance, BASE_URL, MEDIA_URL]
 		)
 		if (!$scope.isPreview) {
-			heartbeatIntervalId = setInterval(_sendAllPendingLogs, PLAYER.LOG_INTERVAL) // if not in preview mode, set the interval to send logs
+			heartbeatInterval = $interval(_sendAllPendingLogs, PLAYER.LOG_INTERVAL) // if not in preview mode, set the interval to send logs
 		}
 
 		deferred.resolve()
 		return deferred.promise
 	}
 
-	var _sendToWidget = (type, args) => {
+	const _sendToWidget = (type, args) => {
 		switch (widgetType) {
 			case '.swf':
 				return widget[type].apply(widget, args)
@@ -212,7 +204,7 @@ app.controller('playerCtrl', function(
 		return deferred.promise
 	}
 
-	var _embedFlash = (enginePath, version, deferred) => {
+	const _embedFlash = (enginePath, version, deferred) => {
 		// register global callbacks for ExternalInterface calls
 		$window.__materia_sendStorage = _sendStorage
 		$window.__materia_onWidgetReady = _onWidgetReady
@@ -253,7 +245,7 @@ app.controller('playerCtrl', function(
 		)
 	}
 
-	var _embedHTML = (enginePath, deferred) => {
+	const _embedHTML = (enginePath, deferred) => {
 		embedDonePromise = deferred
 
 		$scope.type = 'html'
@@ -297,7 +289,7 @@ app.controller('playerCtrl', function(
 				}
 			} else {
 				throw new Error(
-					`Post message Origin does not match.  Expected: ${expectedOrigin}, Actual: ${e.origin}`
+					`Post message Origin does not match. Expected: ${expectedOrigin}, Actual: ${e.origin}`
 				)
 			}
 		}
@@ -381,7 +373,7 @@ app.controller('playerCtrl', function(
 	const _getQuestionSet = () => {
 		const deferred = $q.defer()
 		// TODO: if bad qSet : deferred.reject('Unable to load questions.')
-		Materia.Coms.Json.send('question_set_get', [$scope.inst_id, play_id], result => {
+		Materia.Coms.Json.send('question_set_get', [$scope.inst_id, play_id]).then(result => {
 			qset = result
 			deferred.resolve()
 		})
@@ -389,7 +381,7 @@ app.controller('playerCtrl', function(
 		return deferred.promise
 	}
 
-	var _pushPendingLogs = () => {
+	const _pushPendingLogs = () => {
 		if (logPushInProgress) {
 			return
 		}
@@ -401,54 +393,58 @@ app.controller('playerCtrl', function(
 			return
 		}
 
-		return Materia.Coms.Json.send('play_logs_save', pendingQueue[0].request, result => {
-			retryCount = 0 // reset on success
-			if ($scope.alert.fatal) {
-				$scope.alert.fatal = false
-			}
-			if (result != null && result.score_url != null) {
-				scoreScreenURL = result.score_url
-			} else if (result != null && result.type === 'error') {
-				if (result.msg) {
-					_alert(result.msg, 'Something went wrong...', true)
-				} else {
+		return Materia.Coms.Json.send('play_logs_save', pendingQueue[0].request)
+			.then(result => {
+				retryCount = 0 // reset on success
+				if ($scope.alert.fatal) {
+					$scope.alert.fatal = false
+				}
+
+				if (result) {
+					if (result.score_url) {
+						scoreScreenURL = result.score_url
+					} else if (result.type === 'error') {
+						let title = 'Something went wrong...'
+						let msg = result.msg
+						if (!msg) {
+							msg =
+								"Your play session is no longer valid! This may be due to logging out, your session expiring, or trying to access another Materia account simultaneously. You'll need to reload the page to start over."
+						}
+
+						_alert(msg, title, true)
+					}
+				}
+
+				const previous = pendingQueue.shift()
+				previous.promise.resolve()
+
+				logPushInProgress = false
+
+				if (pendingQueue.length > 0) {
+					_pushPendingLogs()
+				}
+			})
+			.catch(() => {
+				retryCount++
+				let retrySpeed = PLAYER.RETRY_FAST
+
+				if (retryCount > PLAYER.RETRY_LIMIT) {
+					retrySpeed = PLAYER.RETRY_SLOW
 					_alert(
-						"Your play session is no longer valid! This may be due to logging out, your session expiring, or trying to access another Materia account simultaneously. You'll need to reload the page to start over.",
+						"Connection to Materia's server was lost. Check your connection or reload to start over.",
 						'Something went wrong...',
 						true
 					)
 				}
-			}
 
-			const previous = pendingQueue.shift()
-			previous.promise.resolve()
-
-			logPushInProgress = false
-
-			if (pendingQueue.length > 0) {
-				_pushPendingLogs()
-			}
-		}).catch(() => {
-			retryCount++
-			let retrySpeed = PLAYER.RETRY_FAST
-
-			if (retryCount > PLAYER.RETRY_LIMIT) {
-				retrySpeed = PLAYER.RETRY_SLOW
-				_alert(
-					"Connection to Materia's server was lost. Check your connection or reload to start over.",
-					'Something went wrong...',
-					true
-				)
-			}
-
-			$timeout(() => {
-				logPushInProgress = false
-				_pushPendingLogs()
-			}, retrySpeed)
-		})
+				$timeout(() => {
+					logPushInProgress = false
+					_pushPendingLogs()
+				}, retrySpeed)
+			})
 	}
 
-	var _sendPendingPlayLogs = () => {
+	const _sendPendingPlayLogs = () => {
 		const deferred = $q.defer()
 
 		if (pendingLogs.play.length > 0) {
@@ -467,14 +463,14 @@ app.controller('playerCtrl', function(
 		return deferred.promise
 	}
 
-	var _sendPendingStorageLogs = () => {
+	const _sendPendingStorageLogs = () => {
 		const deferred = $q.defer()
 
 		if (!$scope.isPreview && pendingLogs.storage.length > 0) {
-			Materia.Coms.Json.send('play_storage_data_save', [play_id, pendingLogs.storage], () =>
+			Materia.Coms.Json.send('play_storage_data_save', [play_id, pendingLogs.storage]).then(() => {
 				deferred.resolve()
-			)
-			pendingLogs.storage = []
+				pendingLogs.storage = []
+			})
 		} else {
 			deferred.resolve()
 		}
@@ -483,7 +479,7 @@ app.controller('playerCtrl', function(
 	}
 
 	// converts current widget/instance structure to the one expected by the player
-	var _translateForApiVersion = inst => {
+	const _translateForApiVersion = inst => {
 		// switch based on version expected by the widget
 		let output
 		switch (parseInt(inst.widget.api_version)) {
@@ -530,14 +526,14 @@ app.controller('playerCtrl', function(
 		return output
 	}
 
-	var _setHeight = h => {
+	const _setHeight = h => {
 		const min_h = instance.widget.height
 		let el = $document.getElementsByClassName('center')[0]
-		let desiredHeight = max(h, min_h)
+		let desiredHeight = Math.max(h, min_h)
 		el.style.height = `${desiredHeight}px`
 	}
 
-	var _showScoreScreen = () => {
+	const _showScoreScreen = () => {
 		if (scoreScreenURL === null) {
 			if ($scope.isPreview) {
 				scoreScreenURL = `${BASE_URL}scores/preview/${$scope.inst_id}`
@@ -549,17 +545,19 @@ app.controller('playerCtrl', function(
 		}
 
 		if (!$scope.alert.fatal) {
-			return ($window.location = scoreScreenURL)
+			$location.replace(scoreScreenURL)
 		}
 	}
 
-	$window.onbeforeunload = e => {
+	const _beforeUnload = e => {
 		if (instance.widget.is_scorable === '1' && !$scope.isPreview && endState !== 'sent') {
 			return 'Wait! Leaving now will forfeit this attempt. To save your score you must complete the widget.'
 		} else {
 			return undefined
 		}
 	}
+
+	$window.onbeforeunload = _beforeUnload
 
 	// Alert
 	$scope.alert = Alert
@@ -576,8 +574,9 @@ app.controller('playerCtrl', function(
 
 	// Controls whether the view has a "preview" header bar
 	// search for preview or embed directory in the url
-	$scope.isPreview = String($window.location).includes('preview')
+	$scope.isPreview = String($location.path()).includes('preview')
 
+	// wait for a tick to  the queue
 	$timeout(() => {
 		$q
 			.all(_getWidgetInstance(), _startPlaySession())
@@ -587,4 +586,32 @@ app.controller('playerCtrl', function(
 			.then(_startHeartBeat)
 			.catch(_onLoadFail)
 	})
+
+	/* develblock:start */
+	// these method are exposed for testing
+	$scope.jestTest = {
+		_alert,
+		_sendAllPendingLogs,
+		_onWidgetReady,
+		_addLog,
+		_sendStorage,
+		_end,
+		_startHeartBeat,
+		_sendWidgetInit,
+		_sendToWidget,
+		_onLoadFail,
+		_embed,
+		_embedFlash,
+		_embedHTML,
+		_getWidgetInstance,
+		_startPlaySession,
+		_getQuestionSet,
+		_pushPendingLogs,
+		_sendPendingPlayLogs,
+		_sendPendingStorageLogs,
+		_translateForApiVersion,
+		_setHeight,
+		_showScoreScreen
+	}
+	/* develblock:end */
 })
