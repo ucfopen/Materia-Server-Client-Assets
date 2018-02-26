@@ -1,18 +1,18 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const app = angular.module('materia')
-app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userServ, PLAYER, Alert) {
-	$scope.alert = Alert
-
+app.controller('playerCtrl', function(
+	$scope,
+	$q,
+	$interval,
+	$document,
+	$window,
+	$timeout,
+	widgetSrv,
+	userServ,
+	PLAYER,
+	Alert
+) {
 	// Keep track of a promise
-	let embedDoneDfD = null
+	let embedDonePromise = null
 	// Widget instance
 	let instance = null
 	// Logs that have yet to be synced
@@ -43,63 +43,68 @@ app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userSer
 	let logPushInProgress = false
 	// number of times the logs an retried sending
 	let retryCount = 0
-	// search for preview or embed directory in the url
-	const checkForContext = String(window.location).split('/')
-	// Controls whether the view has a "preview" header bar
-	$scope.isPreview = false
-	// Controls whether or not the widget iframe will allow fullscreen behavior (disabled by default)
-	$scope.allowFullScreen = false
+	// dom element where the widget is embedded
+	let embedTargetEl
 
-	for (let word of Array.from(checkForContext)) {
-		if (word === 'preview') {
-			$scope.isPreview = true
-			break
+	const _alert = (msg, title = null, fatal) => {
+		if (fatal == null) {
+			fatal = false
 		}
+		return $scope.$apply(function() {
+			$scope.alert.msg = msg
+			if (title !== null) {
+				$scope.alert.title = title
+			}
+			return ($scope.alert.fatal = fatal)
+		})
 	}
 
-	const sendAllPendingLogs = function(callback) {
+	const _sendAllPendingLogs = callback => {
 		if (callback == null) {
-			callback = $.noop
+			callback = () => {}
 		}
 
-		return $.when(sendPendingStorageLogs())
-			.pipe(sendPendingPlayLogs)
-			.done(callback)
-			.fail(() => _alert('There was a problem saving.', 'Something went wrong...', false))
+		$q
+			.all(_sendPendingStorageLogs())
+			.then(_sendPendingPlayLogs)
+			.then(callback)
+			.catch(() => {
+				_alert('There was a problem saving.', 'Something went wrong...', false)
+			})
 	}
 
-	const onWidgetReady = function() {
-		widget = $(`#${PLAYER.EMBED_TARGET}`).get(0)
+	const _onWidgetReady = () => {
+		widget = embedTargetEl
 		switch (false) {
 			case !(qset == null):
-				return embedDoneDfD.reject('Unable to load widget data.')
+				embedDonePromise.reject('Unable to load widget data.')
 			case !(widget == null):
-				return embedDoneDfD.reject('Unable to load widget.')
+				embedDonePromise.reject('Unable to load widget.')
 			default:
-				return embedDoneDfD.resolve()
+				embedDonePromise.resolve()
 		}
 	}
 
-	const addLog = function(log) {
+	const _addLog = log => {
 		// add to pending logs
 		log['game_time'] = (new Date().getTime() - startTime) / 1000 // log time in seconds
-		return pendingLogs.play.push(log)
+		pendingLogs.play.push(log)
 	}
 
-	const sendStorage = function(log) {
+	const _sendStorage = log => {
 		if (!$scope.isPreview) {
-			return pendingLogs.storage.push(log)
+			pendingLogs.storage.push(log)
 		}
 	}
 
-	const end = function(showScoreScreenAfter) {
+	const _end = showScoreScreenAfter => {
 		if (showScoreScreenAfter == null) {
 			showScoreScreenAfter = true
 		}
 		switch (endState) {
 			case 'sent':
 				if (showScoreScreenAfter) {
-					return showScoreScreen()
+					return _showScoreScreen()
 				}
 				break
 			case 'pending':
@@ -112,56 +117,56 @@ app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userSer
 				// kill the heartbeat
 				clearInterval(heartbeatIntervalId)
 				// required to end a play
-				addLog({ type: 2, item_id: 0, text: '', value: null })
+				_addLog({ type: 2, item_id: 0, text: '', value: null })
 				// send anything remaining
-				return sendAllPendingLogs(function() {
+				return _sendAllPendingLogs(() => {
 					// Async callback after final logs are sent
 					endState = 'sent'
 					// shows the score screen upon callback if requested any time betwen method call and now
 					if (showScoreScreenAfter || scoreScreenPending) {
-						return showScoreScreen()
+						return _showScoreScreen()
 					}
 				})
 		}
 	}
 
-	const startHeartBeat = function() {
-		const dfd = $.Deferred().resolve()
-		setInterval(
-			() =>
-				Materia.Coms.Json.send('session_play_verify', [play_id], function(result) {
-					if (result !== true && instance.guest_access === false) {
-						return _alert(
-							"Your play session is no longer valid! This may be due to logging out, your session expiring, or trying to access another Materia account simultaneously. You'll need to reload the page to start over.",
-							'Invalid session',
-							true
-						)
-					}
-				}),
+	const _startHeartBeat = () => {
+		const deferred = $q.defer()
+		$interval(() => {
+			Materia.Coms.Json.send('session_play_verify', [play_id], result => {
+				if (result !== true && instance.guest_access === false) {
+					return _alert(
+						"Your play session is no longer valid! This may be due to logging out, your session expiring, or trying to access another Materia account simultaneously. You'll need to reload the page to start over.",
+						'Invalid session',
+						true
+					)
+				}
+			})
+		}, 30000)
 
-			30000
-		)
-		return dfd.promise()
+		deferred.resolve()
+		return deferred.promise
 	}
 
-	const sendWidgetInit = function() {
-		const dfd = $.Deferred().resolve()
-		const convertedInstance = translateForApiVersion(instance)
+	const _sendWidgetInit = () => {
+		const deferred = $q.defer()
+		const convertedInstance = _translateForApiVersion(instance)
 		startTime = new Date().getTime()
-		sendToWidget(
+		_sendToWidget(
 			'initWidget',
 			widgetType === '.swf'
 				? [qset, convertedInstance]
 				: [qset, convertedInstance, BASE_URL, MEDIA_URL]
 		)
 		if (!$scope.isPreview) {
-			heartbeatIntervalId = setInterval(sendAllPendingLogs, PLAYER.LOG_INTERVAL) // if not in preview mode, set the interval to send logs
+			heartbeatIntervalId = setInterval(_sendAllPendingLogs, PLAYER.LOG_INTERVAL) // if not in preview mode, set the interval to send logs
 		}
 
-		return dfd.promise()
+		deferred.resolve()
+		return deferred.promise
 	}
 
-	var sendToWidget = function(type, args) {
+	var _sendToWidget = (type, args) => {
 		switch (widgetType) {
 			case '.swf':
 				return widget[type].apply(widget, args)
@@ -173,11 +178,11 @@ app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userSer
 		}
 	}
 
-	const onLoadFail = msg => _alert(`Failure: ${msg}`, null, true)
+	const _onLoadFail = msg => _alert(`Failure: ${msg}`, null, true)
 
-	const embed = function() {
+	const _embed = () => {
+		const deferred = $q.defer()
 		let enginePath
-		const dfd = $.Deferred()
 
 		widgetType = instance.widget.player.slice(instance.widget.player.lastIndexOf('.'))
 
@@ -190,27 +195,30 @@ app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userSer
 		}
 
 		if (instance.widget.width > 0) {
-			$('.preview-bar').width(instance.widget.width)
+			let previewBarEl = $document.getElementsByClassName('preview-bar')[0]
+			previewBarEl.style.width = `${instance.widget.width}px`
 		}
 
 		switch (widgetType) {
 			case '.swf':
-				embedFlash(enginePath, '10', dfd)
+				_embedFlash(enginePath, '10', deferred)
 				break
 			case '.html':
-				embedHTML(enginePath, dfd)
+				_embedHTML(enginePath, deferred)
 				break
 		}
-		return dfd.promise()
+
+		// deferred.resolve()
+		return deferred.promise
 	}
 
-	var embedFlash = function(enginePath, version, dfd) {
+	var _embedFlash = (enginePath, version, deferred) => {
 		// register global callbacks for ExternalInterface calls
-		window.__materia_sendStorage = sendStorage
-		window.__materia_onWidgetReady = onWidgetReady
-		window.__materia_sendPendingLogs = sendAllPendingLogs
-		window.__materia_end = end
-		window.__materia_addLog = addLog
+		$window.__materia_sendStorage = _sendStorage
+		$window.__materia_onWidgetReady = _onWidgetReady
+		$window.__materia_sendPendingLogs = _sendAllPendingLogs
+		$window.__materia_end = _end
+		$window.__materia_addLog = _addLog
 		const params = { menu: 'false', allowFullScreen: 'true', AllowScriptAccess: 'always' }
 		const attributes = { id: PLAYER.EMBED_TARGET }
 		const express = BASE_URL + 'assets/flash/expressInstall.swf'
@@ -228,10 +236,11 @@ app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userSer
 			height = '99.7%'
 		}
 
-		embedDoneDfD = dfd
+		embedDonePromise = deferred
 		$scope.type = 'flash'
 		$scope.$apply()
-		return swfobject.embedSWF(
+
+		swfobject.embedSWF(
 			enginePath,
 			PLAYER.EMBED_TARGET,
 			width,
@@ -244,42 +253,43 @@ app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userSer
 		)
 	}
 
-	var embedHTML = function(enginePath, dfd) {
-		embedDoneDfD = dfd
+	var _embedHTML = (enginePath, deferred) => {
+		embedDonePromise = deferred
 
 		$scope.type = 'html'
 		$scope.htmlPath = enginePath + '?' + instance.widget.created_at
+		embedTargetEl = $document.getElementsById(PLAYER.EMBED_TARGET)
 		if (instance.widget.width > 0) {
-			$(`#${PLAYER.EMBED_TARGET}`).width(instance.widget.width)
+			embedTargetEl.style.width = `${instance.widget.width}px`
 		}
 		if (instance.widget.height > 0) {
-			$(`#${PLAYER.EMBED_TARGET}`).height(instance.widget.height)
+			embedTargetEl.style.width = `${instance.widget.height}px`
 		}
 
 		// build a link element to deconstruct the static url
 		// this helps us match static url against the event origin
-		const a = document.createElement('a')
+		const a = $document.createElement('a')
 		a.href = STATIC_CROSSDOMAIN
 		const expectedOrigin = a.href.substr(0, a.href.length - 1)
 
-		const _onPostMessage = function(e) {
+		const _onPostMessage = e => {
 			if (e.origin === expectedOrigin) {
 				const msg = JSON.parse(e.data)
 				switch (msg.type) {
 					case 'start':
-						return onWidgetReady()
+						return _onWidgetReady()
 					case 'addLog':
-						return addLog(msg.data)
+						return _addLog(msg.data)
 					case 'end':
-						return end(msg.data)
+						return _end(msg.data)
 					case 'sendStorage':
-						return sendStorage(msg.data)
+						return _sendStorage(msg.data)
 					case 'sendPendingLogs':
-						return sendAllPendingLogs()
+						return _sendAllPendingLogs()
 					case 'alert':
 						return _alert(msg.data, 'Warning!', false)
 					case 'setHeight':
-						return setHeight(msg.data[0])
+						return _setHeight(msg.data[0])
 					case 'initialize':
 						break
 					default:
@@ -293,92 +303,93 @@ app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userSer
 		}
 
 		// setup the postmessage listener
-		if (typeof addEventListener !== 'undefined' && addEventListener !== null) {
-			addEventListener('message', _onPostMessage, false)
-		}
-		return $scope.$apply()
+		$window.addEventListener('message', _onPostMessage, false)
+		$scope.$apply()
 	}
 
-	const getWidgetInstance = function() {
-		const dfd = $.Deferred()
+	const _getWidgetInstance = () => {
+		const deferred = $q.defer()
 
 		if ($scope.type === 'noflash') {
-			dfd.reject('Flash Player required.')
+			deferred.reject('Flash Player required.')
 		}
 
-		widgetSrv.getWidget($scope.inst_id).then(widgetInstances => {
-			if (widgetInstances.length < 1) {
-				dfd.reject('Unable to get widget info.')
+		widgetSrv.getWidget($scope.inst_id).then(inst => {
+			if (!inst.hasOwnProperty('id')) {
+				return deferred.reject('Unable to get widget info.')
 			}
-			instance = widgetInstances[0]
+			instance = inst
 			const type = instance.widget.player.split('.').pop()
 			const version = parseInt(instance.widget.flash_version, 10)
 
 			// Fullscreen flag set as an optional parameter in widget install.yaml; have to dig into instance widget's meta_data object to find it
 			// can't use array.includes() since it's necessary to ensure comparison is case insensitive
-			for (let feature of Array.from(instance.widget.meta_data.features)) {
-				if (feature.toLowerCase() === 'fullscreen') {
-					$scope.allowFullScreen = true
-				}
-			}
+			let fullscreen = inst.widget.meta_data.features.find(f => f.toLowerCase() === 'fullscreen')
+			$scope.allowFullScreen = fullscreen != undefined
 
 			if (type === 'swf' && swfobject.hasFlashPlayerVersion(String(version)) === false) {
 				$scope.type = 'noflash'
-				dfd.reject('Newer Flash Player version required.')
+				deferred.reject('Newer Flash Player version required.')
 			} else {
+				let el = $document.getElementsByClassName('center')[0]
+
 				if (instance.widget.width > 0) {
-					$('.center').width(instance.widget.width)
+					// @TODO, just use scope
+					el.style.width = `${instance.widget.width}px`
 				}
 				if (instance.widget.height > 0) {
-					$('.center').height(instance.widget.height)
+					el.style.height = `${instance.widget.height}px`
 				}
-				dfd.resolve()
+				deferred.resolve()
 			}
 
-			return $('.widget').show()
+			let widgetEl = $document.getElementsByClassName('widget')
+			widgetEl.style.display = 'block'
 		})
 
 		$scope.$apply()
 
-		return dfd.promise()
+		return deferred.promise
 	}
 
-	const startPlaySession = function() {
-		const dfd = $.Deferred()
+	const _startPlaySession = () => {
+		const deferred = $q.defer()
 
 		switch (false) {
 			case $scope.type !== 'noflash':
-				dfd.reject('Flash Player Required.')
+				deferred.reject('Flash Player Required.')
 				break
+
 			case !$scope.isPreview:
-				dfd.resolve()
+				deferred.resolve()
 				break
+
 			default:
 				// get the play id from the embedded variable on the page:
 				play_id = PLAY_ID
 
 				if (play_id != null) {
-					dfd.resolve()
+					deferred.resolve()
 				} else {
-					dfd.reject('Unable to start play session.')
+					deferred.reject('Unable to start play session.')
 				}
 		}
 
-		return dfd.promise()
+		return deferred.promise
 	}
 
-	const getQuestionSet = function() {
-		const dfd = $.Deferred()
-		// TODO: if bad qSet : dfd.reject('Unable to load questions.')
-		Materia.Coms.Json.send('question_set_get', [$scope.inst_id, play_id], function(result) {
+	const _getQuestionSet = () => {
+		const deferred = $q.defer()
+		// TODO: if bad qSet : deferred.reject('Unable to load questions.')
+		Materia.Coms.Json.send('question_set_get', [$scope.inst_id, play_id], result => {
 			qset = result
-			return dfd.resolve()
+			deferred.resolve()
 		})
 
-		return dfd.promise()
+		return deferred.promise
 	}
 
-	var pushPendingLogs = function() {
+	var _pushPendingLogs = () => {
 		if (logPushInProgress) {
 			return
 		}
@@ -390,7 +401,7 @@ app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userSer
 			return
 		}
 
-		return Materia.Coms.Json.send('play_logs_save', pendingQueue[0].request, function(result) {
+		return Materia.Coms.Json.send('play_logs_save', pendingQueue[0].request, result => {
 			retryCount = 0 // reset on success
 			if ($scope.alert.fatal) {
 				$scope.alert.fatal = false
@@ -415,9 +426,9 @@ app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userSer
 			logPushInProgress = false
 
 			if (pendingQueue.length > 0) {
-				return pushPendingLogs()
+				_pushPendingLogs()
 			}
-		}).fail(function() {
+		}).catch(() => {
 			retryCount++
 			let retrySpeed = PLAYER.RETRY_FAST
 
@@ -430,49 +441,49 @@ app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userSer
 				)
 			}
 
-			return setTimeout(function() {
+			$timeout(() => {
 				logPushInProgress = false
-				return pushPendingLogs()
+				_pushPendingLogs()
 			}, retrySpeed)
 		})
 	}
 
-	var sendPendingPlayLogs = function() {
-		const dfd = $.Deferred()
+	var _sendPendingPlayLogs = () => {
+		const deferred = $q.defer()
 
 		if (pendingLogs.play.length > 0) {
 			const args = [play_id, pendingLogs.play]
 			if ($scope.isPreview) {
 				args.push($scope.inst_id)
 			}
-			pendingQueue.push({ request: args, promise: dfd })
-			pushPendingLogs()
+			pendingQueue.push({ request: args, promise: deferred })
+			_pushPendingLogs()
 
 			pendingLogs.play = []
 		} else {
-			dfd.resolve()
+			deferred.resolve()
 		}
 
-		return dfd.promise()
+		return deferred.promise
 	}
 
-	var sendPendingStorageLogs = function() {
-		const dfd = $.Deferred()
+	var _sendPendingStorageLogs = () => {
+		const deferred = $q.defer()
 
 		if (!$scope.isPreview && pendingLogs.storage.length > 0) {
 			Materia.Coms.Json.send('play_storage_data_save', [play_id, pendingLogs.storage], () =>
-				dfd.resolve()
+				deferred.resolve()
 			)
 			pendingLogs.storage = []
 		} else {
-			dfd.resolve()
+			deferred.resolve()
 		}
 
-		return dfd.promise()
+		return deferred.promise
 	}
 
 	// converts current widget/instance structure to the one expected by the player
-	var translateForApiVersion = function(inst) {
+	var _translateForApiVersion = inst => {
 		// switch based on version expected by the widget
 		let output
 		switch (parseInt(inst.widget.api_version)) {
@@ -519,16 +530,14 @@ app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userSer
 		return output
 	}
 
-	var setHeight = function(h) {
+	var _setHeight = h => {
 		const min_h = instance.widget.height
-		if (h > min_h) {
-			return $('.center').height(h)
-		} else {
-			return $('.center').height(min_h)
-		}
+		let el = $document.getElementsByClassName('center')[0]
+		let desiredHeight = max(h, min_h)
+		el.style.height = `${desiredHeight}px`
 	}
 
-	var showScoreScreen = function() {
+	var _showScoreScreen = () => {
 		if (scoreScreenURL === null) {
 			if ($scope.isPreview) {
 				scoreScreenURL = `${BASE_URL}scores/preview/${$scope.inst_id}`
@@ -540,11 +549,11 @@ app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userSer
 		}
 
 		if (!$scope.alert.fatal) {
-			return (window.location = scoreScreenURL)
+			return ($window.location = scoreScreenURL)
 		}
 	}
 
-	window.onbeforeunload = function(e) {
+	$window.onbeforeunload = e => {
 		if (instance.widget.is_scorable === '1' && !$scope.isPreview && endState !== 'sent') {
 			return 'Wait! Leaving now will forfeit this attempt. To save your score you must complete the widget.'
 		} else {
@@ -552,38 +561,30 @@ app.controller('playerCtrl', function($scope, $sce, $timeout, widgetSrv, userSer
 		}
 	}
 
-	var _alert = function(msg, title = null, fatal) {
-		if (fatal == null) {
-			fatal = false
-		}
-		return $scope.$apply(function() {
-			$scope.alert.msg = msg
-			if (title !== null) {
-				$scope.alert.title = title
-			}
-			return ($scope.alert.fatal = fatal)
-		})
-	}
+	// Alert
+	$scope.alert = Alert
 
-	return $timeout(() =>
-		$.when(getWidgetInstance(), startPlaySession())
-			.pipe(getQuestionSet)
-			.pipe(embed)
-			.pipe(sendWidgetInit)
-			.pipe(startHeartBeat)
-			.fail(onLoadFail)
-	)
+	$scope.type = null // flash, html, no-flash
+
+	// src path for the engine to load
+	$scope.htmlPath = null
+
+	// Controls whether or not the widget iframe will allow fullscreen behavior (disabled by default)
+	$scope.allowFullScreen = false
+
+	// $scope.inst_id is set on ng-init from the server rendered html template
+
+	// Controls whether the view has a "preview" header bar
+	// search for preview or embed directory in the url
+	$scope.isPreview = String($window.location).includes('preview')
+
+	$timeout(() => {
+		$q
+			.all(_getWidgetInstance(), _startPlaySession())
+			.then(_getQuestionSet)
+			.then(_embed)
+			.then(_sendWidgetInit)
+			.then(_startHeartBeat)
+			.catch(_onLoadFail)
+	})
 })
-
-// Tiny directive that handles applying the "allowfullscreen" attribute to the player iframe
-// since the attribute does not take a parameter, it isn't as easy as allowfullscreen = {{allowFullScreen}} on the actual DOM element
-app.directive('fullscreenDir', () => ({
-	restrict: 'A',
-	link($scope, $element, $attrs) {
-		return $scope.$watch('allowFullScreen', function(newVal, oldVal) {
-			if (newVal === true) {
-				return $attrs.$set('allowfullscreen', '')
-			}
-		})
-	}
-}))
