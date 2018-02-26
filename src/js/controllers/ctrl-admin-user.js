@@ -9,11 +9,12 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const app = angular.module('materia')
-app.controller('adminUserController', function($scope, adminSrv, userServ) {
+app.controller('adminUserController', function($scope, $window, adminSrv, userServ) {
 	let lastSearch = ''
+
 	let _sortNames = (userA, userB) => {
-		const nameA = userA.first + ' ' + userA.last
-		const nameB = userB.first + ' ' + userB.last
+		const nameA = `${userA.first} ${userA.last}`
+		const nameB = `${userB.first} ${userB.last}`
 		return nameA.localeCompare(nameB)
 	}
 
@@ -51,8 +52,8 @@ app.controller('adminUserController', function($scope, adminSrv, userServ) {
 
 		if (nameOrFragment === '') {
 			$scope.searchResults.show = false
+			$scope.searchResults.none = true
 			$scope.searchResults.matches = []
-			lastSearch = ''
 			return
 		}
 
@@ -62,27 +63,26 @@ app.controller('adminUserController', function($scope, adminSrv, userServ) {
 		const inputArray = nameOrFragment.split(',')
 		nameOrFragment = inputArray[inputArray.length - 1]
 
-		adminSrv.searchUsers(nameOrFragment, matches => {
+		adminSrv.searchUsers(nameOrFragment, result => {
 			$scope.searchResults.searching = false
-
-			if (matches != null ? matches.halt : undefined) {
-				alert(matches.msg)
-				location.reload(true)
+			if (result && result.halt) {
+				alert(result.msg)
+				$window.location.reload(true)
 				return
 			}
 
-			if (!matches || (matches != null ? matches.length : undefined) < 1) {
-				matches = []
+			let matches = []
+			if (result.length) {
+				matches = result
 			}
 
-			$scope.searchResults.none = matches.length < 1
-
-			for (let user of Array.from(matches)) {
+			matches.forEach(user => {
 				user.gravatar = userServ.getAvatar(user, 50)
-			}
+			})
 
 			matches = matches.sort(_sortNames)
 
+			$scope.searchResults.none = matches.length < 1
 			$scope.searchResults.matches = matches
 			$scope.$apply()
 		})
@@ -131,6 +131,7 @@ app.controller('adminUserController', function($scope, adminSrv, userServ) {
 	deselectUser()
 	$scope.inputs = { userSearchInput: '' }
 	$scope.searchResults = {
+		none: true,
 		show: false,
 		searching: false,
 		matches: []
