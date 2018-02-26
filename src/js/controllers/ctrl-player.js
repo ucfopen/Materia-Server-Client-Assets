@@ -36,8 +36,6 @@ app.controller('playerCtrl', function(
 	let heartbeatInterval = -1
 	// Calculates which screen to show (preview, embed, or normal)
 	let scoreScreenURL = null
-	// Whether or not to show the embed view
-	const isEmbedded = top.location !== self.location
 	// Queue of requests
 	const pendingQueue = []
 	// Whether or not a queue push is in progress
@@ -96,12 +94,12 @@ app.controller('playerCtrl', function(
 		switch (endState) {
 			case 'sent':
 				if (showScoreScreenAfter) {
-					return _showScoreScreen()
+					_showScoreScreen()
 				}
 				break
 			case 'pending':
 				if (showScoreScreenAfter) {
-					return (scoreScreenPending = true)
+					scoreScreenPending = true
 				}
 				break
 			default:
@@ -111,12 +109,12 @@ app.controller('playerCtrl', function(
 				// required to end a play
 				_addLog({ type: 2, item_id: 0, text: '', value: null })
 				// send anything remaining
-				return _sendAllPendingLogs(() => {
+				_sendAllPendingLogs(() => {
 					// Async callback after final logs are sent
 					endState = 'sent'
 					// shows the score screen upon callback if requested any time betwen method call and now
 					if (showScoreScreenAfter || scoreScreenPending) {
-						return _showScoreScreen()
+						_showScoreScreen()
 					}
 				})
 		}
@@ -127,7 +125,7 @@ app.controller('playerCtrl', function(
 		$interval(() => {
 			Materia.Coms.Json.send('session_play_verify', [play_id]).then(result => {
 				if (result !== true && instance.guest_access === false) {
-					return _alert(
+					_alert(
 						"Your play session is no longer valid! This may be due to logging out, your session expiring, or trying to access another Materia account simultaneously. You'll need to reload the page to start over.",
 						'Invalid session',
 						true
@@ -200,7 +198,6 @@ app.controller('playerCtrl', function(
 				break
 		}
 
-		// deferred.resolve()
 		return deferred.promise
 	}
 
@@ -221,11 +218,6 @@ app.controller('playerCtrl', function(
 			GIID: $scope.inst_id,
 			URL_WEB: BASE_URL,
 			URL_GET_ASSET: 'media/'
-		}
-
-		if (typeof ie8Browser !== 'undefined' && ie8Browser !== null) {
-			width = '99.7%'
-			height = '99.7%'
 		}
 
 		embedDonePromise = deferred
@@ -402,6 +394,7 @@ app.controller('playerCtrl', function(
 
 				if (result) {
 					if (result.score_url) {
+						// score_url is sent from server to redirect to a specific url
 						scoreScreenURL = result.score_url
 					} else if (result.type === 'error') {
 						let title = 'Something went wrong...'
@@ -537,7 +530,7 @@ app.controller('playerCtrl', function(
 		if (scoreScreenURL === null) {
 			if ($scope.isPreview) {
 				scoreScreenURL = `${BASE_URL}scores/preview/${$scope.inst_id}`
-			} else if (isEmbedded) {
+			} else if ($scope.isEmbedded) {
 				scoreScreenURL = `${BASE_URL}scores/embed/${$scope.inst_id}#play-${play_id}`
 			} else {
 				scoreScreenURL = `${BASE_URL}scores/${$scope.inst_id}#play-${play_id}`
@@ -576,6 +569,9 @@ app.controller('playerCtrl', function(
 	// search for preview or embed directory in the url
 	$scope.isPreview = String($location.path()).includes('preview')
 
+	// Whether or not to show the embed view
+	$scope.isEmbedded = top !== self
+
 	// wait for a tick to  the queue
 	$timeout(() => {
 		$q
@@ -611,7 +607,25 @@ app.controller('playerCtrl', function(
 		_sendPendingStorageLogs,
 		_translateForApiVersion,
 		_setHeight,
-		_showScoreScreen
+		_showScoreScreen,
+		getLocalVar: name => eval(name),
+		/* istanbul ignore next */
+		setLocalVar: (name, value) => {
+			/* istanbul ignore next */
+			let x = eval(name)
+			/* istanbul ignore next */
+			x = value
+		},
+		setEmbedTargetEl: el => {
+			embedTargetEl = el
+		},
+		setQset: obj => {
+			qset = obj
+		},
+		getEmbedDonePromise: () => embedDonePromise,
+		setEndState: state => {
+			endState = state
+		}
 	}
 	/* develblock:end */
 })
