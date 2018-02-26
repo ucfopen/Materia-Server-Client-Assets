@@ -5,17 +5,30 @@ describe('adminUserController', function() {
 	var sendMock
 	var _q
 	var $controller
+	var mockWindow
 
 	beforeEach(() => {
 		// MOCK some services
 		_adminSrv = {
 			lookupUser: jest.fn(),
-			saveUser: jest.fn()
+			saveUser: jest.fn(),
+			searchUsers: jest.fn()
 		}
-		_userServ = {}
+		_userServ = {
+			getAvatar: jest.fn(() => 'avatar')
+		}
 		let app = angular.module('materia')
 		app.factory('adminSrv', () => _adminSrv)
 		app.factory('userServ', () => _userServ)
+
+		// MOCK $window
+		mockWindow = {
+			addEventListener: jest.fn(),
+			location: {
+				reload: jest.fn()
+			}
+		}
+		app.factory('$window', () => mockWindow)
 
 		require('../materia-namespace')
 		require('../materia-constants')
@@ -38,6 +51,7 @@ describe('adminUserController', function() {
 
 		expect($scope.inputs).toMatchObject({ userSearchInput: '' })
 		expect($scope.searchResults).toMatchObject({
+			none: true,
 			show: false,
 			searching: false,
 			matches: []
@@ -155,5 +169,96 @@ describe('adminUserController', function() {
 		expect($scope.$apply).toHaveBeenCalledTimes(1)
 	})
 
-	it.skip('search sends args to service and updates scope', () => {})
+	it('search sends args to service and updates scope', () => {
+		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
+		var controller = $controller('adminUserController', { $scope })
+
+		$scope.search('one')
+		expect(_adminSrv.searchUsers).toHaveBeenCalledTimes(1)
+		expect(_adminSrv.searchUsers).toHaveBeenLastCalledWith('one', expect.anything())
+
+		$scope.search('one two three')
+		expect(_adminSrv.searchUsers).toHaveBeenCalledTimes(2)
+		expect(_adminSrv.searchUsers).toHaveBeenLastCalledWith('one two three', expect.anything())
+	})
+
+	it('search sends doesnt search twice with the same input', () => {
+		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
+		var controller = $controller('adminUserController', { $scope })
+
+		$scope.search('one')
+		$scope.search('one')
+		expect(_adminSrv.searchUsers).toHaveBeenCalledTimes(1)
+	})
+
+	it('search responds to api errors with an alert and a location change', () => {
+		global.alert = jest.fn()
+		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
+		var controller = $controller('adminUserController', { $scope })
+
+		_adminSrv.searchUsers.mockImplementationOnce((name, cb) => {
+			cb({ halt: true, msg: 'oh no' })
+		})
+
+		$scope.search('one')
+		expect(alert).toHaveBeenCalledWith('oh no')
+		expect(mockWindow.location.reload).toHaveBeenCalledWith(true)
+	})
+
+	it('search handles no matches', () => {
+		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
+		var controller = $controller('adminUserController', { $scope })
+
+		_adminSrv.searchUsers.mockImplementationOnce((name, cb) => {
+			cb([])
+		})
+
+		$scope.search('one')
+		expect($scope.searchResults.none).toBe(true)
+		expect($scope.searchResults.show).toBe(true)
+		expect($scope.searchResults.matches).toMatchObject([])
+	})
+
+	it('search short cuts empty string', () => {
+		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
+		var controller = $controller('adminUserController', { $scope })
+
+		_adminSrv.searchUsers.mockImplementationOnce((name, cb) => {
+			cb([])
+		})
+
+		$scope.search('one')
+		$scope.search('')
+		expect($scope.searchResults.none).toBe(true)
+		expect($scope.searchResults.show).toBe(false)
+		expect($scope.searchResults.matches).toMatchObject([])
+	})
+
+	it('search shows sorted matches', () => {
+		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
+		var controller = $controller('adminUserController', { $scope })
+
+		_adminSrv.searchUsers.mockImplementationOnce((name, cb) => {
+			cb([{ first: 'z', last: 'z' }, { first: 'a', last: 'a' }])
+		})
+
+		let expected = [
+			{
+				first: 'a',
+				gravatar: 'avatar',
+				last: 'a'
+			},
+			{
+				first: 'z',
+				gravatar: 'avatar',
+				last: 'z'
+			}
+		]
+
+		$scope.search('one')
+		expect($scope.searchResults.none).toBe(false)
+		expect($scope.searchResults.show).toBe(true)
+		expect($scope.$apply).toHaveBeenCalled()
+		expect($scope.searchResults.matches).toMatchObject(expected)
+	})
 })

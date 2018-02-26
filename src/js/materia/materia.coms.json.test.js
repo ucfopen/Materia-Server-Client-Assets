@@ -1,7 +1,4 @@
 describe('Materia.Coms.Json', function() {
-	var filter
-	var _$sce
-
 	beforeEach(() => {
 		global.API_LINK = 'my_api_url'
 		require('../materia-namespace')
