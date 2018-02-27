@@ -31,7 +31,6 @@ module.exports = {
       jsPath+'/materia/materia.flashcheck.js',
       jsPath+'/materia/materia.image.js',
       jsPath+'/materia/materia.mywidgets.statistics.js',
-      jsPath+'/materia/materia.mywidgets.tasks.js',
       jsPath+'/materia/materia.page.default.js',
       jsPath+'/materia/materia.score.js',
       jsPath+'/materia/materia.scores.scoregraphics.js',
