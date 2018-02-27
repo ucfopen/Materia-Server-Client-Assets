@@ -1,14 +1,5 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const app = angular.module('materia')
-app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) {
+app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, widgetSrv, Alert) {
 	$scope.alert = Alert
 
 	const HEARTBEAT_INTERVAL = 30000
@@ -18,9 +9,8 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 	const EMBED_TARGET = 'container'
 
 	let creator = null
-	let embedDoneDfd = null
+	let embedDonePromise = null
 	let heartbeat = null
-	const importerPopup = null
 	let inst_id = null
 	let instance = null
 	let keepQSet = null
@@ -47,7 +37,7 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 
 	// Model methods
 	// send a save request to the creator
-	$scope.requestSave = function(mode) {
+	$scope.requestSave = mode => {
 		// hide dialogs
 		$scope.popup = ''
 
@@ -62,11 +52,11 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 				break
 		}
 
-		return sendToCreator('onRequestSave', [mode])
+		sendToCreator('onRequestSave', [mode])
 	}
 
 	// Popup a question importer dialog
-	$scope.showQuestionImporter = function() {
+	$scope.showQuestionImporter = () => {
 		// must be loose comparison
 		const types = widget_info.meta_data.supported_data
 		//the value passed on needs to be a list of one or two elements, i.e.
@@ -75,72 +65,55 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 		return null // else Safari will give the .swf data that it can't handle
 	}
 
-	$scope.onPublishPressed = function() {
+	$scope.onPublishPressed = () => {
 		if (inst_id != null && instance != null && !instance.is_draft) {
 			// Show the Update Dialog
-			return ($scope.popup = 'update')
+			$scope.popup = 'update'
 		} else {
 			// Show the Publish Dialog
-			return ($scope.popup = 'publish')
+			$scope.popup = 'publish'
 		}
 	}
 
-	$scope.cancelPublish = function(e, instant) {
-		if (instant == null) {
-			instant = false
-		}
-		return ($scope.popup = '')
+	$scope.cancelPublish = e => {
+		$scope.popup = ''
 	}
 
-	$scope.cancelPreview = function(e, instant) {
-		if (instant == null) {
-			instant = false
-		}
-		return ($scope.popup = '')
+	$scope.cancelPreview = e => {
+		$scope.popup = ''
 	}
 
 	// If Initialization Fails
-	const onInitFail = function(msg) {
+	const onInitFail = msg => {
 		stopHeartBeat()
 		if (msg.toLowerCase() !== 'flash player required.') {
-			return _alert(`Failure: ${msg}`)
+			_alert(`Failure: ${msg}`)
 		}
 	}
 
 	// Every 30 seconds, renew/check the session
-	const startHeartBeat = function() {
-		const dfd = $.Deferred().resolve()
-		heartbeat = setInterval(
-			() =>
-				Materia.Coms.Json.send('session_author_verify', [null, false], function(data) {
-					if (data !== true) {
-						_alert('You have been logged out due to inactivity', 'Invalid Login', true, true)
-						$scope.$apply()
-						return stopHeartBeat()
-					}
-				}),
+	const startHeartBeat = () => {
+		const deferred = $q.defer().resolve()
+		heartbeat = $interval(() => {
+			Materia.Coms.Json.send('session_author_verify', [null, false]).then(data => {
+				if (data !== true) {
+					_alert('You have been logged out due to inactivity', 'Invalid Login', true, true)
+					$scope.$apply()
+					stopHeartBeat()
+				}
+			})
+		}, HEARTBEAT_INTERVAL)
 
-			HEARTBEAT_INTERVAL
-		)
-
-		return dfd.promise()
+		return deferred.promise
 	}
 
-	var stopHeartBeat = () => clearInterval(heartbeat)
-
-	// @TODO: getWidgetInfo uses $q now, get rid of this
-	// Gets widget info when not editing an existing instance
-	const getWidgetInfo = function() {
-		const dfd = $.Deferred()
-		widgetSrv.getWidgetInfo(widget_id, widgets => dfd.resolve(widgets))
-
-		return dfd.promise()
+	const stopHeartBeat = () => {
+		$interval.clear(heartbeat)
 	}
 
 	// Gets the qset of a loaded instance
-	const getQset = function() {
-		const dfd = $.Deferred()
-		Materia.Coms.Json.send('question_set_get', [inst_id], function(data) {
+	const getQset = () => {
+		return Materia.Coms.Json.send('question_set_get', [inst_id]).then(data => {
 			if (
 				(data != null ? data.title : undefined) === 'Permission Denied' ||
 				data.title === 'error'
@@ -150,16 +123,13 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 			} else {
 				keepQSet = data
 			}
-			return dfd.resolve()
 		})
-
-		return dfd.promise()
 	}
 
 	// Starts the Creator, sending required widget data
-	const initCreator = function() {
+	const initCreator = () => {
 		let args
-		const dfd = $.Deferred().resolve()
+		const deferred = $q.defer()
 
 		if (inst_id != null) {
 			args = [instance.name, instance.widget, keepQSet.data, keepQSet.version, BASE_URL]
@@ -177,11 +147,12 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 			sendToCreator('initNewWidget', args)
 		}
 
-		return dfd.promise()
+		deferred.resolve()
+		return deferred.promise
 	}
 
 	// Send messages to the creator, handles flash and html creators
-	var sendToCreator = function(type, args) {
+	const sendToCreator = (type, args) => {
 		switch (widgetType) {
 			case '.swf':
 				return creator[type].apply(creator, args)
@@ -197,18 +168,19 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 	const getMyWidgetsUrl = instid => `${BASE_URL}my-widgets#${instid}`
 
 	// Embeds the creator
-	const embed = function(widgetData) {
+	const embed = widgetData => {
+		const deferred = $q.defer()
+
 		let creatorPath
-		if (widgetData != null ? widgetData[0].widget : undefined) {
-			instance = widgetData[0]
+		if (widgetData != null ? widgetData.widget : undefined) {
+			instance = widgetData
 			widget_info = instance.widget
 		} else {
-			widget_info = widgetData[0]
+			widget_info = widgetData
 		}
 
 		$scope.nonEditable = widget_info.is_editable === '0'
 
-		const dfd = $.Deferred()
 		widgetType = widget_info.creator.slice(widget_info.creator.lastIndexOf('.'))
 
 		// allow creator paths to be absolute urls
@@ -224,31 +196,26 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 		$scope.type = type
 		$scope.$apply()
 
+		// the embed process will reolve this later
+		embedDonePromise = deferred
+
 		switch (type) {
 			case 'html':
-				embedHTML(creatorPath, dfd)
+				embedHTML(creatorPath)
 				break
 			case 'swf':
-				embedFlash(creatorPath, widget_info.flash_version, dfd)
+				embedFlash(creatorPath, widget_info.flash_version)
 				break
 		}
 
-		// Prevent closing accidentally
-		$(window).bind('beforeunload', function() {
-			if (importerPopup != null) {
-				return importerPopup.close()
-			}
-		})
-
-		return dfd.promise()
+		return deferred.promise
 	}
 
-	var embedHTML = function(htmlPath, dfd) {
+	const embedHTML = htmlPath => {
 		$scope.htmlPath = htmlPath + '?' + widget_info.created_at
 		$scope.$apply()
-		embedDoneDfd = dfd
 
-		const onPostMessage = function(e) {
+		const onPostMessage = e => {
 			const origin = `${e.origin}/`
 			if (origin === STATIC_CROSSDOMAIN || origin === BASE_URL) {
 				const msg = JSON.parse(e.data)
@@ -268,29 +235,25 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 					default:
 						return _alert(`Unknown message from creator: ${msg.type}`)
 				}
-			} else {
-				return _alert(`Error, cross domain restricted for ${origin}`)
 			}
+
+			_alert(`Error, cross domain restricted for ${origin}`)
 		}
 
 		// setup the postmessage listener
-		if (typeof addEventListener !== 'undefined' && addEventListener !== null) {
-			return addEventListener('message', onPostMessage, false)
-		}
+		window.addEventListener('message', onPostMessage, false)
 	}
 
-	var embedFlash = function(path, version, dfd) {
+	const embedFlash = (path, version) => {
 		// register global callbacks for ExternalInterface calls
 		window.__materia_flash_onCreatorReady = onCreatorReady
 		window.__materia_flash_importMedia = showMediaImporter
 		window.__materia_flash_save = save
 		window.__materia_flash_cancelSave = onSaveCanceled
 
-		// store this dfd so that we can keep things synchronous
-		// it will be resolved by the engine once it's loaded via onCreatorReady
-		embedDoneDfd = dfd
 		if (swfobject.hasFlashPlayerVersion('1') === false) {
-			return $scope.$apply(() => ($scope.type = 'noflash'))
+			$scope.type = 'noflash'
+			$scope.$apply()
 		} else {
 			// setup variable to send to flash
 			const flashvars = {
@@ -311,13 +274,7 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 			let width = '100%'
 			let height = '100%'
 
-			// Needed to check for ie8 browsers to add a border to the swf object.
-			if (typeof ie8Browser !== 'undefined' && ie8Browser !== null) {
-				width = '99.7%'
-				height = '99.7%'
-			}
-
-			return swfobject.embedSWF(
+			swfobject.embedSWF(
 				path,
 				EMBED_TARGET,
 				width,
@@ -332,17 +289,18 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 	}
 
 	// Resizes the swf according to the window height
-	const resizeCreator = function() {
+	const resizeCreator = () => {
 		$('.center').height($(window).height() - BOTTOM_OFFSET)
 		// This fixes a bug in chrome where the iframe (#container)
 		// doesn't correctly fill 100% of the height. Doing this with
 		// just CSS doesn't work - it needs to be done in JS
-		return $('#container').css('position', 'relative')
+		$('#container').css('position', 'relative')
 	}
 
 	// Show the buttons that interact with the creator
-	const showButtons = function() {
-		const dfd = $.Deferred().resolve()
+	const showButtons = () => {
+		const deferred = $q.defer()
+
 		// change the buttons if this isnt a draft
 		if (instance && !instance.is_draft) {
 			$scope.publishText = 'Update'
@@ -351,11 +309,13 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 		enableReturnLink()
 		$scope.showActionBar = true
 		$scope.$apply()
-		return dfd.promise()
+
+		deferred.resolve()
+		return deferred.promise
 	}
 
 	// Changes the Return link's functionality depending on use
-	var enableReturnLink = function() {
+	const enableReturnLink = () => {
 		if (inst_id != null) {
 			// editing
 			$scope.returnUrl = getMyWidgetsUrl(inst_id)
@@ -365,43 +325,44 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 			$scope.returnUrl = `${BASE_URL}widgets`
 			$scope.returnPlace = 'widget catalog'
 		}
-		return $scope.$apply()
+
+		$scope.$apply()
 	}
 
-	const onPreviewPopupBlocked = function(url) {
+	const onPreviewPopupBlocked = url => {
 		$scope.popup = 'blocked'
 		$scope.previewUrl = url
-		return $scope.$apply()
+		$scope.$apply()
 	}
 
 	// When the creator says it's ready
 	// Note this is psuedo public as it's exposed to flash
-	var onCreatorReady = function() {
+	const onCreatorReady = () => {
 		creator = $('#container').get(0)
 		// resize swf now and when window resizes
 		$(window).resize(resizeCreator)
 		resizeCreator()
 
-		return embedDoneDfd.resolve() // used to keep events synchronous
+		return embedDonePromise.resolve() // used to keep events synchronous
 	}
 
 	// Show an embedded dialog, as opposed to a popup
-	var showEmbedDialog = url => ($scope.iframeUrl = url)
+	const showEmbedDialog = url => ($scope.iframeUrl = url)
 
 	// move the embed dialog off to invisibility
-	const hideEmbedDialog = function() {
+	const hideEmbedDialog = () => {
 		$scope.iframeUrl = ''
 		$scope.modal = false
-		return setTimeout(function() {
+		$timeout(() => {
 			$scope.$apply()
 		}, 0)
 	}
 
 	// Note this is psuedo public as it's exposed to flash
-	var showMediaImporter = function(types) {
+	const showMediaImporter = types => {
 		showEmbedDialog(`${BASE_URL}media/import#${types.join(',')}`)
 		$scope.modal = true
-		setTimeout(function() {
+		$timeout(() => {
 			$scope.$apply()
 		}, 0)
 		return null // else Safari will give the .swf data that it can't handle
@@ -409,7 +370,7 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 
 	// save called by the widget creator
 	// Note this is psuedo public as it's exposed to flash
-	var save = function(instanceName, qset, version) {
+	const save = (instanceName, qset, version) => {
 		if (version == null) {
 			version = 1
 		}
@@ -439,7 +400,7 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 							var popup = window.open(url)
 							inst_id = inst.id
 							if (popup != null) {
-								$timeout(function() {
+								$timeout(() => {
 									if (!(popup.innerHeight > 0)) {
 										return onPreviewPopupBlocked(url)
 									}
@@ -466,7 +427,7 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 					}
 
 					$scope.$apply()
-					setTimeout(function() {
+					$timeout(() => {
 						$scope.saveText = 'Save Draft'
 						$scope.saveStatus = 'idle'
 						return $scope.$apply()
@@ -477,7 +438,7 @@ app.controller('createCtrl', function($scope, $sce, $timeout, widgetSrv, Alert) 
 
 	// When the Creator cancels a save request
 	// Note this is psuedo public as it's exposed to flash
-	var onSaveCanceled = function(msg) {
+	const onSaveCanceled = msg => {
 		$scope.saveText = 'Can Not Save!'
 
 		if ((msg != null ? msg.msg : undefined) != null) {
@@ -504,16 +465,16 @@ ${msg.toLowerCase()}`,
 		}
 	}
 
-	var setHeight = h => $('#container').height(h)
+	const setHeight = h => $('#container').height(h)
 
-	var _alert = function(msg, title = null, fatal, enableLoginButton) {
+	const _alert = (msg, title = null, fatal, enableLoginButton) => {
 		if (fatal == null) {
 			fatal = false
 		}
 		if (enableLoginButton == null) {
 			enableLoginButton = false
 		}
-		return $scope.$apply(function() {
+		return $scope.$apply(() => {
 			$scope.alert.msg = msg
 			if (title !== null) {
 				$scope.alert.title = title
@@ -553,24 +514,24 @@ ${msg.toLowerCase()}`,
 
 	// synchronise the asynchronous events
 	if (inst_id != null) {
-		return getQset().then(function() {
+		return getQset().then(() => {
 			if (!$scope.invalid) {
-				// @TODO - switch to $q
-				return $.when(widgetSrv.getWidget(inst_id))
-					.pipe(embed)
-					.pipe(initCreator)
-					.pipe(showButtons)
-					.pipe(startHeartBeat)
-					.fail(onInitFail)
+				return $q(resolve => resolve(inst_id))
+					.then(widgetSrv.getWidget)
+					.then(embed)
+					.then(initCreator)
+					.then(showButtons)
+					.then(startHeartBeat)
+					.catch(onInitFail)
 			}
 		})
 	} else {
-		// @TODO - switch to $q
-		return $.when(getWidgetInfo())
-			.pipe(embed)
-			.pipe(initCreator)
-			.pipe(showButtons)
-			.pipe(startHeartBeat)
-			.fail(onInitFail)
+		return $q(resolve => resolve(widget_id))
+			.then(widgetSrv.getWidgetInfo)
+			.then(embed)
+			.then(initCreator)
+			.then(showButtons)
+			.then(startHeartBeat)
+			.catch(onInitFail)
 	}
 })

@@ -36,8 +36,8 @@ app.controller('widgetDetailsController', function($scope, widgetSrv) {
 		.split('-')
 		.shift()
 
-	widgetSrv.getWidgetInfo(widgetID).then(data => {
-		populateDefaults(data[0])
+	widgetSrv.getWidgetInfo(widgetID).then(widget => {
+		populateDefaults(widget)
 		if (nameArr.length > 1) {
 			$scope.goback = {
 				url: '/',
@@ -81,7 +81,7 @@ app.controller('widgetDetailsController', function($scope, widgetSrv) {
 			})
 		}
 
-		return $scope.$apply()
+		$scope.$apply()
 	}
 
 	return (tooltipObject = txt => ({

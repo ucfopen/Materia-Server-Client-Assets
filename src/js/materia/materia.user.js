@@ -7,19 +7,19 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 Namespace('Materia').User = (function() {
-	let currentUser = null;
+	let currentUser = null
 
-	const getCurrentUser = function(callback) {
+	const getCurrentUser = callback => {
 		if (currentUser != null) {
-			return callback(currentUser);
+			callback(currentUser)
 		} else {
 			// if we are unable to retrieve it then we need to pull it from the server:
-			return Materia.Coms.Json.send('user_get', null, function(user) {
-				currentUser = user;
-				return callback(currentUser);
-			});
+			Materia.Coms.Json.send('user_get', null).then(user => {
+				currentUser = user
+				callback(currentUser)
+			})
 		}
-	};
+	}
 
-	return {getCurrentUser};
-})();
+	return { getCurrentUser }
+})()

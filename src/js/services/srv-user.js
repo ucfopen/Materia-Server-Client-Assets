@@ -1,6 +1,7 @@
 const app = angular.module('materia')
 app.service('userServ', function($q, $rootScope) {
 	let _me = null
+	let _user = null
 
 	const buildUser = function(name, avatar, loggedIn, role, notify) {
 		if (name == null) {
@@ -54,10 +55,7 @@ app.service('userServ', function($q, $rootScope) {
 
 	const updateSettings = (property, value) => (_me[property] = value)
 
-	const getCurrentUser = from => {
-		if (from == null) {
-			from = 'dom'
-		}
+	const getCurrentUser = (from = 'dom') => {
 		if (_me == null) {
 			switch (from) {
 				case 'dom':
@@ -77,20 +75,20 @@ app.service('userServ', function($q, $rootScope) {
 		return getAvatar(_me, size)
 	}
 
-	const get = function() {
+	const get = () => {
 		const deferred = $q.defer()
 
-		if (!_me) {
+		if (!_user) {
 			deferred.resolve(_getCurrentUserFromAPI())
 		} else {
-			deferred.resolve(_me)
+			deferred.resolve(_user)
 		}
 
 		return deferred.promise
 	}
 
 	const set = function(userToSet) {
-		_me = userToSet
+		_user = userToSet
 		return $rootScope.$broadcast('user.update')
 	}
 
@@ -100,7 +98,7 @@ app.service('userServ', function($q, $rootScope) {
 
 		Materia.User.getCurrentUser(user => {
 			set(user)
-			deferred.resolve(_me)
+			deferred.resolve(_user)
 		})
 
 		return deferred.promise
