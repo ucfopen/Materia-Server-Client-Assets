@@ -290,8 +290,6 @@ app.controller('WidgetSettingsController', function(
 	// Handles the api calls to actually change the availability
 	// @return void
 	$scope.changeAvailability = function() {
-		// Close the modal
-		this.$parent.hideModal()
 		const attempts =
 			$scope.attemptsSliderValue < $scope.UNLIMITED_SLIDER_VALUE ? $scope.attemptsSliderValue : -1
 

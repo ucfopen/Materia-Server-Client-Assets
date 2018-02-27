@@ -95,11 +95,11 @@ app.controller('MyWidgetsController', function(
 				widget.beard = beardServ.getRandomBeard()
 			})
 
+			// @TODO: use wigtServ.sortWidgets
+			$scope.widgets.widgetList = data.sort((a, b) => b.created_at - a.created_at)
+
 			// sort widgets by create time
-			$scope.$apply(() => {
-				// @TODO: use wigtServ.sortWidgets
-				$scope.widgets.widgetList = data.sort((a, b) => b.created_at - a.created_at)
-			})
+			if (!$scope.$$phase) $scope.$apply()
 		}
 
 		// on the first load, select the widget from the url
@@ -130,7 +130,7 @@ app.controller('MyWidgetsController', function(
 				selectedWidgetSrv.getScoreSummaries(),
 				selectedWidgetSrv.getDateRanges()
 			])
-			.then(function(data) {
+			.then(data => {
 				// don't render an old display if they user has clicked another widget
 				if ($scope.selected.widget.id !== currentId) {
 					return
@@ -203,7 +203,7 @@ app.controller('MyWidgetsController', function(
 
 	// Second half of populateDisplay
 	// This allows us to update the display before the callback of scores finishes, which speeds up UI
-	var populateAccess = function() {
+	var populateAccess = () => {
 		// accessLevel == ACCESS.VISIBLE is effectively read-only
 		if (
 			($scope.perms.user[$scope.user.id] != null

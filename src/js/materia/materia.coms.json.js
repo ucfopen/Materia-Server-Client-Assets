@@ -86,10 +86,14 @@ Namespace('Materia.Coms').Json = (function() {
 			method: 'POST',
 			credentials: 'same-origin',
 			cache: 'no-cache',
-			body
+			body,
+			headers: {
+				accept: 'application/json, text/javascript, */*; q=0.01'
+				// 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
+			}
 		}
 		// returns deferred
-		fetch(_gatewayURL + method + '/')
+		fetch(_gatewayURL + method + '/', options)
 			.then(res => res.text())
 			.then(body => {
 				if (body) body = JSON.parse(body)

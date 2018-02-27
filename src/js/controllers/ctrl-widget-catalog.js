@@ -78,14 +78,14 @@ app.controller('widgetCatalogCtrl', function($scope, widgetSrv) {
 			$scope.$watchCollection('filters', hideFiltered)
 
 			$scope.widgets = widgets
-			$scope.$apply()
+			if (!$scope.$$phase) $scope.$apply()
 		})
 	}
 
 	// Display ALL the widgets
 	const displayAllWidgets = function() {
 		Materia.Set.Throbber.startSpin('.page')
-		widgetSrv.getWidgetsByType('all').next(widgets => {
+		widgetSrv.getWidgetsByType('all').then(widgets => {
 			if ((widgets != null ? widgets.length : undefined) == null) {
 				return
 			}
@@ -101,7 +101,7 @@ app.controller('widgetCatalogCtrl', function($scope, widgetSrv) {
 			$scope.$watchCollection('filters', hideFiltered)
 
 			$scope.widgets = widgets
-			$scope.$apply()
+			if (!$scope.$$phase) $scope.$apply()
 		})
 	}
 
