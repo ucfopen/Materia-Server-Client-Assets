@@ -58,17 +58,17 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 	}
 
 	const getUserPermissions = () => {
-		const deferred = $q.defer()
-		Materia.Coms.Json.send('permissions_get', [OBJECT_TYPES.WIDGET_INSTANCE, _widget.id], perms => {
+		return Materia.Coms.Json.send('permissions_get', [
+			OBJECT_TYPES.WIDGET_INSTANCE,
+			_widget.id
+		]).then(perms => {
 			const permsObject = {
 				user: perms.user_perms,
 				widget: perms.widget_user_perms
 			}
 
-			return deferred.resolve(permsObject)
+			return permsObject
 		})
-
-		return deferred.promise
 	}
 
 	const getPlayLogsForSemester = (term, year) => {

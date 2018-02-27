@@ -49,7 +49,7 @@ app.controller('playerCtrl', function(
 		$scope.alert.msg = msg
 		$scope.alert.title = title
 		$scope.alert.fatal = fatal
-		$scope.$apply()
+		if (!$scope.$$phase) $scope.$apply()
 	}
 
 	const _sendAllPendingLogs = callback => {
@@ -57,8 +57,8 @@ app.controller('playerCtrl', function(
 			callback = () => {}
 		}
 
-		$q
-			.all(_sendPendingStorageLogs())
+		$q(resolve => resolve())
+			.then(_sendPendingStorageLogs())
 			.then(_sendPendingPlayLogs)
 			.then(callback)
 			.catch(() => {
@@ -171,7 +171,7 @@ app.controller('playerCtrl', function(
 	const _onLoadFail = msg => _alert(`Failure: ${msg}`, null, true)
 
 	const _embed = () => {
-		const deferred = $q.defer()
+		embedDonePromise = $q.defer()
 		let enginePath
 
 		widgetType = instance.widget.player.slice(instance.widget.player.lastIndexOf('.'))
@@ -184,24 +184,26 @@ app.controller('playerCtrl', function(
 			enginePath = WIDGET_URL + instance.widget.dir + instance.widget.player
 		}
 
-		if (instance.widget.width > 0) {
-			let previewBarEl = $document.getElementsByClassName('preview-bar')[0]
+		if ($scope.isPreview && instance.widget.width > 0) {
+			let previewBarEl = $document[0].getElementsByClassName('preview-bar')[0]
 			previewBarEl.style.width = `${instance.widget.width}px`
 		}
 
-		switch (widgetType) {
-			case '.swf':
-				_embedFlash(enginePath, '10', deferred)
-				break
-			case '.html':
-				_embedHTML(enginePath, deferred)
-				break
-		}
+		$timeout(() => {
+			switch (widgetType) {
+				case '.swf':
+					_embedFlash(enginePath, '10')
+					break
+				case '.html':
+					_embedHTML(enginePath)
+					break
+			}
+		})
 
-		return deferred.promise
+		return embedDonePromise.promise
 	}
 
-	const _embedFlash = (enginePath, version, deferred) => {
+	const _embedFlash = (enginePath, version) => {
 		// register global callbacks for ExternalInterface calls
 		$window.__materia_sendStorage = _sendStorage
 		$window.__materia_onWidgetReady = _onWidgetReady
@@ -220,9 +222,8 @@ app.controller('playerCtrl', function(
 			URL_GET_ASSET: 'media/'
 		}
 
-		embedDonePromise = deferred
 		$scope.type = 'flash'
-		$scope.$apply()
+		if (!$scope.$$phase) $scope.$apply()
 
 		swfobject.embedSWF(
 			enginePath,
@@ -237,22 +238,21 @@ app.controller('playerCtrl', function(
 		)
 	}
 
-	const _embedHTML = (enginePath, deferred) => {
-		embedDonePromise = deferred
-
+	const _embedHTML = enginePath => {
 		$scope.type = 'html'
 		$scope.htmlPath = enginePath + '?' + instance.widget.created_at
-		embedTargetEl = $document.getElementsById(PLAYER.EMBED_TARGET)
-		if (instance.widget.width > 0) {
-			embedTargetEl.style.width = `${instance.widget.width}px`
-		}
-		if (instance.widget.height > 0) {
-			embedTargetEl.style.width = `${instance.widget.height}px`
-		}
+		if (!$scope.$$phase) $scope.$apply()
+		embedTargetEl = $document[0].getElementById(PLAYER.EMBED_TARGET)
+		// if (instance.widget.width > 0) {
+		// 	embedTargetEl.style.width = `${instance.widget.width}px`
+		// }
+		// if (instance.widget.height > 0) {
+		// 	embedTargetEl.style.width = `${instance.widget.height}px`
+		// }
 
 		// build a link element to deconstruct the static url
 		// this helps us match static url against the event origin
-		const a = $document.createElement('a')
+		const a = $document[0].createElement('a')
 		a.href = STATIC_CROSSDOMAIN
 		const expectedOrigin = a.href.substr(0, a.href.length - 1)
 
@@ -287,8 +287,8 @@ app.controller('playerCtrl', function(
 		}
 
 		// setup the postmessage listener
-		$window.addEventListener('message', _onPostMessage, false)
-		$scope.$apply()
+		window.addEventListener('message', _onPostMessage, false)
+		if (!$scope.$$phase) $scope.$apply()
 	}
 
 	const _getWidgetInstance = () => {
@@ -315,7 +315,7 @@ app.controller('playerCtrl', function(
 				$scope.type = 'noflash'
 				deferred.reject('Newer Flash Player version required.')
 			} else {
-				let el = $document.getElementsByClassName('center')[0]
+				let el = $document[0].getElementsByClassName('center')[0]
 
 				if (instance.widget.width > 0) {
 					// @TODO, just use scope
@@ -327,11 +327,11 @@ app.controller('playerCtrl', function(
 				deferred.resolve()
 			}
 
-			let widgetEl = $document.getElementsByClassName('widget')
+			let widgetEl = $document[0].getElementsByClassName('widget')[1]
 			widgetEl.style.display = 'block'
 		})
 
-		$scope.$apply()
+		if (!$scope.$$phase) $scope.$apply()
 
 		return deferred.promise
 	}
@@ -339,24 +339,19 @@ app.controller('playerCtrl', function(
 	const _startPlaySession = () => {
 		const deferred = $q.defer()
 
-		switch (false) {
-			case $scope.type !== 'noflash':
-				deferred.reject('Flash Player Required.')
-				break
+		if ($scope.type === 'noflash') {
+			deferred.reject('Flash Player Required.')
+		} else if ($scope.isPreview) {
+			deferred.resolve()
+		} else {
+			// get the play id from the embedded variable on the page:
+			play_id = PLAY_ID
 
-			case !$scope.isPreview:
+			if (play_id != null) {
 				deferred.resolve()
-				break
-
-			default:
-				// get the play id from the embedded variable on the page:
-				play_id = PLAY_ID
-
-				if (play_id != null) {
-					deferred.resolve()
-				} else {
-					deferred.reject('Unable to start play session.')
-				}
+			} else {
+				deferred.reject('Unable to start play session.')
+			}
 		}
 
 		return deferred.promise
@@ -521,13 +516,13 @@ app.controller('playerCtrl', function(
 
 	const _setHeight = h => {
 		const min_h = instance.widget.height
-		let el = $document.getElementsByClassName('center')[0]
+		let el = $document[0].getElementsByClassName('center')[0]
 		let desiredHeight = Math.max(h, min_h)
 		el.style.height = `${desiredHeight}px`
 	}
 
 	const _showScoreScreen = () => {
-		if (scoreScreenURL === null) {
+		if (!scoreScreenURL) {
 			if ($scope.isPreview) {
 				scoreScreenURL = `${BASE_URL}scores/preview/${$scope.inst_id}`
 			} else if ($scope.isEmbedded) {
@@ -538,7 +533,7 @@ app.controller('playerCtrl', function(
 		}
 
 		if (!$scope.alert.fatal) {
-			$location.replace(scoreScreenURL)
+			window.location = scoreScreenURL
 		}
 	}
 
@@ -567,7 +562,7 @@ app.controller('playerCtrl', function(
 
 	// Controls whether the view has a "preview" header bar
 	// search for preview or embed directory in the url
-	$scope.isPreview = String($location.path()).includes('preview')
+	$scope.isPreview = String($location.absUrl()).includes('preview')
 
 	// Whether or not to show the embed view
 	$scope.isEmbedded = top !== self
@@ -581,7 +576,7 @@ app.controller('playerCtrl', function(
 			.then(_sendWidgetInit)
 			.then(_startHeartBeat)
 			.catch(_onLoadFail)
-	})
+	}, 1)
 
 	/* develblock:start */
 	// these method are exposed for testing

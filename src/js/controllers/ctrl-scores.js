@@ -70,8 +70,8 @@ app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
 		// @TODO - switch to $q
 		widgetSrv
 			.getWidget(inst_id)
-			.then(function(widgetInstances) {
-				widgetInstance = widgetInstances[0]
+			.then(instance => {
+				widgetInstance = instance
 				$scope.guestAccess = widgetInstance.guest_access
 				return getInstanceScores(inst_id)
 			})
@@ -79,8 +79,7 @@ app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
 				displayAttempts(play_id)
 				return displayWidgetInstance()
 			})
-			.fail(function() {})
-	// Failed!?!?
+			.catch(function() {})
 
 	var getInstanceScores = function(inst_id) {
 		const dfd = $.Deferred()
@@ -131,7 +130,7 @@ app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
 		return $scope.$apply()
 	}
 
-	var getScoreDetails = function() {
+	var getScoreDetails = () => {
 		if (isPreview) {
 			currentAttempt = 1
 			scoreSrv.getWidgetInstancePlayScores(null, widgetInstance.id, displayDetails)
