@@ -27,10 +27,9 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 	const getWidget = (id = null) => {
 		const deferred = $q.defer()
 
-		if (!id && _widgets.length !== 0) {
-			// return all widgets if no id was requested and we have some
-			deferred.resolve(_widgets)
-		} else if (id && _widgetIds[id] != null) {
+		if (!id) {
+			deferred.reject()
+		} else if (_widgetIds[id] != null) {
 			// return the requested widget if we have it
 			deferred.resolve(_widgetIds[id])
 		} else {
@@ -43,7 +42,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 					deferred.resolve(widget)
 				})
 				.catch(() => {
-					deferred.reject()
+					return deferred.reject()
 				})
 		}
 
@@ -156,7 +155,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 
 	const _getSingleWidgetFromServer = id => {
 		return Materia.Coms.Json.send('widget_instances_get', [[id]]).then(widgets => {
-			if (!widgets.length) {
+			if (!widgets || !widgets.length) {
 				let d = $q.defer()
 				d.reject()
 				return d.promise
@@ -228,13 +227,13 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 				selID = selID.substr(1)
 			}
 
-			getWidget(selID).then(widget => {
-				if (widget) {
+			getWidget(selID)
+				.then(widget => {
 					selectedWidgetSrv.set(widget)
-				} else {
+				})
+				.catch(() => {
 					selectedWidgetSrv.notifyAccessDenied()
-				}
-			})
+				})
 		}
 	}
 
