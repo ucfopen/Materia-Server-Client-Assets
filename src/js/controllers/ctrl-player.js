@@ -4,7 +4,6 @@ app.controller('playerCtrl', function(
 	$location,
 	$q,
 	$interval,
-	$document,
 	$window,
 	$timeout,
 	widgetSrv,
@@ -18,6 +17,8 @@ app.controller('playerCtrl', function(
 	let instance = null
 	// Logs that have yet to be synced
 	const pendingLogs = { play: [], storage: [] }
+
+	let expectedOrigin = null
 	// ID of the current play, received from embedded inline script variables
 	let play_id = null
 	// hold onto the qset from the instance
@@ -126,8 +127,8 @@ app.controller('playerCtrl', function(
 			Materia.Coms.Json.send('session_play_verify', [play_id]).then(result => {
 				if (result !== true && instance.guest_access === false) {
 					_alert(
-						"Your play session is no longer valid! This may be due to logging out, your session expiring, or trying to access another Materia account simultaneously. You'll need to reload the page to start over.",
-						'Invalid session',
+						"Your play session is no longer valid.  You'll need to reload the page and start over.",
+						'Invalid Play Session',
 						true
 					)
 				}
@@ -185,7 +186,7 @@ app.controller('playerCtrl', function(
 		}
 
 		if ($scope.isPreview && instance.widget.width > 0) {
-			let previewBarEl = $document[0].getElementsByClassName('preview-bar')[0]
+			let previewBarEl = document.getElementsByClassName('preview-bar')[0]
 			previewBarEl.style.width = `${instance.widget.width}px`
 		}
 
@@ -238,11 +239,41 @@ app.controller('playerCtrl', function(
 		)
 	}
 
+	const _onPostMessage = e => {
+		if (e.origin === expectedOrigin) {
+			const msg = JSON.parse(e.data)
+			switch (msg.type) {
+				case 'start':
+					return _onWidgetReady()
+				case 'addLog':
+					return _addLog(msg.data)
+				case 'end':
+					return _end(msg.data)
+				case 'sendStorage':
+					return _sendStorage(msg.data)
+				case 'sendPendingLogs':
+					return _sendAllPendingLogs()
+				case 'alert':
+					return _alert(msg.data, 'Warning!', false)
+				case 'setHeight':
+					return _setHeight(msg.data[0])
+				case 'initialize':
+					break
+				default:
+					throw new Error(`Unknown PostMessage received from player core: ${msg.type}`)
+			}
+		} else {
+			throw new Error(
+				`Post message Origin does not match. Expected: ${expectedOrigin}, Actual: ${e.origin}`
+			)
+		}
+	}
+
 	const _embedHTML = enginePath => {
 		$scope.type = 'html'
 		$scope.htmlPath = enginePath + '?' + instance.widget.created_at
 		if (!$scope.$$phase) $scope.$apply()
-		embedTargetEl = $document[0].getElementById(PLAYER.EMBED_TARGET)
+		embedTargetEl = document.getElementById(PLAYER.EMBED_TARGET)
 		// if (instance.widget.width > 0) {
 		// 	embedTargetEl.style.width = `${instance.widget.width}px`
 		// }
@@ -252,39 +283,9 @@ app.controller('playerCtrl', function(
 
 		// build a link element to deconstruct the static url
 		// this helps us match static url against the event origin
-		const a = $document[0].createElement('a')
+		const a = document.createElement('a')
 		a.href = STATIC_CROSSDOMAIN
-		const expectedOrigin = a.href.substr(0, a.href.length - 1)
-
-		const _onPostMessage = e => {
-			if (e.origin === expectedOrigin) {
-				const msg = JSON.parse(e.data)
-				switch (msg.type) {
-					case 'start':
-						return _onWidgetReady()
-					case 'addLog':
-						return _addLog(msg.data)
-					case 'end':
-						return _end(msg.data)
-					case 'sendStorage':
-						return _sendStorage(msg.data)
-					case 'sendPendingLogs':
-						return _sendAllPendingLogs()
-					case 'alert':
-						return _alert(msg.data, 'Warning!', false)
-					case 'setHeight':
-						return _setHeight(msg.data[0])
-					case 'initialize':
-						break
-					default:
-						throw new Error(`Unknown PostMessage received from player core: ${msg.type}`)
-				}
-			} else {
-				throw new Error(
-					`Post message Origin does not match. Expected: ${expectedOrigin}, Actual: ${e.origin}`
-				)
-			}
-		}
+		expectedOrigin = a.href.substr(0, a.href.length - 1)
 
 		// setup the postmessage listener
 		window.addEventListener('message', _onPostMessage, false)
@@ -315,7 +316,7 @@ app.controller('playerCtrl', function(
 				$scope.type = 'noflash'
 				deferred.reject('Newer Flash Player version required.')
 			} else {
-				let el = $document[0].getElementsByClassName('center')[0]
+				let el = document.getElementsByClassName('center')[0]
 
 				if (instance.widget.width > 0) {
 					// @TODO, just use scope
@@ -326,8 +327,7 @@ app.controller('playerCtrl', function(
 				}
 				deferred.resolve()
 			}
-
-			let widgetEl = $document[0].getElementsByClassName('widget')[1]
+			let widgetEl = document.getElementsByClassName('widget')[1]
 			widgetEl.style.display = 'block'
 		})
 
@@ -358,14 +358,10 @@ app.controller('playerCtrl', function(
 	}
 
 	const _getQuestionSet = () => {
-		const deferred = $q.defer()
 		// TODO: if bad qSet : deferred.reject('Unable to load questions.')
-		Materia.Coms.Json.send('question_set_get', [$scope.inst_id, play_id]).then(result => {
+		return Materia.Coms.Json.send('question_set_get', [$scope.inst_id, play_id]).then(result => {
 			qset = result
-			deferred.resolve()
 		})
-
-		return deferred.promise
 	}
 
 	const _pushPendingLogs = () => {
@@ -516,7 +512,7 @@ app.controller('playerCtrl', function(
 
 	const _setHeight = h => {
 		const min_h = instance.widget.height
-		let el = $document[0].getElementsByClassName('center')[0]
+		let el = document.getElementsByClassName('center')[0]
 		let desiredHeight = Math.max(h, min_h)
 		el.style.height = `${desiredHeight}px`
 	}
@@ -533,7 +529,7 @@ app.controller('playerCtrl', function(
 		}
 
 		if (!$scope.alert.fatal) {
-			window.location = scoreScreenURL
+			window.location.assign(scoreScreenURL)
 		}
 	}
 

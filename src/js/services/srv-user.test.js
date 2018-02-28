@@ -1,4 +1,4 @@
-describe('selectedWidgetSrv', function() {
+describe('userServ', function() {
 	var _service
 	var _compile
 	var _scope
@@ -103,13 +103,13 @@ describe('selectedWidgetSrv', function() {
 	})
 
 	it('getCurrentUserAvatar changes the size as expected', () => {
-		_service.set({
-			avatar: 'avatar?s=1',
-			loggedIn: true,
-			name: 'name',
-			notify: false,
-			role: 'role'
-		})
+		let user = _service.getCurrentUser('')
+		user.avatar = 'avatar?s=1'
+		user.loggedIn = true
+		user.name = 'name'
+		user.notify = false
+		user.role = 'role'
+
 		expect(_service.getCurrentUserAvatar()).toBe('avatar?s=24')
 		expect(_service.getCurrentUserAvatar(88)).toBe('avatar?s=88')
 	})
@@ -121,9 +121,15 @@ describe('selectedWidgetSrv', function() {
 	})
 
 	it('updateSettings changes the user as expected', () => {
-		_service.set({ avatar: 'avatar', loggedIn: true, name: 'name', notify: false, role: 'role' })
+		let user = _service.getCurrentUser('')
+		user.avatar = 'avatar?s=1'
+		user.loggedIn = true
+		user.name = 'name'
+		user.notify = false
+		user.role = 'role'
+
 		expect(_service.getCurrentUser()).toMatchObject({
-			avatar: 'avatar',
+			avatar: 'avatar?s=1',
 			loggedIn: true,
 			name: 'name',
 			notify: false,
@@ -131,7 +137,7 @@ describe('selectedWidgetSrv', function() {
 		})
 		expect(_service.updateSettings('name', 'newname')).toBe('newname')
 		expect(_service.getCurrentUser()).toMatchObject({
-			avatar: 'avatar',
+			avatar: 'avatar?s=1',
 			loggedIn: true,
 			name: 'newname',
 			notify: false,
