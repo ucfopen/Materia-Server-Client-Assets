@@ -4,17 +4,25 @@ describe('userServ', function() {
 	var _scope
 	var sendMock
 	var getCurrentUserMock
-	var _q
+	var $q
+
+	let mockSendPromiseOnce = result => {
+		sendMock.mockImplementationOnce((n, arg, cb) => {
+			const deferred = $q.defer()
+			deferred.resolve(result)
+			return deferred.promise
+		})
+	}
 
 	beforeEach(() => {
 		require('../materia-namespace')
 		require('../materia-constants')
 		require('./srv-user')
 
-		inject(function($rootScope, userServ, $q) {
+		inject(function($rootScope, userServ, _$q_) {
 			_scope = $rootScope
 			_service = userServ
-			_q = $q
+			$q = _$q_
 		})
 
 		Namespace('Materia.Coms.Json').send = sendMock = jest.fn()
@@ -215,16 +223,18 @@ describe('userServ', function() {
 	})
 
 	it('checkValidSession returns a promise', () => {
+		mockSendPromiseOnce()
 		expect(_service.checkValidSession()).toHaveProperty('$$state')
 	})
 
 	it('checkValidSession calls api', () => {
+		mockSendPromiseOnce()
 		_service.checkValidSession('some-role')
-		expect(sendMock).toHaveBeenCalledWith('session_author_verify', ['some-role'], expect.anything())
+		expect(sendMock).toHaveBeenCalledWith('session_author_verify', ['some-role'])
 	})
 
 	it('checkValidSession calls api', () => {
-		Materia.Coms.Json.send.mockImplementationOnce((name, data, cb) => cb('true'))
+		mockSendPromiseOnce('true')
 
 		let promiseSpy = jest.fn()
 		_service.checkValidSession('some-role').then(promiseSpy)

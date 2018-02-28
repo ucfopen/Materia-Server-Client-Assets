@@ -25,6 +25,7 @@
     ]
   },
   "jest": {
+    "testURL": "http://localhost",
     "setupTestFrameworkScriptFile": "./testSetup.js",
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}"

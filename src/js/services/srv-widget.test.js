@@ -72,14 +72,6 @@ describe('widgetSrv', function() {
 		expect(_service.convertAvailibilityDates).toBeDefined()
 	})
 
-	it('listens to hash changes', () => {
-		expect(mockWindow.addEventListener).toHaveBeenCalledWith(
-			'hashchange',
-			expect.any(Function),
-			false
-		)
-	})
-
 	it('getWidgets returns a promise', () => {
 		mockSendPromiseOnce()
 		expect(_service.getWidgets()).toHaveProperty('$$state')
@@ -303,7 +295,7 @@ describe('widgetSrv', function() {
 	})
 
 	it('saveWidget returns expected data', () => {
-		mockSendPromiseOnce('mock_result')
+		mockSendPromiseOnce(getMockApiData('widget_instances_get')[4])
 
 		let result
 		_service.saveWidget('type').then(d => {
@@ -311,7 +303,7 @@ describe('widgetSrv', function() {
 		})
 		_scope.$digest() // processes promise
 
-		expect(result).toBe('mock_result')
+		expect(result).toBe(getMockApiData('widget_instances_get')[4])
 	})
 
 	it('removeWidget removes a widget from cache', () => {

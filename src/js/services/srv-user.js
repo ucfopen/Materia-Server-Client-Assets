@@ -3,6 +3,11 @@ app.service('userServ', function($q, $rootScope) {
 	let _me = null
 	let _user = null
 
+	// used for reducing overly repetitive valid session checks
+	let validLastCheck = 0
+	let validLastValue = null
+	const threshold = 10 * 1000
+
 	const buildUser = function(name, avatar, loggedIn, role, notify) {
 		if (name == null) {
 			name = ''
@@ -107,9 +112,16 @@ app.service('userServ', function($q, $rootScope) {
 	const checkValidSession = function(role) {
 		const deferred = $q.defer()
 
-		Materia.Coms.Json.send('session_author_verify', [role], data => {
-			deferred.resolve(data)
-		})
+		let now = new Date().getTime()
+		if (validLastValue && now - validLastCheck < threshold) {
+			deferred.resolve(validLastValue)
+		} else {
+			Materia.Coms.Json.send('session_author_verify', [role]).then(data => {
+				validLastCheck = now
+				validLastValue = data
+				deferred.resolve(data)
+			})
+		}
 
 		return deferred.promise
 	}
