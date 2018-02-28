@@ -38,7 +38,6 @@ describe('selectedWidgetSrv', function() {
 		expect(_service.getSemesterFromTimestamp).toBeDefined()
 		expect(_service.getStorageData).toBeDefined()
 		expect(_service.getMaxRows).toBeDefined()
-		expect(_service.updateAvailability).toBeDefined()
 		expect(_service.notifyAccessDenied).toBeDefined()
 	})
 
@@ -63,8 +62,9 @@ describe('selectedWidgetSrv', function() {
 
 	it('getScoreSummaries to call api', function() {
 		_service.set({ id: 5 })
+		mockSendPromiseOnce()
 		_service.getScoreSummaries()
-		expect(sendMock).toHaveBeenCalledWith('score_summary_get', [5, true], expect.anything())
+		expect(sendMock).toHaveBeenCalledWith('score_summary_get', [5, true])
 	})
 
 	it('getScoreSummaries to return an angular promise', function() {
@@ -76,11 +76,11 @@ describe('selectedWidgetSrv', function() {
 	it('getScoreSummaries to process api results and caches them', function() {
 		_service.set({ id: 5 })
 		let promiseSpy = jest.fn()
+		let data = [{ id: 5 }, { id: 9 }]
+		mockSendPromiseOnce(data)
 		_service.getScoreSummaries().then(promiseSpy)
 
 		// execute coms callback
-		let data = [{ id: 5 }, { id: 9 }]
-		sendMock.mock.calls[0][2](data)
 		_scope.$digest()
 
 		expect(sendMock).toHaveBeenCalledTimes(1)
@@ -128,28 +128,26 @@ describe('selectedWidgetSrv', function() {
 
 	it('getPlayLogsForSemester returns a promise', () => {
 		_service.set({ id: 5 })
+		mockSendPromiseOnce()
 		expect(_service.getPlayLogsForSemester()).toHaveProperty('$$state')
 	})
 
 	it('getPlayLogsForSemester calls play_logs_get api', () => {
 		_service.set({ id: 5 })
+		mockSendPromiseOnce()
 		_service.getPlayLogsForSemester('term', 7)
-		expect(sendMock).toHaveBeenCalledWith('play_logs_get', [5, 'term', 7], expect.anything())
+		expect(sendMock).toHaveBeenCalledWith('play_logs_get', [5, 'term', 7])
 	})
 
 	it('getPlayLogsForSemester resolves with expected values', () => {
 		_service.set({ id: 5 })
 
 		// mock api call to semester_date_ranges_get
-		sendMock.mockImplementationOnce((name, args, cb) => {
-			cb(getMockApiData('semester_date_ranges_get'))
-		})
+		mockSendPromiseOnce(getMockApiData('semester_date_ranges_get'))
 		_service.getDateRanges()
 
 		// mock api call to play_logs_get
-		sendMock.mockImplementation((name, args, cb) => {
-			cb(getMockApiData('play_logs_get'))
-		})
+		mockSendPromiseOnce(getMockApiData('play_logs_get'))
 		_scope.$digest()
 
 		// call the function
@@ -162,6 +160,7 @@ describe('selectedWidgetSrv', function() {
 
 		// now try to get another semester that should be empty
 		let promiseSpy2 = jest.fn()
+		mockSendPromiseOnce(getMockApiData('play_logs_get'))
 		_service.getPlayLogsForSemester('Summer', 2016).then(promiseSpy2)
 		_scope.$digest()
 
@@ -170,28 +169,32 @@ describe('selectedWidgetSrv', function() {
 
 	it('getDateRanges returns a promise', () => {
 		_service.set({ id: 5 })
+		mockSendPromiseOnce()
 		expect(_service.getDateRanges()).toHaveProperty('$$state')
 	})
 
 	it('getDateRanges calls semester_date_ranges_get api', () => {
 		_service.set({ id: 5 })
+		mockSendPromiseOnce()
 		_service.getDateRanges()
-		expect(sendMock).toHaveBeenCalledWith('semester_date_ranges_get', [], expect.anything())
+		expect(sendMock).toHaveBeenCalledWith('semester_date_ranges_get', [])
 	})
 
 	it('getDateRanges caches dates', () => {
 		_service.set({ id: 5 })
 
 		// mock results from semester_date_ranges_get api
-		sendMock.mockImplementationOnce((name, args, cb) => {
-			cb(getMockApiData('semester_date_ranges_get'))
-		})
+		mockSendPromiseOnce(getMockApiData('semester_date_ranges_get'))
 		_service.getDateRanges()
+		_scope.$digest()
+
 		expect(sendMock).toHaveBeenCalledTimes(1)
 
 		// clear mock, expecting the function to use data from cache
 		sendMock.mockClear()
+		mockSendPromiseOnce()
 		_service.getDateRanges()
+		_scope.$digest()
 		expect(sendMock).toHaveBeenCalledTimes(0)
 	})
 
@@ -199,9 +202,7 @@ describe('selectedWidgetSrv', function() {
 		_service.set({ id: 5 })
 
 		// mock results from semester_date_ranges_get api
-		sendMock.mockImplementationOnce((name, args, cb) => {
-			cb(getMockApiData('semester_date_ranges_get'))
-		})
+		mockSendPromiseOnce(getMockApiData('semester_date_ranges_get'))
 
 		let promiseSpy = jest.fn()
 		_service.getDateRanges().then(promiseSpy)
@@ -213,10 +214,9 @@ describe('selectedWidgetSrv', function() {
 	it('getSemesterFromTimestamp returns undefined if not found', () => {
 		_service.set({ id: 5 })
 		// mock results from semester_date_ranges_get api
-		sendMock.mockImplementationOnce((name, args, cb) => {
-			cb(getMockApiData('semester_date_ranges_get'))
-		})
+		mockSendPromiseOnce(getMockApiData('semester_date_ranges_get'))
 		_service.getDateRanges()
+		_scope.$digest()
 
 		expect(_service.getSemesterFromTimestamp(99)).toBeUndefined()
 	})
@@ -224,10 +224,9 @@ describe('selectedWidgetSrv', function() {
 	it('getSemesterFromTimestamp returns the matching semester', () => {
 		_service.set({ id: 5 })
 		// mock results from semester_date_ranges_get api
-		sendMock.mockImplementationOnce((name, args, cb) => {
-			cb(getMockApiData('semester_date_ranges_get'))
-		})
+		mockSendPromiseOnce(getMockApiData('semester_date_ranges_get'))
 		_service.getDateRanges()
+		_scope.$digest()
 
 		let expectedSemseterA = {
 			year: '2016',
@@ -258,25 +257,23 @@ describe('selectedWidgetSrv', function() {
 
 	it('getStorageData returns a promise', () => {
 		_service.set({ id: 5 })
+		mockSendPromiseOnce()
 		expect(_service.getStorageData()).toHaveProperty('$$state')
 	})
 
 	it('getStorageData calls = api', () => {
 		_service.set({ id: 5 })
+		mockSendPromiseOnce()
 		_service.getStorageData()
-		expect(sendMock).toHaveBeenCalledWith('play_storage_get', [5], expect.anything())
+		expect(sendMock).toHaveBeenCalledWith('play_storage_get', [5])
 	})
 
 	it('getStorageData returns the expected data', () => {
 		_service.set({ id: 5 })
-		sendMock.mockImplementationOnce((name, args, cb) => {
-			cb(getMockApiData('semester_date_ranges_get'))
-		})
+		mockSendPromiseOnce(getMockApiData('semester_date_ranges_get'))
 		_service.getDateRanges()
 
-		sendMock.mockImplementationOnce((name, args, cb) => {
-			cb(getMockApiData('play_storage_get'))
-		})
+		mockSendPromiseOnce(getMockApiData('play_storage_get'))
 
 		let promiseSpy = jest.fn()
 		_service.getStorageData().then(promiseSpy)
@@ -311,45 +308,6 @@ describe('selectedWidgetSrv', function() {
 
 	it('getMaxRows returns expected value', () => {
 		expect(_service.getMaxRows()).toBe(100)
-	})
-
-	it('updateAvailability calls $broadcast', () => {
-		_service.set({})
-		_scope.$broadcast = jest.fn()
-		_service.updateAvailability()
-		expect(_scope.$broadcast).toHaveBeenCalledWith('selectedWidget.update')
-	})
-
-	it('updateAvailability sets widget vars', () => {
-		let widget = { id: 5, student_access: true }
-		_service.set(widget)
-		_service.updateAvailability(6, 55, 75, true, true)
-
-		expect(widget).toMatchObject({
-			id: 5,
-			attempts: 6,
-			open_at: 55,
-			close_at: 75,
-			guest_access: true,
-			embedded_only: true,
-			student_access: true
-		})
-	})
-
-	it('updateAvailability restricts student_access when guest_access is false', () => {
-		let widget = { id: 5, student_access: true }
-		_service.set(widget)
-		_service.updateAvailability(6, 55, 75, false, false)
-
-		expect(widget).toMatchObject({
-			id: 5,
-			attempts: 6,
-			open_at: 55,
-			close_at: 75,
-			guest_access: false,
-			embedded_only: false,
-			student_access: false
-		})
 	})
 
 	it('notifyAccessDenied calls $broadcast', () => {

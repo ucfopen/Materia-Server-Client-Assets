@@ -11,6 +11,7 @@
 const app = angular.module('materia')
 // The widget settings/availability modal on My Widgets
 app.controller('WidgetSettingsController', function(
+	$rootScope,
 	$scope,
 	$filter,
 	$window,
@@ -177,23 +178,28 @@ app.controller('WidgetSettingsController', function(
 		return $scope.$apply()
 	}
 
+	let currentlySubmitting = false
+
 	// Validates the availability info and adds error code
 	// TODO: Find a better way to do errors.
 	$scope.parseSubmittedInfo = function() {
+		if (currentlySubmitting) return
+
 		// Reset all of the variables
-		let date, time
-		$scope.error = ''
-		$scope.times = []
-		const ranges = [$scope.availability[0], $scope.availability[1]]
 		let i = 0
-		$scope.dateError = [false, false]
-		$scope.timeError = [false, false]
+		let date
+		let time
+		const ranges = [$scope.availability[0], $scope.availability[1]]
 		const errors = {
 			date: 0,
 			time: 0,
 			missing: 0,
 			invalid: 0
 		}
+		$scope.error = ''
+		$scope.times = []
+		$scope.dateError = [false, false]
+		$scope.timeError = [false, false]
 
 		for (let range of Array.from(ranges)) {
 			;({ date } = range)
@@ -283,7 +289,10 @@ app.controller('WidgetSettingsController', function(
 		}
 
 		if ($scope.error === '') {
+			currentlySubmitting = true
 			$scope.changeAvailability()
+		} else {
+			currentlySubmitting = false
 		}
 	}
 
@@ -304,14 +313,12 @@ app.controller('WidgetSettingsController', function(
 				embedded_only: $scope.embeddedOnly
 			})
 			.then(widget => {
-				$scope.$broadcast('widgetAvailability.update', '')
-				selectedWidgetSrv.updateAvailability(
-					attempts,
-					$scope.times[0],
-					$scope.times[1],
-					$scope.guestAccess,
-					$scope.embeddedOnly
-				)
+				selectedWidgetSrv.set(widget)
+				$rootScope.$broadcast('widgetList.update')
+				currentlySubmitting = false
+			})
+			.catch(() => {
+				currentlySubmitting = false
 			})
 	}
 

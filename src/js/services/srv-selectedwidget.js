@@ -30,7 +30,12 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		if (_scoreData) {
 			deferred.resolve(_scoreData)
 		} else {
-			Materia.Coms.Json.send('score_summary_get', [_widget.id, true], data => {
+			let loadingId = _widget.id
+			Materia.Coms.Json.send('score_summary_get', [loadingId, true]).then(data => {
+				if (loadingId !== _widget.id) {
+					return deferred.reject()
+				}
+
 				_scoreData = {
 					list: [],
 					map: {},
@@ -74,7 +79,7 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 	const getPlayLogsForSemester = (term, year) => {
 		const deferred = $q.defer()
 
-		Materia.Coms.Json.send('play_logs_get', [_widget.id, term, year], logs => {
+		Materia.Coms.Json.send('play_logs_get', [_widget.id, term, year]).then(logs => {
 			const semesterKey = `${year}${term.toLowerCase()}`
 			const logsForSemester = []
 			angular.forEach(logs, (log, key) => {
@@ -96,7 +101,7 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 	const getDateRanges = () => {
 		const deferred = $q.defer()
 		if (_dateRanges == null) {
-			Materia.Coms.Json.send('semester_date_ranges_get', [], data => {
+			Materia.Coms.Json.send('semester_date_ranges_get', []).then(data => {
 				_dateRanges = data
 				deferred.resolve(data)
 			})
@@ -118,7 +123,7 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		if (_storageData != null) {
 			deferred.resolve(_storageData)
 		} else {
-			Materia.Coms.Json.send('play_storage_get', [_widget.id], data => {
+			Materia.Coms.Json.send('play_storage_get', [_widget.id]).then(data => {
 				_storageData = {}
 
 				const temp = {}
@@ -201,20 +206,6 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 
 	const getMaxRows = () => STORAGE_TABLE_MAX_ROWS_SHOWN
 
-	const updateAvailability = (attempts, open_at, close_at, guest_access, embedded_only) => {
-		_widget.attempts = attempts
-		_widget.open_at = open_at
-		_widget.close_at = close_at
-		_widget.guest_access = guest_access
-		_widget.embedded_only = embedded_only
-
-		if (_widget.student_access && !guest_access) {
-			_widget.student_access = false
-		}
-
-		$rootScope.$broadcast('selectedWidget.update')
-	}
-
 	const notifyAccessDenied = () => {
 		$rootScope.$broadcast('selectedWidget.notifyAccessDenied')
 	}
@@ -230,7 +221,6 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		getSemesterFromTimestamp,
 		getStorageData,
 		getMaxRows,
-		updateAvailability,
 		notifyAccessDenied
 	}
 })
