@@ -13,6 +13,7 @@ app.controller('MyWidgetsController', function(
 	$scope,
 	$q,
 	$window,
+	$timeout,
 	widgetSrv,
 	userServ,
 	selectedWidgetSrv,
@@ -47,6 +48,7 @@ app.controller('MyWidgetsController', function(
 		editPublishedWarning: false
 	}
 	let firstRun = true
+	let loadScoresTimout = null
 
 	$scope.SCORE_VIEW_GRAPH = 0
 	$scope.SCORE_VIEW_TABLE = 1
@@ -67,15 +69,14 @@ app.controller('MyWidgetsController', function(
 
 	$scope.$on('widgetList.update', evt => updateWidgets(widgetSrv.getWidgets()))
 
-	$scope.$on('widgetAvailability.update', function(evt) {
-		$scope.selected.widget = selectedWidgetSrv.get()
-		populateAvailability($scope.selected.widget.open_at, $scope.selected.widget.close_at)
-		return populateAttempts($scope.selected.widget.attempts)
-	})
-
 	$scope.$on('collaborators.update', () => countCollaborators())
 
 	$scope.$on('user.update', evt => ($scope.user = userServ.get()))
+
+	const _prepareWidgetForDisplay = widget => {
+		widget.icon = Materia.Image.iconUrl(widget.widget.dir, 60)
+		widget.beard = beardServ.getRandomBeard()
+	}
 
 	var updateWidgets = function(data) {
 		Materia.Set.Throbber.stopSpin('.courses')
@@ -90,14 +91,11 @@ app.controller('MyWidgetsController', function(
 		} else {
 			// we've got data
 			// build attribues for each widget
-			angular.forEach(data, function(widget, key) {
-				widget.icon = Materia.Image.iconUrl(widget.widget.dir, 60)
-				widget.beard = beardServ.getRandomBeard()
+			angular.forEach(data, widget => {
+				_prepareWidgetForDisplay(widget)
 			})
 
-			// @TODO: use wigtServ.sortWidgets
-			$scope.widgets.widgetList = data.sort((a, b) => b.created_at - a.created_at)
-
+			$scope.widgets.widgetList = data
 			// sort widgets by create time
 			if (!$scope.$$phase) $scope.$apply()
 		}
@@ -106,28 +104,30 @@ app.controller('MyWidgetsController', function(
 		if (firstRun) {
 			widgetSrv.selectWidgetFromHashUrl()
 			firstRun = false
+			$window.addEventListener('hashchange', widgetSrv.selectWidgetFromHashUrl, false)
 		}
 	}
 
 	// Populate the widget list
 	// This was originally part of prepare(), but is prepare really necessary now?
-	const deferredWidgets = widgetSrv.getWidgets()
-	deferredWidgets.then(updateWidgets)
+	const deferredWidgets = widgetSrv.getWidgets().then(updateWidgets)
 
 	// This doesn't actually "set" the widget
 	// It ensures required scope objects have been acquired before kicking off the display
 	var setSelectedWidget = function() {
+		const currentId = $scope.selected.widget.id
+
+		// clear scores right away
+		$scope.selected.scores = null
+		Materia.MyWidgets.Statistics.clearGraphs()
 		$scope.perms.stale = true
 
 		populateDisplay()
-
-		const currentId = $scope.selected.widget.id
 
 		return $q
 			.all([
 				userServ.get(),
 				selectedWidgetSrv.getUserPermissions(),
-				selectedWidgetSrv.getScoreSummaries(),
 				selectedWidgetSrv.getDateRanges()
 			])
 			.then(data => {
@@ -138,17 +138,23 @@ app.controller('MyWidgetsController', function(
 
 				$scope.user = data[0]
 				$scope.perms = data[1]
-				$scope.selected.scores = data[2]
+				populateAccess()
 
-				Materia.MyWidgets.Statistics.clearGraphs()
+				$timeout.cancel(loadScoresTimout)
 
-				return populateAccess()
+				// load the scores a little later
+				loadScoresTimout = $timeout(() => {
+					selectedWidgetSrv.getScoreSummaries().then(scores => {
+						$scope.selected.scores = scores
+						populateScores()
+					})
+				}, 300)
 			})
 	}
 
 	var populateAttempts = function(attemptsAllowed) {
 		attemptsAllowed = parseInt(attemptsAllowed, 10)
-		return ($scope.attemptText = attemptsAllowed > 0 ? attemptsAllowed : 'Unlimited')
+		$scope.attemptText = attemptsAllowed > 0 ? attemptsAllowed : 'Unlimited'
 	}
 
 	var populateAvailability = function(startDateInt, endDateInt) {
@@ -157,13 +163,13 @@ app.controller('MyWidgetsController', function(
 		$scope.availabilityEnd = endDateInt
 
 		if (endDateInt < 0 && startDateInt < 0) {
-			return ($scope.availabilityMode = 'anytime')
+			$scope.availabilityMode = 'anytime'
 		} else if (startDateInt < 0 && endDateInt > 0) {
-			return ($scope.availabilityMode = 'open until')
+			$scope.availabilityMode = 'open until'
 		} else if (startDateInt > 0 && endDateInt < 0) {
-			return ($scope.availabilityMode = 'anytime after')
+			$scope.availabilityMode = 'anytime after'
 		} else {
-			return ($scope.availabilityMode = 'from')
+			$scope.availabilityMode = 'from'
 		}
 	}
 
@@ -195,10 +201,21 @@ app.controller('MyWidgetsController', function(
 			$scope.selected.widget.clean_name
 		}`
 		$scope.selected.copy_title = `${$scope.selected.widget.name} copy`
-		return ($scope.selected.widget.iconbig = Materia.Image.iconUrl(
-			$scope.selected.widget.widget.dir,
-			275
-		))
+		$scope.selected.widget.iconbig = Materia.Image.iconUrl($scope.selected.widget.widget.dir, 275)
+	}
+
+	var populateScores = () => {
+		if (!$scope.selected.widget.widget.is_draft) {
+			if ($scope.selected.scores.list.length > 0) {
+				// TODO determine if populateScoreWrapper functionality can be implemented differently
+				angular.forEach($scope.selected.scores.list, (semester, index) => {
+					populateScoreWrapper(semester, index)
+					if (semester.distribution) {
+						$scope.selected.hasScores = true
+					}
+				})
+			}
+		}
 	}
 
 	// Second half of populateDisplay
@@ -231,29 +248,6 @@ app.controller('MyWidgetsController', function(
 
 		populateAvailability($scope.selected.widget.open_at, $scope.selected.widget.close_at)
 		populateAttempts($scope.selected.widget.attempts)
-
-		if (!$scope.selected.widget.widget.is_draft) {
-			if ($scope.selected.scores.list.length > 0) {
-				// TODO determine if populateScoreWrapper functionality can be implemented differently
-				angular.forEach($scope.selected.scores.list, (semester, index) =>
-					populateScoreWrapper(semester, index)
-				)
-
-				return (() => {
-					const result = []
-					for (let d of Array.from($scope.selected.scores.list)) {
-						// is this check necessary? Is there ever a use case where a list object won't have a distro array?
-						if (d.distribution != null) {
-							$scope.selected.hasScores = true
-							break
-						} else {
-							result.push(undefined)
-						}
-					}
-					return result
-				})()
-			}
-		}
 	}
 
 	// count up the number of other users collaborating
@@ -264,18 +258,18 @@ app.controller('MyWidgetsController', function(
 				count++
 			}
 		}
-		return ($scope.collaborateCount = count > 0 ? ` (${count})` : '')
+		$scope.collaborateCount = count > 0 ? ` (${count})` : ''
 	}
 
 	var populateScoreWrapper = function(semester, index) {
 		//  no scores, but we do have storage data
 		if (semester.distribution == null && semester.storage != null) {
-			return $scope.setScoreView(index, 2)
+			$scope.setScoreView(index, 2)
 		} else {
 			//  has scores, might have storage data
 			// Get the score total by summing up the distribution array
 			semester.totalScores = semester.distribution.reduce((prev, cur) => prev + cur)
-			return $scope.setScoreView(index, 0)
+			$scope.setScoreView(index, 0)
 		}
 	}
 

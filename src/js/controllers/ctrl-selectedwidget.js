@@ -32,14 +32,11 @@ app.controller('SelectedWidgetController', function(
 			.copyWidget($scope.selected.widget.id, $scope.selected.copy_title)
 			.then(inst_id => {
 				$scope.show.copyModal = false
-				console.log('copied from', $scope.selected.widget.id, 'to', inst_id)
 				return widgetSrv.getWidget(inst_id)
 			})
 			.then(widget => {
-				console.log('apply')
 				$rootScope.$broadcast('widgetList.update')
 				widgetSrv.updateHashUrl(widget.id)
-				$scope.$apply()
 			})
 			.catch(() => {
 				// @TODO show an alert?
@@ -103,7 +100,6 @@ app.controller('SelectedWidgetController', function(
 	}
 
 	const _showCopyDialog = () => {
-		console.log('_showCopyDialog')
 		if (($scope.selected.accessLevel = ACCESS.VISIBLE)) {
 			$scope.show.copyModal = true
 		}

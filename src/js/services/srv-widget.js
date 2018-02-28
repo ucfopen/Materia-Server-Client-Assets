@@ -12,7 +12,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 
 		if (_widgets.length === 0 || !gotAll) {
 			gotAll = true
-			_getFromServer().then(widgets => {
+			_getMultipleFromServer().then(widgets => {
 				_widgets = widgets.slice(0) // save a copy
 				sortWidgets()
 				deferred.resolve(_widgets)
@@ -94,6 +94,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 			]
 			Materia.Coms.Json.send('widget_instance_update', args).then(widget => {
 				if (widget != null) {
+					_initSearchCache(widget)
 					// replace our widget in place
 					let match = _widgets.findIndex(w => w.id === widget.id)
 					if (match !== -1) {
@@ -108,6 +109,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 			Materia.Coms.Json.send('widget_instance_new', args).then(widget => {
 				if (widget != null) {
 					// add to widgets
+					_initSearchCache(widget)
 					_widgets.push(widget)
 					_widgetIds[widget.id] = widget
 					deferred.resolve(widget)
@@ -166,20 +168,15 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		})
 	}
 
-	var _getFromServer = () => {
+	var _getMultipleFromServer = () => {
 		const deferred = $q.defer()
 		Materia.Coms.Json.send('widget_instances_get', null).then(widgets => {
 			if (widgets != null && widgets.length != null) {
-				for (
-					let i = 0, end = widgets.length, asc = 0 <= end;
-					asc ? i < end : i > end;
-					asc ? i++ : i--
-				) {
-					const w = widgets[i]
+				widgets.forEach(w => {
 					_widgetIds[w.id] = w
 					_initSearchCache(w)
 					_widgets.push(w)
-				}
+				})
 			}
 
 			deferred.resolve(_widgets)
@@ -226,7 +223,6 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 			if (selID.substr(0, 1) === '/') {
 				selID = selID.substr(1)
 			}
-
 			getWidget(selID)
 				.then(widget => {
 					selectedWidgetSrv.set(widget)
@@ -236,8 +232,6 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 				})
 		}
 	}
-
-	$window.addEventListener('hashchange', selectWidgetFromHashUrl, false)
 
 	return {
 		getWidgets,
