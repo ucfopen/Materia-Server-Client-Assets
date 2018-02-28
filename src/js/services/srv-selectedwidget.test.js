@@ -3,17 +3,25 @@ describe('selectedWidgetSrv', function() {
 	var _compile
 	var _scope
 	var sendMock
-	var _q
+	var $q
+
+	let mockSendPromiseOnce = result => {
+		sendMock.mockImplementationOnce((n, arg, cb) => {
+			const deferred = $q.defer()
+			deferred.resolve(result)
+			return deferred.promise
+		})
+	}
 
 	beforeEach(() => {
 		require('../materia-namespace')
 		require('../materia-constants')
 		require('./srv-selectedwidget')
 
-		inject(function($rootScope, selectedWidgetSrv, $q) {
+		inject(function($rootScope, selectedWidgetSrv, _$q_) {
 			_scope = $rootScope
 			_service = selectedWidgetSrv
-			_q = $q
+			$q = _$q_
 		})
 
 		Namespace('Materia.Coms.Json').send = sendMock = jest.fn()
@@ -61,6 +69,7 @@ describe('selectedWidgetSrv', function() {
 
 	it('getScoreSummaries to return an angular promise', function() {
 		_service.set({ id: 5 })
+		mockSendPromiseOnce()
 		expect(_service.getScoreSummaries()).toHaveProperty('$$state')
 	})
 
@@ -95,23 +104,23 @@ describe('selectedWidgetSrv', function() {
 
 	it('getUserPermissions returns a promise', () => {
 		_service.set({ id: 5 })
+		mockSendPromiseOnce()
 		expect(_service.getUserPermissions()).toHaveProperty('$$state')
 	})
 
 	it('getUserPermissions calls permissions_get api ', () => {
 		_service.set({ id: 5 })
+		mockSendPromiseOnce()
 		_service.getUserPermissions()
-		expect(sendMock).toHaveBeenCalledWith('permissions_get', [4, 5], expect.anything())
+		expect(sendMock).toHaveBeenCalledWith('permissions_get', [4, 5])
 	})
 
 	it('getUserPermissions calls permissions_get api', () => {
 		_service.set({ id: 5 })
 		let promiseSpy = jest.fn()
-		_service.getUserPermissions().then(promiseSpy)
-
-		// execute coms callback
 		let data = { user_perms: 4, widget_user_perms: 1 }
-		sendMock.mock.calls[0][2](data)
+		mockSendPromiseOnce(data)
+		_service.getUserPermissions().then(promiseSpy)
 		_scope.$digest()
 
 		expect(promiseSpy).toHaveBeenCalledWith({ user: 4, widget: 1 })
