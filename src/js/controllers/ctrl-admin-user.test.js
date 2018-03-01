@@ -1,11 +1,10 @@
 describe('adminUserController', function() {
 	var _adminSrv
 	var _userServ
-	var _scope
 	var sendMock
-	var _q
 	var $controller
-	var mockWindow
+	var $window
+	var mockPlease
 
 	beforeEach(() => {
 		// MOCK some services
@@ -17,26 +16,26 @@ describe('adminUserController', function() {
 		_userServ = {
 			getAvatar: jest.fn(() => 'avatar')
 		}
+		mockPlease = { $apply: jest.fn() }
 		let app = angular.module('materia')
+		app.factory('Please', () => mockPlease)
 		app.factory('adminSrv', () => _adminSrv)
 		app.factory('userServ', () => _userServ)
 
 		// MOCK $window
-		mockWindow = {
+		$window = {
 			addEventListener: jest.fn(),
 			location: {
 				reload: jest.fn()
 			}
 		}
-		app.factory('$window', () => mockWindow)
+		app.factory('$window', () => $window)
 
 		require('../materia-namespace')
 		require('../materia-constants')
 		require('./ctrl-admin-user')
 
-		inject(function($rootScope, $q, _$controller_) {
-			_scope = $rootScope.$new()
-			_q = $q
+		inject(function(_$controller_) {
 			$controller = _$controller_
 		})
 
@@ -117,7 +116,7 @@ describe('adminUserController', function() {
 		$scope.searchMatchClick({ id: 5 })
 
 		expect(_adminSrv.lookupUser).toHaveBeenCalledWith(5, expect.anything())
-		expect($scope.$apply).toHaveBeenCalledTimes(1)
+		expect(mockPlease.$apply).toHaveBeenCalledTimes(1)
 		expect($scope.additionalData.instances_played).toMatchObject(instances_played)
 	})
 
@@ -144,7 +143,7 @@ describe('adminUserController', function() {
 		expect(_adminSrv.saveUser.mock.calls[0][0].is_student).toBe(false)
 		expect(_adminSrv.saveUser.mock.calls[0][0].useGravatar).toBe(true)
 		expect($scope.errorMessage).toMatchObject([])
-		expect($scope.$apply).toHaveBeenCalledTimes(1)
+		expect(mockPlease.$apply).toHaveBeenCalledTimes(1)
 	})
 
 	it('save sets errors', () => {
@@ -166,7 +165,7 @@ describe('adminUserController', function() {
 
 		$scope.save()
 		expect($scope.errorMessage).toMatchObject(['this was an error'])
-		expect($scope.$apply).toHaveBeenCalledTimes(1)
+		expect(mockPlease.$apply).toHaveBeenCalledTimes(1)
 	})
 
 	it('search sends args to service and updates scope', () => {
@@ -202,7 +201,7 @@ describe('adminUserController', function() {
 
 		$scope.search('one')
 		expect(alert).toHaveBeenCalledWith('oh no')
-		expect(mockWindow.location.reload).toHaveBeenCalledWith(true)
+		expect($window.location.reload).toHaveBeenCalledWith(true)
 	})
 
 	it('search handles no matches', () => {
@@ -258,7 +257,7 @@ describe('adminUserController', function() {
 		$scope.search('one')
 		expect($scope.searchResults.none).toBe(false)
 		expect($scope.searchResults.show).toBe(true)
-		expect($scope.$apply).toHaveBeenCalled()
+		expect(mockPlease.$apply).toHaveBeenCalled()
 		expect($scope.searchResults.matches).toMatchObject(expected)
 	})
 })

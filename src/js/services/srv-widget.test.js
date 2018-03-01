@@ -1,7 +1,6 @@
 describe('widgetSrv', () => {
 	var _service
-	var _compile
-	var _scope
+	var $scope
 	var sendMock
 	var _selectedWidgetSrv
 	var _dateTimeServ
@@ -49,8 +48,8 @@ describe('widgetSrv', () => {
 		require('../materia-constants')
 		require('./srv-widget')
 
-		inject(function($rootScope, widgetSrv, _$q_) {
-			_scope = $rootScope
+		inject(function(_$rootScope_, widgetSrv, _$q_) {
+			$scope = _$rootScope_
 			_service = widgetSrv
 			$q = _$q_
 		})
@@ -88,7 +87,7 @@ describe('widgetSrv', () => {
 
 		let promiseSpy = jest.fn()
 		_service.getWidgets().then(promiseSpy)
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		expect(promiseSpy).toHaveBeenCalled()
 		expect(promiseSpy.mock.calls[0][0]).toHaveLength(49)
@@ -101,7 +100,7 @@ describe('widgetSrv', () => {
 
 		let promiseSpy = jest.fn()
 		_service.getWidgets().then(promiseSpy)
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		expect(promiseSpy).toHaveBeenCalled()
 		expect(promiseSpy.mock.calls[0][0]).toHaveLength(49)
@@ -109,7 +108,7 @@ describe('widgetSrv', () => {
 
 		let promiseSpy2 = jest.fn()
 		_service.getWidgets().then(promiseSpy2)
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		expect(promiseSpy2).toHaveBeenCalled()
 		expect(sendMock).toHaveBeenCalledTimes(1)
@@ -131,7 +130,7 @@ describe('widgetSrv', () => {
 			.getWidget()
 			.then(promiseSpy)
 			.catch(promiseCatch)
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		expect(promiseSpy).not.toHaveBeenCalled()
 		expect(promiseCatch).toHaveBeenCalled()
@@ -142,8 +141,8 @@ describe('widgetSrv', () => {
 
 		let promiseSpy = jest.fn()
 		_service.getWidget('avhWS').then(promiseSpy)
-		_scope.$digest() // processes promise
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		expect(promiseSpy).toHaveBeenCalled()
 		expect(promiseSpy.mock.calls[0][0]).toHaveProperty('widget')
@@ -155,15 +154,15 @@ describe('widgetSrv', () => {
 
 		let promiseSpy = jest.fn()
 		_service.getWidget('0UNM0').then(promiseSpy)
-		_scope.$digest() // processes promise
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		expect(promiseSpy).toHaveBeenCalled()
 		expect(sendMock).toHaveBeenCalledTimes(1)
 
 		let promiseSpy2 = jest.fn()
 		_service.getWidget('0UNM0').then(promiseSpy2)
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		expect(promiseSpy2).toHaveBeenCalled()
 		expect(sendMock).toHaveBeenCalledTimes(1)
@@ -188,7 +187,7 @@ describe('widgetSrv', () => {
 
 		let promiseSpy = jest.fn()
 		_service.getWidgetInfo().then(promiseSpy)
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		expect(promiseSpy).toHaveBeenCalledWith(getMockApiData('widgets_get')[0])
 	})
@@ -197,7 +196,7 @@ describe('widgetSrv', () => {
 		mockSendPromiseOnce(getMockApiData('widget_instances_get'))
 
 		_service.getWidgets()
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		// join all the ids into an orderd string based on their expected order
 		let finalOrder =
@@ -228,7 +227,7 @@ describe('widgetSrv', () => {
 		_service.getWidgetsByType('type').then(d => {
 			result = d
 		})
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		expect(result).toBe('mock_result')
 	})
@@ -259,7 +258,7 @@ describe('widgetSrv', () => {
 		let widgets = getMockApiData('widget_instances_get')
 		mockSendPromiseOnce(widgets)
 		_service.getWidgets()
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		let newWidget = Object.assign({}, widgets[0])
 		newWidget.clean_name = 'MY NEW TEST NAME'
@@ -272,7 +271,7 @@ describe('widgetSrv', () => {
 		let promiseSpy = jest.fn()
 		mockSendPromiseOnce([newWidget])
 		_service.getWidget(newWidget.id).then(promiseSpy)
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		expect(promiseSpy).toHaveBeenCalledWith(newWidget)
 	})
@@ -301,7 +300,7 @@ describe('widgetSrv', () => {
 		_service.saveWidget('type').then(d => {
 			result = d
 		})
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		expect(result).toBe(getMockApiData('widget_instances_get')[4])
 	})
@@ -309,13 +308,13 @@ describe('widgetSrv', () => {
 	it('removeWidget removes a widget from cache', () => {
 		mockSendPromiseOnce(getMockApiData('widget_instances_get'))
 		_service.getWidgets()
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		_service.removeWidget('0UNM0')
 
 		let then = jest.fn()
 		_service.getWidgets().then(then)
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 		expect(then.mock.calls[0][0]).toHaveLength(48)
 		expect(mockHashSet).toHaveBeenCalledWith('/8vwno')
 	})
@@ -323,28 +322,28 @@ describe('widgetSrv', () => {
 	it('removeWidget updates hash', () => {
 		mockSendPromiseOnce(getMockApiData('widget_instances_get'))
 		_service.getWidgets()
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		_service.removeWidget('0UNM0')
 
 		_service.getWidgets()
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		expect(mockHashSet).toHaveBeenCalledWith('/8vwno')
 	})
 
 	it('removeWidget broadcasts event', () => {
-		_scope.$broadcast = jest.fn()
+		$scope.$broadcast = jest.fn()
 		mockSendPromiseOnce(getMockApiData('widget_instances_get'))
 		_service.getWidgets()
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		_service.removeWidget('0UNM0')
 
 		_service.getWidgets()
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
-		expect(_scope.$broadcast).toHaveBeenCalledWith('widgetList.update')
+		expect($scope.$broadcast).toHaveBeenCalledWith('widgetList.update')
 	})
 
 	it('updateHashUrl sets url has as expected', () => {
@@ -385,7 +384,7 @@ describe('widgetSrv', () => {
 		mockHashGet.mockImplementation(() => '/0UNM0')
 		mockSendPromiseOnce(getMockApiData('widget_instances_get'))
 		_service.selectWidgetFromHashUrl()
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		expect(_selectedWidgetSrv.set).toHaveBeenCalled()
 		expect(_selectedWidgetSrv.set.mock.calls[0][0].id).toBe('0UNM0')
@@ -395,11 +394,11 @@ describe('widgetSrv', () => {
 		mockHashGet.mockImplementation(() => '/ffff')
 		mockSendPromiseOnce(getMockApiData('widget_instances_get'))
 		_service.getWidgets()
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 
 		mockSendPromiseOnce()
 		_service.selectWidgetFromHashUrl()
-		_scope.$digest() // processes promise
+		$scope.$digest() // processes promise
 		expect(_selectedWidgetSrv.notifyAccessDenied).toHaveBeenCalled()
 	})
 })

@@ -1,9 +1,9 @@
 describe('scoreTable Directive', function() {
-	let _scope
-	let _compile
-	let _window
-	let _q
-	let _selectedWidgetSrv
+	let $scope
+	let $compile
+	let $window
+	let $q
+	let selectedWidgetSrv
 	let data = [
 		{
 			id: 'one',
@@ -64,75 +64,75 @@ describe('scoreTable Directive', function() {
 		require('../services/srv-selectedwidget')
 		require('./dir-scoretable')
 
-		inject(function($compile, $rootScope, selectedWidgetSrv, $q, $window) {
-			_selectedWidgetSrv = selectedWidgetSrv
-			_compile = $compile
-			_scope = $rootScope.$new()
-			_q = $q
-			_window = $window
+		inject(function(_$compile_, _$rootScope_, _selectedWidgetSrv_, _$q_, _$window_) {
+			selectedWidgetSrv = _selectedWidgetSrv_
+			$compile = _$compile_
+			$scope = _$rootScope_.$new()
+			$q = _$q_
+			$window = _$window_
 		})
 
-		let deferred = _q.defer()
-		jest.spyOn(_selectedWidgetSrv, 'getSelectedId').mockImplementation(() => 6)
+		let deferred = $q.defer()
+		jest.spyOn(selectedWidgetSrv, 'getSelectedId').mockImplementation(() => 6)
 		jest
-			.spyOn(_selectedWidgetSrv, 'getPlayLogsForSemester')
+			.spyOn(selectedWidgetSrv, 'getPlayLogsForSemester')
 			.mockImplementation(() => deferred.promise)
 
-		expect(_scope.selectedUser).not.toBeDefined()
-		expect(_scope.setSelectedUser).not.toBeDefined()
-		expect(_scope.showScorePage).not.toBeDefined()
-		expect(_scope.searchStudentActivity).not.toBeDefined()
+		expect($scope.selectedUser).not.toBeDefined()
+		expect($scope.setSelectedUser).not.toBeDefined()
+		expect($scope.showScorePage).not.toBeDefined()
+		expect($scope.searchStudentActivity).not.toBeDefined()
 		let html = '<div score-table data-term="TERM" data-year="2015"></div>'
 		let element = angular.element(html)
-		let compiled = _compile(element)(_scope)
-		_scope.$digest()
+		let compiled = $compile(element)($scope)
+		$scope.$digest()
 
 		deferred.resolve(data)
-		_scope.$apply()
+		$scope.$apply()
 	})
 
 	it('is initialized on the element', function() {
-		expect(_scope.selectedUser).toBeNull()
-		expect(_scope.users).toMatchObject(expected)
-		expect(_scope.setSelectedUser).toBeDefined()
-		expect(_scope.showScorePage).toBeDefined()
-		expect(_scope.searchStudentActivity).toBeDefined()
+		expect($scope.selectedUser).toBeNull()
+		expect($scope.users).toMatchObject(expected)
+		expect($scope.setSelectedUser).toBeDefined()
+		expect($scope.showScorePage).toBeDefined()
+		expect($scope.searchStudentActivity).toBeDefined()
 	})
 
 	it('setSelectedUser sets selectedUser object as expected', function() {
-		expect(_scope.selectedUser).toBeNull()
-		_scope.setSelectedUser(5)
-		expect(_scope.selectedUser).toMatchObject(expected['5'])
+		expect($scope.selectedUser).toBeNull()
+		$scope.setSelectedUser(5)
+		expect($scope.selectedUser).toMatchObject(expected['5'])
 	})
 
 	it('showScorePage opens the expected url', function() {
-		_window.open = jest.fn()
+		$window.open = jest.fn()
 		global.BASE_URL = 'some_url'
-		_scope.showScorePage('two')
-		expect(_window.open).toHaveBeenLastCalledWith('some_urlscores/6/#single-two')
+		$scope.showScorePage('two')
+		expect($window.open).toHaveBeenLastCalledWith('some_urlscores/6/#single-two')
 	})
 
 	it('searchStudentActivity locates users', function() {
-		_scope.searchStudentActivity('Ian')
-		expect(_scope.users).toMatchObject({ '2': expected['2'] })
+		$scope.searchStudentActivity('Ian')
+		expect($scope.users).toMatchObject({ '2': expected['2'] })
 
 		// finds neither
-		_scope.searchStudentActivity('~author')
-		expect(_scope.users).toMatchObject({})
+		$scope.searchStudentActivity('~author')
+		expect($scope.users).toMatchObject({})
 
-		_scope.searchStudentActivity('Peterson')
-		expect(_scope.users).toMatchObject({ '5': expected['5'] })
+		$scope.searchStudentActivity('Peterson')
+		expect($scope.users).toMatchObject({ '5': expected['5'] })
 
 		// finds all
-		_scope.searchStudentActivity('')
-		expect(_scope.users).toMatchObject(expected)
+		$scope.searchStudentActivity('')
+		expect($scope.users).toMatchObject(expected)
 	})
 
 	it('searchStudentActivity resets selecteUser', function() {
-		_scope.setSelectedUser(5)
-		expect(_scope.selectedUser).toMatchObject(expected['5'])
-		_scope.searchStudentActivity('Ian')
-		expect(_scope.users).toMatchObject({ '2': expected['2'] })
-		expect(_scope.selectedUser).toBeNull()
+		$scope.setSelectedUser(5)
+		expect($scope.selectedUser).toMatchObject(expected['5'])
+		$scope.searchStudentActivity('Ian')
+		expect($scope.users).toMatchObject({ '2': expected['2'] })
+		expect($scope.selectedUser).toBeNull()
 	})
 })

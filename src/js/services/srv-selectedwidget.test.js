@@ -1,7 +1,7 @@
 describe('selectedWidgetSrv', () => {
 	var _service
 	var _compile
-	var _scope
+	var $scope
 	var sendMock
 	var $q
 
@@ -18,8 +18,8 @@ describe('selectedWidgetSrv', () => {
 		require('../materia-constants')
 		require('./srv-selectedwidget')
 
-		inject(function($rootScope, selectedWidgetSrv, _$q_) {
-			_scope = $rootScope
+		inject(function(_$rootScope_, selectedWidgetSrv, _$q_) {
+			$scope = _$rootScope_
 			_service = selectedWidgetSrv
 			$q = _$q_
 		})
@@ -48,9 +48,9 @@ describe('selectedWidgetSrv', () => {
 	})
 
 	it('set calls $broadcast', () => {
-		_scope.$broadcast = jest.fn()
+		$scope.$broadcast = jest.fn()
 		_service.set({})
-		expect(_scope.$broadcast).toHaveBeenCalledWith('selectedWidget.update')
+		expect($scope.$broadcast).toHaveBeenCalledWith('selectedWidget.update')
 	})
 
 	it('getSelectedId gets the widget id', () => {
@@ -81,7 +81,7 @@ describe('selectedWidgetSrv', () => {
 		_service.getScoreSummaries().then(promiseSpy)
 
 		// execute coms callback
-		_scope.$digest()
+		$scope.$digest()
 
 		expect(sendMock).toHaveBeenCalledTimes(1)
 		expect(promiseSpy).toHaveBeenCalledWith({
@@ -92,7 +92,7 @@ describe('selectedWidgetSrv', () => {
 
 		let promiseSpy2 = jest.fn()
 		_service.getScoreSummaries().then(promiseSpy2)
-		_scope.$digest()
+		$scope.$digest()
 
 		expect(sendMock).toHaveBeenCalledTimes(1)
 		expect(promiseSpy2).toHaveBeenCalledWith({
@@ -121,7 +121,7 @@ describe('selectedWidgetSrv', () => {
 		let data = { user_perms: 4, widget_user_perms: 1 }
 		mockSendPromiseOnce(data)
 		_service.getUserPermissions().then(promiseSpy)
-		_scope.$digest()
+		$scope.$digest()
 
 		expect(promiseSpy).toHaveBeenCalledWith({ user: 4, widget: 1 })
 	})
@@ -148,12 +148,12 @@ describe('selectedWidgetSrv', () => {
 
 		// mock api call to play_logs_get
 		mockSendPromiseOnce(getMockApiData('play_logs_get'))
-		_scope.$digest()
+		$scope.$digest()
 
 		// call the function
 		let promiseSpy = jest.fn()
 		_service.getPlayLogsForSemester('Fall', 2016).then(promiseSpy)
-		_scope.$digest()
+		$scope.$digest()
 
 		// all of play_logs_get mock content is in Fall of 2016
 		expect(promiseSpy).toHaveBeenCalledWith(getMockApiData('play_logs_get'))
@@ -162,7 +162,7 @@ describe('selectedWidgetSrv', () => {
 		let promiseSpy2 = jest.fn()
 		mockSendPromiseOnce(getMockApiData('play_logs_get'))
 		_service.getPlayLogsForSemester('Summer', 2016).then(promiseSpy2)
-		_scope.$digest()
+		$scope.$digest()
 
 		expect(promiseSpy2).toHaveBeenCalledWith([])
 	})
@@ -186,7 +186,7 @@ describe('selectedWidgetSrv', () => {
 		// mock results from semester_date_ranges_get api
 		mockSendPromiseOnce(getMockApiData('semester_date_ranges_get'))
 		_service.getDateRanges()
-		_scope.$digest()
+		$scope.$digest()
 
 		expect(sendMock).toHaveBeenCalledTimes(1)
 
@@ -194,7 +194,7 @@ describe('selectedWidgetSrv', () => {
 		sendMock.mockClear()
 		mockSendPromiseOnce()
 		_service.getDateRanges()
-		_scope.$digest()
+		$scope.$digest()
 		expect(sendMock).toHaveBeenCalledTimes(0)
 	})
 
@@ -206,7 +206,7 @@ describe('selectedWidgetSrv', () => {
 
 		let promiseSpy = jest.fn()
 		_service.getDateRanges().then(promiseSpy)
-		_scope.$digest()
+		$scope.$digest()
 
 		expect(promiseSpy).toHaveBeenCalledWith(getMockApiData('semester_date_ranges_get'))
 	})
@@ -216,7 +216,7 @@ describe('selectedWidgetSrv', () => {
 		// mock results from semester_date_ranges_get api
 		mockSendPromiseOnce(getMockApiData('semester_date_ranges_get'))
 		_service.getDateRanges()
-		_scope.$digest()
+		$scope.$digest()
 
 		expect(_service.getSemesterFromTimestamp(99)).toBeUndefined()
 	})
@@ -226,7 +226,7 @@ describe('selectedWidgetSrv', () => {
 		// mock results from semester_date_ranges_get api
 		mockSendPromiseOnce(getMockApiData('semester_date_ranges_get'))
 		_service.getDateRanges()
-		_scope.$digest()
+		$scope.$digest()
 
 		let expectedSemseterA = {
 			year: '2016',
@@ -277,7 +277,7 @@ describe('selectedWidgetSrv', () => {
 
 		let promiseSpy = jest.fn()
 		_service.getStorageData().then(promiseSpy)
-		_scope.$digest()
+		$scope.$digest()
 
 		expect(promiseSpy).toHaveBeenCalled()
 		let result = promiseSpy.mock.calls[0][0]
@@ -311,8 +311,8 @@ describe('selectedWidgetSrv', () => {
 	})
 
 	it('notifyAccessDenied calls $broadcast', () => {
-		_scope.$broadcast = jest.fn()
+		$scope.$broadcast = jest.fn()
 		_service.notifyAccessDenied()
-		expect(_scope.$broadcast).toHaveBeenCalledWith('selectedWidget.notifyAccessDenied')
+		expect($scope.$broadcast).toHaveBeenCalledWith('selectedWidget.notifyAccessDenied')
 	})
 })

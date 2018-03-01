@@ -1,10 +1,14 @@
 Namespace('Materia.Coms').Json = (() => {
 	let _gatewayURL = null
-	let $q
+	let _$q
 
-	angular.injector(['ng']).invoke(function(_$q_) {
-		$q = _$q_
-	})
+	// need to use the annotated angular method because webpack doesn't protect it for us
+	angular.injector(['ng']).invoke([
+		'$q',
+		function($q) {
+			_$q = $q
+		}
+	])
 
 	const _showError = data => {
 		if (data.title === 'Invalid Login') {
@@ -28,7 +32,7 @@ Namespace('Materia.Coms').Json = (() => {
 	}
 
 	const _sendRequest = (method, url, body) => {
-		let deferred = $q.defer()
+		let deferred = _$q.defer()
 		const options = {
 			method,
 			body,
@@ -60,7 +64,7 @@ Namespace('Materia.Coms').Json = (() => {
 
 	// older api
 	const send = (method, args) => {
-		let deferred = $q.defer()
+		let deferred = _$q.defer()
 
 		if (_gatewayURL == null) {
 			_gatewayURL = API_LINK

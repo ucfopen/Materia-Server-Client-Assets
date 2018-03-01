@@ -1,7 +1,7 @@
 describe('scoreGraph Directive', function() {
-	let _scope
-	let _compile
-	let _timeout
+	let $rootScope
+	let $compile
+	let $timeout
 	let mock1 = jest.fn(cb => {
 		cb({ map: { '6': { distribution: true } } })
 	})
@@ -9,16 +9,15 @@ describe('scoreGraph Directive', function() {
 	let mock3 = jest.fn()
 
 	beforeEach(() => {
-		jest.useFakeTimers()
 		angular.module('materia').service('selectedWidgetSrv', () => ({ getScoreSummaries: mock2 }))
 
 		require('../materia-namespace')
 		require('./dir-scoregraph.js')
 
-		inject(function($compile, $rootScope, $timeout) {
-			_compile = $compile
-			_scope = $rootScope.$new()
-			_timeout = $timeout
+		inject(function(_$compile_, _$rootScope_, _$timeout_) {
+			$compile = _$compile_
+			$rootScope = _$rootScope_.$new()
+			$timeout = _$timeout_
 		})
 
 		Namespace('Materia.MyWidgets.Statistics').createGraph = mock3
@@ -27,13 +26,13 @@ describe('scoreGraph Directive', function() {
 	it('is initialized on the element', function() {
 		let html = '<div score-graph id="chart_6" >text</div>'
 		let element = angular.element(html)
-		let compiled = _compile(element)(_scope)
-		_scope.$digest()
+		let compiled = $compile(element)($rootScope)
+		$rootScope.$digest()
 
 		expect(mock1).toHaveBeenCalledTimes(1)
 		expect(mock2).toHaveBeenCalledTimes(1)
 		expect(mock3).toHaveBeenCalledTimes(0)
-		jest.runAllTimers()
+		$timeout.flush()
 		expect(mock3).toHaveBeenCalledTimes(1)
 		expect(mock3).toHaveBeenCalledWith('chart_6', true)
 	})

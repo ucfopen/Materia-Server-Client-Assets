@@ -1,15 +1,15 @@
 describe('datatable Directive', function() {
-	let _scope
-	let _compile
-	let _timeout
+	let $scope
+	let $compile
+	let $timeout
 	let DataTable = jest.fn()
 
 	beforeEach(() => {
 		require('./dir-datatable')
-		inject(function($compile, $rootScope, $timeout) {
-			_compile = $compile
-			_scope = $rootScope.$new()
-			_timeout = $timeout
+		inject(function(_$compile_, _$rootScope_, _$timeout_) {
+			$compile = _$compile_
+			$scope = _$rootScope_.$new()
+			$timeout = _$timeout_
 		})
 
 		// mock jquery and fancybox plugin
@@ -17,16 +17,16 @@ describe('datatable Directive', function() {
 	})
 
 	it('is initialized on the element', function() {
-		let scopeApplySpy = jest.spyOn(_scope, '$apply')
+		let scopeApplySpy = jest.spyOn($scope, '$apply')
 		let html = '<div datatable>text</div>'
 		let element = angular.element(html)
-		let compiled = _compile(element)(_scope)
-		_scope.$digest()
+		let compiled = $compile(element)($scope)
+		$scope.$digest()
 
 		expect(compiled.html()).toBe('text')
 		expect(DataTable).toHaveBeenCalledTimes(0)
 		expect(global.$).toHaveBeenCalledTimes(0)
-		_timeout.flush()
+		$timeout.flush()
 		expect(DataTable).toHaveBeenCalledTimes(1)
 		expect(global.$).toHaveBeenCalledTimes(1)
 	})

@@ -1,16 +1,20 @@
 describe('fancybox Directive', function() {
-	let _scope
-	let _compile
-	let _timeout
+	let $scope
+	let $compile
+	let $timeout
 	let mockFancyBox = jest.fn()
+	let mockPlease
 	mockFancyBox.resize = jest.fn()
 
 	beforeEach(() => {
+		mockPlease = { $apply: jest.fn() }
+		let app = angular.module('materia')
+		app.factory('Please', () => mockPlease)
 		require('./dir-fancybox')
-		inject(function($compile, $rootScope, $timeout) {
-			_compile = $compile
-			_scope = $rootScope.$new()
-			_timeout = $timeout
+		inject(function(_$compile_, _$rootScope_, _$timeout_) {
+			$compile = _$compile_
+			$scope = _$rootScope_.$new()
+			$timeout = _$timeout_
 		})
 
 		// mock jquery and fancybox plugin
@@ -18,13 +22,13 @@ describe('fancybox Directive', function() {
 		global.$.fancybox = mockFancyBox
 	})
 
-	it('is rendered and resized', function() {
+	it('is rendered and resized', () => {
 		expect(mockFancyBox).toHaveBeenCalledTimes(0)
-		let scopeApplySpy = jest.spyOn(_scope, '$apply')
+		let scopeApplySpy = jest.spyOn($scope, '$apply')
 		let html = '<a fancybox>text</a>'
 		let element = angular.element(html)
-		let compiled = _compile(element)(_scope)
-		_scope.$digest()
+		let compiled = $compile(element)($scope)
+		$scope.$digest()
 
 		expect(compiled.html()).toBe('text')
 		expect(mockFancyBox).toHaveBeenCalledTimes(1)
@@ -33,9 +37,9 @@ describe('fancybox Directive', function() {
 
 		// make sure resize and apply are called
 		expect(mockFancyBox.resize).toHaveBeenCalledTimes(0)
-		expect(scopeApplySpy).toHaveBeenCalledTimes(0)
-		_timeout.flush()
+		expect(mockPlease.$apply).toHaveBeenCalledTimes(0)
+		$timeout.flush()
 		expect(mockFancyBox.resize).toHaveBeenCalledTimes(1)
-		expect(scopeApplySpy).toHaveBeenCalledTimes(1)
+		expect(mockPlease.$apply).toHaveBeenCalledTimes(1)
 	})
 })
