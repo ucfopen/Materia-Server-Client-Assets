@@ -1,7 +1,6 @@
 describe('userServ', () => {
 	var _service
-	var _compile
-	var _scope
+	var $scope
 	var sendMock
 	var getCurrentUserMock
 	var $q
@@ -19,8 +18,8 @@ describe('userServ', () => {
 		require('../materia-constants')
 		require('./srv-user')
 
-		inject(function($rootScope, userServ, _$q_) {
-			_scope = $rootScope
+		inject(function(_$rootScope_, userServ, _$q_) {
+			$scope = _$rootScope_
 			_service = userServ
 			$q = _$q_
 		})
@@ -187,7 +186,7 @@ describe('userServ', () => {
 
 		let promiseSpy = jest.fn()
 		_service.get().then(promiseSpy)
-		_scope.$digest()
+		$scope.$digest()
 
 		expect(promiseSpy).toHaveBeenCalledWith(user)
 	})
@@ -198,7 +197,7 @@ describe('userServ', () => {
 
 		let promiseSpy = jest.fn()
 		_service.get().then(promiseSpy)
-		_scope.$digest()
+		$scope.$digest()
 
 		expect(promiseSpy).toHaveBeenCalledWith(user)
 		expect(getCurrentUserMock).toHaveBeenCalledTimes(0)
@@ -210,16 +209,16 @@ describe('userServ', () => {
 
 		let promiseSpy = jest.fn()
 		_service.get().then(promiseSpy)
-		_scope.$digest()
+		$scope.$digest()
 
 		expect(promiseSpy).toHaveBeenCalledWith(user)
 	})
 
 	it('set calls $broadcast', () => {
 		let user = { avatar: '', loggedIn: false, name: '', notify: false, role: '' }
-		_scope.$broadcast = jest.fn()
+		$scope.$broadcast = jest.fn()
 		_service.set(user)
-		expect(_scope.$broadcast).toHaveBeenCalledWith('user.update')
+		expect($scope.$broadcast).toHaveBeenCalledWith('user.update')
 	})
 
 	it('checkValidSession returns a promise', () => {
@@ -238,7 +237,7 @@ describe('userServ', () => {
 
 		let promiseSpy = jest.fn()
 		_service.checkValidSession('some-role').then(promiseSpy)
-		_scope.$digest()
+		$scope.$digest()
 
 		expect(promiseSpy).toHaveBeenCalledWith('true')
 	})

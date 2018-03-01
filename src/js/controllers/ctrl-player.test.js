@@ -10,6 +10,7 @@ describe('playerCtrl', () => {
 	let $timeout
 	let $interval
 	let $location
+	let mockPlease
 
 	let buildPostMessage = (type, data) => {
 		let e = new Event('message')
@@ -117,6 +118,9 @@ describe('playerCtrl', () => {
 	}
 
 	beforeEach(() => {
+		mockPlease = { $apply: jest.fn() }
+		let app = angular.module('materia')
+		app.factory('Please', () => mockPlease)
 		jest.spyOn(window.location, 'assign').mockImplementation(() => {
 			true
 		})
@@ -128,7 +132,7 @@ describe('playerCtrl', () => {
 			getWidget: jest.fn()
 		}
 		_alert = {}
-		let app = angular.module('materia')
+
 		app.factory('widgetSrv', () => _widgetSrv)
 		app.factory('userServ', () => _userServ)
 		app.factory('Alert', () => _alert)
@@ -198,7 +202,7 @@ describe('playerCtrl', () => {
 		} = setupDomStuff()
 
 		// check all the widget initialization
-		expect($scope.$apply).toHaveBeenCalledTimes(3)
+		expect(mockPlease.$apply).toHaveBeenCalledTimes(3)
 		expect(_widgetSrv.getWidget).toHaveBeenLastCalledWith('bb8')
 		expect($scope.allowFullScreen).toBe(false)
 		expect(centerStyle.width).toBe('800px')
@@ -377,9 +381,9 @@ describe('playerCtrl', () => {
 		_scope.$digest() // make sure defer from post message completes
 
 		// test alert post message
-		$scope.$apply.mockClear()
+		mockPlease.$apply.mockClear()
 		mockPostMessage(buildPostMessage('alert', 'aaaahh!'))
-		expect($scope.$apply).toHaveBeenCalledTimes(1)
+		expect(mockPlease.$apply).toHaveBeenCalledTimes(1)
 		expect($scope.alert.msg).toBe('aaaahh!')
 		expect($scope.alert.fatal).toBe(false)
 		expect($scope.alert.title).toBe('Warning!')
@@ -431,15 +435,15 @@ describe('playerCtrl', () => {
 		} = setupDomStuff()
 
 		// test alert
-		$scope.$apply.mockClear()
+		mockPlease.$apply.mockClear()
 		$scope.jestTest._alert('eh', 'titletext', true)
-		expect($scope.$apply).toHaveBeenCalledTimes(1)
+		expect(mockPlease.$apply).toHaveBeenCalledTimes(1)
 		expect($scope.alert.msg).toBe('eh')
 		expect($scope.alert.fatal).toBe(true)
 		expect($scope.alert.title).toBe('titletext')
-		$scope.$apply.mockClear()
+		mockPlease.$apply.mockClear()
 		$scope.jestTest._alert('eh2')
-		expect($scope.$apply).toHaveBeenCalledTimes(1)
+		expect(mockPlease.$apply).toHaveBeenCalledTimes(1)
 		expect($scope.alert.msg).toBe('eh2')
 		expect($scope.alert.fatal).toBe(false)
 		expect($scope.alert.title).toBe('')
@@ -797,7 +801,7 @@ describe('playerCtrl', () => {
 		} = setupDomStuff(true, getMockApiData('widget_instances_get')[4])
 
 		// check all the widget initialization
-		expect($scope.$apply).toHaveBeenCalledTimes(2)
+		expect(mockPlease.$apply).toHaveBeenCalledTimes(2)
 		expect(_widgetSrv.getWidget).toHaveBeenLastCalledWith('bb8')
 		expect($scope.allowFullScreen).toBe(false)
 		expect(centerStyle.width).toBe('800px')

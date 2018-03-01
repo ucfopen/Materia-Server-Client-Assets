@@ -1,17 +1,32 @@
 describe('scoreSrv', () => {
 	var _service
 	var postMock
+	var sendMock
+	var getMock
+	var $q
+	var $rootScope
+
+	let mockJsonPromiseOnce = (mock, result) => {
+		mock.mockImplementationOnce((n, arg, cb) => {
+			const deferred = $q.defer()
+			deferred.resolve(result)
+			return deferred.promise
+		})
+	}
 
 	beforeEach(() => {
 		require('../materia-namespace')
 		require('./srv-scores')
 
-		inject(function(scoreSrv) {
+		inject(function(scoreSrv, _$q_, _$rootScope_) {
 			_service = scoreSrv
+			$q = _$q_
+			$rootScope = _$rootScope_
 		})
 
-		Namespace('Materia.Coms.Json').send = postMock = jest.fn()
-		postMock.mockClear()
+		Namespace('Materia.Coms.Json').send = sendMock = jest.fn()
+		Namespace('Materia.Coms.Json').post = postMock = jest.fn()
+		Namespace('Materia.Coms.Json').get = getMock = jest.fn()
 	})
 
 	it('defines expected methods', () => {
@@ -21,20 +36,32 @@ describe('scoreSrv', () => {
 	})
 
 	it('getWidgetInstanceScores calls api', () => {
-		let cb = { id: 1 }
-		_service.getWidgetInstanceScores(5, 'fff', cb)
-		expect(postMock).toHaveBeenLastCalledWith('widget_instance_scores_get', [5, 'fff'], cb)
+		let mockResults = { id: 1 }
+		let myCallBack = jest.fn()
+		mockJsonPromiseOnce(sendMock, mockResults)
+		_service.getWidgetInstanceScores(5, 'fff', myCallBack)
+		expect(sendMock).toHaveBeenLastCalledWith('widget_instance_scores_get', [5, 'fff'])
+		$rootScope.$digest() // execute coms callback
+		expect(myCallBack).toHaveBeenLastCalledWith(mockResults)
 	})
 
 	it('getWidgetInstancePlayScores calls api', () => {
-		let cb = { id: 1 }
-		_service.getWidgetInstancePlayScores(9, 88, cb)
-		expect(postMock).toHaveBeenLastCalledWith('widget_instance_play_scores_get', [9, 88], cb)
+		let mockResults = { id: 1 }
+		let myCallBack = jest.fn()
+		mockJsonPromiseOnce(sendMock, mockResults)
+		_service.getWidgetInstancePlayScores(9, 88, myCallBack)
+		expect(sendMock).toHaveBeenLastCalledWith('widget_instance_play_scores_get', [9, 88])
+		$rootScope.$digest() // execute coms callback
+		expect(myCallBack).toHaveBeenLastCalledWith(mockResults)
 	})
 
 	it('getGuestWidgetInstanceScores calls api', () => {
-		let cb = { id: 1 }
-		_service.getGuestWidgetInstanceScores(23, 77, cb)
-		expect(postMock).toHaveBeenLastCalledWith('guest_widget_instance_scores_get', [23, 77], cb)
+		let mockResults = { id: 1 }
+		let myCallBack = jest.fn()
+		mockJsonPromiseOnce(sendMock, mockResults)
+		_service.getGuestWidgetInstanceScores(23, 77, myCallBack)
+		expect(sendMock).toHaveBeenLastCalledWith('guest_widget_instance_scores_get', [23, 77])
+		$rootScope.$digest() // execute coms callback
+		expect(myCallBack).toHaveBeenLastCalledWith(mockResults)
 	})
 })

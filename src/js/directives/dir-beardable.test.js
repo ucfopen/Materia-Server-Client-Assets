@@ -1,13 +1,10 @@
 describe('beardable Directive', function() {
-	let _scope
-	let _compile
-	let _timeout
-	let createElementSpy = jest.spyOn(document, 'createElement')
-	let headAppendSpy = jest.spyOn(document.head, 'appendChild')
-	let windowEventListenerSpy = jest.spyOn(window, 'addEventListener')
+	let $scope
+	let $compile
+	let createElementSpy
+	let headAppendSpy
+	let windowEventListenerSpy
 	let html = '<div beardable>text</div>'
-	global.STATIC_CROSSDOMAIN = 'static_domain'
-	global.window.localStorage = { beardMode: 'false' }
 
 	let keyEvent = (code, unsetWhich = false) => {
 		var e = new Event('keydown')
@@ -23,28 +20,31 @@ describe('beardable Directive', function() {
 	}
 
 	beforeEach(() => {
-		createElementSpy.mockClear()
-		headAppendSpy.mockClear()
-		windowEventListenerSpy.mockClear()
+		global.window.localStorage = { beardMode: 'false' }
 		require('./dir-beardable')
-		inject(function($compile, $rootScope, $timeout) {
-			_compile = $compile
-			_scope = $rootScope.$new()
-			_timeout = $timeout
+		inject(function(_$compile_, _$rootScope_) {
+			$compile = _$compile_
+			$scope = _$rootScope_.$new()
 		})
+		createElementSpy = jest.spyOn(document, 'createElement')
+		headAppendSpy = jest.spyOn(document.head, 'appendChild')
+		windowEventListenerSpy = jest.spyOn(window, 'addEventListener')
 	})
 
 	afterEach(() => {
 		let css = document.getElementById('beard_css')
 		if (css) css.parentElement.removeChild(css)
+		createElementSpy.mockRestore()
+		headAppendSpy.mockRestore()
+		windowEventListenerSpy.mockRestore()
 	})
 
 	it('is disabled when beardmode is off and listens for keydown', function() {
 		window.localStorage.beardMode = false
 		let element = angular.element(html)
-		let compiled = _compile(element)(_scope)
+		let compiled = $compile(element)($scope)
 
-		_scope.$digest()
+		$scope.$digest()
 		expect(createElementSpy).not.toHaveBeenLastCalledWith('link')
 		expect(windowEventListenerSpy).toHaveBeenLastCalledWith('keydown', expect.any(Function))
 	})
@@ -52,8 +52,8 @@ describe('beardable Directive', function() {
 	it('is enabled when beardmode is on and listens for keydown', function() {
 		global.window.localStorage.beardMode = 'true'
 		let element = angular.element(html)
-		let compiled = _compile(element)(_scope)
-		_scope.$digest()
+		let compiled = $compile(element)($scope)
+		$scope.$digest()
 
 		expect(createElementSpy).toHaveBeenLastCalledWith('link')
 		expect(headAppendSpy).toHaveBeenCalled()
@@ -63,8 +63,8 @@ describe('beardable Directive', function() {
 	it('enables with the right key events', function() {
 		global.window.localStorage.beardMode = 'false'
 		let element = angular.element(html)
-		let compiled = _compile(element)(_scope)
-		_scope.$digest()
+		let compiled = $compile(element)($scope)
+		$scope.$digest()
 
 		window.dispatchEvent(keyEvent(38))
 		window.dispatchEvent(keyEvent(38))
@@ -83,8 +83,8 @@ describe('beardable Directive', function() {
 	it('disables with the right key events are entered', function() {
 		global.window.localStorage.beardMode = 'true'
 		let element = angular.element(html)
-		let compiled = _compile(element)(_scope)
-		_scope.$digest()
+		let compiled = $compile(element)($scope)
+		$scope.$digest()
 
 		expect(document.getElementById('beard_css')).not.toBeNull()
 		window.dispatchEvent(keyEvent(38))
@@ -104,8 +104,8 @@ describe('beardable Directive', function() {
 	it('konami code resets when messed up', function() {
 		global.window.localStorage = { beardMode: 'false' }
 		let element = angular.element(html)
-		let compiled = _compile(element)(_scope)
-		_scope.$digest()
+		let compiled = $compile(element)($scope)
+		$scope.$digest()
 
 		expect(document.getElementById('beard_css')).toBeNull()
 		window.dispatchEvent(keyEvent(38))
