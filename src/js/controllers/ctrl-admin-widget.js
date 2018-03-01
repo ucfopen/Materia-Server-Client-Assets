@@ -13,7 +13,7 @@ app.controller('adminWidgetController', function($scope, Please, adminSrv) {
 			demo: widget.meta_data.demo
 		}
 
-		adminSrv.saveWidget(update, response => {
+		adminSrv.saveWidget(update).then(response => {
 			widget.errorMessage = []
 			for (let prop in response) {
 				const stat = response[prop]
@@ -29,7 +29,7 @@ app.controller('adminWidgetController', function($scope, Please, adminSrv) {
 	}
 
 	const _displayWidgets = () =>
-		adminSrv.getWidgets(widgets => {
+		adminSrv.getWidgets().then(widgets => {
 			widgets.forEach(w => {
 				w.icon = Materia.Image.iconUrl(w.dir, 60)
 			})
