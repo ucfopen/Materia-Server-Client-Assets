@@ -14,7 +14,6 @@ Namespace('Materia.Storage').Table = () => {
 		columns.forEach(c => {
 			_columns.push(Materia.Storage.Manager.clean(c))
 		})
-		return null
 	}
 
 	// Inserts a new row into this table.
@@ -22,11 +21,9 @@ Namespace('Materia.Storage').Table = () => {
 	// of arguments passed match the number of columns pertaining to this table.
 	const insert = values => {
 		// Make sure arguments match number of columns
-		if (values.length === !_columns.length) {
+		if (values.length !== _columns.length) {
 			throw new Error(
-				`StorageTable '${_id}' requires ${_columns.length} value(s) and received ${
-					arguments.length
-				}`
+				`StorageTable '${_id}' requires ${_columns.length} value(s) and received ${values.length}`
 			)
 			return
 		}
