@@ -1,25 +1,14 @@
 const app = angular.module('materia')
 app.service('adminSrv', function() {
-	// @TODO: upgrade to use $q
-	const getWidgets = callback => {
-		Materia.Coms.Json.get('/api/admin/widgets').then(callback)
-	}
-
-	const saveWidget = (widget, callback) => {
-		Materia.Coms.Json.post(`/api/admin/widget/${widget.id}`, widget).then(callback)
-	}
-
-	const searchUsers = (str, callback) => {
-		Materia.Coms.Json.get(`/api/admin/user_search/${str}`).then(callback)
-	}
-
-	const lookupUser = (userId, callback) => {
-		Materia.Coms.Json.get(`/api/admin/user/${userId}`).then(callback)
-	}
-
-	const saveUser = (obj, callback) => {
-		Materia.Coms.Json.post(`/api/admin/user/${obj.id}`, obj).then(callback)
-	}
+	const getWidgets = () => Materia.Coms.Json.get('/api/admin/widgets')
+	const saveWidget = widget =>
+		Materia.Coms.Json.post(`/api/admin/widget/${encodeURIComponent(widget.id)}`, widget)
+	const searchUsers = str =>
+		Materia.Coms.Json.get(`/api/admin/user_search/${encodeURIComponent(str)}`)
+	const lookupUser = userId =>
+		Materia.Coms.Json.get(`/api/admin/user/${encodeURIComponent(userId)}`)
+	const saveUser = obj =>
+		Materia.Coms.Json.post(`/api/admin/user/${encodeURIComponent(obj.id)}`, obj)
 
 	return {
 		getWidgets,

@@ -367,66 +367,66 @@ app.controller('createCtrl', function(
 		if (version == null) {
 			version = 1
 		}
-		return widgetSrv
-			.saveWidget({
-				widget_id,
-				name: instanceName,
-				qset: { version, data: qset },
-				is_draft: saveMode !== 'publish',
-				inst_id
-			})
-			.then(inst => {
-				// did we get back an error message?
-				if ((inst != null ? inst.msg : undefined) != null) {
-					onSaveCanceled(inst)
-					$scope.alert.fatal = inst.halt
-					Please.$apply()
-				} else if (inst != null && inst.id != null) {
-					// update this creator's url
-					if (String(inst_id).length !== 0) {
-						window.location.hash = `#${inst.id}`
-					}
+		let w = {
+			widget_id,
+			name: instanceName,
+			qset: { version, data: qset },
+			is_draft: saveMode !== 'publish',
+			inst_id
+		}
 
-					switch (saveMode) {
-						case 'preview':
-							var url = `${BASE_URL}preview/${inst.id}`
-							var popup = window.open(url)
-							inst_id = inst.id
-							if (popup != null) {
-								$timeout(() => {
-									if (!(popup.innerHeight > 0)) {
-										return onPreviewPopupBlocked(url)
-									}
-								}, 200)
-							} else {
-								onPreviewPopupBlocked(url)
-							}
-							break
-						case 'publish':
-							window.location = getMyWidgetsUrl(inst.id)
-							break
-						case 'save':
-							$scope.saveText = 'Saved!'
-							sendToCreator('onSaveComplete', [
-								inst.name,
-								inst.widget,
-								inst.qset.data,
-								inst.qset.version
-							])
-							inst_id = inst.id
-							instance = inst
-							$scope.saveStatus = 'saved'
-							break
-					}
-
-					Please.$apply()
-					$timeout(() => {
-						$scope.saveText = 'Save Draft'
-						$scope.saveStatus = 'idle'
-						return Please.$apply()
-					}, 5000)
+		return widgetSrv.saveWidget(w).then(inst => {
+			// did we get back an error message?
+			if ((inst != null ? inst.msg : undefined) != null) {
+				onSaveCanceled(inst)
+				$scope.alert.fatal = inst.halt
+				Please.$apply()
+			} else if (inst != null && inst.id != null) {
+				// update this creator's url
+				if (String(inst_id).length !== 0) {
+					window.location.hash = `#${inst.id}`
 				}
-			})
+
+				switch (saveMode) {
+					case 'preview':
+						var url = `${BASE_URL}preview/${inst.id}`
+						var popup = window.open(url)
+						inst_id = inst.id
+						if (popup != null) {
+							$timeout(() => {
+								if (!(popup.innerHeight > 0)) {
+									return onPreviewPopupBlocked(url)
+								}
+							}, 200)
+						} else {
+							onPreviewPopupBlocked(url)
+						}
+						break
+					case 'publish':
+						window.location = getMyWidgetsUrl(inst.id)
+						break
+					case 'save':
+						$scope.saveText = 'Saved!'
+						sendToCreator('onSaveComplete', [
+							inst.name,
+							inst.widget,
+							inst.qset.data,
+							inst.qset.version
+						])
+						inst_id = inst.id
+						instance = inst
+						$scope.saveStatus = 'saved'
+						break
+				}
+
+				Please.$apply()
+				$timeout(() => {
+					$scope.saveText = 'Save Draft'
+					$scope.saveStatus = 'idle'
+					return Please.$apply()
+				}, 5000)
+			}
+		})
 	}
 
 	// When the Creator cancels a save request
