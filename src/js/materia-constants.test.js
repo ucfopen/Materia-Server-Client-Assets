@@ -1,9 +1,9 @@
-describe('materia constants', function() {
+describe('materia constants', () => {
 	beforeEach(() => {
 		require('./materia-constants')
 	})
 
-	it('OBJECT_TYPES to contain expected data', function() {
+	it('OBJECT_TYPES to contain expected data', () => {
 		const ex = {
 			QUESTION: 1,
 			ASSET: 2,
@@ -21,7 +21,7 @@ describe('materia constants', function() {
 		expect(_OBJECT_TYPES).toMatchObject(ex)
 	})
 
-	it('ACCESS to contain expected data', function() {
+	it('ACCESS to contain expected data', () => {
 		const ex = {
 			VISIBLE: 1,
 			PLAY: 5,
@@ -43,7 +43,7 @@ describe('materia constants', function() {
 		expect(_ACCESS).toMatchObject(ex)
 	})
 
-	it('PLAYER to contain expected data', function() {
+	it('PLAYER to contain expected data', () => {
 		const ex = {
 			LOG_INTERVAL: 10000,
 			RETRY_LIMIT: 15,
@@ -62,7 +62,7 @@ describe('materia constants', function() {
 		expect(_PLAYER).toMatchObject(ex)
 	})
 
-	it('a missing constant to throw an angular injection error', function() {
+	it('a missing constant to throw an angular injection error', () => {
 		const ex = {}
 
 		var _FAKE

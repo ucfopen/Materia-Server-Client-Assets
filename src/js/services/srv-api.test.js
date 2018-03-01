@@ -1,4 +1,4 @@
-describe('apiServ', function() {
+describe('apiServ', () => {
 	var _service
 	var mockWindow
 	var mockLocationSet

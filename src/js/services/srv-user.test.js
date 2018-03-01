@@ -1,4 +1,4 @@
-describe('userServ', function() {
+describe('userServ', () => {
 	var _service
 	var _compile
 	var _scope
@@ -29,7 +29,7 @@ describe('userServ', function() {
 		Namespace('Materia.User').getCurrentUser = getCurrentUserMock = jest.fn()
 	})
 
-	it('defines expected methods', function() {
+	it('defines expected methods', () => {
 		expect(_service.getCurrentUser).toBeDefined()
 		expect(_service.getCurrentUserAvatar).toBeDefined()
 		expect(_service.getAvatar).toBeDefined()

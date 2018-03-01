@@ -1,4 +1,4 @@
-describe('scoreSrv', function() {
+describe('scoreSrv', () => {
 	var _service
 	var postMock
 
