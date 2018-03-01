@@ -1,15 +1,7 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const app = angular.module('materia')
 app.controller('MyWidgetsController', function(
+	Please,
+	$rootScope,
 	$scope,
 	$q,
 	$window,
@@ -21,70 +13,21 @@ app.controller('MyWidgetsController', function(
 	ACCESS,
 	Alert
 ) {
-	$scope.alert = Alert
-	$scope.baseUrl = BASE_URL
-	$scope.widgets = { widgetList: [] }
-	$scope.selected = {
-		widget: null,
-		perms: {},
-		scores: {},
-		accessLevel: ACCESS.VISIBLE,
-		shareable: false,
-		editable: true,
-		hasScores: false,
-		preview: '',
-		guestAccess: false,
-		embeddedOnly: false
-	}
-	$scope.perms = { collaborators: [] }
-	$scope.show = {
-		collaborationModal: false,
-		availabilityModal: false,
-		copyModal: false,
-		olderScores: false,
-		exportModal: false,
-		deleteDialog: false,
-		embedToggle: false,
-		editPublishedWarning: false
-	}
 	let firstRun = true
 	let loadScoresTimout = null
-
-	$scope.SCORE_VIEW_GRAPH = 0
-	$scope.SCORE_VIEW_TABLE = 1
-	$scope.SCORE_VIEW_DATA = 2
-	$scope.selectedScoreView = [] // array of above (i.e. 0 = graph)
-
-	$scope.$on('selectedWidget.update', function(evt) {
-		$scope.selected.widget = selectedWidgetSrv.get()
-		const sessionCheck = userServ.checkValidSession()
-		return sessionCheck.then(function(check) {
-			if (check) {
-				return setSelectedWidget()
-			} else {
-				return location.reload(true)
-			}
-		})
-	})
-
-	$scope.$on('widgetList.update', evt => updateWidgets(widgetSrv.getWidgets()))
-
-	$scope.$on('collaborators.update', () => countCollaborators())
-
-	$scope.$on('user.update', evt => ($scope.user = userServ.get()))
 
 	const _prepareWidgetForDisplay = widget => {
 		widget.icon = Materia.Image.iconUrl(widget.widget.dir, 60)
 		widget.beard = beardServ.getRandomBeard()
 	}
 
-	var updateWidgets = function(data) {
+	const updateWidgets = data => {
 		Materia.Set.Throbber.stopSpin('.courses')
 
 		// data is empty
 		if (!data) {
 			$scope.widgets.widgetList = []
-			$scope.$apply()
+			Please.$apply()
 		} else if (data.then != null) {
 			// data is a promise
 			data.then(updateWidgets)
@@ -97,7 +40,7 @@ app.controller('MyWidgetsController', function(
 
 			$scope.widgets.widgetList = data
 			// sort widgets by create time
-			if (!$scope.$$phase) $scope.$apply()
+			Please.$apply()
 		}
 
 		// on the first load, select the widget from the url
@@ -108,13 +51,9 @@ app.controller('MyWidgetsController', function(
 		}
 	}
 
-	// Populate the widget list
-	// This was originally part of prepare(), but is prepare really necessary now?
-	const deferredWidgets = widgetSrv.getWidgets().then(updateWidgets)
-
 	// This doesn't actually "set" the widget
 	// It ensures required scope objects have been acquired before kicking off the display
-	var setSelectedWidget = function() {
+	const setSelectedWidget = () => {
 		const currentId = $scope.selected.widget.id
 
 		// clear scores right away
@@ -124,7 +63,7 @@ app.controller('MyWidgetsController', function(
 
 		populateDisplay()
 
-		return $q
+		$q
 			.all([
 				userServ.get(),
 				selectedWidgetSrv.getUserPermissions(),
@@ -152,12 +91,12 @@ app.controller('MyWidgetsController', function(
 			})
 	}
 
-	var populateAttempts = function(attemptsAllowed) {
+	const populateAttempts = attemptsAllowed => {
 		attemptsAllowed = parseInt(attemptsAllowed, 10)
 		$scope.attemptText = attemptsAllowed > 0 ? attemptsAllowed : 'Unlimited'
 	}
 
-	var populateAvailability = function(startDateInt, endDateInt) {
+	const populateAvailability = (startDateInt, endDateInt) => {
 		$scope.availability = widgetSrv.convertAvailibilityDates(startDateInt, endDateInt)
 		$scope.availabilityStart = startDateInt
 		$scope.availabilityEnd = endDateInt
@@ -174,7 +113,7 @@ app.controller('MyWidgetsController', function(
 	}
 
 	// Shows selected game information on the mainscreen.
-	var populateDisplay = function() {
+	const populateDisplay = () => {
 		// reset scope variables to defaults
 		const count = null
 
@@ -204,12 +143,12 @@ app.controller('MyWidgetsController', function(
 		$scope.selected.widget.iconbig = Materia.Image.iconUrl($scope.selected.widget.widget.dir, 275)
 	}
 
-	var populateScores = () => {
+	const populateScores = () => {
 		if (!$scope.selected.widget.widget.is_draft) {
 			if ($scope.selected.scores.list.length > 0) {
-				// TODO determine if populateScoreWrapper functionality can be implemented differently
+				// TODO determine if _populateScoreWrapper functionality can be implemented differently
 				angular.forEach($scope.selected.scores.list, (semester, index) => {
-					populateScoreWrapper(semester, index)
+					_populateScoreWrapper(semester, index)
 					if (semester.distribution) {
 						$scope.selected.hasScores = true
 					}
@@ -220,7 +159,7 @@ app.controller('MyWidgetsController', function(
 
 	// Second half of populateDisplay
 	// This allows us to update the display before the callback of scores finishes, which speeds up UI
-	var populateAccess = () => {
+	const populateAccess = () => {
 		// accessLevel == ACCESS.VISIBLE is effectively read-only
 		if (
 			($scope.perms.user[$scope.user.id] != null
@@ -242,7 +181,7 @@ app.controller('MyWidgetsController', function(
 			$scope.selected.edit = '#'
 		}
 
-		countCollaborators()
+		_countCollaborators()
 
 		$scope.selected.shareable = $scope.selected.accessLevel !== ACCESS.VISIBLE
 
@@ -251,7 +190,7 @@ app.controller('MyWidgetsController', function(
 	}
 
 	// count up the number of other users collaborating
-	var countCollaborators = function() {
+	const _countCollaborators = () => {
 		let count = 0
 		for (let id in $scope.perms.widget) {
 			if (id !== $scope.user.id) {
@@ -261,17 +200,90 @@ app.controller('MyWidgetsController', function(
 		$scope.collaborateCount = count > 0 ? ` (${count})` : ''
 	}
 
-	var populateScoreWrapper = function(semester, index) {
+	const _populateScoreWrapper = (semester, index) => {
 		//  no scores, but we do have storage data
 		if (semester.distribution == null && semester.storage != null) {
-			$scope.setScoreView(index, 2)
+			_setScoreViewTab(index, $scope.SCORE_TAB_STORAGE)
 		} else {
 			//  has scores, might have storage data
 			// Get the score total by summing up the distribution array
 			semester.totalScores = semester.distribution.reduce((prev, cur) => prev + cur)
-			$scope.setScoreView(index, 0)
+			_setScoreViewTab(index, $scope.SCORE_TAB_GRAPH)
 		}
 	}
 
-	return ($scope.setScoreView = (index, view) => ($scope.selectedScoreView[index] = view))
+	const _setScoreViewTab = (index, view) => {
+		// load storage data if needed
+		if (view === $scope.SCORE_TAB_STORAGE) {
+			selectedWidgetSrv.getStorageData().then(data => {
+				$rootScope.$broadcast('storageData.loaded')
+				Please.$apply()
+			})
+		}
+
+		$scope.selectedScoreView[index] = view
+	}
+
+	const _onSelectedWidgetUpdate = () => {
+		$scope.selected.widget = selectedWidgetSrv.get()
+		const sessionCheck = userServ.checkValidSession()
+		sessionCheck.then(check => {
+			if (check) {
+				setSelectedWidget()
+			} else {
+				location.reload(true)
+			}
+		})
+	}
+
+	// expose to scope
+
+	$scope.setScoreViewTab = _setScoreViewTab
+	$scope.alert = Alert
+	$scope.baseUrl = BASE_URL
+	$scope.widgets = { widgetList: [] }
+	$scope.selected = {
+		widget: null,
+		perms: {},
+		scores: {},
+		accessLevel: ACCESS.VISIBLE,
+		shareable: false,
+		editable: true,
+		hasScores: false,
+		preview: '',
+		guestAccess: false,
+		embeddedOnly: false
+	}
+	$scope.perms = { collaborators: [] }
+	$scope.show = {
+		collaborationModal: false,
+		availabilityModal: false,
+		copyModal: false,
+		olderScores: false,
+		exportModal: false,
+		deleteDialog: false,
+		embedToggle: false,
+		editPublishedWarning: false
+	}
+	$scope.SCORE_TAB_GRAPH = 0
+	$scope.SCORE_TAB_INDIVIDUAL = 1
+	$scope.SCORE_TAB_STORAGE = 2
+	$scope.selectedScoreView = [] // array of above (i.e. 0 = graph)
+
+	$scope.setSelected = id => {
+		widgetSrv.updateHashUrl(id)
+	}
+
+	// Initialize
+
+	$scope.$on('selectedWidget.update', _onSelectedWidgetUpdate)
+	$scope.$on('collaborators.update', _countCollaborators)
+	$scope.$on('widgetList.update', evt => {
+		updateWidgets(widgetSrv.getWidgets())
+	})
+	$scope.$on('user.update', evt => {
+		$scope.user = userServ.get()
+	})
+
+	widgetSrv.getWidgets().then(updateWidgets)
 })

@@ -1,15 +1,20 @@
-Namespace('Materia.Coms').Json = (function() {
+Namespace('Materia.Coms').Json = (() => {
 	let _gatewayURL = null
+	let $q
+
+	angular.injector(['ng']).invoke(function(_$q_) {
+		$q = _$q_
+	})
 
 	const _showError = data => {
 		if (data.title === 'Invalid Login') {
 			// redirect to login page
-			return (window.location = BASE_URL + 'login')
+			window.location = BASE_URL + 'login'
 		}
 	}
 
 	// prepare the callback interrupt
-	const _resposeErrorChecker = (data, callback, ignoreError) => {
+	const _resposeErrorChecker = (data, ignoreError) => {
 		// show errors if they exist
 		if (
 			ignoreError != null &&
@@ -20,15 +25,10 @@ Namespace('Materia.Coms').Json = (function() {
 		) {
 			_showError(data)
 		}
-		// continue to original callback
-		if (callback != null) callback(data)
 	}
 
-	const _sendRequest = (method, url, body, callback, ignoreError) => {
-		if (callback == null) {
-			callback = new Function()
-		}
-
+	const _sendRequest = (method, url, body) => {
+		let deferred = $q.defer()
 		const options = {
 			method,
 			body,
@@ -43,38 +43,27 @@ Namespace('Materia.Coms').Json = (function() {
 		fetch(url, options)
 			.then(res => res.json())
 			.then(json => {
-				_resposeErrorChecker(json, callback, ignoreError)
+				_resposeErrorChecker(json, false)
+				deferred.resolve(json)
 			})
 			.catch(error => {
+				deferred.reject()
 				_showError('Error Sending request to ' + url)
 			})
+
+		return deferred.promise
 	}
 
-	const setGateway = newGateway => (_gatewayURL = newGateway)
+	const setGateway = newGateway => {
+		_gatewayURL = newGateway
+	}
 
-	// older api, calls callback AND returns a promise
-	const send = (method, args, callback, ignoreError) => {
-		// find a deferred object from angular or jquery
-		// &TODO: remove the jquery version one day
-		let deferred
-		let promise
-		if (angular) {
-			var $injector = angular.injector(['ng'])
-			$injector.invoke(function($q) {
-				deferred = $q.defer()
-				promise = deferred.promise
-				promise.fail = promise.catch // emulate jquery's promise.fail()
-			})
-		} else {
-			deferred = $.Deferred()
-			promise = deferred.promise()
-		}
+	// older api
+	const send = (method, args) => {
+		let deferred = $q.defer()
 
 		if (_gatewayURL == null) {
 			_gatewayURL = API_LINK
-		}
-		if (callback == null) {
-			callback = new Function()
 		}
 		if (args == null) {
 			args = []
@@ -97,27 +86,27 @@ Namespace('Materia.Coms').Json = (function() {
 			.then(res => res.text())
 			.then(body => {
 				if (body) body = JSON.parse(body)
-				_resposeErrorChecker(body, callback, ignoreError)
+				_resposeErrorChecker(body, false)
 				deferred.resolve(body)
 			})
 			.catch(error => {
 				deferred.reject(error)
 			})
 
-		return promise
+		return deferred.promise
 	}
 
 	// newer XMLHttpRequest json api
-	const get = (url, callback, ignoreError) => {
-		_sendRequest('GET', url, null, callback, ignoreError)
+	const get = url => {
+		return _sendRequest('GET', url)
 	}
 
 	// newer XMLHttpRequest json api
-	const post = function(url, dataObject, callback, ignoreError) {
+	const post = function(url, dataObject) {
 		if (dataObject == null) {
 			dataObject = {}
 		}
-		_sendRequest('POST', url, JSON.stringify(dataObject), callback, ignoreError)
+		return _sendRequest('POST', url, JSON.stringify(dataObject))
 	}
 
 	// return true if jsonResult is an error object

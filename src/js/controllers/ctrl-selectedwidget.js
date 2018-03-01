@@ -1,5 +1,6 @@
 const app = angular.module('materia')
 app.controller('SelectedWidgetController', function(
+	Please,
 	$rootScope,
 	$scope,
 	$q,
@@ -24,7 +25,7 @@ app.controller('SelectedWidgetController', function(
 	const _exportPopup = () => {
 		// Do not show modal disabled
 		$scope.show.exportModal = true
-		Materia.MyWidgets.Csv.buildPopup()
+		Please.$apply()
 	}
 
 	const _copyWidget = () => {
@@ -48,7 +49,7 @@ app.controller('SelectedWidgetController', function(
 			if (results) {
 				$scope.show.deleteDialog = false
 				widgetSrv.removeWidget($scope.selected.widget.id)
-				$scope.$apply()
+				Please.$apply()
 			}
 		})
 	}
@@ -66,7 +67,7 @@ app.controller('SelectedWidgetController', function(
 					$scope.alert.msg =
 						'This widget is currently locked, you will be able to edit this widget when it is no longer being edited by somebody else.'
 				}
-				$scope.$apply()
+				Please.$apply()
 			})
 		}
 
@@ -155,7 +156,7 @@ app.controller('SelectedWidgetController', function(
 				$scope.perms.collaborators = users
 			}
 
-			$scope.$apply()
+			Please.$apply()
 			$scope.setupPickers()
 		})
 	}
@@ -173,7 +174,7 @@ app.controller('SelectedWidgetController', function(
 								.getTime() / 1000
 						user.expires = timestamp
 						user.expiresText = getExpiresText(timestamp)
-						$scope.$apply()
+						Please.$apply()
 					}
 				})
 			})(user)
@@ -204,7 +205,7 @@ app.controller('SelectedWidgetController', function(
 	// Displays a no-access message when attempting to access a widget without sharing permissions.
 	$scope.$on('selectedWidget.notifyAccessDenied', () => {
 		$scope.perms.error = true
-		$scope.$apply()
+		Please.$apply()
 	})
 
 	$scope.removeExpires = _removeExpires

@@ -1,5 +1,14 @@
 const app = angular.module('materia')
-app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, widgetSrv, Alert) {
+app.controller('createCtrl', function(
+	Please,
+	$scope,
+	$q,
+	$sce,
+	$timeout,
+	$interval,
+	widgetSrv,
+	Alert
+) {
 	$scope.alert = Alert
 
 	const HEARTBEAT_INTERVAL = 30000
@@ -20,24 +29,7 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 	let widget_info = null
 	let widgetType = null
 
-	// get the instance_id from the url if needed
-	if (window.location.hash) {
-		inst_id = window.location.hash.substr(1)
-	}
-	widget_id = window.location.href.match(/widgets\/([\d]+)/)[1]
-
-	// Model properties
-	$scope.saveStatus = 'idle'
-	$scope.saveText = 'Save Draft'
-	$scope.previewText = 'Preview'
-	$scope.publishText = 'Publish...'
-
-	$scope.invalid = false
-	$scope.modal = false
-
-	// Model methods
-	// send a save request to the creator
-	$scope.requestSave = mode => {
+	const _requestSave = mode => {
 		// hide dialogs
 		$scope.popup = ''
 
@@ -56,7 +48,7 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 	}
 
 	// Popup a question importer dialog
-	$scope.showQuestionImporter = () => {
+	const _showQuestionImporter = () => {
 		// must be loose comparison
 		const types = widget_info.meta_data.supported_data
 		//the value passed on needs to be a list of one or two elements, i.e.
@@ -65,7 +57,7 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 		return null // else Safari will give the .swf data that it can't handle
 	}
 
-	$scope.onPublishPressed = () => {
+	const _onPublishPressed = () => {
 		if (inst_id != null && instance != null && !instance.is_draft) {
 			// Show the Update Dialog
 			$scope.popup = 'update'
@@ -75,11 +67,11 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 		}
 	}
 
-	$scope.cancelPublish = e => {
+	const _cancelPublish = e => {
 		$scope.popup = ''
 	}
 
-	$scope.cancelPreview = e => {
+	const _cancelPreview = e => {
 		$scope.popup = ''
 	}
 
@@ -93,22 +85,23 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 
 	// Every 30 seconds, renew/check the session
 	const startHeartBeat = () => {
-		const deferred = $q.defer().resolve()
+		const deferred = $q.defer()
 		heartbeat = $interval(() => {
 			Materia.Coms.Json.send('session_author_verify', [null, false]).then(data => {
 				if (data !== true) {
 					_alert('You have been logged out due to inactivity', 'Invalid Login', true, true)
-					$scope.$apply()
+					Please.$apply()
 					stopHeartBeat()
 				}
 			})
 		}, HEARTBEAT_INTERVAL)
 
+		deferred.resolve()
 		return deferred.promise
 	}
 
 	const stopHeartBeat = () => {
-		$interval.clear(heartbeat)
+		$interval.cancel(heartbeat)
 	}
 
 	// Gets the qset of a loaded instance
@@ -119,7 +112,7 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 				data.title === 'error'
 			) {
 				$scope.invalid = true
-				$scope.$apply()
+				Please.$apply()
 			} else {
 				keepQSet = data
 			}
@@ -194,7 +187,7 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 		type = creatorPath.split('.').pop()
 		$scope.loaded = true
 		$scope.type = type
-		$scope.$apply()
+		Please.$apply()
 
 		// the embed process will reolve this later
 		embedDonePromise = deferred
@@ -213,7 +206,7 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 
 	const embedHTML = htmlPath => {
 		$scope.htmlPath = htmlPath + '?' + widget_info.created_at
-		$scope.$apply()
+		Please.$apply()
 
 		const onPostMessage = e => {
 			const origin = `${e.origin}/`
@@ -253,7 +246,7 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 
 		if (swfobject.hasFlashPlayerVersion('1') === false) {
 			$scope.type = 'noflash'
-			$scope.$apply()
+			Please.$apply()
 		} else {
 			// setup variable to send to flash
 			const flashvars = {
@@ -308,7 +301,7 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 		}
 		enableReturnLink()
 		$scope.showActionBar = true
-		$scope.$apply()
+		Please.$apply()
 
 		deferred.resolve()
 		return deferred.promise
@@ -326,13 +319,13 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 			$scope.returnPlace = 'widget catalog'
 		}
 
-		$scope.$apply()
+		Please.$apply()
 	}
 
 	const onPreviewPopupBlocked = url => {
 		$scope.popup = 'blocked'
 		$scope.previewUrl = url
-		$scope.$apply()
+		Please.$apply()
 	}
 
 	// When the creator says it's ready
@@ -354,7 +347,7 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 		$scope.iframeUrl = ''
 		$scope.modal = false
 		$timeout(() => {
-			$scope.$apply()
+			Please.$apply()
 		}, 0)
 	}
 
@@ -363,7 +356,7 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 		showEmbedDialog(`${BASE_URL}media/import#${types.join(',')}`)
 		$scope.modal = true
 		$timeout(() => {
-			$scope.$apply()
+			Please.$apply()
 		}, 0)
 		return null // else Safari will give the .swf data that it can't handle
 	}
@@ -387,7 +380,7 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 				if ((inst != null ? inst.msg : undefined) != null) {
 					onSaveCanceled(inst)
 					$scope.alert.fatal = inst.halt
-					$scope.$apply()
+					Please.$apply()
 				} else if (inst != null && inst.id != null) {
 					// update this creator's url
 					if (String(inst_id).length !== 0) {
@@ -426,11 +419,11 @@ app.controller('createCtrl', function($scope, $q, $sce, $timeout, $interval, wid
 							break
 					}
 
-					$scope.$apply()
+					Please.$apply()
 					$timeout(() => {
 						$scope.saveText = 'Save Draft'
 						$scope.saveStatus = 'idle'
-						return $scope.$apply()
+						return Please.$apply()
 					}, 5000)
 				}
 			})
@@ -474,14 +467,14 @@ ${msg.toLowerCase()}`,
 		if (enableLoginButton == null) {
 			enableLoginButton = false
 		}
-		return $scope.$apply(() => {
-			$scope.alert.msg = msg
-			if (title !== null) {
-				$scope.alert.title = title
-			}
-			$scope.alert.fatal = fatal
-			return ($scope.alert.enableLoginButton = enableLoginButton)
-		})
+
+		$scope.alert.msg = msg
+		if (title !== null) {
+			$scope.alert.title = title
+		}
+		$scope.alert.fatal = fatal
+
+		Please.$apply()
 	}
 
 	// Exposed to the window object so that popups and frames can use this public functions
@@ -512,11 +505,33 @@ ${msg.toLowerCase()}`,
 		}
 	}
 
-	// synchronise the asynchronous events
-	if (inst_id != null) {
-		return getQset().then(() => {
+	// expose to scope
+
+	$scope.saveStatus = 'idle'
+	$scope.saveText = 'Save Draft'
+	$scope.previewText = 'Preview'
+	$scope.publishText = 'Publish...'
+	$scope.invalid = false
+	$scope.modal = false
+	$scope.requestSave = _requestSave
+	$scope.showQuestionImporter = _showQuestionImporter
+	$scope.onPublishPressed = _onPublishPressed
+	$scope.cancelPublish = _cancelPublish
+	$scope.cancelPreview = _cancelPreview
+
+	// initialize
+
+	// get the instance_id from the url if needed
+	if (window.location.hash) {
+		inst_id = window.location.hash.substr(1)
+	}
+	widget_id = window.location.href.match(/widgets\/([\d]+)/)[1]
+
+	if (inst_id) {
+		// load an existing widget
+		getQset().then(() => {
 			if (!$scope.invalid) {
-				return $q(resolve => resolve(inst_id))
+				$q(resolve => resolve(inst_id))
 					.then(widgetSrv.getWidget)
 					.then(embed)
 					.then(initCreator)
@@ -526,7 +541,8 @@ ${msg.toLowerCase()}`,
 			}
 		})
 	} else {
-		return $q(resolve => resolve(widget_id))
+		// initialize a new creator
+		$q(resolve => resolve(widget_id))
 			.then(widgetSrv.getWidgetInfo)
 			.then(embed)
 			.then(initCreator)

@@ -1,13 +1,3 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 'use strict'
 
 const app = angular.module('materia')
@@ -25,10 +15,9 @@ app.directive('scoreTable', function(selectedWidgetSrv, $window) {
 			$scope.users = {}
 			$scope.selectedUser = null
 
-			const logs = selectedWidgetSrv.getPlayLogsForSemester(term, year)
-			logs.then(function(data) {
+			selectedWidgetSrv.getPlayLogsForSemester(term, year).then(data => {
 				// process play logs into records for each user
-				angular.forEach(data, function(log, index) {
+				angular.forEach(data, (log, index) => {
 					const uid = log.user_id
 					const name = log.last ? `${log.last}, ${log.first}` : 'Guests'
 
@@ -59,13 +48,13 @@ app.directive('scoreTable', function(selectedWidgetSrv, $window) {
 						duration = `${secs}s`
 					}
 
-					return (users[uid].scores[log.time.toString()] = {
+					users[uid].scores[log.time.toString()] = {
 						date: new Date(log.time * 1000).toDateString(),
 						percent,
 						elapsed: duration,
 						complete: log.done,
 						id: log.id
-					})
+					}
 				})
 
 				masterUserList = $scope.users = users

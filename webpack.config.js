@@ -43,6 +43,7 @@ module.exports = {
     ],
     'js/student.js': [
       jsPath+'/materia-constants.js',
+      jsPath+'/services/srv-please.js',
       jsPath+'/services/srv-user.js',
       jsPath+'/services/srv-api.js',
       jsPath+'/services/srv-datetime.js',
@@ -68,6 +69,7 @@ module.exports = {
     ],
     'js/author.js': [
       jsPath+'/materia-constants.js',
+      jsPath+'/services/srv-please.js',
       jsPath+'/filters/filter-escape.js',
       jsPath+'/filters/filter-highlight.js',
       jsPath+'/filters/filter-multiword.js',
@@ -92,18 +94,20 @@ module.exports = {
       jsPath+'/controllers/ctrl-widget-settings.js',
       jsPath+'/controllers/ctrl-export-scores.js',
       jsPath+'/controllers/ctrl-collaboration.js',
-      jsPath+'/controllers/ctrl-sidebar.js',
       jsPath+'/controllers/ctrl-login.js',
+      jsPath+'/directives/dir-fileonchange.js',
       jsPath+'/directives/dir-beardable.js',
       jsPath+'/directives/dir-datatable.js',
       jsPath+'/directives/dir-date-validation.js',
       jsPath+'/directives/dir-fancybox.js',
       jsPath+'/directives/dir-ngenter.js',
       jsPath+'/directives/dir-scoregraph.js',
-      jsPath+'/directives/dir-scoretable.js'
+      jsPath+'/directives/dir-scoretable.js',
+      jsPath+'/directives/dir-scoredata.js'
     ],
     'js/admin.js':[
       jsPath+'/materia-constants.js',
+      jsPath+'/services/srv-please.js',
       jsPath+'/controllers/ctrl-admin-user.js',
       jsPath+'/controllers/ctrl-admin-widget.js',
       jsPath+'/services/srv-admin.js',
