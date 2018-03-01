@@ -13,12 +13,16 @@ Namespace('Materia').Engine = (() => {
 				_baseUrl = msg.data[2]
 				_mediaUrl = msg.data[3]
 				_initWidget(msg.data[0], msg.data[1])
+				break
 			default:
 				throw new Error(`Error: Engine Core received unknown post message: ${msg.type}`)
+				break
 		}
 	}
 
-	const _sendPostMessage = (type, data) => parent.postMessage(JSON.stringify({ type, data }), '*')
+	const _sendPostMessage = (type, data) => {
+		parent.postMessage(JSON.stringify({ type, data }), '*')
+	}
 
 	// Called by Materia.Player when your widget Engine should start the user experience
 	const _initWidget = (qset, instance) => {
@@ -41,8 +45,8 @@ Namespace('Materia').Engine = (() => {
 		_sendPostMessage('start', null)
 	}
 
-	const sendStorage = () => {
-		_sendPostMessage('sendStorage', arguments[0])
+	const sendStorage = args => {
+		_sendPostMessage('sendStorage', args)
 	}
 
 	const addLog = (type, item_id, text, value) => {
@@ -55,14 +59,14 @@ Namespace('Materia').Engine = (() => {
 		if (text == null) {
 			text = ''
 		}
-		return _sendPostMessage('addLog', { type, item_id, text, value })
+		_sendPostMessage('addLog', { type, item_id, text, value })
 	}
 
 	const alert = (title, msg, type) => {
 		if (type == null) {
 			type = 1
 		}
-		return _sendPostMessage('alert', { title, msg, type })
+		_sendPostMessage('alert', { title, msg, type })
 	}
 
 	const getImageAssetUrl = mediaId => `${_mediaUrl}/${mediaId}`
@@ -71,10 +75,12 @@ Namespace('Materia').Engine = (() => {
 		if (showScoreScreenAfter == null) {
 			showScoreScreenAfter = true
 		}
-		return _sendPostMessage('end', showScoreScreenAfter)
+		_sendPostMessage('end', showScoreScreenAfter)
 	}
 
-	const sendPendingLogs = () => _sendPostMessage('sendPendingLogs', {})
+	const sendPendingLogs = () => {
+		_sendPostMessage('sendPendingLogs', {})
+	}
 
 	const setHeight = h => {
 		if (!h) {
@@ -82,7 +88,7 @@ Namespace('Materia').Engine = (() => {
 		}
 		if (h !== _lastHeight) {
 			_sendPostMessage('setHeight', [h])
-			return (_lastHeight = h)
+			_lastHeight = h
 		}
 	}
 
