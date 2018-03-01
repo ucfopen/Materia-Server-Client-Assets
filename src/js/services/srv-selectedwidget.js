@@ -13,7 +13,7 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 	let _storageData = null
 
 	// get and set _widget
-	const set = function(widget) {
+	const set = widget => {
 		_scoreData = null
 		_storageData = null
 		_widget = widget
@@ -111,7 +111,7 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		return deferred.promise
 	}
 
-	var getSemesterFromTimestamp = timestamp => {
+	const getSemesterFromTimestamp = timestamp => {
 		return _dateRanges.find(
 			r => timestamp >= parseInt(r.start, 10) && timestamp <= parseInt(r.end, 10)
 		)
@@ -166,7 +166,7 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		return deferred.promise
 	}
 
-	var _processDataIntoSemesters = logs => {
+	const _processDataIntoSemesters = logs => {
 		const semesters = {}
 		let timestamp = null
 
@@ -187,7 +187,7 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 	//  storage data doesn't really enforce a schema.
 	//  this function determines every field used throughout the
 	//  storage data and then applies that schema to each item.
-	var _normalizeStorageDataColumns = rows => {
+	const _normalizeStorageDataColumns = rows => {
 		//  go through all the rows and collect the fields used:
 		const fields = {}
 		for (var r of rows) {

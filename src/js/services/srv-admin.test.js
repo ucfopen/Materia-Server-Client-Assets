@@ -1,4 +1,4 @@
-describe('adminSrv', function() {
+describe('adminSrv', () => {
 	var _service
 	var postMock
 	var getMock

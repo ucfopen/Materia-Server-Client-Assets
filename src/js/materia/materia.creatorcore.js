@@ -38,7 +38,7 @@ Namespace('Materia').CreatorCore = (() => {
 		}
 	}
 
-	var _tellCreator = (method, args) => {
+	const _tellCreator = (method, args) => {
 		if (typeof _creatorClass[method] === 'function') {
 			_creatorClass[method].apply(undefined, args)
 		} else {
@@ -48,13 +48,13 @@ Namespace('Materia').CreatorCore = (() => {
 
 	const _sendPostMessage = (type, data) => parent.postMessage(JSON.stringify({ type, data }), '*')
 
-	var _initNewWidget = (widget, baseUrl, mediaUrl) => {
+	const _initNewWidget = (widget, baseUrl, mediaUrl) => {
 		_baseurl = baseUrl
 		_mediaUrl = mediaUrl
 		_tellCreator('initNewWidget', [widget])
 	}
 
-	var _initExistingWidget = (widget, title, qset, qsetVersion, baseUrl, mediaUrl) => {
+	const _initExistingWidget = (widget, title, qset, qsetVersion, baseUrl, mediaUrl) => {
 		_baseurl = baseUrl
 		_mediaUrl = mediaUrl
 		_tellCreator('initExistingWidget', [widget, title, qset, qsetVersion])
@@ -78,7 +78,7 @@ Namespace('Materia').CreatorCore = (() => {
 		_sendPostMessage('start', null)
 	}
 
-	var alert = (title, msg, type) => {
+	const alert = (title, msg, type) => {
 		if (type == null) {
 			type = 1
 		}
@@ -113,7 +113,7 @@ Namespace('Materia').CreatorCore = (() => {
 
 	const cancelSave = msg => _sendPostMessage('cancelSave', [msg])
 
-	var setHeight = h => {
+	const setHeight = h => {
 		if (!h) {
 			h = $('html').height()
 		}

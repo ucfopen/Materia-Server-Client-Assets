@@ -1,12 +1,4 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-Namespace('Materia').Util = (function() {
-
+Namespace('Materia').Util = (() => {
 	// Use for cross side scripting prevention.
 	const escapeUntrustedContent = text =>
 		text
@@ -15,7 +7,6 @@ Namespace('Materia').Util = (function() {
 			.replace(/"/g, '&quot')
 			.replace(/'/g, '&#x27')
 			.replace(/\//g, '&#x2F')
-	;
 
-	return {escapeUntrustedContent};
-})();
+	return { escapeUntrustedContent }
+})()

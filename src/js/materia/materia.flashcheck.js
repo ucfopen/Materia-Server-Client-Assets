@@ -13,7 +13,7 @@ Namespace('Materia').Flashcheck = (() => {
 		}
 
 		if (callback != null) {
-			return callback(return_val)
+			callback(return_val)
 		}
 	}
 
