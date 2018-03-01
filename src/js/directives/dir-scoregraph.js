@@ -1,7 +1,7 @@
 'use strict'
 
 const app = angular.module('materia')
-app.directive('scoreGraph', function(selectedWidgetSrv) {
+app.directive('scoreGraph', function($timeout, selectedWidgetSrv) {
 	return {
 		restrict: 'A',
 		link($scope, $element, $attrs) {
@@ -14,7 +14,9 @@ app.directive('scoreGraph', function(selectedWidgetSrv) {
 				// Don't try creating a graph if there's nothing to put in it
 				if (brackets) {
 					// If we don't defer, Angular might overwrite our element
-					setTimeout(() => Materia.MyWidgets.Statistics.createGraph($attrs.id, brackets), 0)
+					$timeout(() => {
+						Materia.MyWidgets.Statistics.createGraph($attrs.id, brackets)
+					})
 				}
 			})
 		}

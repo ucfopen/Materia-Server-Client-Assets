@@ -2,7 +2,9 @@
 const app = angular.module('materia')
 app.controller('alertCtrl', function($scope, Alert, $window) {
 	$scope.alert = Alert
-	$scope.reloadPage = () => $window.location.reload()
+	$scope.reloadPage = () => {
+		$window.location.reload()
+	}
 })
 
 app.factory('Alert', () => ({

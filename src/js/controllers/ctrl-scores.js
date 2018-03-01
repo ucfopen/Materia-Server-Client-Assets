@@ -1,88 +1,51 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS202: Simplify dynamic range loops
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const app = angular.module('materia')
-app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
+app.controller('scorePageController', function(Please, $scope, $q, $timeout, widgetSrv, scoreSrv) {
+	const COMPARE_TEXT_CLOSE = 'Close Graph'
+	const COMPARE_TEXT_OPEN = 'Compare With Class'
 	// attempts is an array of attempts, [0] is the newest
 	const attempt_dates = []
 	const details = []
-
 	// current attempt is the index of the attempt (the 1st attempt is attempts.length)
 	let currentAttempt = null
 	let widgetInstance = null
-	$scope.guestAccess = false
 	let attemptsLeft = 0
-
-	let single_id = null
-	let isEmbedded = false
-	let isPreview = false
-
-	let _graphData = []
-
-	const COMPARE_TEXT_CLOSE = 'Close Graph'
-	const COMPARE_TEXT_OPEN = 'Compare With Class'
-	$scope.classRankText = COMPARE_TEXT_OPEN
-
-	isPreview = /\/preview\//i.test(document.URL)
-
+	let single_id = window.location.hash.split('single-')[1]
 	// @TODO @IE8 This method of checking for isEmbedded is hacky, but
 	// IE8 didn't like "window.self == window.top" (which also might be
 	// problematic with weird plugins that put the page in an iframe).
 	// This should work pretty well but if we ever decide to change the
 	// scores embed URL this will need to be modified!
-
-	isEmbedded = window.location.href.toLowerCase().indexOf('/scores/embed/') !== -1
+	let isEmbedded = window.location.href.toLowerCase().indexOf('/scores/embed/') !== -1
+	let isPreview = /\/preview\//i.test(document.URL)
+	let _graphData = []
 
 	// We don't want users who click the 'View more details' link via an LTI to play again, since at that point
 	// the play will no longer be connected to the LTI details.
 	// This is a cheap way to hide the button:
 	let hidePlayAgain = document.URL.indexOf('details=1') > -1
-	single_id = window.location.hash.split('single-')[1]
 	const widget_id = document.URL.match(/^[\.\w\/:]+\/([a-z0-9]+)/i)[1]
 
 	// this is only actually set to something when coming from the profile page
 	let play_id = window.location.hash.split('play-')[1]
 
-	// when the url has changes, reload the questions
-	$(window).bind('hashchange', () => getScoreDetails())
-
-	$scope.prevMouseOver = () => ($scope.prevAttemptClass = 'open')
-	$scope.prevMouseOut = () => ($scope.prevAttemptClass = '')
-	$scope.prevClick = () => ($scope.prevAttemptClass = 'open')
-	$scope.attemptClick = function() {
-		if (isMobile.any()) {
-			return ($scope.prevAttemptClass = '')
-		}
-	}
-
-	$scope.isPreview = isPreview
-	$scope.isEmbedded = isEmbedded
-
-	const displayScoreData = (inst_id, play_id) =>
+	const _displayScoreData = (inst_id, play_id) =>
 		// @TODO - switch to $q
 		widgetSrv
 			.getWidget(inst_id)
 			.then(instance => {
 				widgetInstance = instance
 				$scope.guestAccess = widgetInstance.guest_access
-				return getInstanceScores(inst_id)
+				return inst_id
 			})
-			.then(function() {
-				displayAttempts(play_id)
-				return displayWidgetInstance()
+			.then(_getInstanceScores)
+			.then(() => {
+				_displayAttempts(play_id)
+				_displayWidgetInstance()
 			})
-			.catch(function() {})
+			.catch(() => {})
 
-	var getInstanceScores = function(inst_id) {
-		const dfd = $.Deferred()
+	const _getInstanceScores = inst_id => {
+		const dfd = $q.defer()
 		if (isPreview || single_id) {
 			$scope.attempts = [{ id: -1, created_at: 0, percent: 0 }]
 			dfd.resolve() // skip, preview doesn't support this
@@ -91,33 +54,31 @@ app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
 			// support guests.
 			const send_token =
 				typeof LAUNCH_TOKEN !== 'undefined' && LAUNCH_TOKEN !== null ? LAUNCH_TOKEN : play_id
-			scoreSrv.getWidgetInstanceScores(inst_id, send_token, function(result) {
-				populateScores(result.scores)
+			scoreSrv.getWidgetInstanceScores(inst_id, send_token, result => {
+				_populateScores(result.scores)
 				attemptsLeft = result.attempts_left
-				return dfd.resolve()
+				dfd.resolve()
 			})
 		} else {
 			// Only want score corresponding to play_id if guest widget
-			scoreSrv.getGuestWidgetInstanceScores(inst_id, play_id, function(scores) {
-				populateScores(scores)
-				return dfd.resolve()
+			scoreSrv.getGuestWidgetInstanceScores(inst_id, play_id, scores => {
+				_populateScores(scores)
+				dfd.resolve()
 			})
 		}
-		return dfd.promise()
+		return dfd.promise
 	}
 
-	var populateScores = function(scores) {
-		const dfd = $.Deferred()
+	const _populateScores = scores => {
 		if (scores === null || scores.length < 1) {
 			if (single_id) {
 				single_id = null
-				displayScoreData(widget_id, play_id)
+				_displayScoreData(widget_id, play_id)
 			} else {
 				//load up an error screen of some sort
 				$scope.restricted = true
 				$scope.show = true
-				$scope.$apply()
-				dfd.reject('No scores for this widget')
+				Please.$apply()
 			}
 			return
 		}
@@ -127,15 +88,15 @@ app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
 		}
 		$scope.attempts = scores
 		$scope.attempt = scores[0]
-		return $scope.$apply()
+		Please.$apply()
 	}
 
-	var getScoreDetails = () => {
+	const _getScoreDetails = () => {
 		if (isPreview) {
 			currentAttempt = 1
-			scoreSrv.getWidgetInstancePlayScores(null, widgetInstance.id, displayDetails)
+			scoreSrv.getWidgetInstancePlayScores(null, widgetInstance.id, _displayDetails)
 		} else if (single_id) {
-			scoreSrv.getWidgetInstancePlayScores(single_id, null, displayDetails)
+			scoreSrv.getWidgetInstancePlayScores(single_id, null, _displayDetails)
 		} else {
 			// get the current attempt from the url
 			const hash = getAttemptNumberFromHash()
@@ -147,16 +108,16 @@ app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
 
 			// display existing data or get more from the server
 			if (details[$scope.attempts.length - currentAttempt] != null) {
-				displayDetails(details[$scope.attempts.length - currentAttempt])
+				_displayDetails(details[$scope.attempts.length - currentAttempt])
 			} else {
-				scoreSrv.getWidgetInstancePlayScores(play_id, null, displayDetails)
+				scoreSrv.getWidgetInstancePlayScores(play_id, null, _displayDetails)
 			}
 		}
 
-		return $scope.$apply()
+		Please.$apply()
 	}
 
-	var displayWidgetInstance = function() {
+	const _displayWidgetInstance = () => {
 		// Build the data for the overview section, prep for display through Underscore
 		const widget = {
 			title: widgetInstance.name,
@@ -215,51 +176,47 @@ app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
 		$scope.hidePlayAgain = hidePlayAgain
 		$scope.hidePreviousAttempts = single_id
 		$scope.widget = widget
-		return $scope.$apply()
+		Please.$apply()
 	}
 
-	var displayAttempts = function(play_id) {
+	const _displayAttempts = play_id => {
 		if (isPreview) {
 			currentAttempt = 1
-			return getScoreDetails()
+			return _getScoreDetails()
 		} else {
 			if ($scope.attempts instanceof Array && $scope.attempts.length > 0) {
 				let matchedAttempt = false
-				for (
-					let i = 0, end = $scope.attempts.length - 1, asc = 0 <= end;
-					asc ? i <= end : i >= end;
-					asc ? i++ : i--
-				) {
-					const d = new Date($scope.attempts[i].created_at * 1000)
+				$scope.attempts.forEach((a, i) => {
+					const d = new Date(a.created_at * 1000)
 
 					// attempt_dates is used to populate the overview data in displayWidgetInstance, it's just assembled here.
 					attempt_dates[i] = d.getMonth() + 1 + '/' + d.getDate() + '/' + d.getFullYear()
 
-					if (play_id === $scope.attempts[i].id) {
+					if (play_id === a.id) {
 						matchedAttempt = $scope.attempts.length - i
 					}
-				}
+				})
 
 				if (isPreview) {
-					return (window.location.hash = `#attempt-${1}`)
+					window.location.hash = `#attempt-${1}`
 					// we only want to do this if there's more than one attempt. Otherwise it's a guest widget
 					// or the score is being viewed by an instructor, so we don't want to get rid of the playid
 					// in the hash
 				} else if (matchedAttempt !== false && $scope.attempts.length > 1) {
-					// changing the hash will call getScoreDetails()
+					// changing the hash will call _getScoreDetails()
 					window.location.hash = `#attempt-${matchedAttempt}`
-					return getScoreDetails()
+					_getScoreDetails()
 				} else if (getAttemptNumberFromHash() === undefined) {
-					return (window.location.hash = `#attempt-${$scope.attempts.length}`)
+					window.location.hash = `#attempt-${$scope.attempts.length}`
 				} else {
-					return getScoreDetails()
+					_getScoreDetails()
 				}
 			}
 		}
 	}
 
 	// Uses jPlot to create the bargraph
-	$scope.toggleClassRankGraph = function() {
+	const _toggleClassRankGraph = function() {
 		// toggle button text
 		if ($scope.graphShown) {
 			$scope.classRankText = COMPARE_TEXT_OPEN
@@ -295,7 +252,7 @@ app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
 			.script(`${jqplotBase}plugins/jqplot.highlighter.min.js`)
 			.wait(() =>
 				// ========== BUILD THE GRAPH =============
-				Materia.Coms.Json.send('score_summary_get', [widgetInstance.id], function(data) {
+				Materia.Coms.Json.send('score_summary_get', [widgetInstance.id]).then(data => {
 					// add up all semesters data into one dataset
 					_graphData = [
 						['0-9%', 0],
@@ -370,12 +327,12 @@ app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
 					}
 
 					// light the fuse
-					return $.jqplot('graph', [_graphData], jqOptions)
+					$.jqplot('graph', [_graphData], jqOptions)
 				})
 			)
 	}
 
-	var displayDetails = function(results) {
+	const _displayDetails = function(results) {
 		let score
 		$scope.show = true
 
@@ -383,7 +340,7 @@ app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
 			const widget_data = { href: `/preview/${widgetInstance.id}/${widgetInstance.clean_name}` }
 
 			$scope.expired = true
-			$scope.$apply()
+			Please.$apply()
 			return
 		}
 
@@ -410,7 +367,7 @@ app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
 			}
 		}
 
-		setTimeout(() => addCircleToDetailTable(deets.details), 10)
+		$timeout(() => _addCircleToDetailTable(deets.details), 10)
 
 		sendPostMessage(deets.overview.score)
 		$scope.overview = deets.overview
@@ -428,76 +385,38 @@ app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
 		} else {
 			$scope.playAgainUrl = $scope.widget.href
 		}
-		return $scope.$apply()
+		Please.$apply()
 	}
 
-	var addCircleToDetailTable = detail =>
-		(() => {
-			const result = []
-			for (
-				var i = 0, end = detail.length - 1, asc = 0 <= end;
-				asc ? i <= end : i >= end;
-				asc ? i++ : i--
-			) {
-				if (detail[i] != null) {
-					result.push(
-						(() => {
-							const result1 = []
-							for (
-								let j = 0, end1 = detail[i].table.length, asc1 = 0 <= end1;
-								asc1 ? j < end1 : j > end1;
-								asc1 ? j++ : j--
-							) {
-								const { table } = detail[i]
-								let greyMode = false
-								const index = j + 1
-								const canvas_id = `question-${i + 1}-${index}`
-								const percent = table[j].score / 100
-								switch (table[j].graphic) {
-									case 'modifier':
-										greyMode = table[j].score === 0
-										result1.push(
-											Materia.Scores.Scoregraphics.drawModifierCircle(
-												canvas_id,
-												index,
-												percent,
-												greyMode
-											)
-										)
-										break
-									case 'final':
-										result1.push(
-											Materia.Scores.Scoregraphics.drawFinalScoreCircle(canvas_id, index, percent)
-										)
-										break
-									case 'score':
-										greyMode = table[j].score === -1
-										result1.push(
-											Materia.Scores.Scoregraphics.drawScoreCircle(
-												canvas_id,
-												index,
-												percent,
-												greyMode
-											)
-										)
-										break
-									default:
-										result1.push(undefined)
-								}
-							}
-							return result1
-						})()
-					)
-				} else {
-					result.push(undefined)
-				}
+	const _addCircleToDetailTable = detail => {
+		detail.forEach((item, i) => {
+			if (item.table && item.table.length) {
+				item.table.forEach((table, j) => {
+					let greyMode = false
+					const index = j + 1
+					const canvas_id = `question-${i + 1}-${index}`
+					const percent = table.score / 100
+					switch (table.graphic) {
+						case 'modifier':
+							greyMode = table.score === 0
+							Materia.Scores.Scoregraphics.drawModifierCircle(canvas_id, index, percent, greyMode)
+							break
+						case 'final':
+							Materia.Scores.Scoregraphics.drawFinalScoreCircle(canvas_id, index, percent)
+							break
+						case 'score':
+							greyMode = table.score === -1
+							Materia.Scores.Scoregraphics.drawScoreCircle(canvas_id, index, percent, greyMode)
+							break
+					}
+				})
 			}
-			return result
-		})()
+		})
+	}
 
-	var sendPostMessage = function(score) {
+	const sendPostMessage = score => {
 		if (parent.postMessage && JSON.stringify) {
-			return parent.postMessage(
+			parent.postMessage(
 				JSON.stringify({
 					type: 'materiaScoreRecorded',
 					widget: widgetInstance,
@@ -508,7 +427,7 @@ app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
 		}
 	}
 
-	var getAttemptNumberFromHash = function() {
+	const getAttemptNumberFromHash = () => {
 		const hashStr = window.location.hash.split('-')[1]
 		if (hashStr != null && !isNaN(hashStr)) {
 			return hashStr
@@ -516,6 +435,28 @@ app.controller('scorePageController', function($scope, widgetSrv, scoreSrv) {
 		return $scope.attempts.length
 	}
 
+	// expose on scope
+
+	$scope.guestAccess = false
+	$scope.classRankText = COMPARE_TEXT_OPEN
+	$scope.prevMouseOver = () => ($scope.prevAttemptClass = 'open')
+	$scope.prevMouseOut = () => ($scope.prevAttemptClass = '')
+	$scope.prevClick = () => ($scope.prevAttemptClass = 'open')
+	$scope.attemptClick = function() {
+		if (isMobile.any()) {
+			$scope.prevAttemptClass = ''
+		}
+	}
+
+	$scope.isPreview = isPreview
+	$scope.isEmbedded = isEmbedded
+	$scope.toggleClassRankGraph = _toggleClassRankGraph
+
+	// Initialize
+
+	// when the url has changes, reload the questions
+	$(window).bind('hashchange', () => _getScoreDetails())
+
 	// this was originally called in document.ready, but there's no reason to not put it in init
-	return displayScoreData(widget_id, play_id)
+	_displayScoreData(widget_id, play_id)
 })

@@ -9,15 +9,25 @@ app.directive('scoreData', function(selectedWidgetSrv, $window) {
 				return false
 			}
 
-			const id = $attrs.id.split('_')[1]
 			const { semester } = $attrs
-			const storage = selectedWidgetSrv.getStorageData()
-			storage.then(data => {
-				$scope.tables = data[semester]
-				$scope.MAX_ROWS = selectedWidgetSrv.getMaxRows()
-				$scope.tableNames = Object.keys($scope.tables)
-				$scope.selectedTable = $scope.tableNames[0]
+
+			const updateDisplay = () => {
+				// load the storageData from cache (if we have it)
+				selectedWidgetSrv.getStorageData(false).then(data => {
+					$scope.tables = data[semester]
+					$scope.MAX_ROWS = selectedWidgetSrv.getMaxRows()
+					$scope.tableNames = Object.keys($scope.tables)
+					$scope.selectedTable = $scope.tableNames[0]
+				})
+			}
+
+			// the controller will dispatch this when the data is loaded
+			$scope.$on('storageData.loaded', () => {
+				updateDisplay()
 			})
+
+			// try to load it now
+			updateDisplay()
 		}
 	}
 })

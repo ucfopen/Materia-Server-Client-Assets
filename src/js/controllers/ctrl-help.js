@@ -1,18 +1,6 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-const app = angular.module('materia');
-app.controller('helpCtrl', ($scope, $sce) =>
-	Materia.Flashcheck.flashInstalled(function(version) {
-		if ((version === false) || (version.major <= 10)) {
-			return $scope.noFlash = true;
-		} else {
-			return $scope.hasFlash = true;
-		}
+const app = angular.module('materia')
+app.controller('helpCtrl', $scope => {
+	Materia.Flashcheck.flashInstalled(version => {
+		$scope.hasFlash = !(version === false || version.major <= 10)
 	})
-);
-
+})
