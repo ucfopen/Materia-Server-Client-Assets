@@ -8,7 +8,7 @@ app.service('userServ', function($q, $rootScope) {
 	let validLastValue = null
 	const threshold = 10 * 1000
 
-	const buildUser = function(name, avatar, loggedIn, role, notify) {
+	const buildUser = (name, avatar, loggedIn, role, notify) => {
 		if (name == null) {
 			name = ''
 		}
@@ -33,7 +33,7 @@ app.service('userServ', function($q, $rootScope) {
 		}
 	}
 
-	const getCurrentUserFromDom = function() {
+	const getCurrentUserFromDom = () => {
 		const user = document.getElementById('current-user')
 		const userData = {
 			name: user.getAttribute('data-name'),
@@ -51,7 +51,7 @@ app.service('userServ', function($q, $rootScope) {
 		)
 	}
 
-	const getAvatar = function(user, size) {
+	const getAvatar = (user, size) => {
 		if (size == null) {
 			size = 24
 		}
@@ -73,7 +73,7 @@ app.service('userServ', function($q, $rootScope) {
 		return _me
 	}
 
-	const getCurrentUserAvatar = function(size) {
+	const getCurrentUserAvatar = size => {
 		if (size == null) {
 			size = 24
 		}
@@ -92,7 +92,7 @@ app.service('userServ', function($q, $rootScope) {
 		return deferred.promise
 	}
 
-	const set = function(userToSet) {
+	const set = userToSet => {
 		_user = userToSet
 		return $rootScope.$broadcast('user.update')
 	}
@@ -109,7 +109,7 @@ app.service('userServ', function($q, $rootScope) {
 		return deferred.promise
 	}
 
-	const checkValidSession = function(role) {
+	const checkValidSession = role => {
 		const deferred = $q.defer()
 
 		let now = new Date().getTime()

@@ -168,7 +168,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		})
 	}
 
-	var _getMultipleFromServer = () => {
+	const _getMultipleFromServer = () => {
 		const deferred = $q.defer()
 		Materia.Coms.Json.send('widget_instances_get', null).then(widgets => {
 			if (widgets != null && widgets.length != null) {
@@ -185,7 +185,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		return deferred.promise
 	}
 
-	var updateHashUrl = widgetId => ($window.location.hash = `/${widgetId}`)
+	const updateHashUrl = widgetId => ($window.location.hash = `/${widgetId}`)
 
 	const convertAvailibilityDates = (startDateInt, endDateInt) => {
 		let endDate, endTime, open_at, startTime

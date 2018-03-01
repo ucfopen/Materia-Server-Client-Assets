@@ -1,4 +1,4 @@
-describe('dateTimeServ', function() {
+describe('dateTimeServ', () => {
 	var _service
 	var mockWindow
 	var mockLocationSet

@@ -1,9 +1,9 @@
-describe('Namespace', function() {
+describe('Namespace', () => {
 	beforeEach(() => {
 		require('./materia-namespace')
 	})
 
-	it('exists on window', function() {
+	it('exists on window', () => {
 		expect(window.Namespace).toBeDefined()
 	})
 

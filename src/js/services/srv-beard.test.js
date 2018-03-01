@@ -1,4 +1,4 @@
-describe('beardServ', function() {
+describe('beardServ', () => {
 	var _service
 
 	beforeEach(() => {
