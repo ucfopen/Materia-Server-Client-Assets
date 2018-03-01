@@ -5,36 +5,40 @@ Namespace('Materia').CreatorCore = (() => {
 	let _mediaUrl = null
 	let _resizeInterval = null
 
-	const PRESANITIZE_CHARACTERS = {
-		'>': '',
-		'<': ''
-	}
-
 	const _onPostMessage = e => {
 		const msg = JSON.parse(e.data)
 		switch (msg.type) {
 			case 'initNewWidget':
-				_initNewWidget(msg.data[0], msg.data[1], msg.data[2], msg.data[3])
+				_initNewWidget(
+					msg.data[0], // widget
+					msg.data[1], // baseUrl
+					msg.data[2] // mediaUrl
+				)
+				break
 			case 'initExistingWidget':
 				_initExistingWidget(
-					msg.data[0],
-					msg.data[1],
-					msg.data[2],
-					msg.data[3],
-					msg.data[4],
-					msg.data[5],
-					msg.data[6]
+					msg.data[0], // widget
+					msg.data[1], // title
+					msg.data[2], // qset
+					msg.data[3], // qsetVersion
+					msg.data[4], // baseUrl
+					msg.data[5] // mediaUrl
 				)
 			case 'onRequestSave':
 				_tellCreator('onSaveClicked', [msg.data[0]])
+				break
 			case 'onSaveComplete':
 				_tellCreator('onSaveComplete', [msg.data[0], msg.data[1], msg.data[2], msg.data[3]])
+				break
 			case 'onMediaImportComplete':
 				_tellCreator('onMediaImportComplete', [msg.data[0]])
+				break
 			case 'onQuestionImportComplete':
 				_tellCreator('onQuestionImportComplete', [msg.data[0]])
+				break
 			default:
 				alert(`Error, unknown message sent to creator core: ${msg.type}`)
+				break
 		}
 	}
 
@@ -62,7 +66,7 @@ Namespace('Materia').CreatorCore = (() => {
 
 	const start = creatorClass => {
 		// setup the postmessage listener
-		addEventListener('message', _onPostMessage, false)
+		window.addEventListener('message', _onPostMessage, false)
 
 		if (creatorClass.manualResize != null && creatorClass.manualResize === false) {
 			_resizeInterval = setInterval(() => {
@@ -83,15 +87,6 @@ Namespace('Materia').CreatorCore = (() => {
 
 	const getMediaUrl = mediaId => `${_mediaUrl}/${mediaId}`
 
-	// replace a specified list of characters with their safe equivalents
-	const _preSanitize = text => {
-		for (let k in PRESANITIZE_CHARACTERS) {
-			const v = PRESANITIZE_CHARACTERS[k]
-			text = text.replace(new RegExp(k, 'g'), v)
-		}
-		return text
-	}
-
 	const showMediaImporter = types => {
 		if (types == null) {
 			types = ['jpg', 'jpeg', 'gif', 'png']
@@ -103,7 +98,7 @@ Namespace('Materia').CreatorCore = (() => {
 		if (version == null) {
 			version = '1'
 		}
-		const sanitizedTitle = _preSanitize(title)
+		const sanitizedTitle = escapeScriptTags(title)
 		_sendPostMessage('save', [sanitizedTitle, qset, version])
 	}
 
@@ -111,7 +106,7 @@ Namespace('Materia').CreatorCore = (() => {
 
 	const setHeight = h => {
 		if (!h) {
-			h = $('html').height()
+			h = document.getElementsByTagName('html')[0].height()
 		}
 		if (h !== _lastHeight) {
 			_sendPostMessage('setHeight', [h])
@@ -127,18 +122,6 @@ Namespace('Materia').CreatorCore = (() => {
 
 	// Public Methods
 	return {
-		/* develblock:start */
-		// these method are exposed for testing
-		getLocalVar: name => eval(name),
-		/* istanbul ignore next */
-		setLocalVar: (name, value) => {
-			/* istanbul ignore next */
-			let x = eval(name)
-			/* istanbul ignore next */
-			x = value
-		},
-		/* develblock:end */
-
 		start,
 		alert,
 		getMediaUrl,
