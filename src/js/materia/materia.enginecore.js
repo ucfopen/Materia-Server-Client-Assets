@@ -28,14 +28,7 @@ Namespace('Materia').Engine = (() => {
 
 	const start = widgetClass => {
 		// setup the postmessage listener
-		switch (false) {
-			case typeof addEventListener === 'undefined' || addEventListener === null:
-				addEventListener('message', _onPostMessage, false)
-				break
-			case typeof attachEvent === 'undefined' || attachEvent === null:
-				attachEvent('onmessage', _onPostMessage)
-				break
-		}
+		addEventListener('message', _onPostMessage, false)
 
 		if (widgetClass.manualResize != null && widgetClass.manualResize === false) {
 			_resizeInterval = setInterval(() => {

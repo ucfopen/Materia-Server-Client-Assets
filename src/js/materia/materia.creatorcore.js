@@ -62,11 +62,7 @@ Namespace('Materia').CreatorCore = (() => {
 
 	const start = creatorClass => {
 		// setup the postmessage listener
-		if (typeof addEventListener !== 'undefined' && addEventListener !== null) {
-			addEventListener('message', _onPostMessage, false)
-		} else if (typeof attachEvent !== 'undefined' && attachEvent !== null) {
-			attachEvent('onmessage', _onPostMessage)
-		}
+		addEventListener('message', _onPostMessage, false)
 
 		if (creatorClass.manualResize != null && creatorClass.manualResize === false) {
 			_resizeInterval = setInterval(() => {
@@ -131,6 +127,18 @@ Namespace('Materia').CreatorCore = (() => {
 
 	// Public Methods
 	return {
+		/* develblock:start */
+		// these method are exposed for testing
+		getLocalVar: name => eval(name),
+		/* istanbul ignore next */
+		setLocalVar: (name, value) => {
+			/* istanbul ignore next */
+			let x = eval(name)
+			/* istanbul ignore next */
+			x = value
+		},
+		/* develblock:end */
+
 		start,
 		alert,
 		getMediaUrl,
