@@ -32,7 +32,7 @@ Namespace('Materia.Storage').Manager = (() => {
 		const table = getTable(tableId)
 		if (table == null) {
 			// throw error if not found
-			throw new Error(`Data table '${tableId}'' does not exist.`)
+			throw new Error(`Data table '${tableId}' does not exist.`)
 			return null
 		}
 		// Insert the row into the appropriate table
@@ -52,9 +52,10 @@ Namespace('Materia.Storage').Manager = (() => {
 
 	var clean = name => {
 		name = String(name)
-		let cleanName = name.replace(/^([ ]+)/, '')
-		cleanName = cleanName.replace(/\s+$/g, '')
-		cleanName = cleanName.replace(/\s/g, '_')
+		let cleanName = name
+			.replace(/^([ ]+)/, '')
+			.replace(/\s+$/g, '')
+			.replace(/\s/g, '_')
 
 		if (['userName', 'firstName', 'lastName', 'timestamp', 'playID'].includes(cleanName)) {
 			throw new Error(`Column name "${name}" is a protected keyword`)
