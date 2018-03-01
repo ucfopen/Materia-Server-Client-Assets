@@ -1,10 +1,3 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const app = angular.module('materia')
 // Ensures the user can only input numeric characters, '/', and ':' for the
 // date and time inputs.
@@ -14,7 +7,7 @@ app.directive('dateValidation', () => ({
 		validate: '&'
 	},
 	link(scope, element, attrs, modelCtrl) {
-		modelCtrl.$parsers.push(function(inputValue) {
+		modelCtrl.$parsers.push(inputValue => {
 			// Dates can do 0-9 and '/'
 			let transformed
 			if (attrs.validate === 'date') {

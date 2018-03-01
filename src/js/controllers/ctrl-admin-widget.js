@@ -1,17 +1,6 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const app = angular.module('materia')
-app.controller('adminWidgetController', function($scope, adminSrv) {
-	$scope.selectedFileName = 'No File Selected'
-	$scope.widgets = []
-
-	$scope.save = function(widget) {
+app.controller('adminWidgetController', function($scope, Please, adminSrv) {
+	const _save = widget => {
 		const update = {
 			id: widget.id,
 			clean_name: widget.clean_name,
@@ -35,29 +24,36 @@ app.controller('adminWidgetController', function($scope, adminSrv) {
 			if (widget.errorMessage.len === 0) {
 				delete widget.errorMessage
 			}
-			$scope.$apply()
+			Please.$apply()
 		})
 	}
 
-	const displayWidgets = () =>
-		adminSrv.getWidgets(function(widgets) {
-			for (let i = 0; i < widgets.length; i++) {
-				const widget = widgets[i]
-				widget.icon = Materia.Image.iconUrl(widget.dir, 60)
-			}
+	const _displayWidgets = () =>
+		adminSrv.getWidgets(widgets => {
+			widgets.forEach(w => {
+				w.icon = Materia.Image.iconUrl(w.dir, 60)
+			})
 
 			$scope.widgets = widgets
-			return $scope.$apply()
+			Please.$apply()
 		})
 
+	// Expose to scope
+
+	$scope.selectedFileName = 'No File Selected'
+	$scope.widgets = []
+	$scope.save = _save
+
+	// Initialize
+
 	// since the file input is hidden, watch events on it so we can put selected filenames elsewhere
-	document.getElementById('widget_uploader').addEventListener('change', function(e) {
+	document.getElementById('widget_uploader').addEventListener('change', e => {
 		$scope.selectedFileName = 'No File Selected'
 		if ((this.files != null ? this.files.length : undefined) > 0) {
 			$scope.selectedFileName = this.files[0].name
 		}
-		return $scope.$apply()
+		Please.$apply()
 	})
 
-	return displayWidgets()
+	_displayWidgets()
 })

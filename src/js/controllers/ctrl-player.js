@@ -1,5 +1,6 @@
 const app = angular.module('materia')
 app.controller('playerCtrl', function(
+	Please,
 	$scope,
 	$location,
 	$q,
@@ -50,7 +51,7 @@ app.controller('playerCtrl', function(
 		$scope.alert.msg = msg
 		$scope.alert.title = title
 		$scope.alert.fatal = fatal
-		if (!$scope.$$phase) $scope.$apply()
+		Please.$apply()
 	}
 
 	const _sendAllPendingLogs = callback => {
@@ -224,7 +225,7 @@ app.controller('playerCtrl', function(
 		}
 
 		$scope.type = 'flash'
-		if (!$scope.$$phase) $scope.$apply()
+		Please.$apply()
 
 		swfobject.embedSWF(
 			enginePath,
@@ -272,7 +273,7 @@ app.controller('playerCtrl', function(
 	const _embedHTML = enginePath => {
 		$scope.type = 'html'
 		$scope.htmlPath = enginePath + '?' + instance.widget.created_at
-		if (!$scope.$$phase) $scope.$apply()
+		Please.$apply()
 		embedTargetEl = document.getElementById(PLAYER.EMBED_TARGET)
 		// if (instance.widget.width > 0) {
 		// 	embedTargetEl.style.width = `${instance.widget.width}px`
@@ -289,7 +290,7 @@ app.controller('playerCtrl', function(
 
 		// setup the postmessage listener
 		window.addEventListener('message', _onPostMessage, false)
-		if (!$scope.$$phase) $scope.$apply()
+		Please.$apply()
 	}
 
 	const _getWidgetInstance = () => {
@@ -331,7 +332,7 @@ app.controller('playerCtrl', function(
 			widgetEl.style.display = 'block'
 		})
 
-		if (!$scope.$$phase) $scope.$apply()
+		Please.$apply()
 
 		return deferred.promise
 	}
@@ -541,29 +542,22 @@ app.controller('playerCtrl', function(
 		}
 	}
 
-	$window.onbeforeunload = _beforeUnload
+	// expose on scope
 
-	// Alert
 	$scope.alert = Alert
-
 	$scope.type = null // flash, html, no-flash
-
 	// src path for the engine to load
 	$scope.htmlPath = null
-
 	// Controls whether or not the widget iframe will allow fullscreen behavior (disabled by default)
 	$scope.allowFullScreen = false
-
-	// $scope.inst_id is set on ng-init from the server rendered html template
-
 	// Controls whether the view has a "preview" header bar
 	// search for preview or embed directory in the url
 	$scope.isPreview = String($location.absUrl()).includes('preview')
-
 	// Whether or not to show the embed view
 	$scope.isEmbedded = top !== self
 
-	// wait for a tick to  the queue
+	$window.onbeforeunload = _beforeUnload
+
 	$timeout(() => {
 		$q
 			.all(_getWidgetInstance(), _startPlaySession())
@@ -572,7 +566,7 @@ app.controller('playerCtrl', function(
 			.then(_sendWidgetInit)
 			.then(_startHeartBeat)
 			.catch(_onLoadFail)
-	}, 1)
+	})
 
 	/* develblock:start */
 	// these method are exposed for testing

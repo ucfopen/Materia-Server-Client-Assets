@@ -1,10 +1,6 @@
 const app = angular.module('materia')
-app.controller('settingsController', function($scope, $http, userServ, apiServ, $log) {
-	$scope.user = userServ.getCurrentUser()
-	$scope.avatar = userServ.getCurrentUserAvatar(100)
-	$scope.useGravatar = $scope.user.avatar.indexOf('gravatar') > -1
-
-	$scope.saveSettings = () => {
+app.controller('settingsController', function($scope, Please, userServ, apiServ, $log) {
+	const _saveSettings = () => {
 		Materia.Set.Throbber.startSpin('.page')
 
 		const newSettings = {
@@ -12,9 +8,8 @@ app.controller('settingsController', function($scope, $http, userServ, apiServ, 
 			useGravatar: $scope.useGravatar
 		}
 
-		$http
-			.post('/api/user/settings', newSettings)
-			.success((result, status, headers, config) => {
+		Materia.Coms.Json.post('/api/user/settings', newSettings)
+			.then(result => {
 				apiServ.filterError(result)
 				Materia.Set.Throbber.stopSpin('.page')
 				$scope.settingsForm.$setPristine()
@@ -30,10 +25,18 @@ app.controller('settingsController', function($scope, $http, userServ, apiServ, 
 						$scope.avatar = userServ.getCurrentUserAvatar(100)
 					}
 				}
+
+				Please.$apply()
 			})
-			.error((result, status, headers, config) => {
-				$log.error(result)
+			.catch(() => {
+				$log.error('error updating settings')
 				Materia.Set.Throbber.stopSpin('.page')
+				Please.$apply()
 			})
 	}
+
+	$scope.user = userServ.getCurrentUser()
+	$scope.avatar = userServ.getCurrentUserAvatar(100)
+	$scope.useGravatar = $scope.user.avatar.indexOf('gravatar') > -1
+	$scope.saveSettings = _saveSettings
 })

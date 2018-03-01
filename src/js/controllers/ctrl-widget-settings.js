@@ -1,28 +1,20 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const app = angular.module('materia')
 // The widget settings/availability modal on My Widgets
 app.controller('WidgetSettingsController', function(
+	Please,
 	$rootScope,
 	$scope,
+	$timeout,
 	$filter,
 	$window,
 	selectedWidgetSrv,
 	widgetSrv,
 	Alert
 ) {
-	$scope.alert = Alert
+	let currentlySubmitting = false
 
 	// Sets up the slider for availability
-	$scope.setupSlider = () =>
+	const _setupSlider = () =>
 		// The values are huge for smooth slidyness
 		$('.selector').slider({
 			value: $scope.attemptsSliderValue * 1000,
@@ -32,44 +24,42 @@ app.controller('WidgetSettingsController', function(
 			create(event) {
 				$scope.changeSlider($scope.attemptsSliderValue)
 				// remove the href, since clicking on it (when disabled) refreshes the page
-				return $('.selector .ui-slider-handle').removeAttr('href')
+				$('.selector .ui-slider-handle').removeAttr('href')
 			},
 			slide(event, ui) {
-				return $scope.updateSlider(ui.value)
+				$scope.updateSlider(ui.value)
 			},
 			stop(event, ui) {
-				return $scope.updateSlider(ui.value)
+				$scope.updateSlider(ui.value)
 			}
 		})
 
 	// Sets up the date pickers for the availability times
-	$scope.setupDatePickers = function() {
+	const _setupDatePickers = () => {
 		$('.date.from').datepicker({
 			onSelect(dateText) {
-				return ($scope.availability[0].date = dateText)
+				$scope.availability[0].date = dateText
 			}
 		})
 
-		return $('.date.to').datepicker({
+		$('.date.to').datepicker({
 			onSelect(dateText) {
-				return ($scope.availability[1].date = dateText)
+				$scope.availability[1].date = dateText
 			}
 		})
 	}
 
-	$scope.toggleNormalAccess = function() {
+	const _toggleNormalAccess = () => {
 		if (($scope.guestAccess = true)) {
 			$scope.guestAccess = false
 		}
 		if (($scope.embeddedOnly = true)) {
-			return ($scope.embeddedOnly = false)
+			$scope.embeddedOnly = false
 		}
 	}
 
-	$scope.toggleGuestAccess = function() {
-		if ($scope.studentMade) {
-			return
-		}
+	const _toggleGuestAccess = () => {
+		if ($scope.studentMade) return
 
 		$scope.guestAccess = !$scope.guestAccess
 		if ($scope.guestAccess) {
@@ -83,60 +73,49 @@ app.controller('WidgetSettingsController', function(
 		}
 
 		$scope.attemptsSliderValue = $scope.UNLIMITED_SLIDER_VALUE
-		return setTimeout(
-			() =>
-				$('.selector').slider({
-					value: $scope.attemptsSliderValue * 1000,
-					disabled: $scope.guestAccess
-				}),
-
-			0
-		)
+		$timeout(() => {
+			$('.selector').slider({
+				value: $scope.attemptsSliderValue * 1000,
+				disabled: $scope.guestAccess
+			})
+		})
 	}
 
-	$scope.toggleEmbeddedOnly = function() {
-		if ($scope.studentMade) {
-			return
-		}
+	const _toggleEmbeddedOnly = () => {
+		if ($scope.studentMade) return
 
 		$scope.embeddedOnly = !$scope.embeddedOnly
 		if ($scope.embeddedOnly) {
-			return ($scope.guestAccess = false)
+			$scope.guestAccess = false
 		}
 	}
 
 	// Fills in the dates from the selected widget
-	$scope.dateFormatter = function() {
+	const _dateFormatter = () => {
 		const open = $scope.selected.widget.open_at
 		const close = $scope.selected.widget.close_at
 		const dates = [
 			open > -1 ? new Date(open * 1000) : null,
 			close > -1 ? new Date(close * 1000) : null
 		]
-		let i = 0
 
-		return (() => {
-			const result = []
-			for (let date of Array.from(dates)) {
-				if (date) {
-					$scope.availability[i].date = $filter('date')(date, 'MM/dd/yyyy')
-					$scope.availability[i].time = $filter('date')(date, 'h:mm')
-					$scope.availability[i].period = $filter('date')(date, 'a').toLowerCase()
-					$scope.availability[i].anytime = false
-				} else {
-					$scope.availability[i].date = ''
-					$scope.availability[i].time = ''
-					$scope.availability[i].period = ''
-					$scope.availability[i].anytime = true
-				}
-				result.push(i++)
+		dates.forEach((date, i) => {
+			if (date) {
+				$scope.availability[i].date = $filter('date')(date, 'MM/dd/yyyy')
+				$scope.availability[i].time = $filter('date')(date, 'h:mm')
+				$scope.availability[i].period = $filter('date')(date, 'a').toLowerCase()
+				$scope.availability[i].anytime = false
+			} else {
+				$scope.availability[i].date = ''
+				$scope.availability[i].time = ''
+				$scope.availability[i].period = ''
+				$scope.availability[i].anytime = true
 			}
-			return result
-		})()
+		})
 	}
 
 	// If the time is blurred without minutes set, add :00 (so 2 becomes 2:00)
-	$scope.checkTime = function(index) {
+	const _checkTime = index => {
 		if (
 			$scope.availability[index].time.indexOf(':') === -1 &&
 			$scope.availability[index].time !== ''
@@ -144,13 +123,13 @@ app.controller('WidgetSettingsController', function(
 			$scope.availability[index].time += ':00'
 		}
 		if (!$scope.availability[index].period) {
-			return ($scope.availability[index].period = 'am')
+			$scope.availability[index].period = 'am'
 		}
 	}
 
 	// Moves the slider to the specified value and updates the attempts.
 	// From ng-click on the attempt numbers below the slider.
-	$scope.changeSlider = function(number) {
+	const _changeSlider = number => {
 		let val
 		if ($scope.guestAccess) {
 			// always should be set to unlimited (-1)
@@ -163,26 +142,24 @@ app.controller('WidgetSettingsController', function(
 			val = number
 		}
 		$('.selector').slider('value', val * 1000)
-		return ($scope.attemptsSliderValue = number)
+		$scope.attemptsSliderValue = number
 	}
 
 	// Updates the slider based on which value the slider is close to.
 	// It will "click" into place when in between the steps.
-	$scope.updateSlider = function(value) {
+	const _updateSlider = value => {
 		let smaller = Math.round(value / 1000)
 		if (smaller > 5) {
 			smaller = 5 * Math.round(smaller / 5)
 		}
 		$scope.attemptsSliderValue = smaller
 		$('.selector').slider('value', smaller * 1000)
-		return $scope.$apply()
+		Please.$apply()
 	}
-
-	let currentlySubmitting = false
 
 	// Validates the availability info and adds error code
 	// TODO: Find a better way to do errors.
-	$scope.parseSubmittedInfo = function() {
+	const _parseSubmittedInfo = () => {
 		if (currentlySubmitting) return
 
 		// Reset all of the variables
@@ -298,7 +275,7 @@ app.controller('WidgetSettingsController', function(
 
 	// Handles the api calls to actually change the availability
 	// @return void
-	$scope.changeAvailability = function() {
+	const _changeAvailability = () => {
 		const attempts =
 			$scope.attemptsSliderValue < $scope.UNLIMITED_SLIDER_VALUE ? $scope.attemptsSliderValue : -1
 
@@ -321,6 +298,8 @@ app.controller('WidgetSettingsController', function(
 				currentlySubmitting = false
 			})
 	}
+
+	// expose to scope
 
 	$scope.UNLIMITED_SLIDER_VALUE = 25
 	$scope.times = []
@@ -353,7 +332,21 @@ app.controller('WidgetSettingsController', function(
 	$scope.dateError = [false, false]
 	$scope.timeError = [false, false]
 
-	$scope.attemptsSliderValue = parseInt($scope.selected.widget.attempts)
+	$scope.setupSlider = _setupSlider
+	$scope.setupDatePickers = _setupDatePickers
+	$scope.toggleNormalAccess = _toggleNormalAccess
+	$scope.toggleGuestAccess = _toggleGuestAccess
+	$scope.toggleEmbeddedOnly = _toggleEmbeddedOnly
+	$scope.dateFormatter = _dateFormatter
+	$scope.checkTime = _checkTime
+	$scope.changeSlider = _changeSlider
+	$scope.updateSlider = _updateSlider
+	$scope.parseSubmittedInfo = _parseSubmittedInfo
+	$scope.changeAvailability = _changeAvailability
+	$scope.alert = Alert
+	$scope.attemptsSliderValue = parseInt($scope.selected.widget.attempts, 10)
+
+	// initialize
 
 	if ($scope.studentMade) {
 		// force guestAccess on for students or student made widgets
@@ -363,11 +356,9 @@ app.controller('WidgetSettingsController', function(
 		$scope.guestAccess = $scope.selected.widget.guest_access
 	}
 
-	$scope.dateFormatter()
-	setTimeout(function() {
+	_dateFormatter()
+	$timeout(() => {
 		$scope.setupSlider()
-		return $scope.setupDatePickers()
+		$scope.setupDatePickers()
 	}, 1)
-
-	return null
 })

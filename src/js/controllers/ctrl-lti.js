@@ -10,28 +10,22 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const app = angular.module('materia')
-app.controller('ltiCtrl', function($scope, $sce, widgetSrv) {
+app.controller('ltiCtrl', function(Please, $timeout, $scope, $sce, widgetSrv) {
 	const REFRESH_FAKE_DELAY_MS = 500
 	const CHANGE_SECTION_FADE_DELAY_MS = 250
-
 	let selectedWidget = null
 	let widgetsLoaded = false
 
-	$scope.strHeader = 'Select a Widget:'
-	$scope.query = {}
-
-	if (typeof system !== 'undefined' && system !== null && system !== '') {
-		$scope.strHeader = `Select a Widget for use in ${system}:`
+	const _calloutRefreshLink = () => {
+		$scope.showRefreshArrow = true
 	}
-
-	$scope.calloutRefreshLink = () => ($scope.showRefreshArrow = true)
 
 	const loadWidgets = function(fakeDelay) {
 		if (fakeDelay == null) {
 			fakeDelay = 1
 		}
 
-		return setTimeout(
+		$timeout(
 			() =>
 				widgetSrv.getWidgets().then(widgets => {
 					if (widgets != null ? widgets.halt : undefined) {
@@ -53,27 +47,22 @@ app.controller('ltiCtrl', function($scope, $sce, widgetSrv) {
 					}
 
 					$scope.widgets = widgets
-					return $scope.$apply()
+					Please.$apply()
 				}),
 
 			fakeDelay
 		)
 	}
 
-	$scope.highlight = function(widget) {
+	const _highlight = function(widget) {
 		for (let w of Array.from($scope.widgets)) {
 			w.selected = false
 		}
-		return (widget.selected = true)
+		widget.selected = true
 	}
 
-	$scope.embedWidget = widget => selectWidget(widget)
-
-	var selectWidget = function(widget) {
-		if (
-			__guard__(selectedWidget != null ? selectedWidget.state : undefined, x => x.state) ===
-			'pending'
-		) {
+	const _embedWidget = widget => {
+		if (selectedWidget && selectedWidget.state && selectedWidget.state === 'pending') {
 			return
 		}
 
@@ -83,7 +72,7 @@ app.controller('ltiCtrl', function($scope, $sce, widgetSrv) {
 		widget.img = Materia.Image.iconUrl(widget.widget.dir, 60)
 		$scope.selectedWidget = widget
 
-		return setDisplayState('progress')
+		setDisplayState('progress')
 	}
 
 	const finishProgressBarAndSetLocation = function() {
@@ -92,19 +81,19 @@ app.controller('ltiCtrl', function($scope, $sce, widgetSrv) {
 			.find('span')
 			.html('Success!')
 		$('.progressbar').progressbar('value', 100)
-		return setTimeout(function() {
+		$timeout(() => {
 			announceChoice()
 
 			if (typeof RETURN_URL !== 'undefined' && RETURN_URL !== null) {
-				return (window.location =
-					RETURN_URL + '?embed_type=basic_lti&url=' + encodeURI(selectedWidget.embed_url))
+				window.location =
+					RETURN_URL + '?embed_type=basic_lti&url=' + encodeURI(selectedWidget.embed_url)
 			}
 		}, 1000)
 	}
 
-	var setDisplayState = function(newSection) {
+	const setDisplayState = function(newSection) {
 		$scope.section = newSection
-		return setTimeout(function() {
+		$timeout(() => {
 			$('body')
 				.removeClass('selectWidget')
 				.removeClass('widgetSelected')
@@ -120,43 +109,43 @@ app.controller('ltiCtrl', function($scope, $sce, widgetSrv) {
 					loadWidgets()
 				}
 
-				return $('#select-widget').fadeIn(CHANGE_SECTION_FADE_DELAY_MS)
+				$('#select-widget').fadeIn(CHANGE_SECTION_FADE_DELAY_MS)
 			} else if (newSection === 'progress') {
 				$('.progressbar').progressbar()
-				return startProgressBar()
+				startProgressBar()
 			}
 		}, 0)
 	}
 
 	const getRandInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
 
-	var startProgressBar = function() {
+	const startProgressBar = function() {
 		// create a random number of progress bar stops
 		const availStops = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 		const stops = { tick: 0 }
-
 		const len = getRandInt(3, 5)
+
 		for (let i = 0, end = len, asc = 0 <= end; asc ? i < end : i > end; asc ? i++ : i--) {
 			stops[availStops.splice(getRandInt(0, availStops.length), 1)] = true
 		}
 
-		var intervalId = setInterval(function() {
+		var intervalId = $interval(() => {
 			stops.tick++
 			if (stops[stops.tick] != null) {
 				$('.progressbar').progressbar('value', stops.tick * 10)
 			}
 
 			if (stops.tick >= 10) {
-				clearInterval(intervalId)
-				return finishProgressBarAndSetLocation()
+				$interval.cancel(intervalId)
+				finishProgressBarAndSetLocation()
 			}
 		}, 200)
 
-		return $(document).on('keyup', function(event) {
+		$(document).on('keyup', event => {
 			if (event.keyCode === 16) {
 				// shift
 				$scope.easterMode = true
-				return $scope.$apply()
+				Please.$apply()
 			}
 		})
 	}
@@ -177,27 +166,32 @@ app.controller('ltiCtrl', function($scope, $sce, widgetSrv) {
 		}
 	}
 
-	var announceChoice = function() {
+	const announceChoice = function() {
 		const widgetData = $scope.selectedWidget
 		delete widgetData.element
 		delete widgetData.searchCache
 
 		// the host system can listen for this postMessage "message" event:
-		if (JSON.stringify) {
-			if (parent.postMessage) {
-				return parent.postMessage(JSON.stringify(widgetData), '*')
-			}
+		if (JSON.stringify && parent.postMessage) {
+			parent.postMessage(JSON.stringify(widgetData), '*')
 		}
 	}
 
-	$scope.refreshListing = function() {
+	const _refreshListing = function() {
 		$scope.showRefreshArrow = false
-		return loadWidgets(REFRESH_FAKE_DELAY_MS)
+		loadWidgets(REFRESH_FAKE_DELAY_MS)
 	}
 
-	return setDisplayState('selectWidget')
-})
+	// expose to scope
 
-function __guard__(value, transform) {
-	return typeof value !== 'undefined' && value !== null ? transform(value) : undefined
-}
+	$scope.strHeader = system ? `Select a Widget for use in ${system}:` : 'Select a Widget:'
+	$scope.query = {}
+	$scope.refreshListing = _refreshListing
+	$scope.highlight = _highlight
+	$scope.embedWidget = _embedWidget
+	$scope.calloutRefreshLink = _calloutRefreshLink
+
+	// initialize
+
+	setDisplayState('selectWidget')
+})

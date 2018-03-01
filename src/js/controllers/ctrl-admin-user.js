@@ -1,30 +1,20 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const app = angular.module('materia')
-app.controller('adminUserController', function($scope, $window, adminSrv, userServ) {
+app.controller('adminUserController', function(Please, $scope, $window, adminSrv, userServ) {
 	let lastSearch = ''
 
-	let _sortNames = (userA, userB) => {
+	const _sortNames = (userA, userB) => {
 		const nameA = `${userA.first} ${userA.last}`
 		const nameB = `${userB.first} ${userB.last}`
 		return nameA.localeCompare(nameB)
 	}
 
-	let _getIconUrls = instances => {
+	const _getIconUrls = instances => {
 		instances.forEach(i => {
 			i.icon = Materia.Image.iconUrl(i.widget.dir, 60)
 		})
 	}
 
-	let _processPlayed = instances => {
+	const _processPlayed = instances => {
 		const _pre = []
 
 		for (let play of instances) {
@@ -43,7 +33,7 @@ app.controller('adminUserController', function($scope, $window, adminSrv, userSe
 		return Object.values(_pre)
 	}
 
-	let search = nameOrFragment => {
+	const search = nameOrFragment => {
 		if (nameOrFragment === lastSearch) {
 			return
 		}
@@ -84,21 +74,21 @@ app.controller('adminUserController', function($scope, $window, adminSrv, userSe
 
 			$scope.searchResults.none = matches.length < 1
 			$scope.searchResults.matches = matches
-			$scope.$apply()
+			Please.$apply()
 		})
 	}
 
-	let searchMatchClick = user =>
+	const searchMatchClick = user =>
 		adminSrv.lookupUser(user.id, data => {
 			$scope.inputs.userSearchInput = ''
 			$scope.selectedUser = user
 			$scope.additionalData = data
 			_getIconUrls(data.instances_available)
 			data.instances_played = _processPlayed(data.instances_played)
-			$scope.$apply()
+			Please.$apply()
 		})
 
-	let save = () => {
+	const save = () => {
 		let u = $scope.selectedUser
 		const update = {
 			id: u.id,
@@ -117,18 +107,17 @@ app.controller('adminUserController', function($scope, $window, adminSrv, userSe
 				}
 			}
 			if (errors.length != 0) $scope.errorMessage = errors
-			$scope.$apply()
+			Please.$apply()
 		})
 	}
 
-	let deselectUser = () => {
+	const deselectUser = () => {
 		$scope.errorMessage = []
 		$scope.selectedUser = null
 		$scope.additionalData = null
 	}
 
 	// Expose on scope
-	deselectUser()
 	$scope.inputs = { userSearchInput: '' }
 	$scope.searchResults = {
 		none: true,
@@ -140,5 +129,8 @@ app.controller('adminUserController', function($scope, $window, adminSrv, userSe
 	$scope.save = save
 	$scope.searchMatchClick = searchMatchClick
 	$scope.search = search
+
+	// initialize
+	deselectUser()
 	$scope.$watch('inputs.userSearchInput', input => $scope.search(input))
 })
