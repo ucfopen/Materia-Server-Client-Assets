@@ -1,4 +1,4 @@
-describe('selectedWidgetSrv', function() {
+describe('selectedWidgetSrv', () => {
 	var _service
 	var _compile
 	var _scope
@@ -27,7 +27,7 @@ describe('selectedWidgetSrv', function() {
 		Namespace('Materia.Coms.Json').send = sendMock = jest.fn()
 	})
 
-	it('defines expected methods', function() {
+	it('defines expected methods', () => {
 		expect(_service.set).toBeDefined()
 		expect(_service.get).toBeDefined()
 		expect(_service.getSelectedId).toBeDefined()
@@ -41,39 +41,39 @@ describe('selectedWidgetSrv', function() {
 		expect(_service.notifyAccessDenied).toBeDefined()
 	})
 
-	it('set a widget updates result of get', function() {
+	it('set a widget updates result of get', () => {
 		expect(_service.get()).toBeNull()
 		expect(_service.set({ id: 1 })).toBeUndefined()
 		expect(_service.get()).toMatchObject({ id: 1 })
 	})
 
-	it('set calls $broadcast', function() {
+	it('set calls $broadcast', () => {
 		_scope.$broadcast = jest.fn()
 		_service.set({})
 		expect(_scope.$broadcast).toHaveBeenCalledWith('selectedWidget.update')
 	})
 
-	it('getSelectedId gets the widget id', function() {
+	it('getSelectedId gets the widget id', () => {
 		_service.set({ id: 1 })
 		expect(_service.getSelectedId()).toBe(1)
 		_service.set({ id: 4 })
 		expect(_service.getSelectedId()).toBe(4)
 	})
 
-	it('getScoreSummaries to call api', function() {
+	it('getScoreSummaries to call api', () => {
 		_service.set({ id: 5 })
 		mockSendPromiseOnce()
 		_service.getScoreSummaries()
 		expect(sendMock).toHaveBeenCalledWith('score_summary_get', [5, true])
 	})
 
-	it('getScoreSummaries to return an angular promise', function() {
+	it('getScoreSummaries to return an angular promise', () => {
 		_service.set({ id: 5 })
 		mockSendPromiseOnce()
 		expect(_service.getScoreSummaries()).toHaveProperty('$$state')
 	})
 
-	it('getScoreSummaries to process api results and caches them', function() {
+	it('getScoreSummaries to process api results and caches them', () => {
 		_service.set({ id: 5 })
 		let promiseSpy = jest.fn()
 		let data = [{ id: 5 }, { id: 9 }]

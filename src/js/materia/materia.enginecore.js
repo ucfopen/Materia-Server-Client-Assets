@@ -21,7 +21,7 @@ Namespace('Materia').Engine = (() => {
 	const _sendPostMessage = (type, data) => parent.postMessage(JSON.stringify({ type, data }), '*')
 
 	// Called by Materia.Player when your widget Engine should start the user experience
-	var _initWidget = (qset, instance) => {
+	const _initWidget = (qset, instance) => {
 		_widgetClass.start(instance, qset.data, qset.version)
 		_instance = instance
 	}
@@ -83,7 +83,7 @@ Namespace('Materia').Engine = (() => {
 
 	const sendPendingLogs = () => _sendPostMessage('sendPendingLogs', {})
 
-	var setHeight = h => {
+	const setHeight = h => {
 		if (!h) {
 			h = parseInt(window.getComputedStyle(document.documentElement).height, 10)
 		}

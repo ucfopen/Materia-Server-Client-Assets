@@ -1,4 +1,4 @@
-describe('widgetSrv', function() {
+describe('widgetSrv', () => {
 	var _service
 	var _compile
 	var _scope

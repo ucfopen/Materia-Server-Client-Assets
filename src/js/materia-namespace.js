@@ -9,7 +9,7 @@
 // 		}
 // 	}
 // }
-window.Namespace = function(ns) {
+window.Namespace = ns => {
 	let namespaces = ns.split('.')
 	let w = window
 
