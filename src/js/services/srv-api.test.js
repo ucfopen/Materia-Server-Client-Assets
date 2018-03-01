@@ -19,9 +19,8 @@ describe('apiServ', () => {
 
 		require('../materia-namespace')
 		require('./srv-api')
-		inject(function(apiServ, $window) {
+		inject(function(apiServ) {
 			_service = apiServ
-			_window = $window
 		})
 	})
 

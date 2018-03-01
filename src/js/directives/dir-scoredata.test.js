@@ -1,54 +1,54 @@
 describe('scoreData Directive', function() {
-	let _scope
-	let _compile
-	let _q
-	let _selectedWidgetSrv
+	let $scope
+	let $compile
+	let $q
+	let $selectedWidgetSrv
 
 	beforeEach(() => {
 		require('../materia-constants')
 		require('../services/srv-selectedwidget')
 		require('./dir-scoredata.js')
 
-		inject(function($compile, $rootScope, selectedWidgetSrv, $q) {
-			_selectedWidgetSrv = selectedWidgetSrv
-			_compile = $compile
-			_scope = $rootScope.$new()
-			_q = $q
+		inject(function(_$compile_, _$rootScope_, _selectedWidgetSrv_, _$q_) {
+			$selectedWidgetSrv = _selectedWidgetSrv_
+			$compile = _$compile_
+			$scope = _$rootScope_.$new()
+			$q = _$q_
 		})
 	})
 
 	it('is initialized on the element', function() {
 		let data = { '2050 Summer': { table1: null, table2: null } }
 
-		let deferred = _q.defer()
-		jest.spyOn(_selectedWidgetSrv, 'getStorageData').mockImplementation(() => deferred.promise)
+		let deferred = $q.defer()
+		jest.spyOn($selectedWidgetSrv, 'getStorageData').mockImplementation(() => deferred.promise)
 
-		jest.spyOn(_selectedWidgetSrv, 'getMaxRows').mockImplementation(() => 777)
+		jest.spyOn($selectedWidgetSrv, 'getMaxRows').mockImplementation(() => 777)
 
 		let html = '<div score-data id="data_66" data-semester="2050 Summer" data-has-storage="true" >'
 		let element = angular.element(html)
-		let compiled = _compile(element)(_scope)
-		_scope.$digest()
+		let compiled = $compile(element)($scope)
+		$scope.$digest()
 
 		deferred.resolve(data)
-		_scope.$apply()
+		$scope.$apply()
 
-		expect(_scope.tables).toMatchObject({ table1: null, table2: null })
-		expect(_scope.MAX_ROWS).toBe(777)
-		expect(_scope.tableNames).toMatchObject(['table1', 'table2'])
-		expect(_scope.selectedTable).toBe('table1')
+		expect($scope.tables).toMatchObject({ table1: null, table2: null })
+		expect($scope.MAX_ROWS).toBe(777)
+		expect($scope.tableNames).toMatchObject(['table1', 'table2'])
+		expect($scope.selectedTable).toBe('table1')
 	})
 
 	it('is short circuited when there is no storage', function() {
 		let html = '<div score-data id="data_66" data-semester="2050 Summer" data-has-storage="false" >'
 		let element = angular.element(html)
-		let compiled = _compile(element)(_scope)
-		_scope.$digest()
-		_scope.$apply()
+		let compiled = $compile(element)($scope)
+		$scope.$digest()
+		$scope.$apply()
 
-		expect(_scope.tables).not.toBeDefined()
-		expect(_scope.MAX_ROWS).not.toBeDefined()
-		expect(_scope.tableNames).not.toBeDefined()
-		expect(_scope.selectedTable).not.toBeDefined()
+		expect($scope.tables).not.toBeDefined()
+		expect($scope.MAX_ROWS).not.toBeDefined()
+		expect($scope.tableNames).not.toBeDefined()
+		expect($scope.selectedTable).not.toBeDefined()
 	})
 })
