@@ -15,7 +15,6 @@ Namespace('Materia').Score = (() => {
 	// @param questionID the ID of the question associated with this interaction, if applicable. The score module can ignore it for cases where it doesn't apply.
 	// @param interactionType a string identifying what the interaction is, e.g.: 'hint_used', 'attempt_penalty', etc.
 	// @param value the value of the interaction, if applicable.
-
 	const submitInteractionForScoring = (questionID, interactionType, value) =>
 		Materia.Engine.addLog(WIDGET_INTERACTION_UNSCORED, questionID, interactionType, value)
 
@@ -26,7 +25,6 @@ Namespace('Materia').Score = (() => {
 	// @param questionID if the final score is being determined by an individual question, its ID can be used here. Otherwise, just use 0.
 	// @param userAnswer if the final score is determined based on a user's answer. Can be an empty string otherwise.
 	// @param score the final score to return.
-
 	const submitFinalScoreFromClient = (questionID, userAnswer, score) =>
 		Materia.Engine.addLog(FINAL_SCORE_FROM_CLIENT, questionID, userAnswer, score)
 
@@ -35,24 +33,11 @@ Namespace('Materia').Score = (() => {
 	// @param questionID the ID of the question being answered
 	// @param userAnswer the response the user provided. This string is matched against the widget's QSET on the server to determine the correct answer.
 	// @param value the value isn't by default used to determine the score of the question, however it can be used to pass an additional value to be used in scoring.
-
 	const submitQuestionForScoring = (questionID, userAnswer, value) =>
 		Materia.Engine.addLog(QUESTION_ANSWERED_UNSCORED, questionID, userAnswer, value)
 
 	// Adds a message/feedback to the overall score screen
-
 	const addGlobalScoreFeedback = msg => Materia.Engine.addLog(SCORE_FEEDBACK, '0', msg)
-
-	// @private
-	// Throws an error and shows a popup whenever a function is used out of place
-
-	const _error = (fn, types) =>
-		Materia.Engine.alert(
-			'Scoring Error',
-			'An error has occurred with the scoring of this widget. Please refresh and try again. If the problem persists, notify your instructor or contact an instructional designer.'
-		)
-
-	//throw new Error('The function ' + fn + '() can only be used when GR_ScoreType is set to ' + types.join(' or ') + ' in the gs_gameregistry table of the database.<br>GR_ScoreType is currently set to ' + _scoreType() + '. Please set GR_ScoreType to ' + types.join(' or ') + ' in the database or use another function for scoring.')
 
 	const addScoreData = data => Materia.Engine.addLog(DATA, null, JSON.stringify(data), null)
 
