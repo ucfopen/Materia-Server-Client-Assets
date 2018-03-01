@@ -117,12 +117,12 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		)
 	}
 
-	const getStorageData = () => {
+	const getStorageData = (loadIfNotCached = true) => {
 		const deferred = $q.defer()
 
 		if (_storageData != null) {
 			deferred.resolve(_storageData)
-		} else {
+		} else if (loadIfNotCached) {
 			Materia.Coms.Json.send('play_storage_get', [_widget.id]).then(data => {
 				_storageData = {}
 
@@ -159,6 +159,8 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 				)
 				deferred.resolve(_storageData)
 			})
+		} else {
+			deferred.reject()
 		}
 
 		return deferred.promise
