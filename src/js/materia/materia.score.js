@@ -4,7 +4,6 @@ Namespace('Materia').Score = (() => {
 	const FINAL_SCORE_FROM_CLIENT = 1002 // a final score from the widget
 	const QUESTION_ANSWERED_UNSCORED = 1004 // a basic answered question (e.g., 'what color is the sky?' 'blue')
 	const SCORE_FEEDBACK = 1008 // attaches a feedback message to a question (or game if qid is 0)
-	const SCORE_ALERT = 1009 // shows a popup at the score screen
 	const DATA = 2000
 
 	// Widget interactions are a catch-all category for any (logged) widget activity that isn't
