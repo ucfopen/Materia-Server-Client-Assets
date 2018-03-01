@@ -53,7 +53,7 @@ app.controller('adminUserController', function(Please, $scope, $window, adminSrv
 		const inputArray = nameOrFragment.split(',')
 		nameOrFragment = inputArray[inputArray.length - 1]
 
-		adminSrv.searchUsers(nameOrFragment, result => {
+		adminSrv.searchUsers(nameOrFragment).then(result => {
 			$scope.searchResults.searching = false
 			if (result && result.halt) {
 				alert(result.msg)
@@ -78,8 +78,8 @@ app.controller('adminUserController', function(Please, $scope, $window, adminSrv
 		})
 	}
 
-	const searchMatchClick = user =>
-		adminSrv.lookupUser(user.id, data => {
+	const searchMatchClick = user => {
+		adminSrv.lookupUser(user.id).then(data => {
 			$scope.inputs.userSearchInput = ''
 			$scope.selectedUser = user
 			$scope.additionalData = data
@@ -87,6 +87,7 @@ app.controller('adminUserController', function(Please, $scope, $window, adminSrv
 			data.instances_played = _processPlayed(data.instances_played)
 			Please.$apply()
 		})
+	}
 
 	const save = () => {
 		let u = $scope.selectedUser
@@ -98,7 +99,7 @@ app.controller('adminUserController', function(Please, $scope, $window, adminSrv
 			useGravatar: u.profile_fields.useGravatar === 'true' || u.profile_fields.useGravatar === true
 		}
 
-		adminSrv.saveUser(update, response => {
+		adminSrv.saveUser(update).then(response => {
 			let errors = []
 			for (let prop in response) {
 				const stat = response[prop]
