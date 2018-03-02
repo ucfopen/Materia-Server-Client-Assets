@@ -30,7 +30,8 @@ app.controller('adminUserController', function(Please, $scope, $window, adminSrv
 			_pre[play.id].plays.push(play)
 		}
 
-		return Object.values(_pre)
+		// convert to an array
+		return Object.keys(_pre).map(i => _pre[i])
 	}
 
 	const search = nameOrFragment => {
