@@ -1,16 +1,5 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__
- * DS202: Simplify dynamic range loops
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const app = angular.module('materia')
-app.controller('ltiCtrl', function(Please, $timeout, $scope, $sce, widgetSrv) {
+app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, widgetSrv) {
 	const REFRESH_FAKE_DELAY_MS = 500
 	const CHANGE_SECTION_FADE_DELAY_MS = 250
 	let selectedWidget = null
@@ -75,7 +64,7 @@ app.controller('ltiCtrl', function(Please, $timeout, $scope, $sce, widgetSrv) {
 		setDisplayState('progress')
 	}
 
-	const finishProgressBarAndSetLocation = function() {
+	const finishProgressBarAndSetLocation = () => {
 		$('.progress-container').addClass('success')
 		$('.progress-container')
 			.find('span')
@@ -91,7 +80,7 @@ app.controller('ltiCtrl', function(Please, $timeout, $scope, $sce, widgetSrv) {
 		}, 1000)
 	}
 
-	const setDisplayState = function(newSection) {
+	const setDisplayState = newSection => {
 		$scope.section = newSection
 		$timeout(() => {
 			$('body')
@@ -119,7 +108,7 @@ app.controller('ltiCtrl', function(Please, $timeout, $scope, $sce, widgetSrv) {
 
 	const getRandInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
 
-	const startProgressBar = function() {
+	const startProgressBar = () => {
 		// create a random number of progress bar stops
 		const availStops = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 		const stops = { tick: 0 }
@@ -150,7 +139,7 @@ app.controller('ltiCtrl', function(Please, $timeout, $scope, $sce, widgetSrv) {
 		})
 	}
 
-	const getAvailabilityStr = function(startDate, endDate) {
+	const getAvailabilityStr = (startDate, endDate) => {
 		const availability = widgetSrv.convertAvailibilityDates(startDate, endDate)
 
 		if (endDate < 0 && startDate < 0) {
@@ -166,7 +155,7 @@ app.controller('ltiCtrl', function(Please, $timeout, $scope, $sce, widgetSrv) {
 		}
 	}
 
-	const announceChoice = function() {
+	const announceChoice = () => {
 		const widgetData = $scope.selectedWidget
 		delete widgetData.element
 		delete widgetData.searchCache
@@ -177,7 +166,7 @@ app.controller('ltiCtrl', function(Please, $timeout, $scope, $sce, widgetSrv) {
 		}
 	}
 
-	const _refreshListing = function() {
+	const _refreshListing = () => {
 		$scope.showRefreshArrow = false
 		loadWidgets(REFRESH_FAKE_DELAY_MS)
 	}
