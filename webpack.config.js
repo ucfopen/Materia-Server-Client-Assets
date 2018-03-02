@@ -43,6 +43,7 @@ module.exports = {
       jsPath+'/controllers/ctrl-help.js',
       jsPath+'/controllers/ctrl-login.js',
       jsPath+'/controllers/ctrl-notification.js',
+      jsPath+'/controllers/ctrl-spotlight.js',
       jsPath+'/controllers/ctrl-widget-catalog.js',
       jsPath+'/controllers/ctrl-widget-details.js',
       jsPath+'/directives/dir-fancybox.js',
@@ -79,7 +80,6 @@ module.exports = {
       jsPath+'/controllers/ctrl-my-widgets.js',
       jsPath+'/controllers/ctrl-question-import.js',
       jsPath+'/controllers/ctrl-selectedwidget.js',
-      jsPath+'/controllers/ctrl-spotlight.js',
       jsPath+'/controllers/ctrl-widget-settings.js',
       jsPath+'/directives/dir-beardable.js',
       jsPath+'/directives/dir-datatable.js',
@@ -113,7 +113,7 @@ module.exports = {
       jsPath+'/materia/materia.score.js',
       jsPath+'/materia/materia.storage.manager.js',
       jsPath+'/materia/materia.storage.table.js',
-    ]
+    ],
   }),
   module: {
     rules: [
