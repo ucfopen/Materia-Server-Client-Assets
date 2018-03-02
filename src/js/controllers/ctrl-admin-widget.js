@@ -38,6 +38,14 @@ app.controller('adminWidgetController', function($scope, Please, adminSrv) {
 			Please.$apply()
 		})
 
+	const _onUploaderChange = e => {
+		$scope.selectedFileName = 'No File Selected'
+		if (e.target.files && e.target.files.length > 0) {
+			$scope.selectedFileName = e.target.files[0].name
+		}
+		Please.$apply()
+	}
+
 	// Expose to scope
 
 	$scope.selectedFileName = 'No File Selected'
@@ -47,13 +55,7 @@ app.controller('adminWidgetController', function($scope, Please, adminSrv) {
 	// Initialize
 
 	// since the file input is hidden, watch events on it so we can put selected filenames elsewhere
-	document.getElementById('widget_uploader').addEventListener('change', e => {
-		$scope.selectedFileName = 'No File Selected'
-		if ((this.files != null ? this.files.length : undefined) > 0) {
-			$scope.selectedFileName = this.files[0].name
-		}
-		Please.$apply()
-	})
+	document.getElementById('widget_uploader').addEventListener('change', _onUploaderChange)
 
 	_displayWidgets()
 })
