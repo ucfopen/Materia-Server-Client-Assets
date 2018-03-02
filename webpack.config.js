@@ -52,6 +52,7 @@ module.exports = {
       jsPath+'/services/srv-selectedwidget.js',
       jsPath+'/services/srv-user.js',
       jsPath+'/services/srv-widget.js',
+      'ngmodal/dist/ng-modal.min.js'
     ],
     // student.js - all the stuff needed to be a student. play, view scores, profile
     'js/student.js': [
