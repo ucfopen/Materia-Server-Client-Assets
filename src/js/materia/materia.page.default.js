@@ -34,8 +34,6 @@ window.isMobile = {
 
 // this code ensures that Opera runs onload/ready js events when navigating foward/back.
 // http://stackoverflow.com/questions/10125701/
-if (
-	(typeof history !== 'undefined' && history !== null ? history.navigationMode : undefined) != null
-) {
+if (history && history.navigationMode) {
 	history.navigationMode = 'compatible'
 }

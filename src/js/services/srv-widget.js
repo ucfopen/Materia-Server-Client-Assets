@@ -171,7 +171,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 	const _getMultipleFromServer = () => {
 		const deferred = $q.defer()
 		Materia.Coms.Json.send('widget_instances_get', null).then(widgets => {
-			if (widgets != null && widgets.length != null) {
+			if (widgets && widgets.length > 0) {
 				widgets.forEach(w => {
 					_widgetIds[w.id] = w
 					_initSearchCache(w)
