@@ -4313,7 +4313,7 @@ natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
 
-ngModal@ucfcdl/ngModal#v1.2.2:
+ngmodal@ucfcdl/ngModal#v1.2.2:
   version "1.2.2"
   resolved "https://codeload.github.com/ucfcdl/ngModal/tar.gz/6abad982bdb8f258ffcdc20316a907c2292399d2"
 
