@@ -33,17 +33,17 @@
 	margin:0 auto;
 }
 
-	.widget_detail .tooltip {
-		position:absolute;
-		z-index:99;
-		padding:15px;
-		background:#fff;
-		width:250px;
-		border-radius:15px;
-		box-shadow: 1px 2px 5px #888;
-		display:none;
-		font-size:12px;
-	}
+.widget_detail .tooltip {
+	position:absolute;
+	z-index:99;
+	padding:15px;
+	background:#fff;
+	width:250px;
+	border-radius:15px;
+	box-shadow: 1px 2px 5px #888;
+	display:none;
+	font-size:12px;
+}
 
 .widget_icon {
 	float:left;
