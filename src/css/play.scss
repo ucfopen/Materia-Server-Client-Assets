@@ -63,7 +63,6 @@ section.widget.preview {
 	position: absolute;
 	left: 50%;
 	transform: translateX(-50%);
-	-webkit-transform: translateX(-50%);
 	display:block;
 	border-bottom: 4px #b944cc solid;
 	width:100%;
@@ -93,9 +92,6 @@ section.widget.preview {
 	vertical-align: middle;
 
 	border-radius: 5px 5px 0 0;
-	-moz-border-radius: 5px 5px 0 0;
-	-webkit-border-radius: 5px 5px 0 0;
-	-khtml-border-radius: 5px 5px 0 0;
 }
 
 .widget .preview-bar:after {

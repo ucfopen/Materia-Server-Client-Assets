@@ -6,8 +6,6 @@
 
 .docs .container .page {
 	border:rgba(0,0,0,0.22) 1px solid;
-	-moz-box-shadow: 0 3px 5px rgba(0, 0, 0, .2);
-	-webkit-box-shadow: 0 3px 5px rgba(0, 0, 0, .2);
 	box-shadow: 0 3px 5px rgba(0, 0, 0, .2);
 
 	margin:0 auto;
@@ -123,8 +121,6 @@
 .docs .flash_installed  {
 	background: #f7f7f7;
 	border-radius: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
 	padding: 15px 20px;
 	text-align:center;
 	font-size: 15px;

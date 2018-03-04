@@ -29,7 +29,6 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	let play_id = window.location.hash.split('play-')[1]
 
 	const _displayScoreData = (inst_id, play_id) =>
-		// @TODO - switch to $q
 		widgetSrv
 			.getWidget(inst_id)
 			.then(instance => {
@@ -149,8 +148,10 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 		// Modify display of several elements after HTML is outputted
 		const lengthRange = Math.floor(widgetInstance.name.length / 10)
-		let textSize = parseInt($('article.container header > h1').css('font-size'))
-		let paddingSize = parseInt($('article.container header > h1').css('padding-top'))
+		let textSize = parseInt(document.querySelector('article.container header > h1').style.fontSize)
+		let paddingSize = parseInt(
+			document.querySelector('article.container header > h1').style.paddingTop
+		)
 
 		switch (lengthRange) {
 			case 0:
@@ -217,17 +218,17 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 	// Uses jPlot to create the bargraph
 	const _toggleClassRankGraph = function() {
+		let graph = document.querySelector('section.score-graph')
 		// toggle button text
 		if ($scope.graphShown) {
 			$scope.classRankText = COMPARE_TEXT_OPEN
 			$scope.graphShown = false
+			graph.classList.remove('open')
 		} else {
 			$scope.graphShown = true
 			$scope.classRankText = COMPARE_TEXT_CLOSE
+			graph.classList.add('open')
 		}
-
-		// toggle graph visibility
-		$('section.score-graph').slideToggle()
 
 		// return if graph already built
 		if (_graphData.length > 0) {
@@ -240,16 +241,18 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		}
 
 		// Dynamically load jqplot libraries at run time
-		const jqplotBase = '//cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.0/'
+		const cdnBase = '//cdnjs.cloudflare.com/ajax/libs/'
 		return $LAB
-			.script(`${jqplotBase}jquery.jqplot.min.js`)
+			.script(`${cdnBase}jquery/1.8.1/jquery.min.js`)
 			.wait()
-			.script(`${jqplotBase}plugins/jqplot.barRenderer.min.js`)
-			.script(`${jqplotBase}plugins/jqplot.canvasTextRenderer.min.js`)
-			.script(`${jqplotBase}plugins/jqplot.canvasAxisTickRenderer.min.js`)
-			.script(`${jqplotBase}plugins/jqplot.categoryAxisRenderer.min.js`)
-			.script(`${jqplotBase}plugins/jqplot.cursor.min.js`)
-			.script(`${jqplotBase}plugins/jqplot.highlighter.min.js`)
+			.script(`${cdnBase}jqPlot/1.0.0/jquery.jqplot.min.js`)
+			.wait()
+			.script(`${cdnBase}jqPlot/1.0.0/plugins/jqplot.barRenderer.min.js`)
+			.script(`${cdnBase}jqPlot/1.0.0/plugins/jqplot.canvasTextRenderer.min.js`)
+			.script(`${cdnBase}jqPlot/1.0.0/plugins/jqplot.canvasAxisTickRenderer.min.js`)
+			.script(`${cdnBase}jqPlot/1.0.0/plugins/jqplot.categoryAxisRenderer.min.js`)
+			.script(`${cdnBase}jqPlot/1.0.0/plugins/jqplot.cursor.min.js`)
+			.script(`${cdnBase}jqPlot/1.0.0/plugins/jqplot.highlighter.min.js`)
 			.wait(() =>
 				// ========== BUILD THE GRAPH =============
 				Materia.Coms.Json.send('score_summary_get', [widgetInstance.id]).then(data => {
@@ -455,7 +458,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	// Initialize
 
 	// when the url has changes, reload the questions
-	$(window).bind('hashchange', () => _getScoreDetails())
+	window.addEventListener('hashchange', _getScoreDetails)
 
 	// this was originally called in document.ready, but there's no reason to not put it in init
 	_displayScoreData(widget_id, play_id)

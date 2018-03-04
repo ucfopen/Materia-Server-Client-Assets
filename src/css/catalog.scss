@@ -16,8 +16,6 @@
 
 .catalog section.page, .catalog aside{
 	border:rgba(0,0,0,0.11) 1px solid;
-	-moz-box-shadow: 1px 3px 10px #888;
-	-webkit-box-shadow: 1px 3px 10px #888;
 	box-shadow: 1px 3px 10px #888;
 }
 
@@ -46,11 +44,6 @@
 		font-family: 'Lato', arial, serif;
 		font-weight:bold;
 		font-size: 13px;
-		-ms-user-select: none;
-		-webkit-user-select: none;
-		-khtml-user-select: none;
-		-moz-user-select: none;
-		-o-user-select: none;
 		user-select: none;
 	}
 		.catalog aside .features dt input[type="checkbox"] {
@@ -88,11 +81,6 @@
 		font-weight: bold;
 		margin: 3px 0 0 0;
 		color: #000;
-		-ms-user-select: none;
-		-webkit-user-select: none;
-		-khtml-user-select: none;
-		-moz-user-select: none;
-		-o-user-select: none;
 		user-select: none;
 	}
 
@@ -135,8 +123,6 @@
 				width: 124px;
 				margin:7px 10px 0 10px;
 				border: solid 1px #b0b0b0;
-				-webkit-border-radius: 12px;
-				-moz-border-radius: 12px;
 				border-radius: 12px;
 				height: 19px;
 				background: #fff url('../../../img/magnifyingglass.png') 5px 50% no-repeat;
@@ -187,22 +173,14 @@
 		display: block;
 		margin-top: 116px;
 		background: white;
-		-webkit-box-shadow: 0px -10px 5px 3px white;
-		-moz-box-shadow: 0px -10px 5px 3px white;
 		box-shadow: 0px -10px 5px 3px white;
 	}
 
-	-webkit-border-radius:0 5px 5px 0;
-	-moz-border-radius:0 5px 5px 0;
 	border-radius:0 5px 5px 0;
 	.widgetMin {
 		opacity: 1;
-	  -webkit-transition: opacity .3s ease-in-out;
-	  -moz-transition: opacity .3s ease-in-out;
-	  -ms-transition: opacity .3s ease-in-out;
-	  -o-transition: opacity .3s ease-in-out;
-	  transition: opacity .3s ease-in-out;
-		&.hidden	{
+		transition: opacity .3s ease-in-out;
+		&.hidden{
 			opacity:0.3;
 			display:block;
 		}
@@ -280,12 +258,8 @@
 
 	background-color:#FFFFFF;
 
-	-moz-box-shadow: 1px 2px 4px #888;
-	-webkit-box-shadow: 1px 2px 4px #888;
 	box-shadow: 1px 2px 4px #888;
 
-	-webkit-border-radius:5px;
-	-moz-border-radius:5px;
 	border-radius:5px;
 
 	display:block;
@@ -293,8 +267,6 @@
 
 	color:#000000;
 	&:hover{
-		-webkit-animation: animateShow .3s;
-		-moz-animation: animateShow .3s;
 		animation: animateShow .3s;
 		opacity:1;
 		z-index:20;
@@ -344,16 +316,6 @@
 	float:left;
 	margin-top:5px;
 	margin-bottom:5px;
-}
-
-@-webkit-keyframes animateShow {
-	0%   {opacity: 0}
-	100% {opacity: 1}
-}
-
-@-moz-keyframes animateShow {
-	0%   {opacity: 0}
-	100% {opacity: 1}
 }
 
 @keyframes animateShow {
