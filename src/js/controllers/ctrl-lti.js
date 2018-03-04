@@ -65,11 +65,11 @@ app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, wi
 	}
 
 	const finishProgressBarAndSetLocation = () => {
-		$('.progress-container').addClass('success')
-		$('.progress-container')
-			.find('span')
-			.html('Success!')
-		$('.progressbar').progressbar('value', 100)
+		let pg = document.querySelector('.progress-container')
+		let pgSpan = document.querySelector('.progress-container span')
+		pg.classList.add('success')
+		pgSpan.innerText = 'Success!'
+
 		$timeout(() => {
 			announceChoice()
 
@@ -83,24 +83,22 @@ app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, wi
 	const setDisplayState = newSection => {
 		$scope.section = newSection
 		$timeout(() => {
-			$('body')
-				.removeClass('selectWidget')
-				.removeClass('widgetSelected')
-				.removeClass('progress')
-				.addClass(newSection)
+			let body = document.querySelector('body')
+			body.classList.remove('selectWidget')
+			body.classList.remove('widgetSelected')
+			body.classList.remove('progress')
+			body.classList.add(newSection)
 
 			if (newSection === 'selectWidget') {
 				if (selectedWidget != null) {
-					$('.cancel-button').show()
+					let cancel = document.querySelector('.cancel-button')
+					cancel.style.display = 'block'
 				}
 
 				if (!widgetsLoaded) {
 					loadWidgets()
 				}
-
-				$('#select-widget').fadeIn(CHANGE_SECTION_FADE_DELAY_MS)
 			} else if (newSection === 'progress') {
-				$('.progressbar').progressbar()
 				startProgressBar()
 			}
 		}, 0)
@@ -113,6 +111,7 @@ app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, wi
 		const availStops = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 		const stops = { tick: 0 }
 		const len = getRandInt(3, 5)
+		let fill = document.querySelector('.progressbar>.fill')
 
 		for (let i = 0, end = len, asc = 0 <= end; asc ? i < end : i > end; asc ? i++ : i--) {
 			stops[availStops.splice(getRandInt(0, availStops.length), 1)] = true
@@ -121,18 +120,18 @@ app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, wi
 		var intervalId = $interval(() => {
 			stops.tick++
 			if (stops[stops.tick] != null) {
-				$('.progressbar').progressbar('value', stops.tick * 10)
+				fill.style.width = `${stops.tick * 10}%`
 			}
 
 			if (stops.tick >= 10) {
+				fill.style.width = '100%'
 				$interval.cancel(intervalId)
 				finishProgressBarAndSetLocation()
 			}
 		}, 200)
 
-		$(document).on('keyup', event => {
+		document.addEventListener('keyup', event => {
 			if (event.keyCode === 16) {
-				// shift
 				$scope.easterMode = true
 				Please.$apply()
 			}

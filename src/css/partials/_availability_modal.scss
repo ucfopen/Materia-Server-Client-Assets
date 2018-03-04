@@ -150,12 +150,6 @@
 		margin: 0 0 0 129px;
 		padding: 0;
 		cursor: default;
-
-		-ms-user-select: none;
-		-webkit-user-select: none;
-		-khtml-user-select: none;
-		-moz-user-select: none;
-		-o-user-select: none;
 		user-select: none;
 
 		li {
@@ -201,11 +195,6 @@
 		font-weight: bold;
 		cursor: pointer;
 
-		-ms-user-select: none;
-		-webkit-user-select: none;
-		-khtml-user-select: none;
-		-moz-user-select: none;
-		-o-user-select: none;
 		user-select: none;
 	}
 	.ui-slider-handle
