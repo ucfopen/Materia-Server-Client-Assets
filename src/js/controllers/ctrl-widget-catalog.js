@@ -32,7 +32,7 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, widgetSrv) {
 		let type = $scope.displayAll ? 'all' : 'featured'
 		Materia.Set.Throbber.startSpin('.page')
 		widgetSrv.getWidgetsByType(type).then(widgets => {
-			if ((widgets != null ? widgets.length : undefined) == null) {
+			if (!widgets || !widgets.length || !widgets.length > 0) {
 				return
 			}
 			// setup some default values

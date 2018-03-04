@@ -3,12 +3,7 @@ body.scores .container{
 	margin:0 auto;
 
 	background-color: #929AA4;
-	background-image: -ms-linear-gradient(top, #929AA4 0%, #72808F 20%); /* IE10 */
-	background-image: -moz-linear-gradient(top, #929AA4 0%, #72808F 20%); /* Mozilla Firefox */
-	background-image: -o-linear-gradient(top, #929AA4 0%, #72808F 20%); /* Opera */
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #929AA4), color-stop(0.2, #72808F)); /* Webkit (Safari/Chrome 10) */
-	background-image: -webkit-linear-gradient(top, #929AA4 0%, #72808F 20%); /* Webkit (Chrome 11+) */
-	background-image: linear-gradient(top, #929AA4 0%, #72808F 20%); /* Proposed W3C Markup */
+	background-image: linear-gradient(top, #929AA4 0%, #72808F 20%);
 	box-shadow: 0px 0px 34px 1px #999;
 
 	margin-top: 55px;
@@ -100,9 +95,7 @@ body.scores .overview #overview-table{
 	width: 330px;
 	padding-top: 5px;
 	border-bottom-right-radius: 5px ;
-	-moz-border-right-radius: 5px ;
-	-webkit-border-right-radius: 5px;
-	-khtml-border-right-radius: 5px;
+	border-right-radius: 5px;
 }
 
 body.scores .overview #overview-table table{
@@ -177,9 +170,6 @@ body.scores article header.preview:before{
 	vertical-align: middle;
 
 	border-radius: 5px 5px 0 0;
-	-moz-border-radius: 5px 5px 0 0;
-	-webkit-border-radius: 5px 5px 0 0;
-	-khtml-border-radius: 5px 5px 0 0;
 }
 body.scores article header.preview:after{
 	content: "Scores and interactions will not be recorded while previewing.";
@@ -199,11 +189,6 @@ body.scores article header nav.previous-attempts {
 	left:0px;
 	margin:0px;
 	text-align: left;
-	-ms-user-select: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-o-user-select: none;
 	user-select: none;
 }
 
@@ -212,9 +197,6 @@ body.scores article header nav.previous-attempts h1 {
 	color: #fff;
 	display: inline-block;
 	border-radius: 15px;
-	-moz-border-radius: 15px;
-	-webkit-border-radius: 15px;
-	-khtml-border-radius: 15px;
 	background: #222;
 	padding: 10px 18px;
 	margin: 14px 0 0 10px;
@@ -257,9 +239,6 @@ body.scores article header nav.previous-attempts ul
 	position: relative;
 	margin-left:6px;
 	border-radius: 15px;
-	-moz-border-radius: 15px;
-	-webkit-border-radius: 15px;
-	-khtml-border-radius: 15px;
 	box-shadow: 5px 5px 15px 1px #666;
 }
 
@@ -272,9 +251,6 @@ body.scores article header nav.previous-attempts ul li {
 body.scores article header nav.previous-attempts ul li:hover{
 	background-color: #DDD;
 	border-radius: 15px;
-	-moz-border-radius: 15px;
-	-webkit-border-radius: 15px;
-	-khtml-border-radius: 15px;
 }
 
 body.scores article header nav.previous-attempts ul li a:hover{
@@ -440,10 +416,6 @@ body.scores .details ul {
 					padding:18px 60px;
 					margin:0;
 					text-align:center;
-					-moz-border-bottom-left-radius: 3px;
-					-moz-border-bottom-right-radius: 3px;
-					-webkit-border-bottom-left-radius: 3px;
-					-webkit-border-bottom-right-radius: 3px;
 					border-bottom-left-radius: 3px;
 					border-bottom-right-radius: 3px;
 					line-height:1.25em;
@@ -478,7 +450,13 @@ body.scores .graph .jqplot-yaxis-label {
 	padding-left: 5px;
 }
 body.scores section.score-graph{
-	display:none;
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height .5s linear;
+
+	&.open{
+		max-height: 600px;
+	}
 }
 
 body.scores #class-rank-button{
@@ -487,11 +465,8 @@ body.scores #class-rank-button{
 	display: block;
 }
 .green{
-   	background:#b2cd43;
-   	background-image: -webkit-linear-gradient(top, #d1e776, #a6c430);
-	background-image: -moz-linear-gradient(top, #d1e776, #a6c430);
-	background-image: -o-linear-gradient(top, #d1e776, #a6c430);
-	background-image: -ms-linear-gradient(top, #d1e776, #a6c430);
+	background:#b2cd43;
+	background-image: linear-gradient(top, #d1e776, #a6c430);
 	border-color:#95a74e;
 	color:#4d5822;
 }
@@ -499,10 +474,7 @@ body.scores #class-rank-button{
 .gray
 {
 	background:#aeaeae;
-	background-image: -webkit-linear-gradient(top, #e4e4e4, #b8b8b8);
-	background-image: -moz-linear-gradient(top, #e4e4e4, #b8b8b8);
-	background-image: -o-linear-gradient(top, #e4e4e4, #b8b8b8);
-	background-image: -ms-linear-gradient(top, #e4e4e4, #b8b8b8);
+	background-image: linear-gradient(top, #e4e4e4, #b8b8b8);
 	border-color:#747474;
 	color:#545454;
 }
@@ -510,8 +482,6 @@ body.scores #class-rank-button{
 #popup.score_restrict
 {
 	text-align: center;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	border: #f0f0f0 3px solid;
 	width: 300px;
