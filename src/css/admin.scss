@@ -1,5 +1,4 @@
-.uploader
-{
+.uploader {
 	width: 0.1px;
 	height: 0.1px;
 	opacity: 0;
@@ -7,40 +6,36 @@
 	position: absolute;
 	z-index: -1;
 }
-.uploader + label
-{
+.uploader + label {
 	font-family: 'Lato', arial, serif;
 	padding: 7px 23px 8px 23px;
-	background:#ffba5d;
+	background: #ffba5d;
 	background-image: linear-gradient(#ffce8c, #ffa42a);
 
 	border-radius: 6px;
-	border:#fdb34f 1px solid;
-	font-weight:700;
-	color:#694d28;
+	border: #fdb34f 1px solid;
+	font-weight: 700;
+	color: #694d28;
 	text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
 	box-shadow: 1px 2px 4px #888;
 	font-size: 18px;
-	position:relative;
-	cursor:pointer;
-	display:inline-block;
+	position: relative;
+	cursor: pointer;
+	display: inline-block;
 	user-select: none;
 
-	&:hover
-	{
+	&:hover {
 		background: #eca444;
 		background-image: linear-gradient(#ffa42a, #ffce8c);
-		text-decoration:none;
+		text-decoration: none;
 	}
 }
 
-h1
-{
-	font-family: Lato,arial,serif;
+h1 {
+	font-family: Lato, arial, serif;
 }
 
-.container
-{
+.container {
 	background-color: #fff;
 	position: relative;
 	margin: 10px auto;
@@ -50,38 +45,33 @@ h1
 	box-shadow: 0 0 10px #aaa;
 	width: 700px;
 
-	.page > ul
-	{
+	.page > ul {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 
-		> li
-		{
+		> li {
 			background-color: #eee;
 			display: block;
 			margin: 0 0 5px 0;
 			border: 1px solid #ccc;
-			border-radius:10px;
+			border-radius: 10px;
 		}
 	}
 }
 
-.clickable
-{
+.clickable {
 	cursor: pointer;
 }
 
-.back
-{
+.back {
 	position: absolute;
 	top: 3px;
 	right: 5px;
 	cursor: pointer;
 	font-size: 120%;
 
-	.arrow
-	{
+	.arrow {
 		display: inline-block;
 		padding-top: 19px;
 		margin-bottom: -4px;
@@ -94,16 +84,14 @@ h1
 	}
 }
 
-.widget-title
-{
+.widget-title {
 	background-color: #ddd;
 	margin: 0;
 	padding: 10px 10px 7px;
 	border-radius: 10px;
 	border-bottom: 1px solid #ccc;
 
-	.title
-	{
+	.title {
 		margin: 0;
 		padding: 0;
 		vertical-align: middle;
@@ -112,13 +100,11 @@ h1
 	}
 }
 
-.img-holder
-{
+.img-holder {
 	display: inline-block;
 	vertical-align: middle;
 
-	img
-	{
+	img {
 		width: 50px;
 		height: 50px;
 		-moz-border-radius: 3px;
@@ -127,100 +113,85 @@ h1
 		float: left;
 		margin-right: 10px;
 	}
-
 }
 
-.widget-info
-{
-	.info-holder
-	{
+.widget-info {
+	.info-holder {
 		flex-grow: 100;
 		margin: 0 10px;
 	}
 }
 
-.widget-info, .user-info
-{
+.widget-info,
+.user-info {
 	margin: 10px 0;
 
-	.top
-	{
+	.top {
 		pointer-events: none;
 	}
 
-	.error-holder
-	{
+	.error-holder {
 		display: block;
 		text-align: center;
 		color: #f00;
 	}
 
-	.inline
-	{
+	.inline {
 		display: inline-block;
 	}
 
-	div
-	{
+	div {
 		display: block;
 		vertical-align: top;
 		margin: 5px 0 0;
 	}
 
-	input, textarea
-	{
+	input,
+	textarea {
 		font-size: 15px;
 	}
 
-	textarea
-	{
+	textarea {
 		height: 55px;
 		resize: none;
 	}
 
-	.info-holder
-	{
+	.info-holder {
 		position: relative;
 		vertical-align: top;
 
-		span:not(.long), label
-		{
+		span:not(.long),
+		label {
 			display: inline-block;
 			vertical-align: top;
 		}
 
-		label:not(.normal)
-		{
+		label:not(.normal) {
 			width: 145px;
 		}
 
-		.normal input
-		{
+		.normal input {
 			margin: 0;
 			padding: 0;
 		}
 
-		ul
-		{
+		ul {
 			list-style: none;
 			padding: 0;
 			margin: 0;
 		}
 
-		li
-		{
+		li {
 			padding: 0 5px;
 		}
 
-		hr
-		{
+		hr {
 			margin: 5px auto;
 			clear: right;
 			width: auto;
 		}
 
-		.action_button
-		{
+		.action_button {
 			position: absolute;
 			right: 0;
 			bottom: 0;
@@ -228,23 +199,20 @@ h1
 	}
 }
 
-.long
-{
+.long {
 	display: flex;
 
-	input, textarea
-	{
+	input,
+	textarea {
 		flex-grow: 100;
 	}
 }
 
-.user_add
-{
+.user_add {
 	width: 200px;
 }
 
-.search_match
-{
+.search_match {
 	box-sizing: border-box;
 	display: inline-block;
 	width: 48%;
@@ -252,21 +220,18 @@ h1
 	padding: 10px;
 	border: 1px solid #d3d3d3;
 
-	> div
-	{
+	> div {
 		display: inline-block;
 	}
 }
 
-.created_by:after
-{
+.created_by:after {
 	content: ' - Creator';
 	font-size: 13px;
 	font-weight: bold;
 	vertical-align: middle;
 }
 
-.no_match_message
-{
+.no_match_message {
 	margin-top: 10px;
 }

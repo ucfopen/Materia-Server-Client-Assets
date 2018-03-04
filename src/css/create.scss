@@ -5,9 +5,10 @@ body {
 .create header {
 	margin-bottom: 0;
 }
-html, body.create {
-	height:100%;
-	min-height:100%;
+html,
+body.create {
+	height: 100%;
+	min-height: 100%;
 	margin: 0;
 	padding: 0;
 	min-width: 1000px;
@@ -18,23 +19,23 @@ a {
 }
 
 #container {
-	width:100%;
-	height:inherit;
+	width: 100%;
+	height: inherit;
 	margin: 0 auto;
 	padding: 0;
 	border: none;
 }
 #action-bar {
 	position: relative;
-	height:52px;
+	height: 52px;
 	width: 100%;
 	text-align: right;
 	border-bottom: 4px #b944cc solid;
 	white-space: nowrap;
 }
 
-#action-bar:before{
-	content: "Editing";
+#action-bar:before {
+	content: 'Editing';
 	background: #b944cc;
 
 	position: absolute;
@@ -43,14 +44,14 @@ a {
 	height: 40px;
 	width: 100px;
 
-	font-family: "Lato", "Arial", sans-serif;
+	font-family: 'Lato', 'Arial', sans-serif;
 	font-size: 20px;
 	font-weight: 900;
-	color: #FFFFFF;
+	color: #ffffff;
 	text-align: center;
 	vertical-align: middle;
 	border-radius: 5px 5px 0 0;
-	line-height:45px;
+	line-height: 45px;
 }
 #action-bar a {
 	font-family: 'Lucida Grande', 'Verdana', sans-serif;
@@ -73,7 +74,7 @@ a {
 }
 
 #returnLink {
-	float:left;
+	float: left;
 	margin-left: 120px;
 	margin-top: 23px;
 }
@@ -85,81 +86,81 @@ a {
 	padding: 7px 13px 8px 13px;
 
 	border-radius: 6px;
-	font-weight:700;
-	color:#694d28;
+	font-weight: 700;
+	color: #694d28;
 	text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.75);
 	box-shadow: 1px 2px 4px #888;
 	font-size: 15px;
-	position:relative;
-	cursor:pointer;
-	display:inline-block;
+	position: relative;
+	cursor: pointer;
+	display: inline-block;
 }
 
-.publish, .preview {
+.publish,
+.preview {
 	background: #fff6c9;
 	width: 558px;
 	height: 160px;
 	text-align: center;
-	border: 1px solid rgba(0,0,0,.1);
-	border-bottom: 2px solid rgba(0,0,0,.1);
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-bottom: 2px solid rgba(0, 0, 0, 0.1);
 	padding: 0 0 12px 20px;
 	margin: 10px auto;
 }
 
-.preview{
-	height:100px;
+.preview {
+	height: 100px;
 }
-.publish h1, .publish p, .preview h1, .preview p {
-	font-family: "Lato", "Arial", sans-serif;
+.publish h1,
+.publish p,
+.preview h1,
+.preview p {
+	font-family: 'Lato', 'Arial', sans-serif;
 	color: #000000;
 	text-align: left;
 }
-.publish h1, .preview h1{
+.publish h1,
+.preview h1 {
 	font-size: 24px;
 }
-.publish p, .preview p{
+.publish p,
+.preview p {
 	font-size: 14px;
 }
 .page {
-	margin:0 20px;
-	padding:0;
-	text-align:center;
+	margin: 0 20px;
+	padding: 0;
+	text-align: center;
 }
 
-.green
-{
-	background:#8dcb45;
+.green {
+	background: #8dcb45;
 	background-image: linear-gradient(#c0e195, #8dcb45);
-	border:#8dcb45 1px solid;
-	color:#4d5822;
+	border: #8dcb45 1px solid;
+	color: #4d5822;
 }
-.green:hover
-{
-	background:#c0e195;
+.green:hover {
+	background: #c0e195;
 	background-image: linear-gradient(#8dcb45, #c0e195);
-	text-decoration:none;
+	text-decoration: none;
 }
-.orange
-{
-	background:#ff8f11;
+.orange {
+	background: #ff8f11;
 	background-image: linear-gradient(#ffbc78, #ff8f11);
-	border:#ff8f11 1px solid;
+	border: #ff8f11 1px solid;
 	color: #694d28;
 }
-.orange:hover
-{
-	background:#ffce8c;
+.orange:hover {
+	background: #ffce8c;
 	background-image: linear-gradient(#ff8f11, #ffbc78);
-	text-decoration:none;
+	text-decoration: none;
 }
-.page .center
-{
-	min-height:600px;
+.page .center {
+	min-height: 600px;
 	height: calc(100vh - 150px);
 }
 
-#embed_dialog
-{
+#embed_dialog {
 	position: absolute;
 	top: -50%;
 	left: 50%;
@@ -167,8 +168,7 @@ a {
 	width: 675px;
 	height: 500px;
 	z-index: 2;
-	box-shadow: 0px 0px 1000px #000,
-		0px 0px 10px #000;
+	box-shadow: 0px 0px 1000px #000, 0px 0px 10px #000;
 	opacity: 0;
 	transition: all 0.3s ease;
 	background: #fff;
@@ -192,7 +192,7 @@ a {
 }
 
 .animate-show {
-	opacity:1;
+	opacity: 1;
 	transition: all ease 0.5s;
 }
 

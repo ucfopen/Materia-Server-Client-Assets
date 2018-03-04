@@ -1,24 +1,21 @@
-.ng-modal.copy
-{
+.ng-modal.copy {
 	text-align: center;
 }
 
-.ng-modal.copy .adding_shadow
-{
+.ng-modal.copy .adding_shadow {
 	width: 640px;
 	height: 480px;
 	background-color: #000000;
 	border-radius: 3px;
-	position:absolute;
-	top:-65px;
-	left:-20px;
-	z-index:1;
-	opacity:0;
-	filter:alpha(opacity=0);
+	position: absolute;
+	top: -65px;
+	left: -20px;
+	z-index: 1;
+	opacity: 0;
+	filter: alpha(opacity=0);
 }
 
-.ng-modal.copy .container
-{
+.ng-modal.copy .container {
 	position: absolute;
 	left: 20px;
 	top: 40px;
@@ -26,15 +23,13 @@
 	padding-top: 15px;
 }
 
-.ng-modal.copy .ng-modal-title
-{
+.ng-modal.copy .ng-modal-title {
 	top: 3px;
 	left: 12px;
 }
 
-.ng-modal.copy a.close
-{
-	display:block;
+.ng-modal.copy a.close {
+	display: block;
 	position: absolute;
 	right: 5px;
 	top: 4px;
@@ -45,52 +40,45 @@
 	height: 19px;
 }
 
-.ng-modal.copy .input_label
-{
+.ng-modal.copy .input_label {
 	font-size: 16px;
 	margin: 0 25px 0 0;
 }
 
-.ng-modal.copy input.newtitle
-{
+.ng-modal.copy input.newtitle {
 	width: 450px;
 	height: 30px;
 	padding-left: 10px;
 	position: relative;
-	z-index:2;
+	z-index: 2;
 }
 
-.ng-modal.copy .copy_button
-{
-	margin-top:20px;
+.ng-modal.copy .copy_button {
+	margin-top: 20px;
 }
 
-.ng-modal.copy .copy_error
-{
-	display:none;
-	color:#EE0000;
-	margin-top:5px;
+.ng-modal.copy .copy_error {
+	display: none;
+	color: #ee0000;
+	margin-top: 5px;
 }
 
-.share .perm-text
-{
+.share .perm-text {
 	width: 100%;
 	display: inline-block;
 }
 
-.share .exp-date
-{
+.share .exp-date {
 	padding: 0;
-	text-decoration:underline;
-	color:#545454;
+	text-decoration: underline;
+	color: #545454;
 	font-size: 8pt;
 	cursor: pointer;
 	background: transparent;
 	border: none;
 	width: 85px;
 }
-.share .exp-date:hover
-{
+.share .exp-date:hover {
 	color: #969696;
 }
 .share .exp-date:disabled {
@@ -99,20 +87,17 @@
 	text-decoration: none;
 }
 
-.share .exp-date:focus
-{
-	outline:none;
-	background:#fff;
-	border:solid 1px #f7b64a;
+.share .exp-date:focus {
+	outline: none;
+	background: #fff;
+	border: solid 1px #f7b64a;
 }
 
-.share .expires
-{
+.share .expires {
 	font-size: 8pt;
 }
 
-.share .remove-expiration
-{
+.share .remove-expiration {
 	font-size: 8pt;
 	cursor: pointer;
 }
