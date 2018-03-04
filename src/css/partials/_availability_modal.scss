@@ -1,13 +1,10 @@
-.ng-modal.availability
-{
-	.ng-modal-dialog
-	{
+.ng-modal.availability {
+	.ng-modal-dialog {
 		padding: 20px 20px 5px 20px;
 		min-width: 500px;
 	}
 
-	.ng-modal-title
-	{
+	.ng-modal-title {
 		margin: 0;
 		padding: 0;
 		font-size: 1.3em;
@@ -19,49 +16,41 @@
 		text-align: left;
 	}
 
-	ul
-	{
-		&.inline li
-		{
+	ul {
+		&.inline li {
 			list-style: none;
 			display: inline-block;
 			padding: 0;
 			margin: 0;
 		}
 
-		&.inline
-		{
+		&.inline {
 			margin: 50px auto 20px auto;
 			padding: 0;
 			width: 255px;
 		}
 
-		&.attemptsPopup
-		{
+		&.attemptsPopup {
 			margin: 4px 0 10px 0;
 			padding: 0 0 0 10px;
 		}
 
-		&.attemptsPopup li
-		{
+		&.attemptsPopup li {
 			list-style: none;
 		}
 
-		&.toFrom
-		{
+		&.toFrom {
 			margin: 0;
 			padding: 0;
 		}
 
-		&.toFrom > li
-		{
+		&.toFrom > li {
 			list-style: none;
 			margin: 20px 0 0 0;
 			padding: 0;
 		}
 
-		&.toFrom li span.text-right
-		{
+		&.toFrom li span.text-right {
 			text-align: right;
 			display: inline-block;
 			width: 50px;
@@ -69,8 +58,7 @@
 			font-weight: bold;
 		}
 
-		li.save a
-		{
+		li.save a {
 			display: inline-block;
 			background: #0093e7;
 			color: #ffffff;
@@ -85,11 +73,11 @@
 		position: absolute;
 		top: 8px;
 		right: 40px;
-		color: #F00;
+		color: #f00;
 		font-weight: bold;
 	}
 
-	.access-options{
+	.access-options {
 		margin-left: 80px;
 	}
 
@@ -98,8 +86,7 @@
 		opacity: 0.4;
 	}
 
-	h3
-	{
+	h3 {
 		vertical-align: top;
 		display: inline-block;
 		margin: 0;
@@ -108,28 +95,24 @@
 		text-align: right;
 	}
 
-	.datePicker
-	{
+	.datePicker {
 		display: inline-block;
 		padding: 0;
 		margin-left: -12px;
 
-		input[type=text]
-		{
+		input[type='text'] {
 			border: 1px solid rgba(0, 0, 0, 0.2);
 			padding: 7px;
-			font-size: .8em;
+			font-size: 0.8em;
 			border-radius: 7px;
 		}
 
-		input[type=text]:focus
-		{
+		input[type='text']:focus {
 			outline: none;
 			box-shadow: 0px 0px 1px 1px #0094e2;
 		}
 
-		input[type=radio]
-		{
+		input[type='radio'] {
 			height: 15px;
 		}
 	}
@@ -138,15 +121,13 @@
 		color: #000 !important;
 	}
 
-	.selector
-	{
+	.selector {
 		width: 400px;
 		margin: 20px 0 0 0;
 		display: inline-block;
 	}
 
-	.attemptHolder
-	{
+	.attemptHolder {
 		margin: 0 0 0 129px;
 		padding: 0;
 		cursor: default;
@@ -157,65 +138,61 @@
 		}
 	}
 
-	.data_explanation
-	{
+	.data_explanation {
 		margin-left: 125px;
 		width: 450px;
 		font-size: 14px;
 	}
 
-	.access_explanation
-	{
+	.access_explanation {
 		margin-left: 15px;
 		width: 450px;
 		font-size: 14px;
 		margin: 5px 20px;
 	}
 
-	.ui-slider-handle.ui-state-default.ui-corner-all
-	{
+	.ui-slider-handle.ui-state-default.ui-corner-all {
 		outline: none;
 		margin-top: -3px;
-		background: #519BD1;
-		border: #4380AD 1px solid;
+		background: #519bd1;
+		border: #4380ad 1px solid;
 	}
-	.date.error, .time.error
-	{
+	.date.error,
+	.time.error {
 		border: 2px solid rgba(255, 0, 0, 0.2);
 		background: rgba(255, 0, 0, 0.2);
 		font-color: #000000;
 	}
-	.am, .pm {
-		border: 1px solid rgba(0,0,0,0.2);
-		color: rgba(0,0,0,0.2);
+	.am,
+	.pm {
+		border: 1px solid rgba(0, 0, 0, 0.2);
+		color: rgba(0, 0, 0, 0.2);
 		padding: 5px;
 		margin: 0;
-		text-transform:uppercase;
+		text-transform: uppercase;
 		font-size: 0.8em;
 		font-weight: bold;
 		cursor: pointer;
 
 		user-select: none;
 	}
-	.ui-slider-handle
-	{
+	.ui-slider-handle {
 		height: 16px;
 		width: 16px;
 		border-radius: 100%;
 	}
-	.ui-slider
-	{
+	.ui-slider {
 		height: 1px;
 		margin-top: -6px;
 		padding-top: 1px;
 		vertical-align: middle;
 	}
-	.am.selected, .pm.selected  {
+	.am.selected,
+	.pm.selected {
 		background: #0094e2;
-		color: #FFFFFF;
+		color: #ffffff;
 	}
-	.am
-	{
+	.am {
 		border-right: none;
 		border-radius: 4px 0 0 4px;
 	}
@@ -223,47 +200,37 @@
 		border-radius: 0 4px 4px 0;
 	}
 
-	.attemptHolder li
-	{
+	.attemptHolder li {
 		margin-right: 0.23em;
-		color: rgba(0,0,0,0.3);
+		color: rgba(0, 0, 0, 0.3);
 	}
-	.attemptHolder li:hover
-	{
+	.attemptHolder li:hover {
 		color: black;
 	}
-	.attemptHolder li.step
-	{
+	.attemptHolder li.step {
 		margin-right: 3.85em;
 	}
-	.attemptHolder.disabled li:hover
-	{
-		color: rgba(0,0,0,0.3);
+	.attemptHolder.disabled li:hover {
+		color: rgba(0, 0, 0, 0.3);
 	}
-	.step.first
-	{
+	.step.first {
 		margin-left: 3.8em;
 	}
-	.step.last
-	{
+	.step.last {
 		margin-left: -23px;
 	}
-	​
-	ul li ul.hide
-	{
+	​ ul li ul.hide {
 		display: none;
 	}
 	/* date picker overrides */
-	.hasDatePicker
-	{
+	.hasDatePicker {
 		z-index: 1500 !important;
 		font-size: 75% !important;
-		margin-top:3px;
+		margin-top: 3px;
 	}
 
-	.bottom-buttons
-	{
-		width:100%;
+	.bottom-buttons {
+		width: 100%;
 		text-align: center;
 	}
 }

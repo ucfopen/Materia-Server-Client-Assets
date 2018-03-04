@@ -64,7 +64,7 @@ html {
 	padding: 6px 10px;
 }
 
-#question-table_filter input[type="text"] {
+#question-table_filter input[type='text'] {
 	width: 124px;
 	border: solid 1px #b0b0b0;
 	border-radius: 12px;
@@ -155,7 +155,7 @@ table.dataTable thead th {
 	left: 0px;
 	bottom: 0px;
 	right: 0px;
-	background: rgba(0, 0, 0, .7);
+	background: rgba(0, 0, 0, 0.7);
 	z-index: 2;
 	display: none;
 }
@@ -168,9 +168,7 @@ $win_width: 800px;
 $pane_height: 450px; //height curtailed to prevent overflow (and thus scrolling) for now
 $pane_width: 362px; //width of each pane
 $pane_margin: 15px; //margin from parent iframe
-$divwidth: $win_width - 2*(
-		$pane_width + $pane_margin
-	); //width of middle divider pane
+$divwidth: $win_width - 2 * ($pane_width + $pane_margin); //width of middle divider pane
 $pane_header_margin: 17px;
 
 $sortbar_height: 45px;
@@ -194,7 +192,7 @@ $dropzone_margin: 18px;
 
 	&:after {
 		color: #dadada;
-		content: "or";
+		content: 'or';
 		position: absolute;
 		text-align: center;
 		width: $divwidth;
@@ -203,7 +201,7 @@ $dropzone_margin: 18px;
 	}
 
 	&:before {
-		content: "";
+		content: '';
 		border-left: thin solid #dadada;
 		height: $dropzone_height + $footer_height + $dropzone_margin;
 		top: 10%;
@@ -238,10 +236,7 @@ $dropzone_margin: 18px;
 	box-shadow: none;
 
 	#search-box {
-		width: $pane_width -$sortbar_width -
-			(
-				$sortbar_marginleft + $sortbar_marginright
-			) - $arr_size;
+		width: $pane_width -$sortbar_width - ($sortbar_marginleft + $sortbar_marginright) - $arr_size;
 		height: 20px;
 		background: #fff;
 		border: 1px solid #b0b0b0;
@@ -330,7 +325,7 @@ $dropzone_margin: 18px;
 	border-radius: 6px;
 	border: 1px solid #fdb34f;
 	color: #694d28;
-	text-shadow: 1px 1px 1px rgba(255, 255, 255, .5);
+	text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
 	box-shadow: 1px 2px 4px #888;
 	font-size: 18px;
 	display: inline-block;

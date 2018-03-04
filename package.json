@@ -8,8 +8,8 @@
     "build": "webpack -p",
     "build-watch": "webpack --watch",
     "build-dev": "webpack",
-    "prettier:run": "prettier --write='src/**/*.js'",
-    "prettier:debug": "prettier --debug-check='src/**/*.js'",
+    "prettier:run": "prettier --write 'src/**/*.{js,scss}'",
+    "prettier:debug": "prettier -l 'src/**/*.{js,scss}'",
     "precommit": "lint-staged"
   },
   "prettier": {
@@ -19,8 +19,8 @@
     "singleQuote": true
   },
   "lint-staged": {
-    "src/**/*.js": [
-      "yarn prettier:run --",
+    "src/**/*.{js,scss}": [
+      "yarn prettier --write --",
       "git add"
     ]
   },
@@ -56,7 +56,7 @@
     "ngmodal": "ucfcdl/ngModal#v1.2.2",
     "node-sass": "^4.5.3",
     "npm": "^5.7.1",
-    "prettier": "^1.10.2",
+    "prettier": "^1.11.1",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.20.2",
     "webpack": "^3.11.0",

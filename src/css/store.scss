@@ -1,9 +1,9 @@
 .store .page {
-	margin-top:30px;
+	margin-top: 30px;
 }
 
 .store section.store_bottom {
-	overflow:auto;
+	overflow: auto;
 }
 .store section.store_bottom section:first-child {
 	float: left;
@@ -16,18 +16,18 @@
 	width: 250px;
 	padding: 7px 0 20px 33px;
 }
-.store section.store_bottom section section{
+.store section.store_bottom section section {
 	width: 218px;
-	border: #D6D6D6 1px solid;
+	border: #d6d6d6 1px solid;
 	box-shadow: 1px 5px 10px #888;
-	border-top:none;
+	border-top: none;
 	font-family: Lato;
 	height: 270px;
 	background: #fff url(../../../img/bar-top.png) top repeat-x;
-	padding:15px;
+	padding: 15px;
 }
 .store section.store_bottom section section h3 {
-		font-family: Lato;
+	font-family: Lato;
 	color: #6b6b6b;
 	font-size: 17px;
 	padding-bottom: 20px;
@@ -35,20 +35,21 @@
 .store section.store_bottom section section div {
 	margin-left: 100px;
 }
-.store section.store_bottom section section h4, .store section.store_bottom section section p {
+.store section.store_bottom section section h4,
+.store section.store_bottom section section p {
 	margin: 0;
 	padding: 0;
-	color:#6b6b6b;
+	color: #6b6b6b;
 }
 .store section.store_bottom section section h4 {
-	color:#000;
+	color: #000;
 }
 .store section.store_bottom section section p:last-child {
 	margin-top: 10px;
 }
 .store section.store_bottom section section p a {
 	color: #0093e7;
-	text-decoration:underline;
-	font-weight:bold;
-	font-size:.8em;
+	text-decoration: underline;
+	font-weight: bold;
+	font-size: 0.8em;
 }
