@@ -263,7 +263,7 @@ h3
 	font-family: 'Lato', arial, serif;
 	padding: 7px 23px 8px 23px;
 	background:#ffba5d;
-	background-image: linear-gradient(top, #ffce8c, #ffa42a);
+	background-image: linear-gradient(#ffce8c, #ffa42a);
 
 	border-radius: 6px;
 	border:#fdb34f 1px solid;
@@ -294,7 +294,7 @@ h3
 
 .action_button:hover {
 	background: #eca444;
-	background-image: linear-gradient(top, #ffa42a, #ffce8c);
+	background-image: linear-gradient(#ffa42a, #ffce8c);
 	text-decoration:none;
 }
  .index_catalog_button {
@@ -562,7 +562,7 @@ dl.blurb dt {
 	border-radius:4em;
 
 	background: #e00101;
-	background-image: linear-gradient(top, rgb(243, 0, 0), rgb(150, 4, 4));
+	background-image: linear-gradient(rgb(243, 0, 0), rgb(150, 4, 4));
 
 	border:2px solid #fdfdfd;
 
@@ -610,7 +610,7 @@ dl.blurb dt {
 #popup.alert h1
 {
 	background: #6390dc;
-	background-image: linear-gradient(top, #7ba7f2, #4373c1);
+	background-image: linear-gradient(#7ba7f2, #4373c1);
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 	color: #fff;

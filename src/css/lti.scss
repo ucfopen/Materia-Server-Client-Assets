@@ -86,7 +86,7 @@ header > h1
 	font-family: 'Lato', arial, serif;
 	padding: 7px 23px 8px 23px;
 	background:#ffba5d;
-	background-image: linear-gradient(top, #ffce8c, #ffa42a);
+	background-image: linear-gradient(#ffce8c, #ffa42a);
 	border-radius: 6px;
 	border:#fdb34f 1px solid;
 	font-weight:700;
@@ -100,7 +100,7 @@ header > h1
 .button:hover
 {
 	text-decoration: none;
-	background-image: linear-gradient(top, #ffa42a, #ffce8c);
+	background-image: linear-gradient(#ffa42a, #ffce8c);
 }
 
 .highlighted
