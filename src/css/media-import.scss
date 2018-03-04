@@ -99,13 +99,13 @@ h1 {
 
 .gray {
 	background: #aeaeae;
-	background-image: linear-gradient(top, #e4e4e4, #b8b8b8);
+	background-image: linear-gradient(#e4e4e4, #b8b8b8);
 	border-color: #747474;
 	color: #545454;
 }
 
 .gray:hover {
-	background-image: linear-gradient(top, #b8b8b8, #e4e4e4);
+	background-image: linear-gradient(#b8b8b8, #e4e4e4);
 	text-decoration: none;
 }
 
@@ -326,7 +326,7 @@ $dropzone_margin: 18px;
 .select_file_button {
 	padding: 7px 23px 8px;
 	background: #ffba5d;
-	background-image: linear-gradient(top, #ffce8c, #ffa42a);
+	background-image: linear-gradient(#ffce8c, #ffa42a);
 	border-radius: 6px;
 	border: 1px solid #fdb34f;
 	color: #694d28;

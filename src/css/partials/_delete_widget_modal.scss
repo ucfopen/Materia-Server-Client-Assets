@@ -68,13 +68,13 @@
 .ng-modal .red
 {
 	background:#ca0000;
-	background-image: linear-gradient(top, #e10000, #ca0000);
+	background-image: linear-gradient(#e10000, #ca0000);
 	border-color:#747474;
 	color:#545454;
 }
 .ng-modal .red:hover
 {
 	background:#ca0000;
-	background-image: linear-gradient(top, #ca0000, #e10000);
+	background-image: linear-gradient(#ca0000, #e10000);
 	text-decoration:none;
 }

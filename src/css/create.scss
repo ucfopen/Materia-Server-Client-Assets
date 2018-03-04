@@ -129,27 +129,27 @@ a {
 .green
 {
 	background:#8dcb45;
-	background-image: linear-gradient(top, #c0e195, #8dcb45);
+	background-image: linear-gradient(#c0e195, #8dcb45);
 	border:#8dcb45 1px solid;
 	color:#4d5822;
 }
 .green:hover
 {
 	background:#c0e195;
-	background-image: linear-gradient(top, #8dcb45, #c0e195);
+	background-image: linear-gradient(#8dcb45, #c0e195);
 	text-decoration:none;
 }
 .orange
 {
 	background:#ff8f11;
-	background-image: linear-gradient(top, #ffbc78, #ff8f11);
+	background-image: linear-gradient(#ffbc78, #ff8f11);
 	border:#ff8f11 1px solid;
 	color: #694d28;
 }
 .orange:hover
 {
 	background:#ffce8c;
-	background-image: linear-gradient(top, #ff8f11, #ffbc78);
+	background-image: linear-gradient(#ff8f11, #ffbc78);
 	text-decoration:none;
 }
 .page .center
