@@ -243,16 +243,16 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		// Dynamically load jqplot libraries at run time
 		const cdnBase = '//cdnjs.cloudflare.com/ajax/libs/'
 		return $LAB
-			.script(`${cdnBase}jquery/1.8.1/jquery.min.js`)
+			.script(`${cdnBase}jquery/3.3.1/jquery.min.js`)
 			.wait()
-			.script(`${cdnBase}jqPlot/1.0.0/jquery.jqplot.min.js`)
+			.script(`${cdnBase}jqPlot/1.0.9/jquery.jqplot.min.js`)
 			.wait()
-			.script(`${cdnBase}jqPlot/1.0.0/plugins/jqplot.barRenderer.min.js`)
-			.script(`${cdnBase}jqPlot/1.0.0/plugins/jqplot.canvasTextRenderer.min.js`)
-			.script(`${cdnBase}jqPlot/1.0.0/plugins/jqplot.canvasAxisTickRenderer.min.js`)
-			.script(`${cdnBase}jqPlot/1.0.0/plugins/jqplot.categoryAxisRenderer.min.js`)
-			.script(`${cdnBase}jqPlot/1.0.0/plugins/jqplot.cursor.min.js`)
-			.script(`${cdnBase}jqPlot/1.0.0/plugins/jqplot.highlighter.min.js`)
+			.script(`${cdnBase}jqPlot/1.0.9/plugins/jqplot.barRenderer.min.js`)
+			.script(`${cdnBase}jqPlot/1.0.9/plugins/jqplot.canvasTextRenderer.min.js`)
+			.script(`${cdnBase}jqPlot/1.0.9/plugins/jqplot.canvasAxisTickRenderer.min.js`)
+			.script(`${cdnBase}jqPlot/1.0.9/plugins/jqplot.categoryAxisRenderer.min.js`)
+			.script(`${cdnBase}jqPlot/1.0.9/plugins/jqplot.cursor.min.js`)
+			.script(`${cdnBase}jqPlot/1.0.9/plugins/jqplot.highlighter.min.js`)
 			.wait(() =>
 				// ========== BUILD THE GRAPH =============
 				Materia.Coms.Json.send('score_summary_get', [widgetInstance.id]).then(data => {

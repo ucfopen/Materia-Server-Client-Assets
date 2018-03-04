@@ -427,6 +427,7 @@ header > h1
 	.fill{
 		background: #1da4cd;
 		height: 100%;
+		width: 0;
 		border-radius: 11px;
 		transition: width 0.2s ease, background 0.2s ease;
 	}
