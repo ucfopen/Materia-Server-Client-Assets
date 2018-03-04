@@ -1,14 +1,15 @@
 Namespace('Materia.Scores').Scoregraphics = (() => {
 	const drawScoreCircle = (canvasName, number, percent, greyMode) => {
-		const canvas = $(`#${canvasName}`)
-		const h = parseInt(canvas.css('height'), 10)
+		const canvas = document.querySelector(`#${canvasName}`)
+		const h = canvas.clientHeight
 		const halfH = h / 2
 		const lineWidth = 5
 		const radius = (h - lineWidth) / 2
-		canvas.attr('height', h).attr('width', h)
+		canvas.setAttribute('height', h)
+		canvas.setAttribute('width', h)
 
-		if (canvas[0].getContext) {
-			const context = canvas[0].getContext('2d')
+		if (canvas.getContext) {
+			const context = canvas.getContext('2d')
 
 			// choose the dot color based on the value if grey mode is enabled, the dot is greyed out.
 			const dotColor =
@@ -46,16 +47,16 @@ Namespace('Materia.Scores').Scoregraphics = (() => {
 	}
 
 	const drawModifierCircle = (canvasName, number, percent, greyMode) => {
-		const canvas = $(`#${canvasName}`)
-		const h = parseInt(canvas.css('height'))
+		const canvas = document.querySelector(`#${canvasName}`)
+		const h = canvas.clientHeight
 		const halfH = h / 2
 		const lineWidth = 5
 		const radius = (h - lineWidth) / 2
-		canvas.attr('height', h)
-		canvas.attr('width', h)
+		canvas.setAttribute('height', h)
+		canvas.setAttribute('width', h)
 
-		if (canvas[0].getContext) {
-			const context = canvas[0].getContext('2d')
+		if (canvas.getContext) {
+			const context = canvas.getContext('2d')
 
 			// choose the dot color based on the value if grey mode is enabled, the dot is greyed out.
 
@@ -81,15 +82,15 @@ Namespace('Materia.Scores').Scoregraphics = (() => {
 	}
 
 	const drawFinalScoreCircle = (canvasName, number, percent) => {
-		const canvas = $(`#${canvasName}`)
-		const h = parseInt(canvas.css('height'))
+		const canvas = document.querySelector(`#${canvasName}`)
+		const h = canvas.clientHeight
 		const halfH = h / 2
 		const radius = (h - 2) / 2
-		canvas.attr('height', h)
-		canvas.attr('width', h)
+		canvas.setAttribute('height', h)
+		canvas.setAttribute('width', h)
 
-		if (canvas[0].getContext) {
-			const context = canvas[0].getContext('2d')
+		if (canvas.getContext) {
+			const context = canvas.getContext('2d')
 			const fillColor = '#db8081'
 
 			context.strokeStyle = '555555'

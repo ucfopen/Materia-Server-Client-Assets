@@ -281,15 +281,6 @@ app.controller('createCtrl', function(
 		}
 	}
 
-	// Resizes the swf according to the window height
-	const resizeCreator = () => {
-		$('.center').height($(window).height() - BOTTOM_OFFSET)
-		// This fixes a bug in chrome where the iframe (#container)
-		// doesn't correctly fill 100% of the height. Doing this with
-		// just CSS doesn't work - it needs to be done in JS
-		$('#container').css('position', 'relative')
-	}
-
 	// Show the buttons that interact with the creator
 	const showButtons = () => {
 		const deferred = $q.defer()
@@ -331,10 +322,8 @@ app.controller('createCtrl', function(
 	// When the creator says it's ready
 	// Note this is psuedo public as it's exposed to flash
 	const onCreatorReady = () => {
-		creator = $('#container').get(0)
+		creator = document.querySelector('#container')
 		// resize swf now and when window resizes
-		$(window).resize(resizeCreator)
-		resizeCreator()
 
 		return embedDonePromise.resolve() // used to keep events synchronous
 	}
@@ -458,7 +447,9 @@ ${msg.toLowerCase()}`,
 		}
 	}
 
-	const setHeight = h => $('#container').height(h)
+	const setHeight = h => {
+		creator.style.height = `${h}px`
+	}
 
 	const _alert = (msg, title = null, fatal, enableLoginButton) => {
 		if (fatal == null) {
