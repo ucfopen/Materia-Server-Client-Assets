@@ -46,7 +46,6 @@ module.exports = {
       jsPath+'/controllers/ctrl-spotlight.js',
       jsPath+'/controllers/ctrl-widget-catalog.js',
       jsPath+'/controllers/ctrl-widget-details.js',
-      jsPath+'/directives/dir-fancybox.js',
       jsPath+'/services/srv-datetime.js',
       jsPath+'/services/srv-please.js',
       jsPath+'/services/srv-selectedwidget.js',

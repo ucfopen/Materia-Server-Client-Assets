@@ -1,4 +1,4 @@
-const app = angular.module('materia', ['ngModal'])
+const app = angular.module('materia', [])
 app.config($sceDelegateProvider =>
 	$sceDelegateProvider.resourceUrlWhitelist(['self', STATIC_CROSSDOMAIN + '**', BASE_URL + '**'])
 )
