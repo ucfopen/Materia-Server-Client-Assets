@@ -1,31 +1,32 @@
-html, body {
-	height:100%;
-	min-height:100%;
+html,
+body {
+	height: 100%;
+	min-height: 100%;
 }
 #container {
-	margin:0 auto;
+	margin: 0 auto;
 	outline: 1px solid #999;
 	display: block;
 }
 
-#container.html{
-	border:0;
-	height:100%;
-	width:100%;
+#container.html {
+	border: 0;
+	height: 100%;
+	width: 100%;
 }
 
 .page {
-	margin:0;
-	padding:0;
-	text-align:center;
+	margin: 0;
+	padding: 0;
+	text-align: center;
 }
 .center {
-	position:relative;
+	position: relative;
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
-	margin:0 auto;
+	margin: 0 auto;
 	height: 100%;
-	box-shadow:0px 0px 34px 1px #999;
+	box-shadow: 0px 0px 34px 1px #999;
 }
 .embedded .center {
 	box-shadow: none;
@@ -63,20 +64,20 @@ section.widget.preview {
 	position: absolute;
 	left: 50%;
 	transform: translateX(-50%);
-	display:block;
+	display: block;
 	border-bottom: 4px #b944cc solid;
-	width:100%;
-	height:40px;
-	padding:0;
-	background:none;
+	width: 100%;
+	height: 40px;
+	padding: 0;
+	background: none;
 	margin-top: -44px;
 	z-index: 1;
 }
 
 .widget .preview-bar:before {
-	content: "Previewing";
+	content: 'Previewing';
 	background: #b944cc;
-	display:block;
+	display: block;
 
 	left: 0px;
 	top: -40px;
@@ -84,10 +85,10 @@ section.widget.preview {
 	height: 20px;
 	padding: 8px 0 12px 0;
 
-	font-family: "Lato", "Arial", sans-serif;
+	font-family: 'Lato', 'Arial', sans-serif;
 	font-size: 20px;
 	font-weight: 900;
-	color: #FFFFFF;
+	color: #ffffff;
 	text-align: center;
 	vertical-align: middle;
 
@@ -95,21 +96,21 @@ section.widget.preview {
 }
 
 .widget .preview-bar:after {
-	content: "Scores and interactions will not be recorded while previewing.";
-	position:absolute;
-	display:block;
+	content: 'Scores and interactions will not be recorded while previewing.';
+	position: absolute;
+	display: block;
 
 	right: 0px;
 	top: 16px;
 
-	font-family: "Lato", "Arial", sans-serif;
+	font-family: 'Lato', 'Arial', sans-serif;
 	font-size: 14px;
 	font-weight: 300;
 }
 
 .embedded {
-	background-image:none;
-	background:#FFFFFF;
+	background-image: none;
+	background: #ffffff;
 }
 
 .ng-modal button {
@@ -124,4 +125,3 @@ section.widget.preview {
 /* *************************************************************** */
 
 @import 'partials/validation_error_modal';
-
