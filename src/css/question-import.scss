@@ -54,13 +54,13 @@ h1{
 
 .gray {
 	background: #aeaeae;
-	background-image: linear-gradient(top, #e4e4e4, #b8b8b8);
+	background-image: linear-gradient(#e4e4e4, #b8b8b8);
 	border-color: #747474;
 	color: #545454;
 }
 
 .gray:hover{
-	background-image: linear-gradient(top, #b8b8b8, #e4e4e4);
+	background-image: linear-gradient(#b8b8b8, #e4e4e4);
 	text-decoration: none;
 }
 
