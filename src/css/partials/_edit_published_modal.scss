@@ -1,20 +1,17 @@
-.edit-published-widget
-{
+.edit-published-widget {
 	border-radius: 3px;
 	border: #f0f0f0 3px solid;
 	width: 530px;
 	height: 320px;
 }
 
-.edit-published-widget .container
-{
+.edit-published-widget .container {
 	width: 450px;
 	height: 300px;
 	padding-top: 30px;
 }
 
-.edit-published-widget h2
-{
+.edit-published-widget h2 {
 	font-family: Lato, arial, serif;
 	font-weight: bold;
 	font-size: 24px;
@@ -25,9 +22,8 @@
 	margin: 4px;
 }
 
-.edit-published-widget a.close
-{
-	display:block;
+.edit-published-widget a.close {
+	display: block;
 	position: absolute;
 	right: 5px;
 	top: 4px;
@@ -38,13 +34,11 @@
 	height: 19px;
 }
 
-.edit-published-widget span.center
-{
+.edit-published-widget span.center {
 	text-align: center;
-	display:block;
+	display: block;
 }
 
-.edit-published-widget .action_button
-{
-	margin-top:20px;
+.edit-published-widget .action_button {
+	margin-top: 20px;
 }

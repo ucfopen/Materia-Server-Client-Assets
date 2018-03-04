@@ -1,5 +1,4 @@
-.popup.delete
-{
+.popup.delete {
 	text-align: center;
 	border-radius: 3px;
 	border: #f0f0f0 3px solid;
@@ -7,23 +6,21 @@
 	height: 220px;
 }
 
-.popup.delete .adding_shadow
-{
+.popup.delete .adding_shadow {
 	width: 640px;
 	height: 480px;
 	background-color: #000000;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
-	position:absolute;
-	top:-65px;
-	left:-20px;
-	z-index:1;
-	opacity:0;
-	filter:alpha(opacity=0);
+	position: absolute;
+	top: -65px;
+	left: -20px;
+	z-index: 1;
+	opacity: 0;
+	filter: alpha(opacity=0);
 }
 
-.popup.delete .container
-{
+.popup.delete .container {
 	position: absolute;
 	left: 20px;
 	top: 40px;
@@ -32,8 +29,7 @@
 	padding-top: 15px;
 }
 
-.popup.delete h2
-{
+.popup.delete h2 {
 	font-family: Lato, arial, serif;
 	font-weight: bold;
 	font-size: 24px;
@@ -44,9 +40,8 @@
 	margin: 4px;
 }
 
-.popup.delete a.close
-{
-	display:block;
+.popup.delete a.close {
+	display: block;
 	position: absolute;
 	right: 5px;
 	top: 4px;
@@ -57,24 +52,20 @@
 	height: 19px;
 }
 
-.popup.delete .delete-warning
-{
-	display:block;
-	margin:5px 0 5px 0;
-	font-weight:bold;
-
+.popup.delete .delete-warning {
+	display: block;
+	margin: 5px 0 5px 0;
+	font-weight: bold;
 }
 
-.ng-modal .red
-{
-	background:#ca0000;
+.ng-modal .red {
+	background: #ca0000;
 	background-image: linear-gradient(#e10000, #ca0000);
-	border-color:#747474;
-	color:#545454;
+	border-color: #747474;
+	color: #545454;
 }
-.ng-modal .red:hover
-{
-	background:#ca0000;
+.ng-modal .red:hover {
+	background: #ca0000;
 	background-image: linear-gradient(#ca0000, #e10000);
-	text-decoration:none;
+	text-decoration: none;
 }
