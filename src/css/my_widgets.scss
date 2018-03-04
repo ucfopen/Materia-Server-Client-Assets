@@ -104,7 +104,7 @@
 		border-bottom: 1px solid #0276b9;
 
 		background: #83caf3; /* Old browsers */
-		background: linear-gradient(top,  #83caf3 16%,#37a9e6 89%);
+		background: linear-gradient( #83caf3 16%,#37a9e6 89%);
 	}
 
 	aside h1, .container .description h1 {
@@ -327,7 +327,7 @@
 
 	.page .controls .green {
 		background:#b2cd43;
-		background-image: linear-gradient(top, #d1e776, #a6c430);
+		background-image: linear-gradient(#d1e776, #a6c430);
 		border-color:#95a74e;
 		color:#4d5822;
 	}
@@ -340,7 +340,7 @@
 
 	.page .controls .green:hover {
 		background:#a2c129;
-		background-image: linear-gradient(top, #a6c430, #d1e776);
+		background-image: linear-gradient(#a6c430, #d1e776);
 		text-decoration:none;
 	}
 	.page .controls .circle_button .arrow_right.disabled:hover{
@@ -405,7 +405,7 @@
 	.page .controls div.delete_dialogue .red
 	{
 		background:#ca0000;
-		background-image: linear-gradient(top, #e10000, #ca0000);
+		background-image: linear-gradient(#e10000, #ca0000);
 		border-color:#747474;
 		color:#FFFFFF;
 	}
@@ -413,7 +413,7 @@
 	.page .controls div.delete_dialogue .red:hover
 	{
 		background:#ca0000;
-		background-image: linear-gradient(top, #ca0000, #e10000);
+		background-image: linear-gradient(#ca0000, #e10000);
 		text-decoration:none;
 	}
 
@@ -423,7 +423,7 @@
 	.page .scores .disabled:hover
 	{
 		background:#aeaeae;
-		background-image: linear-gradient(top, #e4e4e4, #b8b8b8);
+		background-image: linear-gradient(#e4e4e4, #b8b8b8);
 		border-color:#747474;
 		color:#545454;
 		cursor: default;
@@ -433,7 +433,7 @@
 	.page .controls div.delete_dialogue .gray:hover
 	{
 		background:#a2c129;
-		background-image: linear-gradient(top, #b8b8b8, #e4e4e4);
+		background-image: linear-gradient(#b8b8b8, #e4e4e4);
 		text-decoration:none;
 	}
 
@@ -885,7 +885,7 @@
 
 	.page .scores #export_scores_button.disabled {
 		background:#aeaeae;
-		background-image: linear-gradient(top, #e4e4e4, #b8b8b8);
+		background-image: linear-gradient(#e4e4e4, #b8b8b8);
 		border-color:#747474;
 		color:#545454;
 		opacity: 0.5;
@@ -1002,7 +1002,7 @@
 	text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
 
 	background:#ffba5d;
-	background-image: linear-gradient(top, #ffce8c, #ffa42a);
+	background-image: linear-gradient(#ffce8c, #ffa42a);
 
 	border-radius: 6px;
 	border:#fdb34f 1px solid;
@@ -1229,7 +1229,7 @@
 .ng-modal.csv_popup div.score_table p.download a.disabled
 {
 	background:#aeaeae;
-	background-image: linear-gradient(top, #e4e4e4, #b8b8b8);
+	background-image: linear-gradient(#e4e4e4, #b8b8b8);
 	border-color:#747474;
 	color:#545454;
 	opacity: 0.5;
@@ -1245,7 +1245,7 @@
 }
 .ng-modal.csv_popup p.download a.disabled:hover {
 	background:#ffba5d;
-	background-image: linear-gradient(top, #ffce8c, #ffa42a);
+	background-image: linear-gradient(#ffce8c, #ffa42a);
 	text-decoration: none;
 	cursor: default;
 }
