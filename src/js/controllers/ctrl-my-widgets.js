@@ -1,4 +1,7 @@
 const app = angular.module('materia')
+app.config(function($locationProvider) {
+	$locationProvider.hashPrefix('')
+})
 app.controller('MyWidgetsController', function(
 	Please,
 	$rootScope,

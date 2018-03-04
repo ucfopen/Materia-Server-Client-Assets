@@ -9,14 +9,16 @@ describe('scoreGraph Directive', function() {
 	let mock3 = jest.fn()
 
 	beforeEach(() => {
-		angular.module('materia').service('selectedWidgetSrv', () => ({ getScoreSummaries: mock2 }))
+		angular.module('materia').service('selectedWidgetSrv', function() {
+			return { getScoreSummaries: mock2 }
+		})
 
 		require('../materia-namespace')
 		require('./dir-scoregraph.js')
 
 		inject(function(_$compile_, _$rootScope_, _$timeout_) {
 			$compile = _$compile_
-			$rootScope = _$rootScope_.$new()
+			$rootScope = _$rootScope_
 			$timeout = _$timeout_
 		})
 
@@ -24,9 +26,8 @@ describe('scoreGraph Directive', function() {
 	})
 
 	it('is initialized on the element', function() {
-		let html = '<div score-graph id="chart_6" >text</div>'
-		let element = angular.element(html)
-		let compiled = $compile(element)($rootScope)
+		let html = '<div score-graph id="chart_6">text</div>'
+		let compiled = $compile('<div score-graph id="chart_6">text</div>')($rootScope)
 		$rootScope.$digest()
 
 		expect(mock1).toHaveBeenCalledTimes(1)
