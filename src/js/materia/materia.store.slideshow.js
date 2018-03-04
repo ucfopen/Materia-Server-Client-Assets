@@ -35,7 +35,6 @@ Namespace('Materia.Store').SlideShow = (() => {
 			span.dataset.index = i
 			if (i === 0) span.classList.add('spotlight_selected')
 			span.onclick = e => {
-				console.log('click', e.target)
 				if (e.target.classList.contains('spotlight_selected')) {
 					return false
 				}

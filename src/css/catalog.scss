@@ -40,67 +40,51 @@
 	z-index:80;
 }
 
-	.catalog aside .features dt {
-		font-family: 'Lato', arial, serif;
-		font-weight:bold;
-		font-size: 13px;
-		user-select: none;
-	}
-		.catalog aside .features dt input[type="checkbox"] {
-			width:20px;
-			margin:0 0 0 0;
-		}
-
-	.catalog aside p, .catalog aside .features dd {
-		font-size: 9px;
-		color: #3f3f3f;
+.catalog aside .features dt {
+	font-family: 'Lato', arial, serif;
+	font-weight:bold;
+	font-size: 13px;
+	user-select: none;
+}
+	.catalog aside .features dt input[type="checkbox"] {
+		width:20px;
+		margin:0 0 0 0;
 	}
 
-	.catalog aside p {
-		padding:0 17px 0 0;
-	}
+.catalog aside p, .catalog aside .features dd {
+	font-size: 9px;
+	color: #3f3f3f;
+}
 
-	.catalog aside .features dd {
-		margin:5px 0 10px 25px;
-		width: 175px;
-	}
-		.catalog aside .features dd p {
-			margin:0;
-		}
+.catalog aside ul.supported-data {
+	padding:0;
+	margin-top:0;
+}
 
-	.catalog aside ul.supported-data {
-		padding:0;
-		margin-top:0;
-	}
+.catalog aside ul.supported-data li {
+	list-style-type: none;
+	padding: 0;
+	font-family: 'Lato', arial, serif;
+	font-size: 13px;
+	font-weight: bold;
+	margin: 3px 0 0 0;
+	color: #000;
+	user-select: none;
+}
 
-	.catalog aside ul.supported-data li {
-		list-style-type: none;
-		padding: 0;
-		font-family: 'Lato', arial, serif;
-		font-size: 13px;
-		font-weight: bold;
-		margin: 3px 0 0 0;
-		color: #000;
-		user-select: none;
-	}
+.catalog aside h1, .catalog aside h2, .catalog aside h3 {
+	font-size: 17px;
+	font-family: 'Lato', arial, serif;
+	color: #000;
+	margin:0;
+	padding:10px 0 0 0;
+}
 
-	.catalog aside h1, .catalog aside h2, .catalog aside h3 {
-		font-size: 17px;
-		font-family: 'Lato', arial, serif;
-		color: #000;
-		margin:0;
-		padding:10px 0 0 0;
-	}
-
-	.catalog aside h2 {
-		margin:0;
-		padding:10px 0 10px 0;
-		font-size: 15px;
-	}
-
-	.catalog aside .program-department {
-		width:215px;
-	}
+.catalog aside h2 {
+	margin:0;
+	padding:10px 0 10px 0;
+	font-size: 15px;
+}
 
 .catalog section.page .top {
 	background: #eeeeee;
@@ -108,53 +92,15 @@
 	padding:0;
 	height: 37px;
 }
-	.catalog section.page .top .sortsearch {
-		font-size: 11px;
-		float:right;
-		height:100%;
-	}
-		.catalog section.page .top .sortsearch .search {
-			display:inline-block;
-			border: solid #fff;
-			border-width: 0 0 0 1px;
-			height:100%;
-		}
-			.catalog section.page .top .sortsearch .search input[type="text"] {
-				width: 124px;
-				margin:7px 10px 0 10px;
-				border: solid 1px #b0b0b0;
-				border-radius: 12px;
-				height: 19px;
-				background: #fff url('../../../img/magnifyingglass.png') 5px 50% no-repeat;
-				padding-left:23px;
-				padding-right: 10px;
-				outline: none;
-			}
 
-		.catalog section.page .top .sortsearch ul {
-			display:inline-block;
-			padding:0;
-			margin:0 8px 0  5px;
-		}
-			.catalog section.page .top .sortsearch ul li {
-				list-style-type:none;
-				display:inline;
-				margin:0 5px 0 0;
-				font-size: 12px;
-			}
-
-	.catalog section.page .top h1 {
-		margin:7px 0 0 15px;
-		font-size: 18px;
-		font-family: 'Lato', arial, serif;
-		font-weight:550;
-		text-shadow: 0 1px #fbfbfb;
-		float:left;
-	}
-
-	.catalog section.page p {
-		margin: 10px 15px 0 15px;
-	}
+.catalog section.page .top h1 {
+	margin:7px 0 0 15px;
+	font-size: 18px;
+	font-family: 'Lato', arial, serif;
+	font-weight:550;
+	text-shadow: 0 1px #fbfbfb;
+	float:left;
+}
 
 .catalog section.widget {
 	width: 356px;
@@ -188,64 +134,48 @@
 }
 
 
-	.catalog div.widgets {
-		overflow: hidden;
-		padding-top:10px;
-	}
-	.catalog section.widget h1 a {
-		color: #000000;
-	}
+.catalog div.widgets {
+	overflow: hidden;
+	padding-top:10px;
+}
+.catalog section.widget h1 a {
+	color: #000000;
+}
 
-	.catalog section.widget img {
-		width: 92px;
-		height: 92px;
-		margin:10px;
-		float:left;
-	}
+.catalog section.widget img {
+	width: 92px;
+	height: 92px;
+	margin:10px;
+	float:left;
+}
 
-	.catalog section.widget .header {
-		float:left;
-		max-width: 240px;
-	}
-		.catalog section.widget .header h1  {
-			display:block;
-		}
+.catalog section.widget .header {
+	float:left;
+	max-width: 240px;
+}
+.catalog section.widget .header h1  {
+	display:block;
+}
 
-		.catalog section.widget .header h1  {
-			font-size:10px;
-			margin:0;
-		}
+.catalog section.widget .header h1  {
+	font-size:10px;
+	margin:0;
+}
 
-		.catalog section.widget .header h1 {
-			font-size: 18px;
-			font-family: 'Lato-Black', arial, serif;
-			margin-top:9px;
-		}
-		.highlighted {
-			background: #FFF389;
-			color: #000000;
-		}
+.catalog section.widget .header h1 {
+	font-size: 18px;
+	font-family: 'Lato-Black', arial, serif;
+	margin-top:9px;
+}
 
-	.catalog section.widget ul {
-		float:left;
-		margin:0;
-		padding:0;
-		width:216px;
-	}
 
-	.catalog section.widget ul li {
-		margin:0;
-		padding:0;
-		list-style-type:none;
-	}
-
-	dl.inline_def {
-		width:235px;
-		max-height: 80px;
-		overflow-y: hidden;
-		margin:0;
-		line-height: 20px;
-	}
+dl.inline_def {
+	width:235px;
+	max-height: 80px;
+	overflow-y: hidden;
+	margin:0;
+	line-height: 20px;
+}
 
 .catalog .infocard {
 	position:absolute;
