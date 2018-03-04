@@ -8,9 +8,7 @@
 .store section.store_bottom section:first-child {
 	float: left;
 }
-/*.store section.store_bottom section:last-child {
-	float:right;
-}*/
+
 .store section.store_bottom section:nth-child(2) {
 	margin: 0 60px;
 }
@@ -54,4 +52,3 @@
 	font-weight:bold;
 	font-size:.8em;
 }
-
