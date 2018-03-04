@@ -1,4 +1,5 @@
 const app = angular.module('materia')
+app.requires.push('ngModal')
 app.config(function($locationProvider) {
 	$locationProvider.hashPrefix('')
 })
