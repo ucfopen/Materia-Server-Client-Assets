@@ -212,9 +212,7 @@ app.controller('playerCtrl', function(
 		$window.__materia_sendPendingLogs = _sendAllPendingLogs
 		$window.__materia_end = _end
 		$window.__materia_addLog = _addLog
-		const params = { menu: 'false', allowFullScreen: 'true', AllowScriptAccess: 'always' }
-		const attributes = { id: PLAYER.EMBED_TARGET }
-		const express = BASE_URL + 'assets/flash/expressInstall.swf'
+		const express = `${STATIC_CROSSDOMAIN}js/vendor/swfobject/expressInstall.swf`
 		let width = '100%'
 		let height = '100%'
 		const flashvars = {
@@ -222,6 +220,14 @@ app.controller('playerCtrl', function(
 			GIID: $scope.inst_id,
 			URL_WEB: BASE_URL,
 			URL_GET_ASSET: 'media/'
+		}
+		const params = {
+			menu: 'false',
+			allowFullScreen: 'true',
+			AllowScriptAccess: 'always'
+		}
+		const attributes = {
+			id: PLAYER.EMBED_TARGET
 		}
 
 		$scope.type = 'flash'
@@ -238,6 +244,7 @@ app.controller('playerCtrl', function(
 			params,
 			attributes
 		)
+		embedTargetEl = document.getElementById(PLAYER.EMBED_TARGET)
 	}
 
 	const _onPostMessage = e => {
