@@ -43,8 +43,13 @@ Namespace('Materia.Storage').Manager = (() => {
 	var getTable = tableId => {
 		tableId = clean(tableId)
 		// Search for the Table
-		let table = _tables.find(t => t.getId() === tableId)
-		if (table) return table
+		// can't use array.find here due to IE11
+		for (var i = _tables.length - 1; i >= 0; i--) {
+			let table = _tables[i]
+			if(table.getId() === tableId){
+				return table
+			}
+		}
 
 		throw new Error(`Data table '${tableId}' does not exist.`)
 		return null
@@ -57,7 +62,8 @@ Namespace('Materia.Storage').Manager = (() => {
 			.replace(/\s+$/g, '')
 			.replace(/\s/g, '_')
 
-		if (['userName', 'firstName', 'lastName', 'timestamp', 'playID'].includes(cleanName)) {
+		// cant use .contains due to IE11
+		if (['userName', 'firstName', 'lastName', 'timestamp', 'playID'].indexOf(cleanName) !== -1) {
 			throw new Error(`Column name "${name}" is a protected keyword`)
 		}
 
