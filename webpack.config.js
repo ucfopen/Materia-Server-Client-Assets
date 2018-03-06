@@ -22,10 +22,12 @@ module.exports = {
     // contains common libs used by other scripts
     // contains everything needed by all pages that don't require a login
     'js/materia.js':[
-      "core-js/library/es6/array",
-      "core-js/library/es6/promise",
-      "core-js/library/fn/object/assign",
-      "core-js/library/fn/string/includes",
+      "core-js/es6/array",
+      "core-js/es6/symbol",
+      "core-js/es6/promise",
+      "core-js/fn/object/assign",
+      "core-js/fn/string/includes",
+      "core-js/web/dom-collections",
       "whatwg-fetch",
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.coms.json.js',
