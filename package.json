@@ -10,7 +10,7 @@
     "build-dev": "webpack",
     "prettier:run": "prettier --write 'src/**/*.{js,scss}'",
     "prettier:debug": "prettier -l 'src/**/*.{js,scss}'",
-    "precommit": "lint-staged"
+    "precommit": "yarn test && lint-staged"
   },
   "prettier": {
     "printWidth": 100,
