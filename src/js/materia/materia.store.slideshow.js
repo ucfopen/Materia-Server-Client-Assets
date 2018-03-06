@@ -72,7 +72,7 @@ Namespace('Materia.Store').SlideShow = (() => {
 	// Cycles thorough the buttons to remove all selected clases, then adds the selected class to the button specified and checks that buttons input.
 	const spotlightSelected = index => {
 		// clear previously selected
-		let spans = document.querySelectorAll('.spotlight_selected')
+		let spans = Array.from(document.querySelectorAll('.spotlight_selected'))
 		spans.forEach(s => {
 			s.classList.remove('spotlight_selected')
 		})
