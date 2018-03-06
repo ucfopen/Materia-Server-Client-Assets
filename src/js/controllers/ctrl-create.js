@@ -184,22 +184,24 @@ app.controller('createCtrl', function(
 			creatorPath = WIDGET_URL + widget_info.dir + widget_info.creator
 		}
 
-		type = creatorPath.split('.').pop()
 		$scope.loaded = true
-		$scope.type = type
+		$scope.type = creatorPath.split('.').pop()
 		Please.$apply()
 
 		// the embed process will reolve this later
 		embedDonePromise = deferred
 
-		switch (type) {
-			case 'html':
-				embedHTML(creatorPath)
-				break
-			case 'swf':
-				embedFlash(creatorPath, widget_info.flash_version)
-				break
-		}
+		$timeout(() => {
+
+			switch (widgetType) {
+				case '.swf':
+					embedFlash(creatorPath, widget_info.flash_version)
+					break
+				case '.html':
+					embedHTML(creatorPath)
+					break
+			}
+		})
 
 		return deferred.promise
 	}
@@ -251,7 +253,7 @@ app.controller('createCtrl', function(
 			// setup variable to send to flash
 			const flashvars = {
 				URL_WEB: BASE_URL,
-				URL_GET_ASSET: `${BASE_URL}media/`,
+				URL_GET_ASSET: MEDIA_URL,
 				widget_id,
 				inst_id
 			}
@@ -261,9 +263,8 @@ app.controller('createCtrl', function(
 				allowFullScreen: 'true',
 				AllowScriptAccess: 'always'
 			}
-
 			const attributes = { id: EMBED_TARGET, wmode: 'opaque' }
-			const expressSwf = `${BASE_URL}assets/flash/expressInstall.swf`
+			const expressSwf = `${STATIC_CROSSDOMAIN}js/vendor/swfobject/expressInstall.swf`
 			let width = '100%'
 			let height = '100%'
 
