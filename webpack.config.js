@@ -23,6 +23,7 @@ module.exports = {
     // contains everything needed by all pages that don't require a login
     'js/materia.js':[
       "core-js/es6/array",
+      "core-js/fn/array/includes",
       "core-js/es6/symbol",
       "core-js/es6/promise",
       "core-js/fn/object/assign",
