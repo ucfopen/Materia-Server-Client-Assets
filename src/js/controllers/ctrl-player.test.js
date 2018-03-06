@@ -820,7 +820,7 @@ describe('playerCtrl', () => {
 			'100%',
 			'100%',
 			'10',
-			'https://test_base_url.com/assets/flash/expressInstall.swf',
+			'https://crossdomain.com/js/vendor/swfobject/expressInstall.swf',
 			{
 				GIID: 'bb8',
 				URL_GET_ASSET: 'media/',
