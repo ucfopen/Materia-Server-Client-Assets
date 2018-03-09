@@ -16,10 +16,12 @@ app.controller 'scorePageController', ($scope, widgetSrv, scoreSrv) ->
 	isPreview = false
 
 	_graphData = []
+	_graphIsDistribution = false
 
 	COMPARE_TEXT_CLOSE = "Close Graph"
 	COMPARE_TEXT_OPEN = "Compare With Class"
 	$scope.classRankText = COMPARE_TEXT_OPEN
+	$scope.percentile = 2
 
 	isPreview = /\/preview\//i.test(document.URL)
 
@@ -34,9 +36,10 @@ app.controller 'scorePageController', ($scope, widgetSrv, scoreSrv) ->
 	# We don't want users who click the 'View more details' link via an LTI to play again, since at that point
 	# the play will no longer be connected to the LTI details.
 	# This is a cheap way to hide the button:
-	hidePlayAgain = document.URL.indexOf('details=1') > -1
+	hidePlayAgain = (document.URL.indexOf('details=1') > -1)
 	single_id  = window.location.hash.split('single-')[1]
 	widget_id  = document.URL.match( /^[\.\w\/:]+\/([a-z0-9]+)/i )[1]
+	onDistribution = window.location.hash.indexOf("distribution") == 1
 
 	# this is only actually set to something when coming from the profile page
 	play_id    = window.location.hash.split('play-')[1]
@@ -57,6 +60,7 @@ app.controller 'scorePageController', ($scope, widgetSrv, scoreSrv) ->
 
 	$scope.isPreview = isPreview
 	$scope.isEmbedded = isEmbedded
+	$scope.distributionOnly = onDistribution
 
 	displayScoreData = (inst_id, play_id) ->
 		widgetSrv.getWidget(inst_id)
@@ -111,6 +115,14 @@ app.controller 'scorePageController', ($scope, widgetSrv, scoreSrv) ->
 		$scope.$apply()
 
 	getScoreDetails = ->
+		if $scope.distributionOnly
+			$scope.toggleClassRankGraph(true)
+		else if $scope.graphShown
+			$scope.toggleClassRankGraph()
+
+		if $scope.restricted
+			return $scope.$apply()
+
 		if isPreview
 			currentAttempt = 1
 			scoreSrv.getWidgetInstancePlayScores null, widgetInstance.id, displayDetails
@@ -119,7 +131,7 @@ app.controller 'scorePageController', ($scope, widgetSrv, scoreSrv) ->
 		else
 			# get the current attempt from the url
 			hash = getAttemptNumberFromHash()
-			return if currentAttempt == hash
+			return $scope.$apply() if currentAttempt == hash
 			currentAttempt = hash
 			play_id = $scope.attempts[$scope.attempts.length - currentAttempt]['id']
 
@@ -207,98 +219,168 @@ app.controller 'scorePageController', ($scope, widgetSrv, scoreSrv) ->
 					getScoreDetails()
 
 	# Uses jPlot to create the bargraph
-	$scope.toggleClassRankGraph = ->
+	$scope.toggleClassRankGraph = (distribution = false) ->
 		# toggle button text
-		if $scope.graphShown
+		if $scope.graphShown && ! distribution
 			$scope.classRankText = COMPARE_TEXT_OPEN
 			$scope.graphShown = false
+			$('section.score-graph').slideUp()
 		else
 			$scope.graphShown = true
 			$scope.classRankText = COMPARE_TEXT_CLOSE
-
-		# toggle graph visibility
-		$('section.score-graph').slideToggle()
+			$('section.score-graph').slideDown()
 
 		# return if graph already built
-		return if _graphData.length > 0
+		return if _graphData.length > 0 && _graphIsDistribution == distribution
 
-		# return if preview
 		return if isPreview
 
-		# Dynamically load jqplot libraries at run time
-		jqplotBase = '//cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.0/'
-		$LAB.script("#{jqplotBase}jquery.jqplot.min.js")
-		.wait()
-		.script("#{jqplotBase}plugins/jqplot.barRenderer.min.js")
-		.script("#{jqplotBase}plugins/jqplot.canvasTextRenderer.min.js")
-		.script("#{jqplotBase}plugins/jqplot.canvasAxisTickRenderer.min.js")
-		.script("#{jqplotBase}plugins/jqplot.categoryAxisRenderer.min.js")
-		.script("#{jqplotBase}plugins/jqplot.cursor.min.js")
-		.script("#{jqplotBase}plugins/jqplot.highlighter.min.js")
-		.wait ->
+		if (distribution)
+			jqplotBase = '//cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.0/'
+			$LAB.script("#{jqplotBase}jquery.jqplot.min.js")
+			.wait()
+			.script("#{jqplotBase}plugins/jqplot.barRenderer.min.js")
+			.script("#{jqplotBase}plugins/jqplot.canvasTextRenderer.min.js")
+			.script("#{jqplotBase}plugins/jqplot.canvasAxisTickRenderer.min.js")
+			.script("#{jqplotBase}plugins/jqplot.categoryAxisRenderer.min.js")
+			.script("#{jqplotBase}plugins/jqplot.cursor.min.js")
+			.script("#{jqplotBase}plugins/jqplot.highlighter.min.js")
+			.wait ->
+				# ========== BUILD THE GRAPH =============
+				Materia.Coms.Json.send 'score_distribution_get', [widgetInstance.id], (data) ->
+					console.log data
+					if ! data?.scores? || ! data.user_score?
+						$scope.restricted = true
+						$scope.distributionOnly = false
+						$scope.$apply()
+						return _graphIsDistribution = distribution
+					_graphData = data.scores
+					graphColors = Array(_graphData.length);
+					graphColors.fill("#1e91e1")
 
-			# ========== BUILD THE GRAPH =============
-			Materia.Coms.Json.send 'score_summary_get', [widgetInstance.id], (data) ->
+					highlightIndex = _graphData.indexOf(data.user_score);
+					graphColors[highlightIndex] = "#000" if highlightIndex > -1
+					console.log highlightIndex
+					console.log graphColors
 
-				# add up all semesters data into one dataset
-				_graphData = [
-					['0-9%',    0],
-					['10-19%',  0],
-					['20-29%',  0],
-					['30-39%',  0],
-					['40-49%',  0],
-					['50-59%',  0],
-					['60-69%',  0],
-					['70-79%',  0],
-					['80-89%',  0],
-					['90-100%', 0]
-				]
-
-				for d in data
-					for bracket, n in _graphData
-						bracket[1] += d.distribution[n]
-
-				# setup options
-				jqOptions =
-					animate: true,
-					animateReplot: true,
-					series: [
-							renderer:$.jqplot.BarRenderer,
-							shadow: false,
-							color: '#1e91e1',
+					jqOptions =
+						animate: true,
+						animateReplot: true,
+						series: [
+								renderer:$.jqplot.BarRenderer,
+								shadow: true,
+								color: '#1e91e1',
+								rendererOptions:
+									animation:
+										speed: 500
+						]
+						seriesColors: graphColors,
+						seriesDefaults:
+							showMarker: false
 							rendererOptions:
-								animation:
-									speed: 500
-					]
-					seriesDefaults:
-						showMarker:false,
-						pointLabels:
-							show: true,
-							formatString:'%.0f',
-							color: '#000'
-					title:
-						text: "Compare Your Score With Everyone Else's",
-						fontFamily: 'Lato, Lucida Grande, Arial, sans'
-					axesDefaults:
-						tickRenderer: $.jqplot.CanvasAxisTickRenderer,
-						tickOptions:
-							angle: 0,
-							fontSize: '8pt',
-							color: '#000'
-					axes:
-						xaxis:
-							renderer: $.jqplot.CategoryAxisRenderer,
-							label:'Score Percent'
-						yaxis:
-							tickOptions:{formatString:'%.1f', angle: 45},
-							label:'Number of Scores',
-							labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-							color: '#000'
-					cursor: {show: false},
-					grid:{shadow: false}
+								varyBarColor: true,
+								barMargin: 0
+						title:
+							text: "Score Distribution",
+							fontFamily: 'Lato, Lucida Grande, Arial, sans'
+						axesDefaults:
+							tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+							tickOptions:
+								angle: 0,
+								fontSize: '8pt',
+								color: '#000'
+						axes:
+							xaxis:
+								renderer: $.jqplot.CategoryAxisRenderer,
+							yaxis:
+								tickOptions:{formatString:'%.1f', angle: 45},
+								label:'Score Percent',
+								labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+								color: '#000'
+						cursor: {show: false},
+						grid:{shadow: false}
 
-				# light the fuse
-				$.jqplot('graph', [_graphData], jqOptions)
+					# light the fuse
+					$.jqplot('graph', [_graphData], jqOptions)
+
+
+		else
+			# Dynamically load jqplot libraries at run time
+			jqplotBase = '//cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.0/'
+			$LAB.script("#{jqplotBase}jquery.jqplot.min.js")
+			.wait()
+			.script("#{jqplotBase}plugins/jqplot.barRenderer.min.js")
+			.script("#{jqplotBase}plugins/jqplot.canvasTextRenderer.min.js")
+			.script("#{jqplotBase}plugins/jqplot.canvasAxisTickRenderer.min.js")
+			.script("#{jqplotBase}plugins/jqplot.categoryAxisRenderer.min.js")
+			.script("#{jqplotBase}plugins/jqplot.cursor.min.js")
+			.script("#{jqplotBase}plugins/jqplot.highlighter.min.js")
+			.wait ->
+
+				# ========== BUILD THE GRAPH =============
+				Materia.Coms.Json.send 'score_summary_get', [widgetInstance.id], (data) ->
+
+					# add up all semesters data into one dataset
+					_graphData = [
+						['0-9%',    0],
+						['10-19%',  0],
+						['20-29%',  0],
+						['30-39%',  0],
+						['40-49%',  0],
+						['50-59%',  0],
+						['60-69%',  0],
+						['70-79%',  0],
+						['80-89%',  0],
+						['90-100%', 0]
+					]
+
+					for d in data
+						for bracket, n in _graphData
+							bracket[1] += d.distribution[n]
+
+					# setup options
+					jqOptions =
+						animate: true,
+						animateReplot: true,
+						series: [
+								renderer:$.jqplot.BarRenderer,
+								shadow: false,
+								color: '#1e91e1',
+								rendererOptions:
+									animation:
+										speed: 500
+						]
+						seriesDefaults:
+							showMarker:false,
+							pointLabels:
+								show: true,
+								formatString:'%.0f',
+								color: '#000'
+						title:
+							text: "Compare Your Score With Everyone Else's",
+							fontFamily: 'Lato, Lucida Grande, Arial, sans'
+						axesDefaults:
+							tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+							tickOptions:
+								angle: 0,
+								fontSize: '8pt',
+								color: '#000'
+						axes:
+							xaxis:
+								renderer: $.jqplot.CategoryAxisRenderer,
+								label:'Score Percent'
+							yaxis:
+								tickOptions:{formatString:'%.1f', angle: 45},
+								label:'Number of Scores',
+								labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+								color: '#000'
+						cursor: {show: false},
+						grid:{shadow: false}
+
+					# light the fuse
+					$.jqplot('graph', [_graphData], jqOptions)
+
+		_graphIsDistribution = distribution
 
 	displayDetails = (results) ->
 		$scope.show = true
@@ -375,6 +457,19 @@ app.controller 'scorePageController', ($scope, widgetSrv, scoreSrv) ->
 		hashStr = window.location.hash.split('-')[1]
 		return hashStr if hashStr? and ! isNaN(hashStr)
 		$scope.attempts.length
+
+	$scope.getSuffix = ->
+		return "" if ! $scope.percentile
+
+		switch ($scope.percentile % 10)
+			when 1
+				return "st"
+			when 2
+				return "nd"
+			when 3
+				return "rd"
+			else
+				return "th"
 
 	# this was originally called in document.ready, but there's no reason to not put it in init
 	displayScoreData widget_id, play_id
