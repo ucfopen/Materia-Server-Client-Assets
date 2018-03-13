@@ -21,6 +21,11 @@ app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
 	widget_info   = null
 	widgetType    = null
 
+	requestFullScreen = null
+	cancelFullScreen = null
+	$scope.allowFullscreen = false
+	$scope.inFullScreen = false
+
 	# get the instance_id from the url if needed
 	inst_id = window.location.hash.substr(1) if window.location.hash
 	widget_id = window.location.href.match(/widgets\/([\d]+)/)[1]
@@ -144,6 +149,29 @@ app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
 	getMyWidgetsUrl = (instid) ->
 		"#{BASE_URL}my-widgets##{instid}"
 
+	setFullscreenCalls = ->
+		doc = window.document
+		docEl = doc.documentElement
+
+		requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen
+		cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen
+
+	$scope.goFullScreen = () ->
+		unless requestFullScreen or cancelFullScreen then return
+
+		container = document.getElementById 'container'
+		requestFullScreen.call container
+
+		# TODO events need to be added for different browser prefixes:
+		# mozfullscreenchange
+		# fullscreenchange
+		# MSFullscreenChange
+		container.addEventListener 'webkitfullscreenchange', ->
+			$scope.$apply ->
+				$scope.inFullScreen = !$scope.inFullScreen
+				
+		return false
+
 	# Embeds the creator
 	embed = (widgetData) ->
 		if widgetData?[0].widget
@@ -151,8 +179,13 @@ app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
 			widget_info = instance.widget
 		else
 			widget_info = widgetData[0]
-
+		
 		$scope.nonEditable = widget_info.is_editable == "0"
+
+		for feature in widget_info.meta_data.features
+			if feature.toLowerCase() is "fullscreen"
+					$scope.allowFullScreen = true
+					setFullscreenCalls()
 
 		dfd = $.Deferred()
 		widgetType = widget_info.creator.slice widget_info.creator.lastIndexOf('.')

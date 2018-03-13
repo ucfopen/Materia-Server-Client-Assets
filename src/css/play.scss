@@ -123,6 +123,42 @@ section.widget.preview {
 	display: block;
 }
 
+.fullscreen-prompt {
+	position: relative;
+	top: 10px;
+	margin: 0 auto;
+	padding: 15px 10px;
+
+	border-radius: 6px;
+
+	background: #E5E5E5;
+	font-size: 0.8em;
+
+	box-shadow:0px 0px 14px 0px #A9A9A9;
+
+	h3 {
+		display: inline-block;
+	}
+
+	button.fullscreen-toggle {
+		position: relative;
+		float: right;
+
+		margin-right: 15px;
+		margin-bottom: 15px;
+
+		padding: 10px;
+		font-family: 'Lato', arial, serif;
+		font-size: 1.2em;
+		background: #ffffff;
+		// background: #b2cd43;
+		color: #000000;
+		border-radius: 3px;
+	}
+}
+
+
+
 /* *************************************************************** */
 /*        Validation Error Popup                                                                */
 /* *************************************************************** */

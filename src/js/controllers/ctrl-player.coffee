@@ -42,6 +42,13 @@ app.controller 'playerCtrl', ($scope, $sce, $timeout, widgetSrv, userServ, PLAYE
 	# Controls whether or not the widget iframe will allow fullscreen behavior (disabled by default)
 	$scope.allowFullScreen = false
 
+	$scope.widgetWidth = 800
+	$scope.widgetHeight = 600
+
+	# callbacks to request or cancel fullscreen mode, currently messy due to vendor prefixes
+	requestFullScreen = null
+	cancelFullScreen = null
+
 	for word in checkForContext
 		if word == 'preview'
 			$scope.isPreview = true
@@ -215,14 +222,18 @@ app.controller 'playerCtrl', ($scope, $sce, $timeout, widgetSrv, userServ, PLAYE
 			# Fullscreen flag set as an optional parameter in widget install.yaml; have to dig into instance widget's meta_data object to find it
 			# can't use array.includes() since it's necessary to ensure comparison is case insensitive
 			for feature in instance.widget.meta_data.features
-				if feature.toLowerCase() is "fullscreen" then $scope.allowFullScreen = true
+				if feature.toLowerCase() is "fullscreen"
+					$scope.allowFullScreen = true
+					setFullscreenCalls()
 
 			if type == 'swf' && swfobject.hasFlashPlayerVersion(String(version)) == false
 				$scope.type = "noflash"
 				dfd.reject 'Newer Flash Player version required.'
 			else
-				$('.center').width instance.widget.width if instance.widget.width > 0
-				$('.center').height instance.widget.height if instance.widget.height > 0
+				$scope.widgetWidth = instance.widget.width if instance.widget.width > 0
+				$scope.widgetHeight = instance.widget.height if instance.widget.height > 0
+				# $('.center').width instance.widget.width if instance.widget.width > 0
+				# $('.center').height instance.widget.height if instance.widget.height > 0
 				dfd.resolve()
 
 			$('.widget').show()
@@ -392,6 +403,20 @@ app.controller 'playerCtrl', ($scope, $sce, $timeout, widgetSrv, userServ, PLAYE
 			$scope.alert.msg = msg
 			$scope.alert.title = title if title isnt null
 			$scope.alert.fatal = fatal
+
+	setFullscreenCalls = ->
+		doc = window.document
+		docEl = doc.documentElement
+
+		requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen
+		cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen
+	
+	$scope.goFullScreen = () ->
+		unless requestFullScreen or cancelFullScreen then return
+
+		container = document.getElementById 'container'
+		requestFullScreen.call container
+		return false
 
 	$timeout ->
 		$.when(getWidgetInstance(), startPlaySession())
