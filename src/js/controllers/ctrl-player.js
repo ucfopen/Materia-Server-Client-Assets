@@ -47,6 +47,9 @@ app.controller('playerCtrl', function(
 	// dom element where the widget is embedded
 	let embedTargetEl
 
+	let requestFullScreen = null
+	let cancelFullScreen = null
+
 	const _alert = (msg, title = '', fatal = false) => {
 		$scope.alert.msg = msg
 		$scope.alert.title = title
@@ -319,6 +322,7 @@ app.controller('playerCtrl', function(
 			// can't use array.includes() since it's necessary to ensure comparison is case insensitive
 			let fullscreen = inst.widget.meta_data.features.find(f => f.toLowerCase() === 'fullscreen')
 			$scope.allowFullScreen = fullscreen != undefined
+			if (fullscreen) setFullscreenCalls()
 
 			if (type === 'swf' && swfobject.hasFlashPlayerVersion(String(version)) === false) {
 				$scope.type = 'noflash'
@@ -328,10 +332,12 @@ app.controller('playerCtrl', function(
 
 				if (instance.widget.width > 0) {
 					// @TODO, just use scope
-					el.style.width = `${instance.widget.width}px`
+					// el.style.width = `${instance.widget.width}px`
+					$scope.widgetWidth = `${instance.widget.width}px`
 				}
 				if (instance.widget.height > 0) {
-					el.style.height = `${instance.widget.height}px`
+					// el.style.height = `${instance.widget.height}px`
+					$scope.widgetHeight = `${instance.widget.height}px`
 				}
 				deferred.resolve()
 			}
@@ -562,6 +568,24 @@ app.controller('playerCtrl', function(
 	$scope.isPreview = String($location.absUrl()).includes('preview')
 	// Whether or not to show the embed view
 	$scope.isEmbedded = top !== self
+
+	$scope.widgetWidth = 800
+	$scope.widgetHeight = 600
+
+	const setFullscreenCalls = () => {
+		let doc = window.document
+		let docEl = doc.documentElement
+
+		requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen
+		cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen	
+	}
+
+	$scope.goFullScreen = () => {
+		if (!requestFullScreen || !cancelFullScreen) return
+
+		let container = document.getElementById('container')
+		requestFullScreen.call(container)
+	}
 
 	$window.onbeforeunload = _beforeUnload
 

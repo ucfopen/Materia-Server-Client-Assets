@@ -29,6 +29,11 @@ app.controller('createCtrl', function(
 	let widget_info = null
 	let widgetType = null
 
+	let requestFullScreen = null
+	let cancelFullScreen = null
+	$scope.allowFullscreen = false
+	$scope.inFullScreen = false
+
 	const _requestSave = mode => {
 		// hide dialogs
 		$scope.popup = ''
@@ -160,6 +165,30 @@ app.controller('createCtrl', function(
 	// build a my-widgets url to a specific widget
 	const getMyWidgetsUrl = instid => `${BASE_URL}my-widgets#${instid}`
 
+	const setFullscreenCalls = () => {
+		let doc = window.document
+		let docEl = doc.documentElement
+
+		requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen
+		cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen	
+	}
+
+	$scope.goFullScreen = () => {
+		if (!requestFullScreen || !cancelFullScreen) return
+
+		let container = document.getElementById('container')
+		requestFullScreen.call(container)
+
+		// TODO events need to be added for different browser prefixes:
+		// mozfullscreenchange
+		// fullscreenchange
+		// MSFullscreenChange
+		container.addEventListener('webkitfullscreenchange', () => {
+			$scope.inFullScreen = !$scope.inFullScreen
+			Please.$apply()
+		})
+	}
+
 	// Embeds the creator
 	const embed = widgetData => {
 		const deferred = $q.defer()
@@ -173,6 +202,13 @@ app.controller('createCtrl', function(
 		}
 
 		$scope.nonEditable = widget_info.is_editable === '0'
+
+		for (feature in widget_info.meta_data.features) {
+			if (feature.toLowerCase() == "fullscreen") {
+				$scope.allowFullScreen = true
+				setFullscreenCalls()
+			}
+		}
 
 		widgetType = widget_info.creator.slice(widget_info.creator.lastIndexOf('.'))
 
