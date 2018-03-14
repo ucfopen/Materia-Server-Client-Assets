@@ -31,8 +31,6 @@ app.controller('createCtrl', function(
 
 	let requestFullScreen = null
 	let cancelFullScreen = null
-	$scope.allowFullscreen = false
-	$scope.inFullScreen = false
 
 	const _requestSave = mode => {
 		// hide dialogs
@@ -203,12 +201,9 @@ app.controller('createCtrl', function(
 
 		$scope.nonEditable = widget_info.is_editable === '0'
 
-		for (feature in widget_info.meta_data.features) {
-			if (feature.toLowerCase() == "fullscreen") {
-				$scope.allowFullScreen = true
-				setFullscreenCalls()
-			}
-		}
+		let fullscreen = widget_info.meta_data.features.find(f => f.toLowerCase() === 'fullscreen')
+			$scope.allowFullScreen = fullscreen != undefined
+			if (fullscreen) setFullscreenCalls()
 
 		widgetType = widget_info.creator.slice(widget_info.creator.lastIndexOf('.'))
 
@@ -546,6 +541,8 @@ ${msg.toLowerCase()}`,
 	$scope.onPublishPressed = _onPublishPressed
 	$scope.cancelPublish = _cancelPublish
 	$scope.cancelPreview = _cancelPreview
+	$scope.allowFullscreen = false
+	$scope.inFullScreen = false
 
 	// initialize
 

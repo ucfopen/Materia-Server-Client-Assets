@@ -333,11 +333,11 @@ app.controller('playerCtrl', function(
 				if (instance.widget.width > 0) {
 					// @TODO, just use scope
 					// el.style.width = `${instance.widget.width}px`
-					$scope.widgetWidth = `${instance.widget.width}px`
+					$scope.widgetWidth = `${instance.widget.width}`
 				}
 				if (instance.widget.height > 0) {
 					// el.style.height = `${instance.widget.height}px`
-					$scope.widgetHeight = `${instance.widget.height}px`
+					$scope.widgetHeight = `${instance.widget.height}`
 				}
 				deferred.resolve()
 			}
