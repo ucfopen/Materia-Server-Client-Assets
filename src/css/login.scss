@@ -2,29 +2,29 @@
 	cursor: text;
 }
 
-.login section.page, .login aside {
+.login section.page,
+.login aside {
 	background: #fff;
 }
 
 .login .container {
-	margin:15px auto 0px auto;
+	margin: 15px auto 0px auto;
 	width: 640px;
-	position:relative;
+	position: relative;
 }
 
-.login section.page, .login aside{
-	border:rgba(0,0,0,0.11) 1px solid;
-	-moz-box-shadow: 1px 3px 10px #888;
-	-webkit-box-shadow: 1px 3px 10px #888;
+.login section.page,
+.login aside {
+	border: rgba(0, 0, 0, 0.11) 1px solid;
 	box-shadow: 1px 3px 10px #888;
 }
 
 .login section.page {
-	width:600px;
-	margin:0 auto;
-	top:0;
-	right:0;
-	z-index:100;
+	width: 600px;
+	margin: 0 auto;
+	top: 0;
+	right: 0;
+	z-index: 100;
 	padding: 30px 10px;
 }
 
@@ -55,9 +55,8 @@
 	margin-top: 55px;
 }
 
-.login .container.widget.preview section.page:before
-{
-	content: "Previewing";
+.login .container.widget.preview section.page:before {
+	content: 'Previewing';
 	background: #b944cc;
 
 	position: absolute;
@@ -67,97 +66,93 @@
 	height: 20px;
 	padding: 8px 0 12px 0;
 
-	font-family: "Lato", "Arial", sans-serif;
+	font-family: 'Lato', 'Arial', sans-serif;
 	font-size: 20px;
 	font-weight: 900;
-	color: #FFFFFF;
+	color: #ffffff;
 	text-align: center;
 	vertical-align: middle;
 
 	border-radius: 5px 5px 0 0;
-	-moz-border-radius: 5px 5px 0 0;
-	-webkit-border-radius: 5px 5px 0 0;
-	-khtml-border-radius: 5px 5px 0 0;
 }
 
 .login .availability_message {
 	padding: 1em 70px;
 }
 
-.login div.detail, div.detail {
+.login div.detail,
+div.detail {
 	text-align: center;
-	clear:both;
+	clear: both;
 }
 
 div.detail.icon-offset {
 	margin-left: 110px;
 }
 
-.login .container.widget div.detail h3, .login .container.widget div.detail h3 {
+.login .container.widget div.detail h3,
+.login .container.widget div.detail h3 {
 	margin-top: 3px;
 }
 
 .login .form-content ul {
-	margin:0;
-	position:relative;
-	width:500px;
-	margin:0 auto;
-	margin-top:30px;
-	padding:0;
+	margin: 0;
+	position: relative;
+	width: 500px;
+	margin: 0 auto;
+	margin-top: 30px;
+	padding: 0;
 }
 
 .login .form-content ul li {
-	position:relative;
-	list-style-type:none;
-	display:block;
+	position: relative;
+	list-style-type: none;
+	display: block;
 	height: 46px;
-	width:350px;
-	margin:0 auto;
-	margin-top:13px;
+	width: 350px;
+	margin: 0 auto;
+	margin-top: 13px;
 }
 
 .login .form-content ul li.submit_button {
-	text-align:center;
+	text-align: center;
 }
 
 .login .form-content ul li label,
-.login .form-content ul li input[type="text"],
-.login .form-content ul li input[type="password"] {
-	position:absolute;
-	top:0;
-	left:0;
-	display:block;
-	width:300px;
+.login .form-content ul li input[type='text'],
+.login .form-content ul li input[type='password'] {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: block;
+	width: 300px;
 	font-size: 17px;
 }
 
 .login .form-content ul li label {
 	z-index: 1000;
-	height:27px;
-	margin-top:13px;
+	height: 27px;
+	margin-top: 13px;
 	margin-left: 14px;
 }
-.login .form-content ul li input[type="text"],
-.login .form-content ul li input[type="password"] {
+.login .form-content ul li input[type='text'],
+.login .form-content ul li input[type='password'] {
 	z-index: 500;
 	height: 40px;
 	padding-left: 12px;
 	padding-right: 12px;
-	width:326px;
+	width: 326px;
 	border: solid 1px #abadb3;
 	background: #fff;
-/*-moz-box-shadow: 1px 2px 4px #888;
--webkit-box-shadow: 1px 2px 4px #888;
-box-shadow: 1px 2px 4px #888;*/
 }
 
 .login ul.help_links {
-	text-align:center;
-	padding:0;
+	text-align: center;
+	padding: 0;
 }
 
 .login ul.help_links li {
-	display:inline;
+	display: inline;
 }
 
 .login ul.help_links li a {
@@ -165,16 +160,12 @@ box-shadow: 1px 2px 4px #888;*/
 }
 
 .login ul.help_links li:after {
-	content: "|";
+	content: '|';
 }
 
 .login ul.help_links li:last-child:after {
-	content: "";
+	content: '';
 }
-
-/*.login .notice {
-       width:618px;
-}*/
 
 .login .error {
 	margin: -5px 0 -10px 0;
@@ -183,7 +174,7 @@ box-shadow: 1px 2px 4px #888;*/
 .login .error p {
 	background: #ffcfcf;
 	color: red;
-	font-family: "Lato";
+	font-family: 'Lato';
 	font-weight: 600;
 	font-size: 17px;
 	padding: 6px 10px;
@@ -212,11 +203,10 @@ box-shadow: 1px 2px 4px #888;*/
 	display: block;
 }
 
-
 .login .widget_icon {
-	position:absolute;
-	top:25px;
-	left:-25px;
+	position: absolute;
+	top: 25px;
+	left: -25px;
 	background: #0093e7;
 	width: 115px;
 	height: inherit;
@@ -225,12 +215,7 @@ box-shadow: 1px 2px 4px #888;*/
 	color: #fff;
 	font-size: 10px;
 	line-height: 13px;
-
-
- 	-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.40);
-    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.40);
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.40);
-
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.4);
 }
 
 .login .widget_icon img {
@@ -240,13 +225,11 @@ box-shadow: 1px 2px 4px #888;*/
 	height: 100px;
 }
 
-.login .widget_info  li.widget_tag {
+.login .widget_info li.widget_tag {
 	background: #f2f0d0;
 	color: #48483e;
 	border-radius: 3px;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	text-transform:uppercase;
+	text-transform: uppercase;
 	padding: 2px 6px;
 	font-size: 12px;
 	display: inline-block;
@@ -254,7 +237,7 @@ box-shadow: 1px 2px 4px #888;*/
 	margin-right: 3px;
 }
 
-.login .widget_info  li.widget_availability {
+.login .widget_info li.widget_availability {
 	font-size: 13px;
 	display: inline-block;
 	padding: 0;
@@ -262,30 +245,29 @@ box-shadow: 1px 2px 4px #888;*/
 	padding-bottom: 15px;
 }
 
-.login .widget_info  li.widget_availability .available_date,
-.login .widget_info  li.widget_availability .available_time {
+.login .widget_info li.widget_availability .available_date,
+.login .widget_info li.widget_availability .available_time {
 	font-weight: 100;
 }
 
-.login .widget_info  li.widget_name {
+.login .widget_info li.widget_name {
 	font-family: 'Lato', arial, serif;
 	font-weight: 700;
 	font-size: 38px;
-	border-bottom: dotted
-	black 1px;
+	border-bottom: dotted black 1px;
 	margin: 0;
 	padding: 0 0 5px 0;
 	margin-bottom: 10px;
 	line-height: 37px;
 }
 
-.login .widget_type	 {
+.login .widget_type {
 	font-size: 12px;
-	text-transform:uppercase;
+	text-transform: uppercase;
 	color: #b2b2b2;
 	display: block;
 }
 
 .login .server_date {
-	display:none;
+	display: none;
 }
