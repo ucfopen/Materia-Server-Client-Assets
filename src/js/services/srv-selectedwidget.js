@@ -160,7 +160,7 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 				deferred.resolve(_storageData)
 			})
 		} else {
-			deferred.reject()
+			deferred.resolve()
 		}
 
 		return deferred.promise
