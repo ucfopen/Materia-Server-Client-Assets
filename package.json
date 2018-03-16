@@ -1,22 +1,66 @@
 {
   "name": "materia-client-assets",
-  "version": "0.2.2-alpha1",
+  "version": "0.3.1",
   "author": "University of Central Florida, Center for Distributed Learning",
   "homepage": "https://ucfopen.github.io/Materia-Docs",
   "scripts": {
+    "test": "jest --verbose",
     "build": "webpack -p",
     "build-watch": "webpack --watch",
-    "build-dev": "webpack"
+    "build-dev": "webpack",
+    "prettier:run": "prettier --write 'src/**/*.{js,scss}'",
+    "prettier:debug": "prettier -l 'src/**/*.{js,scss}'",
+    "precommit": "yarn test && lint-staged"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "semi": false,
+    "useTabs": true,
+    "singleQuote": true
+  },
+  "lint-staged": {
+    "src/**/*.{js,scss}": [
+      "yarn prettier --write --",
+      "git add"
+    ]
+  },
+  "jest": {
+    "testURL": "http://localhost",
+    "setupTestFrameworkScriptFile": "./testSetup.js",
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": -10
+      }
+    }
   },
   "dependencies": {
-    "coffee-loader": "^0.7.3",
-    "coffee-script": "^1.9.1",
+    "angular": "1.6.9",
+    "angular-mocks": "1.6.9",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-angularjs-annotate": "^0.8.2",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
     "css-loader": "^0.28.4",
     "extract-text-webpack-plugin": "^3.0.0",
-    "ng-annotate-loader": "^0.6.1",
+    "husky": "^0.14.3",
+    "jest": "^22.3.0",
+    "lint-staged": "^7.0.0",
+    "ngmodal": "ucfcdl/ngModal#v1.2.2",
     "node-sass": "^4.5.3",
+    "npm": "^5.7.1",
+    "prettier": "^1.11.1",
     "sass-loader": "^6.0.6",
-    "style-loader": "^0.18.2",
-    "webpack": "^3.3.0"
+    "style-loader": "^0.20.2",
+    "webpack": "^3.11.0",
+    "webpack-strip-block": "^0.2.0",
+    "whatwg-fetch": "^2.0.3"
   }
 }

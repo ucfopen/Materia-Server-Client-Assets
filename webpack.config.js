@@ -18,132 +18,129 @@ glob.sync(path.join(cssPath, '*.scss')).forEach(function(file){
 module.exports = {
   stats: {children: false}, // reduce noising webpack print output
   entry: Object.assign(css, {
-    'js/student.js': [
-      jsPath+'/materia-constants.coffee',
-      jsPath+'/materia-namespace.coffee',
-      jsPath+'/services/srv-user.coffee',
-      jsPath+'/services/srv-api.coffee',
-      jsPath+'/services/srv-datetime.coffee',
-      jsPath+'/services/srv-widget.coffee',
-      jsPath+'/services/srv-selectedwidget.coffee',
-      jsPath+'/services/srv-scores.coffee',
-      jsPath+'/controllers/ctrl-current-user.coffee',
-      jsPath+'/controllers/ctrl-notification.coffee',
-      jsPath+'/controllers/ctrl-login.coffee',
-      jsPath+'/controllers/ctrl-profile.coffee',
-      jsPath+'/controllers/ctrl-scores.coffee',
-      jsPath+'/controllers/ctrl-settings.coffee',
-      jsPath+'/controllers/ctrl-help.coffee',
-      jsPath+'/controllers/ctrl-player.coffee',
-      jsPath+'/directives/dir-beardable.coffee',
-      jsPath+'/directives/dir-datatable.coffee',
-      jsPath+'/directives/dir-date-validation.coffee',
-      jsPath+'/directives/dir-fancybox.coffee',
-      jsPath+'/directives/dir-ngenter.coffee',
-      jsPath+'/directives/dir-scoredata.coffee',
-      jsPath+'/directives/dir-scoregraph.coffee',
-      jsPath+'/directives/dir-scoretable.coffee',
-      jsPath+'/directives/dir-selecteddisplay.coffee',
-    ],
-    'js/author.js': [
-      jsPath+'/materia-constants.coffee',
-      jsPath+'/materia-namespace.coffee',
-      jsPath+'/filters/filter-escape.coffee',
-      jsPath+'/filters/filter-highlight.coffee',
-      jsPath+'/services/srv-api.coffee',
-      jsPath+'/services/srv-beard.coffee',
-      jsPath+'/services/srv-datetime.coffee',
-      jsPath+'/services/srv-scores.coffee',
-      jsPath+'/services/srv-selectedwidget.coffee',
-      jsPath+'/services/srv-user.coffee',
-      jsPath+'/services/srv-widget.coffee',
-      jsPath+'/controllers/ctrl-current-user.coffee',
-      jsPath+'/controllers/ctrl-notification.coffee',
-      jsPath+'/controllers/ctrl-create.coffee',
-      jsPath+'/controllers/ctrl-lti.coffee',
-      jsPath+'/controllers/ctrl-media-import.coffee',
-      jsPath+'/controllers/ctrl-my-widgets.coffee',
-      jsPath+'/controllers/ctrl-question-import.coffee',
-      jsPath+'/controllers/ctrl-spotlight.coffee',
-      jsPath+'/controllers/ctrl-widget-catalog.coffee',
-      jsPath+'/controllers/ctrl-widget-details.coffee',
-      jsPath+'/controllers/ctrl-selectedwidget.coffee',
-      jsPath+'/controllers/ctrl-widget-settings.coffee',
-      jsPath+'/controllers/ctrl-export-scores.coffee',
-      jsPath+'/controllers/ctrl-collaboration.coffee',
-      jsPath+'/controllers/ctrl-sidebar.coffee',
-      jsPath+'/controllers/ctrl-login.coffee',
-      jsPath+'/directives/dir-beardable.coffee',
-      jsPath+'/directives/dir-datatable.coffee',
-      jsPath+'/directives/dir-date-validation.coffee',
-      jsPath+'/directives/dir-fancybox.coffee',
-      jsPath+'/directives/dir-ngenter.coffee',
-      jsPath+'/directives/dir-scoredata.coffee',
-      jsPath+'/directives/dir-scoregraph.coffee',
-      jsPath+'/directives/dir-scoretable.coffee',
-      jsPath+'/directives/dir-selecteddisplay.coffee',
-    ],
+    // materia.js present on every page on the server except inside widget iframe & error pages
+    // contains common libs used by other scripts
+    // contains everything needed by all pages that don't require a login
     'js/materia.js':[
-      jsPath+'/materia-namespace.coffee',
-      jsPath+'/materia/materia.coms.json.coffee',
-      jsPath+'/materia/materia.creatorcore.coffee',
-      jsPath+'/materia/materia.enginecore.coffee',
-      jsPath+'/materia/materia.flashcheck.coffee',
-      jsPath+'/materia/materia.image.coffee',
-      jsPath+'/materia/materia.mywidgets.statistics.coffee',
-      jsPath+'/materia/materia.mywidgets.tasks.coffee',
-      jsPath+'/materia/materia.page.default.coffee',
-      jsPath+'/materia/materia.score.coffee',
-      jsPath+'/materia/materia.scores.scoregraphics.coffee',
-      jsPath+'/materia/materia.set.throbber.coffee',
-      jsPath+'/materia/materia.store.slideshow.coffee',
-      jsPath+'/materia/materia.user.coffee',
-      jsPath+'/materia/materia.util.coffee',
-      jsPath+'/materia/materia.validate.textfield.coffee',
-      jsPath+'/controllers/ctrl-alert.coffee',
+      "core-js/es6/array",
+      "core-js/fn/array/includes",
+      "core-js/es6/symbol",
+      "core-js/es6/promise",
+      "core-js/fn/object/assign",
+      "core-js/fn/string/includes",
+      "core-js/web/dom-collections",
+      "whatwg-fetch",
+      jsPath+'/materia-namespace.js',
+      jsPath+'/materia/materia.coms.json.js',
+      jsPath+'/materia/materia.flashcheck.js',
+      jsPath+'/materia/materia.image.js',
+      jsPath+'/materia/materia.page.default.js',
+      jsPath+'/materia/materia.set.throbber.js',
+      jsPath+'/materia/materia.store.slideshow.js',
+      jsPath+'/materia/materia.user.js',
+      jsPath+'/materia/materia.util.js',
+      jsPath+'/materia/materia.validate.textfield.js',
+      jsPath+'/materia-constants.js',
+      jsPath+'/controllers/ctrl-alert.js',
+      jsPath+'/controllers/ctrl-current-user.js',
+      jsPath+'/controllers/ctrl-help.js',
+      jsPath+'/controllers/ctrl-login.js',
+      jsPath+'/controllers/ctrl-notification.js',
+      jsPath+'/controllers/ctrl-spotlight.js',
+      jsPath+'/controllers/ctrl-widget-catalog.js',
+      jsPath+'/controllers/ctrl-widget-details.js',
+      jsPath+'/services/srv-datetime.js',
+      jsPath+'/services/srv-please.js',
+      jsPath+'/services/srv-selectedwidget.js',
+      jsPath+'/services/srv-user.js',
+      jsPath+'/services/srv-widget.js',
+      'ngmodal/dist/ng-modal.min.js'
     ],
+    // student.js - all the stuff needed to be a student. play, view scores, profile
+    'js/student.js': [
+      jsPath+'/controllers/ctrl-player.js',
+      jsPath+'/controllers/ctrl-profile.js',
+      jsPath+'/controllers/ctrl-scores.js',
+      jsPath+'/controllers/ctrl-settings.js',
+      jsPath+'/directives/dir-beardable.js',
+      jsPath+'/directives/dir-datatable.js',
+      jsPath+'/directives/dir-date-validation.js',
+      jsPath+'/directives/dir-fullscreen.js',
+      jsPath+'/directives/dir-ngenter.js',
+      jsPath+'/directives/dir-scoregraph.js',
+      jsPath+'/directives/dir-scoretable.js',
+      jsPath+'/materia/materia.scores.scoregraphics.js',
+      jsPath+'/services/srv-api.js',
+      jsPath+'/services/srv-scores.js',
+    ],
+    // author.js - all scripts for creating content: my widgets, widget authoring, lti picker
+    'js/author.js': [
+      jsPath+'/controllers/ctrl-collaboration.js',
+      jsPath+'/controllers/ctrl-create.js',
+      jsPath+'/controllers/ctrl-export-scores.js',
+      jsPath+'/controllers/ctrl-lti.js',
+      jsPath+'/controllers/ctrl-media-import.js',
+      jsPath+'/controllers/ctrl-my-widgets.js',
+      jsPath+'/controllers/ctrl-question-import.js',
+      jsPath+'/controllers/ctrl-selectedwidget.js',
+      jsPath+'/controllers/ctrl-widget-settings.js',
+      jsPath+'/directives/dir-beardable.js',
+      jsPath+'/directives/dir-datatable.js',
+      jsPath+'/directives/dir-date-validation.js',
+      jsPath+'/directives/dir-fileonchange.js',
+      jsPath+'/directives/dir-ngenter.js',
+      jsPath+'/directives/dir-scoredata.js',
+      jsPath+'/directives/dir-scoregraph.js',
+      jsPath+'/directives/dir-scoretable.js',
+      jsPath+'/filters/filter-escape.js',
+      jsPath+'/filters/filter-highlight.js',
+      jsPath+'/filters/filter-multiword.js',
+      jsPath+'/materia/materia.mywidgets.statistics.js',
+      jsPath+'/services/srv-api.js',
+      jsPath+'/services/srv-beard.js',
+      jsPath+'/services/srv-scores.js',
+    ],
+    // only used on admin interface pages
     'js/admin.js':[
-      jsPath+'/materia-constants.coffee',
-      jsPath+'/materia-namespace.coffee',
-      jsPath+'/controllers/ctrl-admin-user.coffee',
-      jsPath+'/controllers/ctrl-admin-widget.coffee',
-      jsPath+'/materia/materia.coms.json.coffee',
-      jsPath+'/services/srv-admin.coffee',
-    ],
-    'js/materia.coms.json.js': [
-      jsPath+'/materia-namespace.coffee',
-      jsPath+'/materia/materia.coms.json.coffee',
-    ],
-    'js/materia.namespace.js': [
-      jsPath+'/materia-namespace.coffee',
+      jsPath+'/controllers/ctrl-admin-user.js',
+      jsPath+'/controllers/ctrl-admin-widget.js',
+      jsPath+'/services/srv-admin.js',
     ],
     'js/materia.creatorcore.js': [
-      jsPath+'/materia-namespace.coffee',
-      jsPath+'/materia/materia.creatorcore.coffee',
+      jsPath+'/materia-namespace.js',
+      jsPath+'/materia/materia.creatorcore.js',
     ],
     'js/materia.enginecore.js': [
-      jsPath+'/materia-namespace.coffee',
-      jsPath+'/materia/materia.enginecore.coffee',
-      jsPath+'/materia/materia.storage.manager.coffee',
-      jsPath+'/materia/materia.storage.table.coffee',
-    ],
-    'js/materia.score.js': [
-      jsPath+'/materia-namespace.coffee',
-      jsPath+'/materia/materia.score.coffee',
-    ],
-    'js/materia.storage.manager.js': [
-      jsPath+'/empty.js', // moved to engine core, still creates file to prevent 404 errors
-    ],
-    'js/materia.storage.table.js': [
-      jsPath+'/empty.js', // moved to engine core, still creates file to prevent 404 errors
+      jsPath+'/materia-namespace.js',
+      jsPath+'/materia/materia.enginecore.js',
+      jsPath+'/materia/materia.score.js',
+      jsPath+'/materia/materia.storage.manager.js',
+      jsPath+'/materia/materia.storage.table.js',
     ],
   }),
   module: {
     rules: [
-      // coffeescript
       {
-        test: /\.coffee$/,
-        use: [ 'ng-annotate-loader', 'coffee-loader' ]
+        test: /\.js$/,
+        enforce: 'pre',
+        use: ['webpack-strip-block']
+      },
+      {
+        test: /\.js$/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              'es2015',
+              ['env', {
+                targets: { browsers: ["last 2 versions", "ie >= 11"]},
+                debug: true
+              }]
+            ],
+            plugins: [
+              require('babel-plugin-angularjs-annotate'),]
+          }
+        }
       },
       // SASS files
       {
@@ -153,13 +150,6 @@ module.exports = {
             'css-loader?url=false', // disable the css-loaders' function of locating image urls
             'sass-loader'
           ]
-        })
-      },
-      // hack to write empty files
-      {
-        test: /empty\.js/,
-        use: ExtractTextPlugin.extract({
-          use: ['css-loader']
         })
       }
     ]
