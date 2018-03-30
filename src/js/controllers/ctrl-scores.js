@@ -28,7 +28,19 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	// this is only actually set to something when coming from the profile page
 	let play_id = window.location.hash.split('play-')[1]
 
-	const _displayScoreData = (inst_id, play_id) =>
+	let enginePath = null
+	let widgetType = null
+	let qset = null
+	let scoreWidget = null
+	let scoreScreenInitialized = false
+	let scoreTable = null
+	let customScoreScreen = null
+	let embedDonePromise = null
+	let scoresLoadPromise = null
+	let hashAllowUpdate = true
+
+	const _displayScoreData = (inst_id, play_id) => {
+		const deferred = $q.defer()
 		widgetSrv
 			.getWidget(inst_id)
 			.then(instance => {
@@ -38,10 +50,101 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			})
 			.then(_getInstanceScores)
 			.then(() => {
-				_displayAttempts(play_id)
+				_displayAttempts(play_id, deferred)
 				_displayWidgetInstance()
 			})
 			.catch(() => {})
+		return deferred.promise
+	}
+
+	const _checkCustomScoreScreen = () => {
+		customScoreScreen = true
+		widgetType = '.html'
+		enginePath = WIDGET_URL + widgetInstance.widget.dir + "scoreScreen.html"
+		/* TODO uncomment this, remove above
+		if (widgetInstance.widget.scorescreen) {
+			const splitSpot = widgetInstance.widget.scorescreen.lastIndexof('.')
+			if (splitSpot != -1) {
+				widgetType = widgetInstance.widget.scorescreen.slice(splitSpot)
+				if (widgetInstance.widget.scorescreen.substring(0,4) == 'http') {
+					// allow player paths to be aboslute urls
+					enginePath = instance.widget.scorescreen
+				}
+				else {
+					// link to the static widget
+					// TODO need to test this
+					enginePath = WIDGET_URL + widgetInstance.widget.dir + widgetInstance.widget.scorescreen
+				}
+				customScoreScreen = true
+				return
+			}
+		}
+
+		customScoreScreen = false
+		*/
+	}
+
+	const _embed = () => {
+		const deferred = $q.defer()
+
+		/* TODO convert this line from coffe/query to reg
+		NOTE: this is commented out in the new player embed stuff
+		if widgetInstance.widget.width > 0 then $('.preview-bar').width widgetInstance.widget.width
+			*/
+		switch (widgetType) {
+			case '.swf':
+				// TODO need to test flash
+				_embedFlash(enginePath, '10', deferred)
+				break
+			case '.html':
+				_embedHTML(enginePath, deferred)
+		}
+		return deferred.promise
+	}
+
+	const _embedFlash = () => {
+		console.log("no flash")
+		// TODO this
+	}
+
+	const _embedHTML = (htmlPath, deferred) => {
+		embedDonePromise = deferred
+		$scope.htmlPath = htmlPath + "?" + widgetInstance.widget.created_at
+		$scope.type = "html"
+
+		// setup the postmessage listener
+		window.addEventListener('message', _onPostMessage, false)
+		Please.$apply()
+	}
+
+	const _onPostMessage = e => {
+		const origin = `${e.origin}/`
+		if (origin === STATIC_CROSSDOMAIN || origin === BASE_URL) {
+			const msg = JSON.parse(e.data)
+			switch (msg.type) {
+				case 'start':
+					return _onWidgetReady()
+				case 'validationResponse':
+					$scope.validScoreScreen = msg.data[0]
+					if ($scope.validScoreScreen) {
+						scoreScreenInitialized = true
+					}
+					return Please.$apply()
+				case 'materiaScoreRecorded':
+					// TODO
+					return console.log("??? need to handle materiaScoreRecorded ???")
+				case 'initialize':
+					// TODO
+					return console.log("??? initialized, may remove this call?")
+				default:
+					throw new Error(`Unknown PostMessage received from score core: ${msg.type}`)
+			}
+		} else {
+			throw new Error(
+				`Error, cross domain restricted for ${origin}`
+			)
+		}
+	}
 
 	const _getInstanceScores = inst_id => {
 		const dfd = $q.defer()
@@ -91,6 +194,8 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const _getScoreDetails = () => {
+		const deferred = $q.defer()
+		scoresLoadPromise = deferred
 		if (isPreview) {
 			currentAttempt = 1
 			scoreSrv.getWidgetInstancePlayScores(null, widgetInstance.id, _displayDetails)
@@ -114,6 +219,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		}
 
 		Please.$apply()
+		return deferred.promise
 	}
 
 	const _displayWidgetInstance = () => {
@@ -180,10 +286,12 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		Please.$apply()
 	}
 
-	const _displayAttempts = play_id => {
+	const _displayAttempts = (play_id, deferred) => {
 		if (isPreview) {
 			currentAttempt = 1
-			return _getScoreDetails()
+			_getScoreDetails().then( () => {
+				deferred.resolve()
+			})
 		} else {
 			if ($scope.attempts instanceof Array && $scope.attempts.length > 0) {
 				let matchedAttempt = false
@@ -200,17 +308,25 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 				if (isPreview) {
 					window.location.hash = `#attempt-${1}`
+					deferred.resolve() // TODO is this necessary?
 					// we only want to do this if there's more than one attempt. Otherwise it's a guest widget
 					// or the score is being viewed by an instructor, so we don't want to get rid of the playid
 					// in the hash
 				} else if (matchedAttempt !== false && $scope.attempts.length > 1) {
 					// changing the hash will call _getScoreDetails()
+					hashAllowUpdate = false
 					window.location.hash = `#attempt-${matchedAttempt}`
-					_getScoreDetails()
+					_getScoreDetails().then( () => {
+						deferred.resolve()
+					})
 				} else if (getAttemptNumberFromHash() === undefined) {
+					// TODO does the promise need to be resolved here?
 					window.location.hash = `#attempt-${$scope.attempts.length}`
+					deferred.resolve()
 				} else {
-					_getScoreDetails()
+					_getScoreDetails().then( () => {
+						deferred.resolve()
+					})
 				}
 			}
 		}
@@ -339,7 +455,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		let score
 		$scope.show = true
 
-		if (!results) {
+		if (!results || !results[0]) {
 			const widget_data = { href: `/preview/${widgetInstance.id}/${widgetInstance.clean_name}` }
 
 			$scope.expired = true
@@ -349,10 +465,6 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 		details[$scope.attempts.length - currentAttempt] = results
 		const deets = results[0]
-
-		if (!deets) {
-			return
-		}
 
 		// Round the score for display
 		deets.overview.score = Math.round(deets.overview.score)
@@ -389,6 +501,19 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			$scope.playAgainUrl = $scope.widget.href
 		}
 		Please.$apply()
+
+		scoreTable = deets.details[0].table
+		if (!scoreScreenInitialized) {
+			_checkCustomScoreScreen()
+			if (customScoreScreen) {
+				_getQset().then( () => {
+					scoresLoadPromise.resolve();
+				})
+			}
+		}
+		else {
+			scoresLoadPromise.resolve()
+		}
 	}
 
 	const _addCircleToDetailTable = detail => {
@@ -400,6 +525,10 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 					const canvas_id = `question-${i + 1}-${index}`
 					const percent = table.score / 100
 					switch (table.graphic) {
+						/*
+						TODO look into this (see if it should be added to scorescreen in some way)
+						looks like it is set in score_module.php but it's always either 'score' or 'none'
+						*/
 						case 'modifier':
 							greyMode = table.score === 0
 							Materia.Scores.Scoregraphics.drawModifierCircle(canvas_id, index, percent, greyMode)
@@ -418,6 +547,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const sendPostMessage = score => {
+		// TODO need to see what this is used for
 		if (parent.postMessage && JSON.stringify) {
 			parent.postMessage(
 				JSON.stringify({
@@ -438,6 +568,58 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		return $scope.attempts.length
 	}
 
+	// Gets the qset of a loaded instance
+	const _getQset = () => {
+		const deferred = $q.defer()
+		Materia.Coms.Json.send('question_set_get', [widget_id, play_id, true]).then(data => {
+			if (
+				(data != null ? data.title : undefined) === 'Permission Denied' ||
+				data.title === 'error'
+			) {
+				$scope.invalid = true
+				Please.$apply()
+			} else {
+				qset = data
+			}
+			deferred.resolve()
+		})
+		return deferred.promise
+	}
+
+	const _onWidgetReady = () => {
+		scoreWidget = document.querySelector('#container')
+		switch (false) {
+			case !(qset == null):
+				embedDonePromise.reject('Unable to load widget data.')
+			case !(scoreWidget == null):
+				embedDonePromise.reject('Unable to load widget.')
+			default:
+				embedDonePromise.resolve()
+		}
+		_sendWidgetInit()
+	}
+
+	const _sendToWidget = (type, args) => {
+		switch (widgetType) {
+			case '.swf':
+				// TODO need to test flash
+				return scoreWidget[type].apply(scoreWidget, args)
+			case '.html':
+				return scoreWidget.contentWindow.postMessage(
+					JSON.stringify({ type, data: args }),
+					STATIC_CROSSDOMAIN
+				)
+		}
+	}
+
+	const _sendWidgetInit = () => {
+		_sendToWidget('initWidget', [qset, scoreTable, widgetInstance])
+	}
+
+	const _sendWidgetUpdate = () => {
+		_sendToWidget('updateWidget', [scoreTable])
+	}
+
 	// expose on scope
 
 	$scope.guestAccess = false
@@ -454,12 +636,31 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	$scope.isPreview = isPreview
 	$scope.isEmbedded = isEmbedded
 	$scope.toggleClassRankGraph = _toggleClassRankGraph
+	$scope.validScoreScreen = true
 
-	// Initialize
+	const hashchange = () => {
+		if (!hashAllowUpdate) {
+			return
+		}
+		_getScoreDetails()
+			.then( () => {
+				if (customScoreScreen)
+					if (scoreScreenInitialized)
+						_sendWidgetUpdate()
+					else
+						_sendWidgetInit()
+			})
+		hashAllowUpdate = true
+	}
 
 	// when the url has changes, reload the questions
-	window.addEventListener('hashchange', _getScoreDetails)
+	window.addEventListener('hashchange', hashchange)
 
+	// Initialize
 	// this was originally called in document.ready, but there's no reason to not put it in init
-	_displayScoreData(widget_id, play_id)
+	_displayScoreData(widget_id, play_id).then( () => {
+		if (customScoreScreen) {
+			_embed()
+		}
+	})
 })
