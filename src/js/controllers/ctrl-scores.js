@@ -640,6 +640,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 	const hashchange = () => {
 		if (!hashAllowUpdate) {
+			hashAllowUpdate = true
 			return
 		}
 		_getScoreDetails()
