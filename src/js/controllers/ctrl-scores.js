@@ -46,6 +46,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			.then(instance => {
 				widgetInstance = instance
 				$scope.guestAccess = widgetInstance.guest_access
+				_checkCustomScoreScreen()
 				return inst_id
 			})
 			.then(_getInstanceScores)
@@ -124,12 +125,6 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			switch (msg.type) {
 				case 'start':
 					return _onWidgetReady()
-				case 'validationResponse':
-					$scope.validScoreScreen = msg.data[0]
-					if ($scope.validScoreScreen) {
-						scoreScreenInitialized = true
-					}
-					return Please.$apply()
 				case 'materiaScoreRecorded':
 					// TODO
 					return console.log("??? need to handle materiaScoreRecorded ???")
@@ -503,13 +498,11 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		Please.$apply()
 
 		scoreTable = deets.details[0].table
-		if (!scoreScreenInitialized) {
-			_checkCustomScoreScreen()
-			if (customScoreScreen) {
-				_getQset().then( () => {
-					scoresLoadPromise.resolve();
-				})
-			}
+		if (customScoreScreen) {
+			const created_at = ~~deets.overview.created_at
+			_getQset(created_at).then( () => {
+				scoresLoadPromise.resolve();
+			})
 		}
 		else {
 			scoresLoadPromise.resolve()
@@ -569,9 +562,9 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	// Gets the qset of a loaded instance
-	const _getQset = () => {
+	const _getQset = (timestamp) => {
 		const deferred = $q.defer()
-		Materia.Coms.Json.send('question_set_get', [widget_id, play_id, true]).then(data => {
+		Materia.Coms.Json.send('question_set_get', [widget_id, play_id, timestamp]).then(data => {
 			if (
 				(data != null ? data.title : undefined) === 'Permission Denied' ||
 				data.title === 'error'
@@ -617,7 +610,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const _sendWidgetUpdate = () => {
-		_sendToWidget('updateWidget', [scoreTable])
+		_sendToWidget('updateWidget', [qset, scoreTable])
 	}
 
 	// expose on scope
@@ -645,11 +638,9 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		}
 		_getScoreDetails()
 			.then( () => {
-				if (customScoreScreen)
-					if (scoreScreenInitialized)
-						_sendWidgetUpdate()
-					else
-						_sendWidgetInit()
+				if (customScoreScreen) {
+					_sendWidgetUpdate()
+				}
 			})
 		hashAllowUpdate = true
 	}

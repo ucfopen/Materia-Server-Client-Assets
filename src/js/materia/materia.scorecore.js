@@ -9,7 +9,7 @@ Namespace('Materia').ScoreCore = (() => {
 				_initWidget(msg.data[0], msg.data[1], msg.data[2])
 				break
 			case 'updateWidget':
-				_updateWidget(msg.data[0])
+				_updateWidget(msg.data[0], msg.data[1])
 				break
 			default:
 				throw new Error(`Error: Engine Core received unknown post message: ${msg.type}`)
@@ -25,8 +25,8 @@ Namespace('Materia').ScoreCore = (() => {
 		_widgetClass.start(instance, qset.data, scoreTable, qset.version)
 	}
 
-	const _updateWidget = (scoreTable) => {
-		_widgetClass.update(scoreTable)
+	const _updateWidget = (qset, scoreTable) => {
+		_widgetClass.update(qset.data, scoreTable)
 	}
 
 	const start = widgetClass => {
@@ -38,12 +38,7 @@ Namespace('Materia').ScoreCore = (() => {
 		_sendPostMessage('start', null)
 	}
 
-	const sendValidation = (valid) => {
-		_sendPostMessage('validationResponse', [valid])
-	}
-
 	return {
-		start,
-		sendValidation
+		start
 	}
 })()
