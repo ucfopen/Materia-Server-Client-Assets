@@ -567,7 +567,7 @@ app.controller('playerCtrl', function(
 
 	$timeout(() => {
 		$q
-			.all(_getWidgetInstance(), _startPlaySession())
+			.all([_getWidgetInstance(), _startPlaySession()])
 			.then(_getQuestionSet)
 			.then(_embed)
 			.then(_sendWidgetInit)
