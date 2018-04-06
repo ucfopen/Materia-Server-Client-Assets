@@ -34,7 +34,6 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	let scoreWidget = null
 	let scoreScreenInitialized = false
 	let scoreTable = null
-	let customScoreScreen = null
 	let embedDonePromise = null
 	let scoresLoadPromise = null
 	let hashAllowUpdate = true
@@ -47,6 +46,9 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 				widgetInstance = instance
 				$scope.guestAccess = widgetInstance.guest_access
 				_checkCustomScoreScreen()
+				if ($scope.customScoreScreen) {
+					_embed()
+				}
 				return inst_id
 			})
 			.then(_getInstanceScores)
@@ -59,7 +61,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const _checkCustomScoreScreen = () => {
-		customScoreScreen = true
+		$scope.customScoreScreen = true
 		widgetType = '.html'
 		enginePath = WIDGET_URL + widgetInstance.widget.dir + "scoreScreen.html"
 		/* TODO uncomment this, remove above
@@ -76,31 +78,27 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 					// TODO need to test this
 					enginePath = WIDGET_URL + widgetInstance.widget.dir + widgetInstance.widget.scorescreen
 				}
-				customScoreScreen = true
+				$scope.customScoreScreen = true
 				return
 			}
 		}
 
-		customScoreScreen = false
+		$scope.customScoreScreen = false
 		*/
 	}
 
 	const _embed = () => {
 		const deferred = $q.defer()
+		embedDonePromise = deferred
 
-		/* TODO convert this line from coffe/query to reg
-		NOTE: this is commented out in the new player embed stuff
-		if widgetInstance.widget.width > 0 then $('.preview-bar').width widgetInstance.widget.width
-			*/
 		switch (widgetType) {
 			case '.swf':
 				// TODO need to test flash
-				_embedFlash(enginePath, '10', deferred)
+				_embedFlash(enginePath, '10')
 				break
 			case '.html':
-				_embedHTML(enginePath, deferred)
+				_embedHTML(enginePath)
 		}
-		return deferred.promise
 	}
 
 	const _embedFlash = () => {
@@ -108,8 +106,8 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		// TODO this
 	}
 
-	const _embedHTML = (htmlPath, deferred) => {
-		embedDonePromise = deferred
+	const _embedHTML = (htmlPath) => {
+		scoreWidget = document.querySelector('#container')
 		$scope.htmlPath = htmlPath + "?" + widgetInstance.widget.created_at
 		$scope.type = "html"
 
@@ -131,6 +129,12 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 				case 'initialize':
 					// TODO
 					return console.log("??? initialized, may remove this call?")
+				case 'setHeight':
+					return _setHeight(msg.data[0])
+				case 'hideResultsTable':
+					return $scope.showResultsTable = false
+				case 'hideScoresOverview':
+					return $scope.showScoresOverview = false
 				default:
 					throw new Error(`Unknown PostMessage received from score core: ${msg.type}`)
 			}
@@ -303,7 +307,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 				if (isPreview) {
 					window.location.hash = `#attempt-${1}`
-					deferred.resolve() // TODO is this necessary?
+					deferred.resolve()
 					// we only want to do this if there's more than one attempt. Otherwise it's a guest widget
 					// or the score is being viewed by an instructor, so we don't want to get rid of the playid
 					// in the hash
@@ -315,7 +319,6 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 						deferred.resolve()
 					})
 				} else if (getAttemptNumberFromHash() === undefined) {
-					// TODO does the promise need to be resolved here?
 					window.location.hash = `#attempt-${$scope.attempts.length}`
 					deferred.resolve()
 				} else {
@@ -328,7 +331,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	// Uses jPlot to create the bargraph
-	const _toggleClassRankGraph = function() {
+	const _toggleClassRankGraph = () => {
 		let graph = document.querySelector('section.score-graph')
 		// toggle button text
 		if ($scope.graphShown) {
@@ -446,13 +449,11 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			)
 	}
 
-	const _displayDetails = function(results) {
+	const _displayDetails = (results) => {
 		let score
 		$scope.show = true
 
 		if (!results || !results[0]) {
-			const widget_data = { href: `/preview/${widgetInstance.id}/${widgetInstance.clean_name}` }
-
 			$scope.expired = true
 			Please.$apply()
 			return
@@ -462,14 +463,6 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		const deets = results[0]
 
 		// Round the score for display
-		deets.overview.score = Math.round(deets.overview.score)
-		for (var tableItem of Array.from(deets.overview.table)) {
-			if (tableItem.value.constructor === String) {
-				tableItem.value = parseFloat(tableItem.value)
-			}
-			tableItem.value = tableItem.value.toFixed(2)
-		}
-
 		for (tableItem of Array.from(deets.details[0].table)) {
 			score = parseFloat(tableItem.score)
 			if (score !== 0 && score !== 100) {
@@ -477,17 +470,29 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			}
 		}
 
-		$timeout(() => _addCircleToDetailTable(deets.details), 10)
+		if ($scope.showScoresOverview) {
+			deets.overview.score = Math.round(deets.overview.score)
+			for (var tableItem of Array.from(deets.overview.table)) {
+				if (tableItem.value.constructor === String) {
+					tableItem.value = parseFloat(tableItem.value)
+				}
+				tableItem.value = tableItem.value.toFixed(2)
+			}
 
-		sendPostMessage(deets.overview.score)
-		$scope.overview = deets.overview
+			sendPostMessage(deets.overview.score) // todo ??
+			$scope.overview = deets.overview
+			$scope.attempt_num = currentAttempt
+		}
+		if ($scope.showResultsTable) {
+			$scope.details = deets.details
+			$timeout(() => _addCircleToDetailTable(deets.details), 10)
+		}
+
 		$scope.dates = attempt_dates
-		$scope.details = deets.details
-		$scope.attempt_num = currentAttempt
-		const referrerUrl = $scope.overview.referrer_url
-		const playTime = $scope.overview.created_at
+
+		const referrerUrl = deets.overview.referrer_url
 		if (
-			$scope.overview.auth === 'lti' &&
+			deets.overview.auth === 'lti' &&
 			referrerUrl &&
 			referrerUrl.indexOf(`/scores/${widgetInstance.id}`) === -1
 		) {
@@ -498,10 +503,10 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		Please.$apply()
 
 		scoreTable = deets.details[0].table
-		if (customScoreScreen) {
+		if ($scope.customScoreScreen) {
 			const created_at = ~~deets.overview.created_at
 			_getQset(created_at).then( () => {
-				scoresLoadPromise.resolve();
+				scoresLoadPromise.resolve()
 			})
 		}
 		else {
@@ -580,16 +585,8 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const _onWidgetReady = () => {
-		scoreWidget = document.querySelector('#container')
-		switch (false) {
-			case !(qset == null):
-				embedDonePromise.reject('Unable to load widget data.')
-			case !(scoreWidget == null):
-				embedDonePromise.reject('Unable to load widget.')
-			default:
-				embedDonePromise.resolve()
-		}
-		_sendWidgetInit()
+		$scope.show = $scope.show || !$scope.showScoresOverview
+		embedDonePromise.resolve()
 	}
 
 	const _sendToWidget = (type, args) => {
@@ -606,6 +603,12 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const _sendWidgetInit = () => {
+		switch (false) {
+			case !(qset == null):
+				embedDonePromise.reject('Unable to load widget data.')
+			case !(scoreWidget == null):
+				embedDonePromise.reject('Unable to load widget.')
+		}
 		_sendToWidget('initWidget', [qset, scoreTable, widgetInstance])
 	}
 
@@ -613,10 +616,21 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		_sendToWidget('updateWidget', [qset, scoreTable])
 	}
 
-	// expose on scope
+	const _setHeight = (h) => {
+		const min_h = widgetInstance.widget.height
+		let desiredHeight = Math.max(h, min_h)
+		scoreWidget.style.height = `${desiredHeight}px`
+	}
 
+	// expose on scope
 	$scope.guestAccess = false
 	$scope.classRankText = COMPARE_TEXT_OPEN
+	$scope.isPreview = isPreview
+	$scope.isEmbedded = isEmbedded
+	$scope.toggleClassRankGraph = _toggleClassRankGraph
+	$scope.showScoresOverview = true
+	$scope.customScoreScreen = false
+	$scope.showResultsTable = true
 	$scope.prevMouseOver = () => ($scope.prevAttemptClass = 'open')
 	$scope.prevMouseOut = () => ($scope.prevAttemptClass = '')
 	$scope.prevClick = () => ($scope.prevAttemptClass = 'open')
@@ -626,33 +640,24 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		}
 	}
 
-	$scope.isPreview = isPreview
-	$scope.isEmbedded = isEmbedded
-	$scope.toggleClassRankGraph = _toggleClassRankGraph
-	$scope.validScoreScreen = true
-
-	const hashchange = () => {
+	// when the url has changes, reload the questions
+	window.addEventListener('hashchange', () => {
 		if (!hashAllowUpdate) {
 			hashAllowUpdate = true
 			return
 		}
 		_getScoreDetails()
 			.then( () => {
-				if (customScoreScreen) {
+				if ($scope.customScoreScreen) {
 					_sendWidgetUpdate()
 				}
 			})
-		hashAllowUpdate = true
-	}
-
-	// when the url has changes, reload the questions
-	window.addEventListener('hashchange', hashchange)
+	})
 
 	// Initialize
-	// this was originally called in document.ready, but there's no reason to not put it in init
 	_displayScoreData(widget_id, play_id).then( () => {
-		if (customScoreScreen) {
-			_embed()
+		if ($scope.customScoreScreen) {
+			embedDonePromise.promise.then(_sendWidgetInit)
 		}
 	})
 })
