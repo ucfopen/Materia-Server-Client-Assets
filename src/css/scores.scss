@@ -522,9 +522,16 @@ h1.scoreFontColor {
 	color: #fff;
 }
 
-iframe {
-	height: 600px;
+iframe#container {
+	min-height: 600px;
 	width: 100%;
-	margin: 25px 0;
 	border: none;
+
+	&.margin-above {
+		margin-top: 25px;
+	}
+
+	&.margin-below {
+		margin-bottom: 25px;
+	}
 }
