@@ -29,6 +29,14 @@ Namespace('Materia').ScoreCore = (() => {
 		_widgetClass.update(qset.data, scoreTable)
 	}
 
+	const hideResultsTable = () => {
+		_sendPostMessage('hideResultsTable')
+	}
+
+	const hideScoresOverview = () => {
+		_sendPostMessage('hideScoresOverview')
+	}
+
 	const start = widgetClass => {
 		// setup the postmessage listener
 		addEventListener('message', _onPostMessage, false)
@@ -38,7 +46,21 @@ Namespace('Materia').ScoreCore = (() => {
 		_sendPostMessage('start', null)
 	}
 
+	const setHeight = h => {
+		console.log("going to set height to ", h)
+		if (!h) {
+			h = parseInt(window.getComputedStyle(document.documentElement).height, 10)
+		}
+		if (h !== _lastHeight) {
+			_sendPostMessage('setHeight', [h])
+			_lastHeight = h
+		}
+	}
+
 	return {
+		hideResultsTable,
+		hideScoresOverview,
+		setHeight,
 		start
 	}
 })()
