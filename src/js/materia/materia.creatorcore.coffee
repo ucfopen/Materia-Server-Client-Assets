@@ -68,7 +68,7 @@ Namespace('Materia').CreatorCore = do ->
 	getMediaUrl = (mediaId) ->
 		"#{_mediaUrl}/#{mediaId}"
 
-	# replace a specified list of characters with their safe equivalents
+	# replace a specified list of characters with their safe equivalents   
 	_preSanitize = (text) ->
 		for k, v of PRESANITIZE_CHARACTERS
 			text = text.replace new RegExp(k, 'g'), v
@@ -76,6 +76,9 @@ Namespace('Materia').CreatorCore = do ->
 
 	showMediaImporter = (types = ['jpg','jpeg','gif','png']) ->
 		_sendPostMessage 'showMediaImporter', types
+
+	uploadMedia = (mediaData) ->
+		_sendPostMessage 'uploadMedia', mediaData
 
 	save = (title, qset, version = '1') ->
 		sanitizedTitle = _preSanitize title
@@ -101,6 +104,7 @@ Namespace('Materia').CreatorCore = do ->
 	alert:alert
 	getMediaUrl:getMediaUrl
 	showMediaImporter:showMediaImporter
+	uploadMedia: uploadMedia
 	cancelSave:cancelSave
 	save:save
 	disableResizeInterval:disableResizeInterval

@@ -9,7 +9,7 @@ app.directive 'fileOnChange', ->
 			element.bind 'drop', onChangeHandler
 	}
 
-app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) ->
+app.controller 'mediaImportCtrl', ($rootScope, $scope, $sce, $timeout, $window, $document) ->
 	selectedAssets  = []
 	data            = []
 	assetIndices    = []
@@ -80,7 +80,7 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 		getMimeType: (dataUrl)->
 			mime = dataUrl.split(";")[0].split(":")[1]
 
-			# used to see if the file type is allowed
+			# used to see if the file type is allowed 
 			fileExtension = if !mime? then null else mime.split("/")[1]
 
 			if !fileExtension? or $scope.fileType.indexOf(fileExtension) == -1
@@ -196,11 +196,20 @@ app.controller 'mediaImportCtrl', ($scope, $sce, $timeout, $window, $document) -
 						type: fileType
 					$window.parent.Materia.Creator.onMediaImportComplete([res])
 
+
 	config =
 		s3enabled: _s3enabled
 		uploadUrl: _mediaUploadUrl
 		mediaUrl: _mediaUrl
 	uploader = new Uploader(config)
+
+	parent.postMessage JSON.stringify({type:'media event', data:''}), '*'
+
+	_onPostMessage = (event) ->
+		uploader.upload JSON.parse(event.data)
+
+
+	$window.addEventListener "message", _onPostMessage, false
 
 	# SCOPE VARS
 	# ==========

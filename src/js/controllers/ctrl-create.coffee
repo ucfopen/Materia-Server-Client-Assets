@@ -1,5 +1,5 @@
 app = angular.module 'materia'
-app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
+app.controller 'createCtrl', ($rootScope, $scope, $sce, $timeout, widgetSrv, Alert) ->
 	$scope.alert = Alert
 
 	HEARTBEAT_INTERVAL = 30000
@@ -20,6 +20,7 @@ app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
 	widget_id     = null
 	widget_info   = null
 	widgetType    = null
+	mediaFile     = null
 
 	# get the instance_id from the url if needed
 	inst_id = window.location.hash.substr(1) if window.location.hash
@@ -118,7 +119,7 @@ app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
 	# Starts the Creator, sending required widget data
 	initCreator = ->
 		dfd = $.Deferred().resolve()
-		
+
 		if inst_id?
 			args = [instance.name, instance.widget, keepQSet.data, keepQSet.version, BASE_URL]
 			if widgetType isnt '.swf' then args.push MEDIA_URL # Passing MEDIA_URL breaks the SWF, so omit it for Flash widgets! The intent is to sunset Flash support relatively soon after this code is committed.
@@ -199,10 +200,14 @@ app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
 						onSaveCanceled msg.data[0] # msg
 					when 'showMediaImporter' # the creator wants to import media
 						showMediaImporter(msg.data)
+					when 'uploadMedia'
+						uploadMedia(msg.data)
 					when 'setHeight' # the height of the creator has changed
 						setHeight msg.data[0]
 					when 'alert'
 						_alert msg.data
+					when 'media event'
+						e.source.postMessage mediaFile, e.origin
 					else
 						_alert "Unknown message from creator: #{msg.type}"
 			else
@@ -319,6 +324,25 @@ app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
 		), 0
 		null # else Safari will give the .swf data that it can't handle
 
+
+
+	uploadMedia = (media) ->
+	#	blob = dataURItoBlob mediaFile, "image/*" 
+		showMediaImporter  ['jpg','gif','png']
+		mediaFile = media
+	#	sendToCreator 'onMediaImportComplete', mediaFile
+
+	#	mediaSrv.upload mediaFile
+	#	upload mediaFile
+
+	###
+	window.addEventListener "message", receiveMessage, false
+
+	receiveMessage = (event) ->
+			console.log "recieved message: " + event.data
+			HTMLIFrameElement.contentWindow.postMessage media, '*'
+	###
+
 	# save called by the widget creator
 	# Note this is psuedo public as it's exposed to flash
 	save = (instanceName, qset, version = 1) ->
@@ -402,7 +426,6 @@ app.controller 'createCtrl', ($scope, $sce, $timeout, widgetSrv, Alert) ->
 		# Exposed to the media importer screen
 		onMediaImportComplete: (media) ->
 			hideEmbedDialog()
-
 			if media != null
 				# convert the sparce array that was converted into an object back to an array (ie9, you SUCK)
 				anArray = []
