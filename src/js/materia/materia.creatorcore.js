@@ -94,6 +94,10 @@ Namespace('Materia').CreatorCore = (() => {
 		_sendPostMessage('showMediaImporter', types)
 	}
 
+	const uploadMedia = mediaData => {
+		_sendPostMessage('uploadMedia', mediaData)
+	}
+
 	const save = (title, qset, version) => {
 		if (version == null) {
 			version = '1'
@@ -126,6 +130,7 @@ Namespace('Materia').CreatorCore = (() => {
 		alert,
 		getMediaUrl,
 		showMediaImporter,
+		uploadMedia,
 		cancelSave,
 		save,
 		disableResizeInterval,
