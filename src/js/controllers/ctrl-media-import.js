@@ -256,6 +256,14 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 	}
 	const uploader = new Uploader(config)
 
+	parent.postMessage(JSON.stringify({type:'media event', data:''}), '*')
+	
+	const _onPostMessage = function(event){
+		uploader.upload(JSON.parse(event.data))
+	}
+
+	$window.addEventListener("message", _onPostMessage, false)
+
 	// SCOPE VARS
 	// ==========
 	$scope.fileType = location.hash.substring(1).split(',')

@@ -28,6 +28,7 @@ app.controller('createCtrl', function(
 	let widget_id = null
 	let widget_info = null
 	let widgetType = null
+	let mediaFile = null
 
 	const _requestSave = mode => {
 		// hide dialogs
@@ -223,6 +224,10 @@ app.controller('createCtrl', function(
 						return onSaveCanceled(msg.data[0]) // msg
 					case 'showMediaImporter': // the creator wants to import media
 						return showMediaImporter(msg.data)
+					case 'uploadMedia':
+						return uploadMedia(msg.data)
+					case 'media event':
+						return e.source.postMessage(mediaFile, e.origin)
 					case 'setHeight': // the height of the creator has changed
 						return setHeight(msg.data[0])
 					case 'alert':
@@ -349,6 +354,11 @@ app.controller('createCtrl', function(
 			Please.$apply()
 		}, 0)
 		return null // else Safari will give the .swf data that it can't handle
+	}
+
+	const uploadMedia = media => {
+		showMediaImporter(['jpg','gif','png'])
+		mediaFile = media
 	}
 
 	// save called by the widget creator
