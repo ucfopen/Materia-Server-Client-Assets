@@ -29,7 +29,6 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	let play_id = window.location.hash.split('play-')[1]
 
 	let enginePath = null
-	let widgetType = null
 	let qset = null
 	let scoreWidget = null
 	let scoreScreenInitialized = false
@@ -61,13 +60,11 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 	const _checkCustomScoreScreen = () => {
 		$scope.customScoreScreen = true
-		widgetType = '.html'
 		enginePath = WIDGET_URL + widgetInstance.widget.dir + "scoreScreen.html"
-		/* TODO uncomment this, remove above
+		/* TODO uncomment this, remove above, requires change to `widget` table
 		if (widgetInstance.widget.scorescreen) {
 			const splitSpot = widgetInstance.widget.scorescreen.lastIndexof('.')
 			if (splitSpot != -1) {
-				widgetType = widgetInstance.widget.scorescreen.slice(splitSpot)
 				if (widgetInstance.widget.scorescreen.substring(0,4) == 'http') {
 					// allow player paths to be aboslute urls
 					enginePath = instance.widget.scorescreen
@@ -89,20 +86,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	const _embed = () => {
 		const deferred = $q.defer()
 		embedDonePromise = deferred
-
-		switch (widgetType) {
-			case '.swf':
-				// TODO need to test flash
-				_embedFlash(enginePath, '10')
-				break
-			case '.html':
-				_embedHTML(enginePath)
-		}
-	}
-
-	const _embedFlash = () => {
-		console.log("no flash")
-		// TODO this
+		_embedHTML(enginePath)
 	}
 
 	const _embedHTML = (htmlPath) => {
@@ -599,25 +583,17 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const _sendToWidget = (type, args) => {
-		switch (widgetType) {
-			case '.swf':
-				// TODO need to test flash
-				return scoreWidget[type].apply(scoreWidget, args)
-			case '.html':
-				return scoreWidget.contentWindow.postMessage(
-					JSON.stringify({ type, data: args }),
-					STATIC_CROSSDOMAIN
-				)
-		}
+		return scoreWidget.contentWindow.postMessage(
+			JSON.stringify({ type, data: args }),
+			STATIC_CROSSDOMAIN
+		)
 	}
 
 	const _sendWidgetInit = () => {
-		switch (false) {
-			// todo embedDonePromise is already resolved when it gets here
-			case !(qset == null):
-				embedDonePromise.reject('Unable to load widget data.')
-			case !(scoreWidget == null):
-				embedDonePromise.reject('Unable to load widget.')
+		if (qset == null || scoreWidget == null) {
+			$scope.invalid = true
+			$scope.$apply()
+			return
 		}
 		$scope.show = true
 		_sendToWidget('initWidget', [qset, scoreTable, widgetInstance, isPreview])
