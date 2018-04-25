@@ -24,6 +24,7 @@ Namespace('Materia').CreatorCore = (() => {
 					msg.data[4], // baseUrl
 					msg.data[5] // mediaUrl
 				)
+				break
 			case 'onRequestSave':
 				_tellCreator('onSaveClicked', [msg.data[0]])
 				break
