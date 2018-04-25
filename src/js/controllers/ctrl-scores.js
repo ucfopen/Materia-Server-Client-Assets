@@ -443,6 +443,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 		if (!results || !results[0]) {
 			$scope.expired = true
+			$scope.show = true
 			Please.$apply()
 			return
 		}
@@ -592,7 +593,6 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	const _sendWidgetInit = () => {
 		if (qset == null || scoreWidget == null) {
 			$scope.invalid = true
-			$scope.$apply()
 			return
 		}
 		$scope.show = true
