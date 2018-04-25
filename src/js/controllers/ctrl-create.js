@@ -357,7 +357,7 @@ app.controller('createCtrl', function(
 	}
 
 	const uploadMedia = media => {
-		showMediaImporter(['jpg','gif','png'])
+		showMediaImporter(['jpg','gif','png','mp3'])
 		mediaFile = media
 	}
 
