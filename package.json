@@ -1,10 +1,11 @@
 {
   "name": "materia-client-assets",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": "University of Central Florida, Center for Distributed Learning",
   "homepage": "https://github.com/ucfcdl/Materia",
   "scripts": {
-    "test": "jest --verbose",
+    "test": "TZ=Etc/UTC jest --verbose",
+    "test:ci": "TZ=Etc/UTC CI=true jest --ci --useStderr --coverage --coverageReporters text-summary cobertura",
     "build": "webpack -p",
     "build-watch": "webpack --watch",
     "build-dev": "webpack",
@@ -29,15 +30,7 @@
     "setupTestFrameworkScriptFile": "./testSetup.js",
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 80,
-        "functions": 80,
-        "lines": 80,
-        "statements": -10
-      }
-    }
+    ]
   },
   "dependencies": {
     "angular": "1.6.9",
