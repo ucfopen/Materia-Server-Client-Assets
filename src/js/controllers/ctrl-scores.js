@@ -40,8 +40,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 	const _displayScoreData = (inst_id, play_id) => {
 		const deferred = $q.defer()
-		widgetSrv
-			.getWidget(inst_id)
+		widgetSrv.getWidget(inst_id)
 			.then(instance => {
 				widgetInstance = instance
 				$scope.guestAccess = widgetInstance.guest_access
@@ -135,6 +134,8 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 					return $scope.showResultsTable = false
 				case 'hideScoresOverview':
 					return $scope.showScoresOverview = false
+				case 'requestScoreDistribution':
+					return _getScoreDistribution()
 				default:
 					throw new Error(`Unknown PostMessage received from score core: ${msg.type}`)
 			}
@@ -451,7 +452,10 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 	const _displayDetails = (results) => {
 		let score
-		$scope.show = true
+
+		if (!$scope.customScoreScreen) {
+			$scope.show = true
+		}
 
 		if (!results || !results[0]) {
 			$scope.expired = true
@@ -585,8 +589,13 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const _onWidgetReady = () => {
-		$scope.show = $scope.show || !$scope.showScoresOverview
 		embedDonePromise.resolve()
+	}
+
+	const _getScoreDistribution = () => {
+		Materia.Coms.Json.send('sample_scores_get', [widgetInstance.id]).then( data => {
+			_sendToWidget('scoreDistribution', [data])
+		})
 	}
 
 	const _sendToWidget = (type, args) => {
@@ -604,12 +613,14 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 	const _sendWidgetInit = () => {
 		switch (false) {
+			// todo embedDonePromise is already resolved when it gets here
 			case !(qset == null):
 				embedDonePromise.reject('Unable to load widget data.')
 			case !(scoreWidget == null):
 				embedDonePromise.reject('Unable to load widget.')
 		}
-		_sendToWidget('initWidget', [qset, scoreTable, widgetInstance])
+		$scope.show = true
+		_sendToWidget('initWidget', [qset, scoreTable, widgetInstance, isPreview])
 	}
 
 	const _sendWidgetUpdate = () => {
