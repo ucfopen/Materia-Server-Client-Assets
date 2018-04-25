@@ -6,10 +6,13 @@ Namespace('Materia').ScoreCore = (() => {
 		const msg = JSON.parse(e.data)
 		switch (msg.type) {
 			case 'initWidget':
-				_initWidget(msg.data[0], msg.data[1], msg.data[2])
+				_initWidget(msg.data[0], msg.data[1], msg.data[2], msg.data[3])
 				break
 			case 'updateWidget':
 				_updateWidget(msg.data[0], msg.data[1])
+				break
+			case 'scoreDistribution':
+				_scoreDistribution(msg.data[0])
 				break
 			default:
 				throw new Error(`Error: Engine Core received unknown post message: ${msg.type}`)
@@ -21,12 +24,16 @@ Namespace('Materia').ScoreCore = (() => {
 		parent.postMessage(JSON.stringify({ type, data }), '*')
 	}
 
-	const _initWidget = (qset, scoreTable, instance) => {
-		_widgetClass.start(instance, qset.data, scoreTable, qset.version)
+	const _initWidget = (qset, scoreTable, instance, isPreview) => {
+		_widgetClass.start(instance, qset.data, scoreTable, isPreview, qset.version)
 	}
 
 	const _updateWidget = (qset, scoreTable) => {
 		_widgetClass.update(qset.data, scoreTable)
+	}
+
+	const _scoreDistribution = (data) => {
+		_widgetClass.handleScoreDistribution(data)
 	}
 
 	const hideResultsTable = () => {
@@ -35,6 +42,10 @@ Namespace('Materia').ScoreCore = (() => {
 
 	const hideScoresOverview = () => {
 		_sendPostMessage('hideScoresOverview')
+	}
+
+	const requestScoreDistribution = () => {
+		_sendPostMessage('requestScoreDistribution')
 	}
 
 	const start = widgetClass => {
@@ -47,7 +58,6 @@ Namespace('Materia').ScoreCore = (() => {
 	}
 
 	const setHeight = h => {
-		console.log("going to set height to ", h)
 		if (!h) {
 			h = parseInt(window.getComputedStyle(document.documentElement).height, 10)
 		}
@@ -60,6 +70,7 @@ Namespace('Materia').ScoreCore = (() => {
 	return {
 		hideResultsTable,
 		hideScoresOverview,
+		requestScoreDistribution,
 		setHeight,
 		start
 	}
