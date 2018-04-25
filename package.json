@@ -4,7 +4,8 @@
   "author": "University of Central Florida, Center for Distributed Learning",
   "homepage": https://github.com/ucfopen/Materia-Docs",
   "scripts": {
-    "test": "jest --verbose",
+    "test": "TZ=Etc/UTC jest --verbose",
+    "test:ci": "TZ=Etc/UTC CI=true jest --ci --useStderr --coverage --coverageReporters text-summary cobertura",
     "build": "webpack -p",
     "build-watch": "webpack --watch",
     "build-dev": "webpack",
