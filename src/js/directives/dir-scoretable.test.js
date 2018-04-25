@@ -30,34 +30,6 @@ describe('scoreTable Directive', function() {
 			username: '~author2'
 		}
 	]
-	let expected = {
-		'2': {
-			name: 'Turgeon, Ian',
-			scores: {
-				'1519272328': {
-					complete: '1',
-					date: 'Wed Feb 21 2018',
-					elapsed: '16m 39s',
-					id: 'one',
-					percent: '99'
-				}
-			},
-			uid: '2'
-		},
-		'5': {
-			name: 'Peterson, Corey',
-			scores: {
-				'1519372329': {
-					complete: '0',
-					date: 'Fri Feb 23 2018',
-					elapsed: '12s',
-					id: 'two',
-					percent: 0
-				}
-			},
-			uid: '5'
-		}
-	}
 
 	beforeEach(() => {
 		require('../materia-constants')
@@ -93,7 +65,7 @@ describe('scoreTable Directive', function() {
 
 	it('is initialized on the element', function() {
 		expect($scope.selectedUser).toBeNull()
-		expect($scope.users).toMatchObject(expected)
+		expect($scope.users).toMatchSnapshot()
 		expect($scope.setSelectedUser).toBeDefined()
 		expect($scope.showScorePage).toBeDefined()
 		expect($scope.searchStudentActivity).toBeDefined()
@@ -102,7 +74,7 @@ describe('scoreTable Directive', function() {
 	it('setSelectedUser sets selectedUser object as expected', function() {
 		expect($scope.selectedUser).toBeNull()
 		$scope.setSelectedUser(5)
-		expect($scope.selectedUser).toMatchObject(expected['5'])
+		expect($scope.selectedUser).toMatchSnapshot()
 	})
 
 	it('showScorePage opens the expected url', function() {
@@ -114,25 +86,25 @@ describe('scoreTable Directive', function() {
 
 	it('searchStudentActivity locates users', function() {
 		$scope.searchStudentActivity('Ian')
-		expect($scope.users).toMatchObject({ '2': expected['2'] })
+		expect($scope.users).toMatchSnapshot()
 
 		// finds neither
 		$scope.searchStudentActivity('~author')
 		expect($scope.users).toMatchObject({})
 
 		$scope.searchStudentActivity('Peterson')
-		expect($scope.users).toMatchObject({ '5': expected['5'] })
+		expect($scope.users).toMatchSnapshot()
 
 		// finds all
 		$scope.searchStudentActivity('')
-		expect($scope.users).toMatchObject(expected)
+		expect($scope.users).toMatchSnapshot()
 	})
 
 	it('searchStudentActivity resets selecteUser', function() {
 		$scope.setSelectedUser(5)
-		expect($scope.selectedUser).toMatchObject(expected['5'])
+		expect($scope.selectedUser).toMatchSnapshot()
 		$scope.searchStudentActivity('Ian')
-		expect($scope.users).toMatchObject({ '2': expected['2'] })
+		expect($scope.users).toMatchSnapshot()
 		expect($scope.selectedUser).toBeNull()
 	})
 })
