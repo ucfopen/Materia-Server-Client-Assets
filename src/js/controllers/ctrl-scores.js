@@ -60,7 +60,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 	const _checkCustomScoreScreen = () => {
 		$scope.customScoreScreen = true
-		enginePath = WIDGET_URL + widgetInstance.widget.dir + "scoreScreen.html"
+		enginePath = WIDGET_URL + widgetInstance.widget.dir + "scorescreen.html"
 		/* TODO uncomment this, remove above, requires change to `widget` table
 		if (widgetInstance.widget.scorescreen) {
 			const splitSpot = widgetInstance.widget.scorescreen.lastIndexof('.')
