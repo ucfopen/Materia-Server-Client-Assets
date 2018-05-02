@@ -71,7 +71,6 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 				}
 				else {
 					// link to the static widget
-					// TODO need to test this
 					enginePath = WIDGET_URL + widgetInstance.widget.dir + widgetInstance.widget.scorescreen
 				}
 				$scope.customScoreScreen = true
@@ -108,10 +107,10 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 					return _onWidgetReady()
 				case 'materiaScoreRecorded':
 					// TODO
-					return console.log("??? need to handle materiaScoreRecorded ???")
+					return
 				case 'initialize':
 					// TODO
-					return console.log("??? initialized, may remove this call?")
+					return
 				case 'setHeight':
 					return _setHeight(msg.data[0])
 				case 'hideResultsTable':
@@ -468,7 +467,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 				tableItem.value = tableItem.value.toFixed(2)
 			}
 
-			sendPostMessage(deets.overview.score) // todo ??
+			sendPostMessage(deets.overview.score) // TODO ??
 			$scope.overview = deets.overview
 			$scope.attempt_num = currentAttempt
 		}
@@ -512,10 +511,6 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 					const canvas_id = `question-${i + 1}-${index}`
 					const percent = table.score / 100
 					switch (table.graphic) {
-						/*
-						TODO look into this (see if it should be added to scorescreen in some way)
-						looks like it is set in score_module.php but it's always either 'score' or 'none'
-						*/
 						case 'modifier':
 							greyMode = table.score === 0
 							Materia.Scores.Scoregraphics.drawModifierCircle(canvas_id, index, percent, greyMode)
@@ -535,6 +530,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 	const sendPostMessage = score => {
 		// TODO need to see what this is used for
+		// (`materiaScoreRecorded` only appears in this file, not sure how it's used)
 		if (parent.postMessage && JSON.stringify) {
 			parent.postMessage(
 				JSON.stringify({
