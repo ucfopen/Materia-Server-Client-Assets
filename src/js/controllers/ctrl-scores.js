@@ -59,27 +59,22 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const _checkCustomScoreScreen = () => {
-		$scope.customScoreScreen = true
-		enginePath = WIDGET_URL + widgetInstance.widget.dir + "scorescreen.html"
-		/* TODO uncomment this, remove above, requires change to `widget` table
-		if (widgetInstance.widget.scorescreen) {
-			const splitSpot = widgetInstance.widget.scorescreen.lastIndexof('.')
+		$scope.customScoreScreen = false
+		const score_screen = widgetInstance.widget.score_screen
+		if (score_screen) {
+			const splitSpot = score_screen.lastIndexOf('.')
 			if (splitSpot != -1) {
-				if (widgetInstance.widget.scorescreen.substring(0,4) == 'http') {
-					// allow player paths to be aboslute urls
-					enginePath = instance.widget.scorescreen
+				if (score_screen.substring(0,4) == 'http') {
+					// allow player paths to be absolute urls
+					enginePath = score_screen
 				}
 				else {
-					// link to the static widget
-					enginePath = WIDGET_URL + widgetInstance.widget.dir + widgetInstance.widget.scorescreen
+					// link to the static file
+					enginePath = WIDGET_URL + widgetInstance.widget.dir + score_screen
 				}
 				$scope.customScoreScreen = true
-				return
 			}
 		}
-
-		$scope.customScoreScreen = false
-		*/
 	}
 
 	const _embed = () => {
