@@ -15,8 +15,7 @@ Namespace('Materia').ScoreCore = (() => {
 				_scoreDistribution(msg.data[0])
 				break
 			default:
-				throw new Error(`Error: Engine Core received unknown post message: ${msg.type}`)
-				break
+				throw new Error(`Error: Score Core received unknown post message: ${msg.type}`)
 		}
 	}
 
