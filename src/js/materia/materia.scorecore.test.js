@@ -1,27 +1,32 @@
 describe('Materia.ScoreCore', () => {
 	let ScoreCore
-	let $q
 
-	let mockWidget = {
-		start: jest.fn(),
-		update: jest.fn(),
-		handleScoreDistribution: jest.fn()
-	}
-
+	let mockWidget
 	let _onPostMessage
 
 	beforeEach(() => {
 		let app = angular.module('materia')
-		inject(function(_$q_) {
-			$q = _$q_
-		})
 		global.API_LINK = 'my_api_url'
 		require('../materia-namespace')
 		require('./materia.scorecore')
 		ScoreCore = Namespace('Materia').ScoreCore
-		global.fetch = jest.fn()
 		jest.spyOn(window, 'addEventListener')
 		jest.spyOn(parent, 'postMessage')
+
+		mockWidget = {
+			start: jest.fn(),
+			update: jest.fn(),
+			handleScoreDistribution: jest.fn()
+		}
+		//prior to each test, run ScoreCore.start to prime the _onPostMessage event listener
+		ScoreCore.start( mockWidget )
+		parent.postMessage.mockReset()
+		//this refers to the private method _onPostMessage in ScoreCore passed to window.addEventListener
+		//we can use this to run private methods
+		_onPostMessage = window.addEventListener.mock.calls[0][1]
+	})
+	afterEach(() => {
+		jest.clearAllMocks()
 	})
 
 	it('defines expected public methods', () => {
@@ -32,13 +37,12 @@ describe('Materia.ScoreCore', () => {
 		expect(ScoreCore.start).toBeDefined()
 	})
 
-	it('sends a post message and adds an event listener for post messages when starting', () => {
+	it('sends a post message when starting', () => {
 		ScoreCore.start( mockWidget )
+
 		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"initialize"}', '*')
 		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"start","data":null}', '*')
-
-		expect(window.addEventListener).toHaveBeenCalled()
-		_onPostMessage = window.addEventListener.mock.calls[0][1]
+		expect(window.addEventListener).toHaveBeenCalledWith('message', _onPostMessage, false)
 	})
 
 	it('sends a post message when hiding the results table', () => {
