@@ -192,7 +192,6 @@ app.controller('createCtrl', function(
 		embedDonePromise = deferred
 
 		$timeout(() => {
-
 			switch (widgetType) {
 				case '.swf':
 					embedFlash(creatorPath, widget_info.flash_version)
