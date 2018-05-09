@@ -73,16 +73,14 @@ Namespace('Materia.Coms').Json = (() => {
 			args = []
 		}
 
-		let body = new FormData()
-		body.append('data', JSON.stringify(args))
 		let options = {
 			method: 'POST',
 			credentials: 'same-origin',
 			cache: 'no-cache',
-			body,
+			body: encodeURI(`data=${JSON.stringify(args)}`),
 			headers: {
-				accept: 'application/json, text/javascript, */*; q=0.01'
-				// 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
+				accept: 'application/json, text/javascript, */*; q=0.01',
+				'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
 			}
 		}
 		// returns deferred
