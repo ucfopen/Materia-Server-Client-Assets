@@ -46,7 +46,7 @@ Namespace('Materia.Storage').Manager = (() => {
 		// can't use array.find here due to IE11
 		for (var i = _tables.length - 1; i >= 0; i--) {
 			let table = _tables[i]
-			if(table.getId() === tableId){
+			if (table.getId() === tableId) {
 				return table
 			}
 		}
