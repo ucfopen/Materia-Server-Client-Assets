@@ -93,6 +93,8 @@ app.controller('SelectedWidgetController', function(
 
 		return `<iframe src='${BASE_URL}embed/${$scope.selected.widget.id}/${
 			$scope.selected.widget.clean_name
+		}?autoplay=${
+			$scope.show.autoplayToggle ? 1 : 0
 		}' width='${width}' height='${height}' style='margin:0;padding:0;border:0;'></iframe>`
 	}
 
