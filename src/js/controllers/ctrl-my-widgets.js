@@ -128,6 +128,7 @@ app.controller('MyWidgetsController', function(
 		$scope.show.deleteDialog = false
 		$scope.show.editPublishedWarning = false
 		$scope.show.embedToggle = false
+		$scope.show.autoplayToggle = true
 		$scope.show.exportModal = false
 		$scope.show.olderScores = false
 

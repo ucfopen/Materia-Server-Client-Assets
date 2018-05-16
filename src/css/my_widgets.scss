@@ -517,7 +517,7 @@
 		margin-bottom: 6px;
 	}
 
-	.page .share-widget-container input {
+	.page .share-widget-container input:not(.unstyled) {
 		width: 548px;
 		margin: 0;
 		height: 1.5em;
