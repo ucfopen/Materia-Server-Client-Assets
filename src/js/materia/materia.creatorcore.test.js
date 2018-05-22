@@ -2,11 +2,29 @@ describe('creatorcore', () => {
 	let creatorCore
 	let $q
 
+	let mockCreator
+	let _onPostMessage
+
+	let mockHeightGetter = () => {
+		//mocks document.getElementsByTagName('tag')[0].height()
+		jest.spyOn(document, 'getElementsByTagName').mockReturnValueOnce([{height: () => 10}])
+	}
+
 	let mockFetchOnce = result => {
 		fetch.mockImplementationOnce((n, arg, cb) => {
 			const deferred = $q.defer()
 			deferred.resolve(result)
 			return deferred.promise
+		})
+	}
+
+	let onlyCalledInCreator = targetMethod => {
+		Object.keys(mockCreator).forEach(method => {
+			if (method == targetMethod) {
+				expect(mockCreator[method]).toHaveBeenCalledTimes(1)
+			} else {
+				expect(mockCreator[method]).not.toHaveBeenCalled()
+			}
 		})
 	}
 
@@ -22,6 +40,26 @@ describe('creatorcore', () => {
 		global.fetch = jest.fn()
 		jest.spyOn(window, 'addEventListener')
 		jest.spyOn(parent, 'postMessage')
+
+		mockCreator = {
+			onSaveClicked: jest.fn(),
+			onSaveComplete: jest.fn(),
+			onMediaImportComplete: jest.fn(),
+			onQuestionImportComplete: jest.fn(),
+			initNewWidget: jest.fn(),
+			initExistingWidget: jest.fn()
+		}
+
+		//prior to each test, run creatorCore.start to prime the _onPostMessage event listener
+		creatorCore.start(mockCreator)
+		parent.postMessage.mockReset()
+		//this refers to the private method _onPostMessage passed to window.addEventListener
+		//use this to run private methods
+		_onPostMessage = window.addEventListener.mock.calls[0][1]
+	})
+
+	afterEach(() => {
+		jest.clearAllMocks()
 	})
 
 	it('defines expected public methods', () => {
@@ -41,6 +79,101 @@ describe('creatorcore', () => {
 		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"start","data":null}', '*')
 	})
 
+	it('reacts properly to initNewWidget post messages', () => {
+		_onPostMessage({
+			data: JSON.stringify({
+				type: 'initNewWidget',
+				data: ['widgetObj', 'baseUrl', 'mediaUrl']
+			})
+		})
+		expect(mockCreator.initNewWidget).toHaveBeenCalledWith('widgetObj')
+		onlyCalledInCreator('initNewWidget')
+	})
+
+	it('reacts properly to initExistingWidget post messages', () => {
+		_onPostMessage({
+			data: JSON.stringify({
+				type: 'initExistingWidget',
+				data: ['widgetObj', 'widgetTitle', 'qsetObj', 'qsetVersion', 'baseUrl', 'mediaUrl']
+			})
+		})
+		expect(mockCreator.initExistingWidget).toHaveBeenCalledWith('widgetObj', 'widgetTitle', 'qsetObj', 'qsetVersion')
+		onlyCalledInCreator('initExistingWidget')
+	})
+
+	it('reacts properly to onRequestSave post messages', () => {
+		_onPostMessage({
+			data: JSON.stringify({
+				type: 'onRequestSave',
+				data: ['save']
+			})
+		})
+		expect(mockCreator.onSaveClicked).toHaveBeenCalledWith('save')
+		onlyCalledInCreator('onSaveClicked')
+	})
+
+	it('reacts properly to onSaveComplete post messages', () => {
+		_onPostMessage({
+			data: JSON.stringify({
+				type: 'onSaveComplete',
+				data: ['instanceName', 'instanceWidget', 'instanceQsetData', 'instanceQsetVersion']
+			})
+		})
+		expect(mockCreator.onSaveComplete).toHaveBeenCalledWith('instanceName', 'instanceWidget', 'instanceQsetData', 'instanceQsetVersion')
+		onlyCalledInCreator('onSaveComplete')
+	})
+
+	it('reacts properly to onMediaImportComplete post messages', () => {
+		_onPostMessage({
+			data: JSON.stringify({
+				type: 'onMediaImportComplete',
+				data: ['mediaArray']
+			})
+		})
+		expect(mockCreator.onMediaImportComplete).toHaveBeenCalledWith('mediaArray')
+		onlyCalledInCreator('onMediaImportComplete')
+	})
+
+	it('reacts properly to onQuestionImportComplete post messages', () => {
+		_onPostMessage({
+			data: JSON.stringify({
+				type: 'onQuestionImportComplete',
+				data: ['questionArray']
+			})
+		})
+		expect(mockCreator.onQuestionImportComplete).toHaveBeenCalledWith('questionArray')
+		onlyCalledInCreator('onQuestionImportComplete')
+	})
+
+	it('reacts properly to unknown post messages', () => {
+		_onPostMessage({
+			data: JSON.stringify({
+				type: 'undefinedMessageType',
+				data: ['payload']
+			})
+		})
+		expect(parent.postMessage).toHaveBeenCalledWith(
+			'{\"type\":\"alert\",\"data\":{\"title\":\"Error, unknown message sent to creator core: undefinedMessageType\",\"type\":1}}',
+			'*'
+		)
+	})
+
+	it('reacts properly if the creator class is missing an expected method', () => {
+		//pretend the creator doesn't have this method defined after all
+		delete mockCreator.initNewWidget
+
+		_onPostMessage({
+			data: JSON.stringify({
+				type: 'initNewWidget',
+				data: ['widgetObj', 'baseUrl', 'mediaUrl']
+			})
+		})
+		expect(parent.postMessage).toHaveBeenCalledWith(
+			'{\"type\":\"alert\",\"data\":{\"title\":\"Error, missing creator initNewWidget called.\",\"type\":1}}',
+			'*'
+		)
+	})
+
 	it('alert sends a postmessage', () => {
 		creatorCore.alert('title', 'msg', 'type')
 		expect(parent.postMessage).toHaveBeenCalledWith(
@@ -50,8 +183,6 @@ describe('creatorcore', () => {
 	})
 
 	it('getMediaUrl returns an expected url', () => {
-		creatorCore.start({})
-		let _onPostMessage = window.addEventListener.mock.calls[0][1]
 		_onPostMessage({
 			data: JSON.stringify({
 				type: 'initNewWidget',
@@ -128,5 +259,51 @@ describe('creatorcore', () => {
 	it('escapeScriptTags cleans tags', () => {
 		let ret = creatorCore.escapeScriptTags('<script><a href="test">hi</a></script>')
 		expect(ret).toBe('&lt;script&gt;&lt;a href="test"&gt;hi&lt;/a&gt;&lt;/script&gt;')
+	})
+
+	it('does not send a request to set height if setHeight is given the current height', () => {
+		creatorCore.setHeight(-1)
+		expect(parent.postMessage).not.toHaveBeenCalled()
+	})
+
+	it('sends a request to set height if setHeight is given the current height', () => {
+		creatorCore.setHeight(1)
+		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","data":[1]}', '*')
+	})
+
+	it('sends a request to set height if setHeight is given nothing', () => {
+		mockHeightGetter()
+		creatorCore.setHeight()
+		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","data":[10]}', '*')
+	})
+
+	it('properly sets a resize interval for auto-resizing widgets', () => {
+		mockHeightGetter()
+		mockCreator.manualResize = false
+
+		//lets us trigger intervals
+		jest.useFakeTimers()
+
+		creatorCore.start(mockCreator)
+		jest.runOnlyPendingTimers()
+		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","data":[10]}', '*')
+	})
+
+	it('disables the resize interval correctly', () => {
+		mockHeightGetter()
+		mockCreator.manualResize = false
+
+		//lets us trigger intervals
+		jest.useFakeTimers()
+
+		creatorCore.start(mockCreator)
+		parent.postMessage.mockReset()
+
+		creatorCore.disableResizeInterval()
+		expect(clearInterval).toHaveBeenCalledTimes(1)
+
+		//no additional post messages should result since we shouldn't have any intervals
+		jest.runOnlyPendingTimers();
+		expect(parent.postMessage).not.toHaveBeenCalled()
 	})
 })
