@@ -5,20 +5,13 @@ describe('creatorcore', () => {
 	let mockCreator
 	let _onPostMessage
 
-	let mockHeightGetter = () => {
+	const mockHeightGetter = () => {
 		//mocks document.getElementsByTagName('tag')[0].height()
 		jest.spyOn(document, 'getElementsByTagName').mockReturnValueOnce([{height: () => 10}])
 	}
 
-	let mockFetchOnce = result => {
-		fetch.mockImplementationOnce((n, arg, cb) => {
-			const deferred = $q.defer()
-			deferred.resolve(result)
-			return deferred.promise
-		})
-	}
-
-	let onlyCalledInCreator = targetMethod => {
+	//iterates all mocked creator methods to ensure only the target method is called
+	const expectOnlyCreatorMethodCalledToBe = targetMethod => {
 		Object.keys(mockCreator).forEach(method => {
 			if (method == targetMethod) {
 				expect(mockCreator[method]).toHaveBeenCalledTimes(1)
@@ -27,6 +20,25 @@ describe('creatorcore', () => {
 			}
 		})
 	}
+
+	const mockPostMessageFromWidget = (type, data) => {
+		let payload = JSON.stringify({
+			type: type,
+			data: data
+		})
+		_onPostMessage({
+			data: payload
+		})
+		return payload
+	}
+
+	const mockCreatorCoreAlert = message => JSON.stringify({
+		type: 'alert',
+		data: {
+			title: message,
+			type: 1
+		}
+	})
 
 	beforeEach(() => {
 		let app = angular.module('materia')
@@ -80,80 +92,55 @@ describe('creatorcore', () => {
 	})
 
 	it('reacts properly to initNewWidget post messages', () => {
-		_onPostMessage({
-			data: JSON.stringify({
-				type: 'initNewWidget',
-				data: ['widgetObj', 'baseUrl', 'mediaUrl']
-			})
-		})
+		mockPostMessageFromWidget('initNewWidget', ['widgetObj', 'baseUrl', 'mediaUrl'])
+
 		expect(mockCreator.initNewWidget).toHaveBeenCalledWith('widgetObj')
-		onlyCalledInCreator('initNewWidget')
+		expectOnlyCreatorMethodCalledToBe('initNewWidget')
 	})
 
 	it('reacts properly to initExistingWidget post messages', () => {
-		_onPostMessage({
-			data: JSON.stringify({
-				type: 'initExistingWidget',
-				data: ['widgetObj', 'widgetTitle', 'qsetObj', 'qsetVersion', 'baseUrl', 'mediaUrl']
-			})
-		})
+		mockPostMessageFromWidget(
+			'initExistingWidget',
+			['widgetObj', 'widgetTitle', 'qsetObj', 'qsetVersion', 'baseUrl', 'mediaUrl']
+		)
 		expect(mockCreator.initExistingWidget).toHaveBeenCalledWith('widgetObj', 'widgetTitle', 'qsetObj', 'qsetVersion')
-		onlyCalledInCreator('initExistingWidget')
+		expectOnlyCreatorMethodCalledToBe('initExistingWidget')
 	})
 
 	it('reacts properly to onRequestSave post messages', () => {
-		_onPostMessage({
-			data: JSON.stringify({
-				type: 'onRequestSave',
-				data: ['save']
-			})
-		})
+		mockPostMessageFromWidget('onRequestSave', ['save'])
+
 		expect(mockCreator.onSaveClicked).toHaveBeenCalledWith('save')
-		onlyCalledInCreator('onSaveClicked')
+		expectOnlyCreatorMethodCalledToBe('onSaveClicked')
 	})
 
 	it('reacts properly to onSaveComplete post messages', () => {
-		_onPostMessage({
-			data: JSON.stringify({
-				type: 'onSaveComplete',
-				data: ['instanceName', 'instanceWidget', 'instanceQsetData', 'instanceQsetVersion']
-			})
-		})
-		expect(mockCreator.onSaveComplete).toHaveBeenCalledWith('instanceName', 'instanceWidget', 'instanceQsetData', 'instanceQsetVersion')
-		onlyCalledInCreator('onSaveComplete')
+		let payload = ['instanceName', 'instanceWidget', 'instanceQsetData', 'instanceQsetVersion']
+		mockPostMessageFromWidget('onSaveComplete', payload)
+
+		expect(mockCreator.onSaveComplete).toHaveBeenCalledWith(...payload)
+		expectOnlyCreatorMethodCalledToBe('onSaveComplete')
 	})
 
 	it('reacts properly to onMediaImportComplete post messages', () => {
-		_onPostMessage({
-			data: JSON.stringify({
-				type: 'onMediaImportComplete',
-				data: ['mediaArray']
-			})
-		})
+		mockPostMessageFromWidget('onMediaImportComplete', ['mediaArray'])
+
 		expect(mockCreator.onMediaImportComplete).toHaveBeenCalledWith('mediaArray')
-		onlyCalledInCreator('onMediaImportComplete')
+		expectOnlyCreatorMethodCalledToBe('onMediaImportComplete')
 	})
 
 	it('reacts properly to onQuestionImportComplete post messages', () => {
-		_onPostMessage({
-			data: JSON.stringify({
-				type: 'onQuestionImportComplete',
-				data: ['questionArray']
-			})
-		})
+		mockPostMessageFromWidget('onQuestionImportComplete', ['questionArray'])
+
 		expect(mockCreator.onQuestionImportComplete).toHaveBeenCalledWith('questionArray')
-		onlyCalledInCreator('onQuestionImportComplete')
+		expectOnlyCreatorMethodCalledToBe('onQuestionImportComplete')
 	})
 
 	it('reacts properly to unknown post messages', () => {
-		_onPostMessage({
-			data: JSON.stringify({
-				type: 'undefinedMessageType',
-				data: ['payload']
-			})
-		})
+		mockPostMessageFromWidget('undefinedMessageType', ['payload'])
+
 		expect(parent.postMessage).toHaveBeenCalledWith(
-			'{\"type\":\"alert\",\"data\":{\"title\":\"Error, unknown message sent to creator core: undefinedMessageType\",\"type\":1}}',
+			mockCreatorCoreAlert('Error, unknown message sent to creator core: undefinedMessageType'),
 			'*'
 		)
 	})
@@ -169,7 +156,7 @@ describe('creatorcore', () => {
 			})
 		})
 		expect(parent.postMessage).toHaveBeenCalledWith(
-			'{\"type\":\"alert\",\"data\":{\"title\":\"Error, missing creator initNewWidget called.\",\"type\":1}}',
+			mockCreatorCoreAlert('Error, missing creator initNewWidget called.'),
 			'*'
 		)
 	})
@@ -183,13 +170,7 @@ describe('creatorcore', () => {
 	})
 
 	it('getMediaUrl returns an expected url', () => {
-		_onPostMessage({
-			data: JSON.stringify({
-				type: 'initNewWidget',
-				data: ['widgetObj', 'baseUrl', 'mediaUrl']
-			})
-		})
-
+		mockPostMessageFromWidget('initNewWidget', ['widgetObj', 'baseUrl', 'mediaUrl'])
 		expect(creatorCore.getMediaUrl('fR93X')).toBe('mediaUrl/fR93X')
 	})
 
