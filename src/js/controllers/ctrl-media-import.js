@@ -425,8 +425,8 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 								let extension = image_key.pop()
 
 								// Maintains a standard extension
-								if (extension === 'jpg') {
-									extension = 'jpeg'
+								if (extension === 'jpeg') {
+									extension = 'jpg'
 								}
 
 								// thumbnails in Materia are 75x75 dimensions
