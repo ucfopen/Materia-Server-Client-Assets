@@ -39,12 +39,15 @@ describe('Materia.Coms.Json', () => {
 			credentials: 'same-origin',
 			cache: 'no-cache',
 			headers: {
-				accept: 'application/json, text/javascript, */*; q=0.01'
+				accept: 'application/json, text/javascript, */*; q=0.01',
+				'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
 			},
-			body: expect.any(FormData)
+			//this corresponds to the arguments we're sending above
+			//we'll verify later that they're encoded properly
+			body: 'data=%5B1,%22two%22%5D'
 		}
+
 		expect(global.fetch).toHaveBeenCalledWith('my_api_url/what/is/this/', a)
-		expect(global.fetch.mock.calls[0][1].body.get('data')).toBe('[1,"two"]')
 	})
 
 	it('send defaults to API_LINK for a base url', () => {
@@ -67,7 +70,7 @@ describe('Materia.Coms.Json', () => {
 	it('send defaults data to an empty array', () => {
 		mockFetchOnce()
 		coms.send('/what/is/this')
-		expect(global.fetch.mock.calls[0][1].body.get('data')).toBe('[]')
+		expect(global.fetch.mock.calls[0][1].body).toBe('data=%5B%5D')
 	})
 
 	it('send returns a promise', () => {
