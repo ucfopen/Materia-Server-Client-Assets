@@ -14,7 +14,7 @@ app.directive('scoreData', function(selectedWidgetSrv, $window) {
 			const updateDisplay = () => {
 				// load the storageData from cache (if we have it)
 				selectedWidgetSrv.getStorageData(false).then(data => {
-					if(!data) return
+					if (!data) return
 					$scope.tables = data[semester]
 					$scope.MAX_ROWS = selectedWidgetSrv.getMaxRows()
 					$scope.tableNames = Object.keys($scope.tables)
