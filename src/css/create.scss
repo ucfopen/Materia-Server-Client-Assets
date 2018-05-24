@@ -107,6 +107,7 @@ a {
 	border-bottom: 2px solid rgba(0, 0, 0, 0.1);
 	padding: 0 0 12px 20px;
 	margin: 10px auto;
+	overflow: hidden;
 }
 
 .preview {
@@ -182,6 +183,7 @@ a {
 	text-align: left;
 	top: 50%;
 	width: 800px;
+	z-index: 10
 }
 #modal-cover {
 	background-color: #000000;
@@ -191,7 +193,7 @@ a {
 	right: -20px;
 	top: 65px;
 	width: 100%;
-	z-index: 1;
+	z-index: 7;
 }
 
 .animate-show {
