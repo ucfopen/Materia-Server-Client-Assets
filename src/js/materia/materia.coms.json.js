@@ -77,7 +77,7 @@ Namespace('Materia.Coms').Json = (() => {
 			method: 'POST',
 			credentials: 'same-origin',
 			cache: 'no-cache',
-			body: encodeURI(`data=${JSON.stringify(args)}`),
+			body: `data=${encodeURIComponent(JSON.stringify(args))}`,
 			headers: {
 				accept: 'application/json, text/javascript, */*; q=0.01',
 				'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
