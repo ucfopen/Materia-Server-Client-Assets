@@ -7,7 +7,7 @@ describe('creatorcore', () => {
 
 	const mockHeightGetter = () => {
 		//mocks document.getElementsByTagName('tag')[0].height()
-		jest.spyOn(document, 'getElementsByTagName').mockReturnValueOnce([{height: () => 10}])
+		jest.spyOn(document, 'getElementsByTagName').mockReturnValueOnce([{ height: () => 10 }])
 	}
 
 	//iterates all mocked creator methods to ensure only the target method is called
@@ -32,13 +32,14 @@ describe('creatorcore', () => {
 		return payload
 	}
 
-	const mockCreatorCoreAlert = message => JSON.stringify({
-		type: 'alert',
-		data: {
-			title: message,
-			type: 1
-		}
-	})
+	const mockCreatorCoreAlert = message =>
+		JSON.stringify({
+			type: 'alert',
+			data: {
+				title: message,
+				type: 1
+			}
+		})
 
 	beforeEach(() => {
 		let app = angular.module('materia')
@@ -99,11 +100,20 @@ describe('creatorcore', () => {
 	})
 
 	it('reacts properly to initExistingWidget post messages', () => {
-		mockPostMessageFromWidget(
-			'initExistingWidget',
-			['widgetObj', 'widgetTitle', 'qsetObj', 'qsetVersion', 'baseUrl', 'mediaUrl']
+		mockPostMessageFromWidget('initExistingWidget', [
+			'widgetObj',
+			'widgetTitle',
+			'qsetObj',
+			'qsetVersion',
+			'baseUrl',
+			'mediaUrl'
+		])
+		expect(mockCreator.initExistingWidget).toHaveBeenCalledWith(
+			'widgetObj',
+			'widgetTitle',
+			'qsetObj',
+			'qsetVersion'
 		)
-		expect(mockCreator.initExistingWidget).toHaveBeenCalledWith('widgetObj', 'widgetTitle', 'qsetObj', 'qsetVersion')
 		expectOnlyCreatorMethodCalledToBe('initExistingWidget')
 	})
 
@@ -284,7 +294,7 @@ describe('creatorcore', () => {
 		expect(clearInterval).toHaveBeenCalledTimes(1)
 
 		//no additional post messages should result since we shouldn't have any intervals
-		jest.runOnlyPendingTimers();
+		jest.runOnlyPendingTimers()
 		expect(parent.postMessage).not.toHaveBeenCalled()
 	})
 })
