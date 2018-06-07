@@ -44,7 +44,7 @@ describe('Materia.Coms.Json', () => {
 			},
 			//this corresponds to the arguments we're sending above
 			//we'll verify later that they're encoded properly
-			body: 'data=%5B1,%22two%22%5D'
+			body: 'data=%5B1%2C%22two%22%5D'
 		}
 
 		expect(global.fetch).toHaveBeenCalledWith('my_api_url/what/is/this/', a)
@@ -71,6 +71,12 @@ describe('Materia.Coms.Json', () => {
 		mockFetchOnce()
 		coms.send('/what/is/this')
 		expect(global.fetch.mock.calls[0][1].body).toBe('data=%5B%5D')
+	})
+
+	it('send sanitizes dangerous characters properly', () => {
+		mockFetchOnce()
+		coms.send('/what/is/this', ['?=/&:'])
+		expect(global.fetch.mock.calls[0][1].body).toBe('data=%5B%22%3F%3D%2F%26%3A%22%5D')
 	})
 
 	it('send returns a promise', () => {
