@@ -62,7 +62,6 @@ app.controller('MyWidgetsController', function(
 
 		// clear scores right away
 		$scope.selected.scores = null
-		Materia.MyWidgets.Statistics.clearGraphs()
 		$scope.perms.stale = true
 
 		populateDisplay()
@@ -121,7 +120,6 @@ app.controller('MyWidgetsController', function(
 		// reset scope variables to defaults
 		const count = null
 
-		$scope.show.olderScores = false
 		$scope.show.availabilityModal = false
 		$scope.show.collaborationModal = false
 		$scope.show.copyModal = false
