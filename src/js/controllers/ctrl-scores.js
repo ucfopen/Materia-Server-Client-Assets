@@ -569,7 +569,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const _getScoreDistribution = () => {
-		Materia.Coms.Json.send('play_score_distribution_get', [widgetInstance.id]).then( data => {
+		Materia.Coms.Json.send('score_raw_distribution_get', [widgetInstance.id]).then( data => {
 			_sendToWidget('scoreDistribution', [data])
 		})
 	}
