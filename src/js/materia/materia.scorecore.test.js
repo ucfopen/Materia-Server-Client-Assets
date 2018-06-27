@@ -40,7 +40,6 @@ describe('Materia.ScoreCore', () => {
 	it('sends a post message when starting', () => {
 		ScoreCore.start( mockWidget )
 
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"initialize"}', '*')
 		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"start","data":null}', '*')
 		expect(window.addEventListener).toHaveBeenCalledWith('message', _onPostMessage, false)
 	})
