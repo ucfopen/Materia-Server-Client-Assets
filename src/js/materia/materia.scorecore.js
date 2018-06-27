@@ -52,7 +52,6 @@ Namespace('Materia').ScoreCore = (() => {
 		addEventListener('message', _onPostMessage, false)
 
 		_widgetClass = widgetClass
-		_sendPostMessage('initialize') // not currently used, TODO
 		_sendPostMessage('start', null)
 	}
 

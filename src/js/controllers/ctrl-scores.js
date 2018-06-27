@@ -100,12 +100,6 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			switch (msg.type) {
 				case 'start':
 					return _onWidgetReady()
-				case 'materiaScoreRecorded':
-					// TODO
-					return
-				case 'initialize':
-					// TODO
-					return
 				case 'setHeight':
 					return _setHeight(msg.data[0])
 				case 'hideResultsTable':
