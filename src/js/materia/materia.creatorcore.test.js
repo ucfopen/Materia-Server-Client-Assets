@@ -188,7 +188,7 @@ describe('creatorcore', () => {
 		creatorCore.showMediaImporter()
 		let ex = JSON.stringify({
 			type: 'showMediaImporter',
-			data: ['jpg', 'jpeg', 'gif', 'png']
+			data: ['image']
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})

@@ -90,7 +90,7 @@ Namespace('Materia').CreatorCore = (() => {
 
 	const showMediaImporter = types => {
 		if (types == null) {
-			types = ['jpg', 'jpeg', 'gif', 'png']
+			types = ['image']
 		}
 		_sendPostMessage('showMediaImporter', types)
 	}
