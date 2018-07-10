@@ -24,6 +24,20 @@ app.controller('mediaImportCtrl', function($scope, $sce, $timeout, $window, $doc
 	const _mediaUrl = MEDIA_URL
 	const _baseUrl = BASE_URL
 
+	// generic media type definitions and substitutions for compatibility
+	const MEDIA_SUBSTITUTIONS = {
+		//generic types, preferred
+		image: ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'],
+		audio: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
+		video: [], //placeholder
+		//incompatibility prevention, not preferred
+		jpg: ['image/jpg'],
+		jpeg: ['image/jpeg'],
+		gif: ['image/gif'],
+		png: ['image/png'],
+		mp3: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3']
+	}
+
 	var Uploader = (function() {
 		let $dropArea = undefined
 		Uploader = class Uploader {
@@ -99,12 +113,19 @@ app.controller('mediaImportCtrl', function($scope, $sce, $timeout, $window, $doc
 			}
 
 			getMimeType(dataUrl) {
+				let allowedMimeTypes = []
+				$scope.fileType.forEach(type => {
+					if (MEDIA_SUBSTITUTIONS[type]) {
+						allowedMimeTypes = [
+							...allowedMimeTypes,
+							...MEDIA_SUBSTITUTIONS[type]
+						]
+					}
+				})
+
 				const mime = dataUrl.split(';')[0].split(':')[1]
 
-				// used to see if the file type is allowed
-				const fileExtension = mime == null ? null : mime.split('/')[1]
-
-				if (fileExtension == null || $scope.fileType.indexOf(fileExtension) === -1) {
+				if (mime == null || allowedMimeTypes.indexOf(mime) === -1) {
 					alert(`This widget does not support selected file type is not supported. \
 The allowed types are: ${$scope.fileType.join(', ')}.`)
 					return null
