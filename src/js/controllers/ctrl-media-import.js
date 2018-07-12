@@ -317,6 +317,26 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 		// load and/or select file for labelling
 		return _coms.send('assets_get', []).then(result => {
 			if (result && result.msg === undefined && result.length > 0) {
+				//we have a list of allowed mime types, assets are stored with file types only
+				let allowedFileTypes = []
+				$scope.fileType.forEach(type => {
+					if (MEDIA_SUBSTITUTIONS[type]) {
+						//split the file type out of the full mime type for each allowed mime type
+						let extractedTypes = []
+						MEDIA_SUBSTITUTIONS[type].forEach(subtype => {
+							extractedTypes = [
+								...extractedTypes,
+								subtype.split('/')[1]
+							]
+						})
+
+						allowedFileTypes = [
+							...allowedFileTypes,
+							...extractedTypes
+						]
+					}
+				})
+
 				data = result
 				$('#question-table')
 					.dataTable()
@@ -332,7 +352,7 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 						continue
 					}
 
-					if (Array.from($scope.fileType).includes(res.type)) {
+					if (allowedFileTypes.indexOf(res.type) > -1) {
 						// the id used for asset url is actually remote_url
 						// if it exists, use it instead
 						res.id = res.remote_url != null ? res.remote_url : res.id
@@ -341,7 +361,7 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 						if (
 							file_id != null &&
 							res.id === file_id &&
-							Array.from($scope.fileType).includes(res.type)
+							allowedFileTypes.indexOf(res.type) > -1
 						) {
 							$window.parent.Materia.Creator.onMediaImportComplete([res])
 						}
