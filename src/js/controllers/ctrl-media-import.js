@@ -494,7 +494,27 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 				{
 					// custom ui column containing a nested table of asset details
 					render(data, type, full, meta) {
-						if (Array.from($scope.fileType).includes(full.type)) {
+						let allowedFileTypes = []
+						$scope.fileType.forEach(type => {
+							if (MEDIA_SUBSTITUTIONS[type]) {
+								//split the file type out of the full mime type for each allowed mime type
+								let extractedTypes = []
+								MEDIA_SUBSTITUTIONS[type].forEach(subtype => {
+									extractedTypes = [
+										...extractedTypes,
+										subtype.split('/')[1]
+									]
+								})
+
+								allowedFileTypes = [
+									...allowedFileTypes,
+									...extractedTypes
+								]
+							}
+						})
+
+						// if (Array.from($scope.fileType).includes(full.type)) {
+						if (allowedFileTypes.indexOf(full.type) > -1) {
 							const sub_table = document.createElement('table')
 							sub_table.width = '100%'
 							sub_table.className = 'sub-table'
