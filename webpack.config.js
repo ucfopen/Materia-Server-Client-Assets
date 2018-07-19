@@ -87,6 +87,7 @@ module.exports = {
       jsPath+'/directives/dir-beardable.js',
       jsPath+'/directives/dir-datatable.js',
       jsPath+'/directives/dir-date-validation.js',
+      jsPath+'/directives/dir-filedropper.js',
       jsPath+'/directives/dir-fileonchange.js',
       jsPath+'/directives/dir-ngenter.js',
       jsPath+'/directives/dir-scoredata.js',
