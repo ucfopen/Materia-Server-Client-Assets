@@ -5,6 +5,7 @@
   "homepage": "https://ucfopen.github.io/Materia-Docs",
   "scripts": {
     "test": "TZ=Etc/UTC jest --verbose",
+    "test:dev": "TZ=Etc/UTC jest --verbose --watch --coverage --coverageReporters html",
     "test:ci": "TZ=Etc/UTC CI=true jest --ci --useStderr --coverage --coverageReporters text-summary cobertura",
     "build": "webpack -p",
     "build-watch": "webpack --watch",
