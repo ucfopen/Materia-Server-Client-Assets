@@ -32,8 +32,9 @@ app.controller('mediaImportCtrl', function($scope, $window){
 	const SORTING_ASC = 'asc'
 	const SORTING_DESC = 'desc'
 
+	const FILETYPES = $window.location.hash.substring(1).split(',')
+
 	// SCOPE VARS
-	$scope.fileTypes = location.hash.substring(1).split(',')
 	$scope.sortOptions = [
 		{
 			type: TITLE_SORT,
@@ -56,11 +57,15 @@ app.controller('mediaImportCtrl', function($scope, $window){
 	]
 
 	// track all valid files separately from which files are currently displayed
-	$scope.allFiles = []
+	let _allFiles = []
 	$scope.displayFiles = []
 
 	$scope.currentSort = null
 	$scope.filter = null
+
+	$scope.select = function(asset) {
+		$window.parent.Materia.Creator.onMediaImportComplete([asset])
+	}
 
 	$scope.cancel = function() {
 		$window.parent.Materia.Creator.onMediaImportComplete(null)
@@ -123,7 +128,7 @@ app.controller('mediaImportCtrl', function($scope, $window){
 	}
 
 	$scope.filterFiles = function() {
-		$scope.displayFiles = $scope.allFiles
+		$scope.displayFiles = _allFiles
 		_sortFiles()
 
 		let search = $scope.filter.toLowerCase().trim()
@@ -161,16 +166,12 @@ app.controller('mediaImportCtrl', function($scope, $window){
 	}
 
 	function _loadAllMedia(file_id) {
-		// determine the types from the url hash string
-		let mediaTypes = $window.location.hash.substring(1)
-		if (mediaTypes) mediaTypes = mediaTypes.split(',')
-
 		// load and/or select file for labelling
 		return COMS.send('assets_get', []).then(result => {
 			if (result && result.msg === undefined && result.length > 0) {
 				//we have a list of allowed mime types, assets are stored with file types only
 				let allowedFileTypes = []
-				$scope.fileTypes.forEach(type => {
+				FILETYPES.forEach(type => {
 					if (MEDIA_SUBSTITUTIONS[type]) {
 						//split the file type out of the full mime type for each allowed mime type
 						let extractedTypes = []
@@ -197,8 +198,7 @@ app.controller('mediaImportCtrl', function($scope, $window){
 					) {
 						return
 					}
-
-					if (allowedFileTypes.includes(res.type)) {
+					if (allowedFileTypes.indexOf(res.type) > -1) {
 						// the id used for asset url is actually remote_url
 						// if it exists, use it instead
 						res.id = res.remote_url != null ? res.remote_url : res.id
@@ -230,8 +230,8 @@ app.controller('mediaImportCtrl', function($scope, $window){
 						})
 					}
 				})
-				$scope.allFiles = allowedResult
-				$scope.displayFiles = $scope.allFiles
+				_allFiles = allowedResult
+				$scope.displayFiles = _allFiles
 				$scope.$apply()
 			}
 		})
@@ -271,12 +271,8 @@ app.controller('mediaImportCtrl', function($scope, $window){
 			case 'wav':
 			case 'ogg':
 				return '/img/audio.png'
-			default:
-				return ''
 		}
 	}
-
-	_loadAllMedia()
 
 	function _getFileData(file, callback) {
 		const dataReader = new FileReader()
@@ -312,10 +308,10 @@ app.controller('mediaImportCtrl', function($scope, $window){
 	function _getMimeType(dataUrl) {
 		let allowedMimeTypes = []
 
-		$scope.fileTypes.forEach(type => {
+		FILETYPES.forEach(type => {
 			if (MEDIA_SUBSTITUTIONS[type]) {
 				allowedMimeTypes = [
-					...allowedMimeTypes,
+		...allowedMimeTypes,
 					...MEDIA_SUBSTITUTIONS[type]
 				]
 			}
@@ -325,10 +321,9 @@ app.controller('mediaImportCtrl', function($scope, $window){
 
 		if (mime == null || allowedMimeTypes.indexOf(mime) === -1) {
 			alert('This widget does not support selected file type is not supported. ' +
-				`The allowed types are: ${$scope.fileTypes.join(', ')}.`)
+				`The allowed types are: ${FILETYPES.join(', ')}.`)
 			return null
 		}
-
 		return mime
 	}
 
@@ -463,4 +458,6 @@ app.controller('mediaImportCtrl', function($scope, $window){
 			request_to_S3.send()
 		}, attempt * 1000)
 	}
+
+	_loadAllMedia()
 })
