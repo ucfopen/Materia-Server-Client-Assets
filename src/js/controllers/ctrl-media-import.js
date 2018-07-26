@@ -162,6 +162,8 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 						// s3 upload
 						const success = request.status === 200 || request.status === 201
 
+						let importElement = document.getElementsByClassName('import')[0].setAttribute('disabled', false)
+
 						if (!success) {
 							// Parse the Error message received from amazonaws
 							const parser = new DOMParser()
@@ -256,9 +258,17 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 	}
 	const uploader = new Uploader(config)
 
-	parent.postMessage(JSON.stringify({type:'media event', data:''}), '*')
+	// announce to the creator that the importer is available, if waiting to auto-upload
+	parent.postMessage(JSON.stringify({type:'mediaImporterAvailable', data:''}), '*')
+
+	// if creator returns a file, go ahead and upload it (bypasses user input)
 	const _onPostMessage = function(event){
-		uploader.upload(JSON.parse(event.data))
+		// Disable mouse events within the importer while the upload is happening (input from the user is NOT required)
+		document.getElementsByClassName('import')[0].setAttribute('style', 'pointer-events: none; opacity: 0.5')
+		let json = JSON.parse(event.data)
+		if (json.name && json.ext && json.src) {
+			uploader.upload(json)
+		}
 	}
 
 	$window.addEventListener("message", _onPostMessage, false)
