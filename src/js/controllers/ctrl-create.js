@@ -226,8 +226,8 @@ app.controller('createCtrl', function(
 						return showMediaImporter(msg.data)
 					case 'uploadMedia':
 						return uploadMedia(msg.data)
-					case 'media event':
-						return e.source.postMessage(mediaFile, e.origin)
+					case 'mediaImporterAvailable': // the creator announces that the importer is available for an automatic upload
+						if (mediaFile) return e.source.postMessage(mediaFile, e.origin)
 					case 'setHeight': // the height of the creator has changed
 						return setHeight(msg.data[0])
 					case 'alert':
