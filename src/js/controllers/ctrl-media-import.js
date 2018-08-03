@@ -314,6 +314,28 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 
 	$scope.uploadFile = uploader.onFileChange
 
+	var getAllowedFileTypes = function() {
+		let allowedFileTypes = []
+		$scope.fileType.forEach(type => {
+			if (MEDIA_SUBSTITUTIONS[type]) {
+				//split the file type out of the full mime type for each allowed mime type
+				let extractedTypes = []
+				MEDIA_SUBSTITUTIONS[type].forEach(subtype => {
+					extractedTypes = [
+						...extractedTypes,
+						subtype.split('/')[1]
+					]
+				})
+
+				allowedFileTypes = [
+					...allowedFileTypes,
+					...extractedTypes
+				]
+			}
+		})
+		return allowedFileTypes
+	}
+
 	// load up the media objects, optionally pass file id to skip labeling that file
 	var loadAllMedia = function(file_id) {
 		// clear the table
@@ -335,24 +357,7 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 		return _coms.send('assets_get', []).then(result => {
 			if (result && result.msg === undefined && result.length > 0) {
 				//we have a list of allowed mime types, assets are stored with file types only
-				let allowedFileTypes = []
-				$scope.fileType.forEach(type => {
-					if (MEDIA_SUBSTITUTIONS[type]) {
-						//split the file type out of the full mime type for each allowed mime type
-						let extractedTypes = []
-						MEDIA_SUBSTITUTIONS[type].forEach(subtype => {
-							extractedTypes = [
-								...extractedTypes,
-								subtype.split('/')[1]
-							]
-						})
-
-						allowedFileTypes = [
-							...allowedFileTypes,
-							...extractedTypes
-						]
-					}
-				})
+				let allowedFileTypes = getAllowedFileTypes()
 
 				data = result
 				$('#question-table')
@@ -369,7 +374,7 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 						continue
 					}
 
-					if (allowedFileTypes.indexOf(res.type) > -1) {
+					if (allowedFileTypes.includes(res.type)) {
 						// the id used for asset url is actually remote_url
 						// if it exists, use it instead
 						res.id = res.remote_url != null ? res.remote_url : res.id
@@ -378,7 +383,7 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 						if (
 							file_id != null &&
 							res.id === file_id &&
-							allowedFileTypes.indexOf(res.type) > -1
+							allowedFileTypes.includes(res.type)
 						) {
 							$window.parent.Materia.Creator.onMediaImportComplete([res])
 						}
@@ -511,27 +516,9 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 				{
 					// custom ui column containing a nested table of asset details
 					render(data, type, full, meta) {
-						let allowedFileTypes = []
-						$scope.fileType.forEach(type => {
-							if (MEDIA_SUBSTITUTIONS[type]) {
-								//split the file type out of the full mime type for each allowed mime type
-								let extractedTypes = []
-								MEDIA_SUBSTITUTIONS[type].forEach(subtype => {
-									extractedTypes = [
-										...extractedTypes,
-										subtype.split('/')[1]
-									]
-								})
+						let allowedFileTypes = getAllowedFileTypes()
 
-								allowedFileTypes = [
-									...allowedFileTypes,
-									...extractedTypes
-								]
-							}
-						})
-
-						// if (Array.from($scope.fileType).includes(full.type)) {
-						if (allowedFileTypes.indexOf(full.type) > -1) {
+						if (allowedFileTypes.includes(full.type)) {
 							const sub_table = document.createElement('table')
 							sub_table.width = '100%'
 							sub_table.className = 'sub-table'
