@@ -447,8 +447,10 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			}
 		}
 
+		deets.overview.score = Math.round(deets.overview.score)
+		sendPostMessage(deets.overview.score)
+
 		if ($scope.showScoresOverview) {
-			deets.overview.score = Math.round(deets.overview.score)
 			for (var tableItem of Array.from(deets.overview.table)) {
 				if (tableItem.value.constructor === String) {
 					tableItem.value = parseFloat(tableItem.value)
@@ -456,7 +458,6 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 				tableItem.value = tableItem.value.toFixed(2)
 			}
 
-			sendPostMessage(deets.overview.score) // TODO ??
 			$scope.overview = deets.overview
 			$scope.attempt_num = currentAttempt
 		}

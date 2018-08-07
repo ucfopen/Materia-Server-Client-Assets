@@ -51,7 +51,7 @@ Namespace('Materia').CreatorCore = (() => {
 		}
 	}
 
-	const _sendPostMessage = (type, data) => parent.postMessage(JSON.stringify({ type, data }), '*')
+	const _sendPostMessage = (type, source, data) => parent.postMessage(JSON.stringify({ type, source, data }), '*')
 
 	const _initNewWidget = (widget, baseUrl, mediaUrl) => {
 		_baseurl = baseUrl
@@ -76,14 +76,14 @@ Namespace('Materia').CreatorCore = (() => {
 		}
 
 		_creatorClass = creatorClass
-		_sendPostMessage('start', null)
+		_sendPostMessage('start', 'creator-core', null)
 	}
 
 	const alert = (title, msg, type) => {
 		if (type == null) {
 			type = 1
 		}
-		_sendPostMessage('alert', { title, msg, type })
+		_sendPostMessage('alert', 'creator-core', { title, msg, type })
 	}
 
 	const getMediaUrl = mediaId => `${_mediaUrl}/${mediaId}`
@@ -92,11 +92,11 @@ Namespace('Materia').CreatorCore = (() => {
 		if (types == null) {
 			types = ['image']
 		}
-		_sendPostMessage('showMediaImporter', types)
+		_sendPostMessage('showMediaImporter', 'creator-core', types)
 	}
 
-	const uploadMedia = mediaData => {
-		_sendPostMessage('uploadMedia', mediaData)
+	const directUploadMedia = mediaData => {
+		_sendPostMessage('directUploadMedia', 'creator-core', mediaData)
 	}
 
 	const save = (title, qset, version) => {
@@ -104,17 +104,17 @@ Namespace('Materia').CreatorCore = (() => {
 			version = '1'
 		}
 		const sanitizedTitle = escapeScriptTags(title)
-		_sendPostMessage('save', [sanitizedTitle, qset, version])
+		_sendPostMessage('save', 'creator-core', [sanitizedTitle, qset, version])
 	}
 
-	const cancelSave = msg => _sendPostMessage('cancelSave', [msg])
+	const cancelSave = msg => _sendPostMessage('cancelSave', 'creator-core', [msg])
 
 	const setHeight = h => {
 		if (!h) {
 			h = document.getElementsByTagName('html')[0].height()
 		}
 		if (h !== _lastHeight) {
-			_sendPostMessage('setHeight', [h])
+			_sendPostMessage('setHeight', 'creator-core', [h])
 			_lastHeight = h
 		}
 	}
@@ -131,7 +131,7 @@ Namespace('Materia').CreatorCore = (() => {
 		alert,
 		getMediaUrl,
 		showMediaImporter,
-		uploadMedia,
+		directUploadMedia,
 		cancelSave,
 		save,
 		disableResizeInterval,
