@@ -108,6 +108,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 					return $scope.showScoresOverview = false
 				case 'requestScoreDistribution':
 					return _getScoreDistribution()
+					case 'materiaScoreRecorded': return false // let this one pass through, it's not intended for score-core but rather a parent platform (like Obojobo)
 				default:
 					throw new Error(`Unknown PostMessage received from score core: ${msg.type}`)
 			}
@@ -342,7 +343,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			.script(`${cdnBase}jqPlot/1.0.9/plugins/jqplot.highlighter.min.js`)
 			.wait(() =>
 				// ========== BUILD THE GRAPH =============
-				Materia.Coms.Json.send('score_summary_get', [widgetInstance.id]).then(data => {
+				scoreSrv.getWidgetInstanceScoreSummary(widgetInstance.id).then(data => {
 					// add up all semesters data into one dataset
 					_graphData = [
 						['0-9%', 0],
@@ -447,6 +448,8 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			}
 		}
 
+		// send the materiaScoreRecorded postMessage
+		// previously within the if block below, but should happen regardless of whether the overview is shown
 		deets.overview.score = Math.round(deets.overview.score)
 		sendPostMessage(deets.overview.score)
 
@@ -483,8 +486,19 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		scoreTable = deets.details[0].table
 		if ($scope.customScoreScreen) {
 			const created_at = ~~deets.overview.created_at
-			_getQset(created_at).then( () => {
-				scoresLoadPromise.resolve()
+			scoreSrv.getWidgetInstanceQSet(play_id, widget_id, created_at, (data) => {
+
+				if (
+					(data != null ? data.title : undefined) === 'Permission Denied' ||
+						data.title === 'error'
+				) {
+					$scope.invalid = true
+					Please.$apply()
+				} else {
+					qset = data
+				}
+				
+				return scoresLoadPromise.resolve()					
 			})
 		}
 		else {
@@ -518,9 +532,9 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		})
 	}
 
+	// broadcasts a postMessage to inform Obojobo, or other platforms, about a score event
+	// Bypasses the LTI interface and provides an alternative for platforms that use embedded Materia to listen for a score
 	const sendPostMessage = score => {
-		// TODO need to see what this is used for
-		// (`materiaScoreRecorded` only appears in this file, not sure how it's used)
 		if (parent.postMessage && JSON.stringify) {
 			parent.postMessage(
 				JSON.stringify({
@@ -541,30 +555,12 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		return $scope.attempts.length
 	}
 
-	// Gets the qset of a loaded instance
-	const _getQset = (timestamp) => {
-		const deferred = $q.defer()
-		Materia.Coms.Json.send('question_set_get', [widget_id, play_id, timestamp]).then(data => {
-			if (
-				(data != null ? data.title : undefined) === 'Permission Denied' ||
-				data.title === 'error'
-			) {
-				$scope.invalid = true
-				Please.$apply()
-			} else {
-				qset = data
-			}
-			deferred.resolve()
-		})
-		return deferred.promise
-	}
-
 	const _onWidgetReady = () => {
 		embedDonePromise.resolve()
 	}
 
 	const _getScoreDistribution = () => {
-		Materia.Coms.Json.send('score_raw_distribution_get', [widgetInstance.id]).then( data => {
+		scoreSrv.getScoreDistribution(widgetInstance.id, (data) => {
 			_sendToWidget('scoreDistribution', [data])
 		})
 	}
