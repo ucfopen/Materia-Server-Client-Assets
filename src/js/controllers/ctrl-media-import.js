@@ -280,7 +280,7 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 	const uploader = new Uploader(config)
 
 	// announce to the creator that the importer is available, if waiting to auto-upload
-	parent.postMessage(JSON.stringify({type:'mediaImporterAvailable', data:''}), '*')
+	parent.postMessage(JSON.stringify({type:'readyForDirectUpload', source:'media-importer', data:''}), '*')
 
 	// if creator returns a file, go ahead and upload it (bypasses user input)
 	const _onPostMessage = function(event){
@@ -314,7 +314,7 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 
 	$scope.uploadFile = uploader.onFileChange
 
-	var getAllowedFileTypes = function() {
+	var setAllowedFileTypes = function() {
 		let allowedFileTypes = []
 		$scope.fileType.forEach(type => {
 			if (MEDIA_SUBSTITUTIONS[type]) {
@@ -357,7 +357,7 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 		return _coms.send('assets_get', []).then(result => {
 			if (result && result.msg === undefined && result.length > 0) {
 				//we have a list of allowed mime types, assets are stored with file types only
-				let allowedFileTypes = getAllowedFileTypes()
+				let allowedFileTypes = setAllowedFileTypes()
 
 				data = result
 				$('#question-table')
@@ -516,7 +516,7 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 				{
 					// custom ui column containing a nested table of asset details
 					render(data, type, full, meta) {
-						let allowedFileTypes = getAllowedFileTypes()
+						let allowedFileTypes = setAllowedFileTypes()
 
 						if (allowedFileTypes.includes(full.type)) {
 							const sub_table = document.createElement('table')
