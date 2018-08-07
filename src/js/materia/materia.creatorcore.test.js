@@ -21,9 +21,10 @@ describe('creatorcore', () => {
 		})
 	}
 
-	const mockPostMessageFromWidget = (type, data) => {
+	const mockPostMessageFromWidget = (type, source, data) => {
 		let payload = JSON.stringify({
 			type: type,
+			source: source,
 			data: data
 		})
 		_onPostMessage({
@@ -35,6 +36,7 @@ describe('creatorcore', () => {
 	const mockCreatorCoreAlert = message =>
 		JSON.stringify({
 			type: 'alert',
+			source: 'creator-core',
 			data: {
 				title: message,
 				type: 1
@@ -89,18 +91,18 @@ describe('creatorcore', () => {
 
 	it('start sends a postmessage', () => {
 		creatorCore.start({})
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"start","data":null}', '*')
+		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"start","source":"creator-core","data":null}', '*')
 	})
 
 	it('reacts properly to initNewWidget post messages', () => {
-		mockPostMessageFromWidget('initNewWidget', ['widgetObj', 'baseUrl', 'mediaUrl'])
+		mockPostMessageFromWidget('initNewWidget','creator-core', ['widgetObj', 'baseUrl', 'mediaUrl'])
 
 		expect(mockCreator.initNewWidget).toHaveBeenCalledWith('widgetObj')
 		expectOnlyCreatorMethodCalledToBe('initNewWidget')
 	})
 
 	it('reacts properly to initExistingWidget post messages', () => {
-		mockPostMessageFromWidget('initExistingWidget', [
+		mockPostMessageFromWidget('initExistingWidget', 'creator-core', [
 			'widgetObj',
 			'widgetTitle',
 			'qsetObj',
@@ -118,7 +120,7 @@ describe('creatorcore', () => {
 	})
 
 	it('reacts properly to onRequestSave post messages', () => {
-		mockPostMessageFromWidget('onRequestSave', ['save'])
+		mockPostMessageFromWidget('onRequestSave', 'creator-core', ['save'])
 
 		expect(mockCreator.onSaveClicked).toHaveBeenCalledWith('save')
 		expectOnlyCreatorMethodCalledToBe('onSaveClicked')
@@ -126,28 +128,28 @@ describe('creatorcore', () => {
 
 	it('reacts properly to onSaveComplete post messages', () => {
 		let payload = ['instanceName', 'instanceWidget', 'instanceQsetData', 'instanceQsetVersion']
-		mockPostMessageFromWidget('onSaveComplete', payload)
+		mockPostMessageFromWidget('onSaveComplete', 'creator-core', payload)
 
 		expect(mockCreator.onSaveComplete).toHaveBeenCalledWith(...payload)
 		expectOnlyCreatorMethodCalledToBe('onSaveComplete')
 	})
 
 	it('reacts properly to onMediaImportComplete post messages', () => {
-		mockPostMessageFromWidget('onMediaImportComplete', ['mediaArray'])
+		mockPostMessageFromWidget('onMediaImportComplete', 'creator-core', ['mediaArray'])
 
 		expect(mockCreator.onMediaImportComplete).toHaveBeenCalledWith('mediaArray')
 		expectOnlyCreatorMethodCalledToBe('onMediaImportComplete')
 	})
 
 	it('reacts properly to onQuestionImportComplete post messages', () => {
-		mockPostMessageFromWidget('onQuestionImportComplete', ['questionArray'])
+		mockPostMessageFromWidget('onQuestionImportComplete', 'creator-core', ['questionArray'])
 
 		expect(mockCreator.onQuestionImportComplete).toHaveBeenCalledWith('questionArray')
 		expectOnlyCreatorMethodCalledToBe('onQuestionImportComplete')
 	})
 
 	it('reacts properly to unknown post messages', () => {
-		mockPostMessageFromWidget('undefinedMessageType', ['payload'])
+		mockPostMessageFromWidget('undefinedMessageType', 'unknown-source', ['payload'])
 
 		expect(parent.postMessage).toHaveBeenCalledWith(
 			mockCreatorCoreAlert('Error, unknown message sent to creator core: undefinedMessageType'),
@@ -174,13 +176,13 @@ describe('creatorcore', () => {
 	it('alert sends a postmessage', () => {
 		creatorCore.alert('title', 'msg', 'type')
 		expect(parent.postMessage).toHaveBeenCalledWith(
-			'{"type":"alert","data":{"title":"title","msg":"msg","type":"type"}}',
+			'{"type":"alert","source":"creator-core","data":{"title":"title","msg":"msg","type":"type"}}',
 			'*'
 		)
 	})
 
 	it('getMediaUrl returns an expected url', () => {
-		mockPostMessageFromWidget('initNewWidget', ['widgetObj', 'baseUrl', 'mediaUrl'])
+		mockPostMessageFromWidget('initNewWidget', 'creator-core', ['widgetObj', 'baseUrl', 'mediaUrl'])
 		expect(creatorCore.getMediaUrl('fR93X')).toBe('mediaUrl/fR93X')
 	})
 
@@ -188,6 +190,7 @@ describe('creatorcore', () => {
 		creatorCore.showMediaImporter()
 		let ex = JSON.stringify({
 			type: 'showMediaImporter',
+			source: 'creator-core',
 			data: ['image']
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
@@ -197,6 +200,7 @@ describe('creatorcore', () => {
 		creatorCore.showMediaImporter(['mp3'])
 		let ex = JSON.stringify({
 			type: 'showMediaImporter',
+			source: 'creator-core',
 			data: ['mp3']
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
@@ -206,6 +210,7 @@ describe('creatorcore', () => {
 		creatorCore.cancelSave('message')
 		let ex = JSON.stringify({
 			type: 'cancelSave',
+			source: 'creator-core',
 			data: ['message']
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
@@ -215,6 +220,7 @@ describe('creatorcore', () => {
 		creatorCore.save('title', { one: 1, two: 2 }, 1)
 		let ex = JSON.stringify({
 			type: 'save',
+			source: 'creator-core',
 			data: ['title', { one: 1, two: 2 }, 1]
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
@@ -224,6 +230,7 @@ describe('creatorcore', () => {
 		creatorCore.save('title', { one: 1, two: 2 })
 		let ex = JSON.stringify({
 			type: 'save',
+			source: 'creator-core',
 			data: ['title', { one: 1, two: 2 }, '1']
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
@@ -233,6 +240,7 @@ describe('creatorcore', () => {
 		creatorCore.save('title <script></script>', {})
 		let ex = JSON.stringify({
 			type: 'save',
+			source: 'creator-core',
 			data: ['title &lt;script&gt;&lt;/script&gt;', {}, '1']
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
@@ -242,6 +250,7 @@ describe('creatorcore', () => {
 		creatorCore.setHeight(200)
 		let ex = JSON.stringify({
 			type: 'setHeight',
+			source: 'creator-core',
 			data: [200]
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
@@ -259,13 +268,13 @@ describe('creatorcore', () => {
 
 	it('sends a request to set height if setHeight is given the current height', () => {
 		creatorCore.setHeight(1)
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","data":[1]}', '*')
+		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","source":"creator-core","data":[1]}', '*')
 	})
 
 	it('sends a request to set height if setHeight is given nothing', () => {
 		mockHeightGetter()
 		creatorCore.setHeight()
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","data":[10]}', '*')
+		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","source":"creator-core","data":[10]}', '*')
 	})
 
 	it('properly sets a resize interval for auto-resizing widgets', () => {
@@ -277,7 +286,7 @@ describe('creatorcore', () => {
 
 		creatorCore.start(mockCreator)
 		jest.runOnlyPendingTimers()
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","data":[10]}', '*')
+		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","source":"creator-core","data":[10]}', '*')
 	})
 
 	it('disables the resize interval correctly', () => {
