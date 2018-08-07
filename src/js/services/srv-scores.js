@@ -13,6 +13,18 @@ app.service('scoreSrv', function() {
 
 		getGuestWidgetInstanceScores(inst_id, play_id, callback) {
 			Materia.Coms.Json.send('guest_widget_instance_scores_get', [inst_id, play_id]).then(callback)
+		},
+
+		getWidgetInstanceQSet(play_id, widget_id, timestamp, callback) {
+			Materia.Coms.Json.send('question_set_get', [widget_id, play_id, timestamp]).then(callback)
+		},
+
+		getWidgetInstanceScoreSummary(inst_id, callback) {
+			Materia.Coms.Json.send('score_summary_get', [inst_id]).then(callback)
+		},
+
+		getScoreDistribution(inst_id, callback) {
+			Materia.Coms.Json.send('score_raw_distribution_get', [inst_id]).then(callback)
 		}
 	}
 })
