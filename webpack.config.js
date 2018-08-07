@@ -119,7 +119,6 @@ module.exports = {
     ],
     'js/materia.scorecore.js': [
       jsPath+'/materia-namespace.js',
-      jsPath+'/materia/materia.score.js',
       jsPath+'/materia/materia.scorecore.js',
     ],
   }),
