@@ -214,26 +214,50 @@ app.controller('createCtrl', function(
 			const origin = `${e.origin}/`
 			if (origin === STATIC_CROSSDOMAIN || origin === BASE_URL) {
 				const msg = JSON.parse(e.data)
-				switch (msg.type) {
-					case 'start': // The creator notifies us when its ready
-						return onCreatorReady()
-					case 'save': // The creator issued a save request
-						return save(msg.data[0], msg.data[1], msg.data[2]) // instanceName, qset
-					case 'cancelSave': // the creator canceled a save request
-						return onSaveCanceled(msg.data[0]) // msg
-					case 'showMediaImporter': // the creator wants to import media
-						return showMediaImporter(msg.data)
-					case 'uploadMedia':
-						return uploadMedia(msg.data)
-					case 'mediaImporterAvailable': // the creator announces that the importer is available for an automatic upload
-						if (mediaFile) return e.source.postMessage(mediaFile, e.origin)
-					case 'setHeight': // the height of the creator has changed
-						return setHeight(msg.data[0])
-					case 'alert':
-						return _alert(msg.data)
+				switch (msg.source) { // currently 'creator-core' || 'media-importer' - can be extended to other sources
+					case 'media-importer':
+
+					console.log('message from media-importer')
+
+						// options for media-importer postMessages
+
+						switch (msg.type) {
+							
+							// broadcast by the importer when showMediaImporter is called
+							// if a file is pre-selected (by direct upload pipeline), go ahead and send it over
+							// this behavior only occurs for direct media uploads, bypassing user input
+							case 'readyForDirectUpload':
+								if (mediaFile) return e.source.postMessage(mediaFile, e.origin)
+								else return false
+							default:
+								return false
+						}
+
+					case 'creator-core':
 					default:
-						return _alert(`Unknown message from creator: ${msg.type}`)
-				}
+
+					console.log('message from creator-core')
+						// options for creator-core postMessages
+						
+						switch (msg.type) {
+							case 'start': // The creator notifies us when its ready
+								return onCreatorReady()
+							case 'save': // The creator issued a save request
+								return save(msg.data[0], msg.data[1], msg.data[2]) // instanceName, qset
+							case 'cancelSave': // the creator canceled a save request
+								return onSaveCanceled(msg.data[0]) // msg
+							case 'showMediaImporter': // the creator wants to import media
+								return showMediaImporter(msg.data)
+							case 'directUploadMedia': // the creator is requesting to directly upload a media file, bypassing user input
+								return directUploadMedia(msg.data)
+							case 'setHeight': // the height of the creator has changed
+								return setHeight(msg.data[0])
+							case 'alert':
+								return _alert(msg.data)
+							default:
+								return _alert(`Unknown message from creator: ${msg.type}`)
+						}
+				}				
 			}
 
 			_alert(`Error, cross domain restricted for ${origin}`)
@@ -355,7 +379,9 @@ app.controller('createCtrl', function(
 		return null // else Safari will give the .swf data that it can't handle
 	}
 
-	const uploadMedia = media => {
+	// Called by the creator when a direct upload of media is requested - instead of asking user to select one themselves
+	// Displays the media importer (which dispatches 'readyForDirectUpload') and pre-selects the mediaFile to be uploaded
+	const directUploadMedia = media => {
 		showMediaImporter(['jpg','gif','png','mp3'])
 		mediaFile = media
 	}
