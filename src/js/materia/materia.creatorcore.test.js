@@ -149,12 +149,9 @@ describe('creatorcore', () => {
 	})
 
 	it('reacts properly to unknown post messages', () => {
+		jest.spyOn(console,'warn')
 		mockPostMessageFromWidget('undefinedMessageType', 'unknown-source', ['payload'])
-
-		expect(parent.postMessage).toHaveBeenCalledWith(
-			mockCreatorCoreAlert('Error, unknown message sent to creator core: undefinedMessageType'),
-			'*'
-		)
+		expect(console.warn).toHaveBeenCalledWith('Error, unknown message sent to creator core: undefinedMessageType')
 	})
 
 	it('reacts properly if the creator class is missing an expected method', () => {

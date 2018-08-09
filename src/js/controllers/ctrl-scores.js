@@ -43,10 +43,10 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			.then(instance => {
 				widgetInstance = instance
 				$scope.guestAccess = widgetInstance.guest_access
-				_checkCustomScoreScreen()
-				if ($scope.customScoreScreen) {
-					_embed()
-				}
+				if (_checkCustomScoreScreen()) _embed()
+				// if ($scope.customScoreScreen) {
+				// 	_embed()
+				// }
 				return inst_id
 			})
 			.then(_getInstanceScores)
@@ -75,17 +75,15 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 				$scope.customScoreScreen = true
 			}
 		}
+		return $scope.customScoreScreen
 	}
 
 	const _embed = () => {
 		const deferred = $q.defer()
 		embedDonePromise = deferred
-		_embedHTML(enginePath)
-	}
 
-	const _embedHTML = (htmlPath) => {
 		scoreWidget = document.querySelector('#container')
-		$scope.htmlPath = htmlPath + "?" + widgetInstance.widget.created_at
+		$scope.htmlPath = enginePath + "?" + widgetInstance.widget.created_at
 		$scope.type = "html"
 
 		// setup the postmessage listener
@@ -97,20 +95,36 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		const origin = `${e.origin}/`
 		if (origin === STATIC_CROSSDOMAIN || origin === BASE_URL) {
 			const msg = JSON.parse(e.data)
-			switch (msg.type) {
-				case 'start':
-					return _onWidgetReady()
-				case 'setHeight':
-					return _setHeight(msg.data[0])
-				case 'hideResultsTable':
-					return $scope.showResultsTable = false
-				case 'hideScoresOverview':
-					return $scope.showScoresOverview = false
-				case 'requestScoreDistribution':
-					return _getScoreDistribution()
-					case 'materiaScoreRecorded': return false // let this one pass through, it's not intended for score-core but rather a parent platform (like Obojobo)
+			switch (msg.source) {
+				case 'score-core':
+
+					switch (msg.type) {
+						case 'start':
+							return _onWidgetReady()
+						case 'setHeight':
+							return _setHeight(msg.data[0])
+						case 'hideResultsTable':
+							return $scope.showResultsTable = false
+						case 'hideScoresOverview':
+							return $scope.showScoresOverview = false
+						case 'requestScoreDistribution':
+							return _getScoreDistribution()
+						default:
+							console.warn(`Unknown PostMessage received from score core: ${msg.type}`)
+							return false
+					}
+
+				case 'score-controller':
+					switch (msg.type) {
+						case 'materiaScoreRecorded': return false // let this one pass through, it's not intended for score-core but rather a parent platform (like Obojobo)
+						default:
+							console.warn(`Unknown PostMessage received from score controller: ${msg.type}`)
+							return false
+					}
+
 				default:
-					throw new Error(`Unknown PostMessage received from score core: ${msg.type}`)
+					console.warn('Invalid postMessage source or no source provided')			
+					return false
 			}
 		} else {
 			throw new Error(
@@ -539,6 +553,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			parent.postMessage(
 				JSON.stringify({
 					type: 'materiaScoreRecorded',
+					source: 'score-controller',
 					widget: widgetInstance,
 					score
 				}),
