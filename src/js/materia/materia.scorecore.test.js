@@ -12,7 +12,8 @@ describe('Materia.ScoreCore', () => {
 		ScoreCore = Namespace('Materia').ScoreCore
 		jest.spyOn(window, 'addEventListener')
 		jest.spyOn(parent, 'postMessage')
-
+		jest.spyOn(console,'warn')
+		
 		mockWidget = {
 			start: jest.fn(),
 			update: jest.fn(),
@@ -40,23 +41,23 @@ describe('Materia.ScoreCore', () => {
 	it('sends a post message when starting', () => {
 		ScoreCore.start( mockWidget )
 
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"start","data":null}', '*')
+		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"start","source":"score-core","data":null}', '*')
 		expect(window.addEventListener).toHaveBeenCalledWith('message', _onPostMessage, false)
 	})
 
 	it('sends a post message when hiding the results table', () => {
 		ScoreCore.hideResultsTable()
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"hideResultsTable"}', '*')
+		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"hideResultsTable","source":"score-core"}', '*')
 	})
 
 	it('sends a post message when hiding the scores overview', () => {
 		ScoreCore.hideScoresOverview()
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"hideScoresOverview"}', '*')
+		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"hideScoresOverview","source":"score-core"}', '*')
 	})
 
 	it('sends a post message when requesting score distribution', () => {
 		ScoreCore.requestScoreDistribution()
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"requestScoreDistribution"}', '*')
+		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"requestScoreDistribution","source":"score-core"}', '*')
 	})
 
 	it('does not send a request to set height if setHeight is given the current height', () => {
@@ -66,13 +67,13 @@ describe('Materia.ScoreCore', () => {
 
 	it('sends a request to set height if setHeight is given the current height', () => {
 		ScoreCore.setHeight(1)
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","data":[1]}', '*')
+		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","source":"score-core","data":[1]}', '*')
 	})
 
 	it('sends a request to set height if setHeight is given nothing', () => {
 		jest.spyOn(window, 'getComputedStyle').mockReturnValueOnce({height: 10})
 		ScoreCore.setHeight()
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","data":[10]}', '*')
+		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","source":"score-core","data":[10]}', '*')
 	})
 
 	it('initializes the widget when receiving an "initWidget" post message', () => {
@@ -90,6 +91,7 @@ describe('Materia.ScoreCore', () => {
 		_onPostMessage({
 			data: JSON.stringify({
 				type: 'initWidget',
+				source: 'score-core',
 				data: initData
 			})
 		})
@@ -136,14 +138,14 @@ describe('Materia.ScoreCore', () => {
 	})
 
 	it('throws an error when receiving an unexpected post message', () => {
-		let postUnknown = () => {
-			_onPostMessage({
-				data: JSON.stringify({
-					type: 'unknownMessageType',
-					data: [null]
-				})
+		
+		_onPostMessage({
+			data: JSON.stringify({
+				type: 'unknownMessageType',
+				data: [null]
 			})
-		}
-		expect(postUnknown).toThrow('Error: Score Core received unknown post message: unknownMessageType');
+		})
+		
+		expect(console.warn).toHaveBeenCalledWith('Error: Score Core received unknown post message: unknownMessageType')
 	})
 })

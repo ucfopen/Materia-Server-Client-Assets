@@ -216,11 +216,7 @@ app.controller('createCtrl', function(
 				const msg = JSON.parse(e.data)
 				switch (msg.source) { // currently 'creator-core' || 'media-importer' - can be extended to other sources
 					case 'media-importer':
-
-					console.log('message from media-importer')
-
 						// options for media-importer postMessages
-
 						switch (msg.type) {
 							
 							// broadcast by the importer when showMediaImporter is called
@@ -235,10 +231,7 @@ app.controller('createCtrl', function(
 
 					case 'creator-core':
 					default:
-
-					console.log('message from creator-core')
 						// options for creator-core postMessages
-						
 						switch (msg.type) {
 							case 'start': // The creator notifies us when its ready
 								return onCreatorReady()
@@ -255,7 +248,7 @@ app.controller('createCtrl', function(
 							case 'alert':
 								return _alert(msg.data)
 							default:
-								return _alert(`Unknown message from creator: ${msg.type}`)
+								return console.warn(`Unknown message from creator: ${msg.type}`)
 						}
 				}				
 			}

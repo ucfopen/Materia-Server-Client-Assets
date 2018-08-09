@@ -38,7 +38,7 @@ Namespace('Materia').CreatorCore = (() => {
 				_tellCreator('onQuestionImportComplete', [msg.data[0]])
 				break
 			default:
-				alert(`Error, unknown message sent to creator core: ${msg.type}`)
+				console.warn(`Error, unknown message sent to creator core: ${msg.type}`)
 				break
 		}
 	}
@@ -51,7 +51,7 @@ Namespace('Materia').CreatorCore = (() => {
 		}
 	}
 
-	const _sendPostMessage = (type, source, data) => parent.postMessage(JSON.stringify({ type, source, data }), '*')
+	const _sendPostMessage = (type, data) => parent.postMessage(JSON.stringify({ type, source: 'creator-core', data }), '*')
 
 	const _initNewWidget = (widget, baseUrl, mediaUrl) => {
 		_baseurl = baseUrl
@@ -76,14 +76,14 @@ Namespace('Materia').CreatorCore = (() => {
 		}
 
 		_creatorClass = creatorClass
-		_sendPostMessage('start', 'creator-core', null)
+		_sendPostMessage('start', null)
 	}
 
 	const alert = (title, msg, type) => {
 		if (type == null) {
 			type = 1
 		}
-		_sendPostMessage('alert', 'creator-core', { title, msg, type })
+		_sendPostMessage('alert', { title, msg, type })
 	}
 
 	const getMediaUrl = mediaId => `${_mediaUrl}/${mediaId}`
@@ -92,11 +92,11 @@ Namespace('Materia').CreatorCore = (() => {
 		if (types == null) {
 			types = ['image']
 		}
-		_sendPostMessage('showMediaImporter', 'creator-core', types)
+		_sendPostMessage('showMediaImporter', types)
 	}
 
 	const directUploadMedia = mediaData => {
-		_sendPostMessage('directUploadMedia', 'creator-core', mediaData)
+		_sendPostMessage('directUploadMedia', mediaData)
 	}
 
 	const save = (title, qset, version) => {
@@ -104,17 +104,17 @@ Namespace('Materia').CreatorCore = (() => {
 			version = '1'
 		}
 		const sanitizedTitle = escapeScriptTags(title)
-		_sendPostMessage('save', 'creator-core', [sanitizedTitle, qset, version])
+		_sendPostMessage('save', [sanitizedTitle, qset, version])
 	}
 
-	const cancelSave = msg => _sendPostMessage('cancelSave', 'creator-core', [msg])
+	const cancelSave = msg => _sendPostMessage('cancelSave', [msg])
 
 	const setHeight = h => {
 		if (!h) {
 			h = document.getElementsByTagName('html')[0].height()
 		}
 		if (h !== _lastHeight) {
-			_sendPostMessage('setHeight', 'creator-core', [h])
+			_sendPostMessage('setHeight', [h])
 			_lastHeight = h
 		}
 	}
