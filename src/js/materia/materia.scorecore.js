@@ -6,33 +6,30 @@ Namespace('Materia').ScoreCore = (() => {
 		const msg = JSON.parse(e.data)
 		switch (msg.type) {
 			case 'initWidget':
-				_initWidget(msg.data[0], msg.data[1], msg.data[2], msg.data[3])
+				_widgetClass.start(
+					msg.data[2], // instance
+					msg.data[0].data, // qset.data
+					msg.data[1], // scoreTable
+					msg.data[3], // isPreview
+					msg.data[0].version // qset.version
+				)
 				break
 			case 'updateWidget':
-				_updateWidget(msg.data[0], msg.data[1])
+				_widgetClass.update(
+					msg.data[0].data, // qset.data
+					msg.data[1] // scoreTable
+				)
 				break
 			case 'scoreDistribution':
-				_scoreDistribution(msg.data[0])
+				_widgetClass.handleScoreDistribution(msg.data[0])
 				break
 			default:
-				throw new Error(`Error: Score Core received unknown post message: ${msg.type}`)
+				console.warn(`Error: Score Core received unknown post message: ${msg.type}`)
 		}
 	}
 
 	const _sendPostMessage = (type, data) => {
-		parent.postMessage(JSON.stringify({ type, data }), '*')
-	}
-
-	const _initWidget = (qset, scoreTable, instance, isPreview) => {
-		_widgetClass.start(instance, qset.data, scoreTable, isPreview, qset.version)
-	}
-
-	const _updateWidget = (qset, scoreTable) => {
-		_widgetClass.update(qset.data, scoreTable)
-	}
-
-	const _scoreDistribution = (data) => {
-		_widgetClass.handleScoreDistribution(data)
+		parent.postMessage(JSON.stringify({ type, source: 'score-core', data }), '*')
 	}
 
 	const hideResultsTable = () => {
