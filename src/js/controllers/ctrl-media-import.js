@@ -24,6 +24,20 @@ app.controller('mediaImportCtrl', function($scope, $sce, $timeout, $window, $doc
 	const _mediaUrl = MEDIA_URL
 	const _baseUrl = BASE_URL
 
+	// generic media type definitions and substitutions for compatibility
+	const MEDIA_SUBSTITUTIONS = {
+		//generic types, preferred
+		image: ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'],
+		audio: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
+		video: [], //placeholder
+		//incompatibility prevention, not preferred
+		jpg: ['image/jpg'],
+		jpeg: ['image/jpeg'],
+		gif: ['image/gif'],
+		png: ['image/png'],
+		mp3: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3']
+	}
+
 	var Uploader = (function() {
 		let $dropArea = undefined
 		Uploader = class Uploader {
@@ -99,12 +113,19 @@ app.controller('mediaImportCtrl', function($scope, $sce, $timeout, $window, $doc
 			}
 
 			getMimeType(dataUrl) {
+				let allowedMimeTypes = []
+				$scope.fileType.forEach(type => {
+					if (MEDIA_SUBSTITUTIONS[type]) {
+						allowedMimeTypes = [
+							...allowedMimeTypes,
+							...MEDIA_SUBSTITUTIONS[type]
+						]
+					}
+				})
+
 				const mime = dataUrl.split(';')[0].split(':')[1]
 
-				// used to see if the file type is allowed
-				const fileExtension = mime == null ? null : mime.split('/')[1]
-
-				if (fileExtension == null || $scope.fileType.indexOf(fileExtension) === -1) {
+				if (mime == null || allowedMimeTypes.indexOf(mime) === -1) {
 					alert(`This widget does not support selected file type is not supported. \
 The allowed types are: ${$scope.fileType.join(', ')}.`)
 					return null
@@ -161,6 +182,8 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 					if (keyData != null) {
 						// s3 upload
 						const success = request.status === 200 || request.status === 201
+
+						let importElement = document.getElementsByClassName('import')[0].setAttribute('disabled', false)
 
 						if (!success) {
 							// Parse the Error message received from amazonaws
@@ -256,6 +279,21 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 	}
 	const uploader = new Uploader(config)
 
+	// announce to the creator that the importer is available, if waiting to auto-upload
+	parent.postMessage(JSON.stringify({type:'readyForDirectUpload', source:'media-importer', data:''}), '*')
+
+	// if creator returns a file, go ahead and upload it (bypasses user input)
+	const _onPostMessage = function(event){
+		// Disable mouse events within the importer while the upload is happening (input from the user is NOT required)
+		document.getElementsByClassName('import')[0].setAttribute('style', 'pointer-events: none; opacity: 0.5')
+		let json = JSON.parse(event.data)
+		if (json.name && json.ext && json.src) {
+			uploader.upload(json)
+		}
+	}
+
+	$window.addEventListener("message", _onPostMessage, false)
+
 	// SCOPE VARS
 	// ==========
 	$scope.fileType = location.hash.substring(1).split(',')
@@ -275,6 +313,28 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 	]
 
 	$scope.uploadFile = uploader.onFileChange
+
+	var setAllowedFileTypes = function() {
+		let allowedFileTypes = []
+		$scope.fileType.forEach(type => {
+			if (MEDIA_SUBSTITUTIONS[type]) {
+				//split the file type out of the full mime type for each allowed mime type
+				let extractedTypes = []
+				MEDIA_SUBSTITUTIONS[type].forEach(subtype => {
+					extractedTypes = [
+						...extractedTypes,
+						subtype.split('/')[1]
+					]
+				})
+
+				allowedFileTypes = [
+					...allowedFileTypes,
+					...extractedTypes
+				]
+			}
+		})
+		return allowedFileTypes
+	}
 
 	// load up the media objects, optionally pass file id to skip labeling that file
 	var loadAllMedia = function(file_id) {
@@ -296,6 +356,9 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 		// load and/or select file for labelling
 		return _coms.send('assets_get', []).then(result => {
 			if (result && result.msg === undefined && result.length > 0) {
+				//we have a list of allowed mime types, assets are stored with file types only
+				let allowedFileTypes = setAllowedFileTypes()
+
 				data = result
 				$('#question-table')
 					.dataTable()
@@ -311,7 +374,7 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 						continue
 					}
 
-					if (Array.from($scope.fileType).includes(res.type)) {
+					if (allowedFileTypes.includes(res.type)) {
 						// the id used for asset url is actually remote_url
 						// if it exists, use it instead
 						res.id = res.remote_url != null ? res.remote_url : res.id
@@ -320,7 +383,7 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 						if (
 							file_id != null &&
 							res.id === file_id &&
-							Array.from($scope.fileType).includes(res.type)
+							allowedFileTypes.includes(res.type)
 						) {
 							$window.parent.Materia.Creator.onMediaImportComplete([res])
 						}
@@ -453,7 +516,9 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 				{
 					// custom ui column containing a nested table of asset details
 					render(data, type, full, meta) {
-						if (Array.from($scope.fileType).includes(full.type)) {
+						let allowedFileTypes = setAllowedFileTypes()
+
+						if (allowedFileTypes.includes(full.type)) {
 							const sub_table = document.createElement('table')
 							sub_table.width = '100%'
 							sub_table.className = 'sub-table'

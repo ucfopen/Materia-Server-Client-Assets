@@ -117,6 +117,10 @@ module.exports = {
       jsPath+'/materia/materia.storage.manager.js',
       jsPath+'/materia/materia.storage.table.js',
     ],
+    'js/materia.scorecore.js': [
+      jsPath+'/materia-namespace.js',
+      jsPath+'/materia/materia.scorecore.js',
+    ],
   }),
   module: {
     rules: [

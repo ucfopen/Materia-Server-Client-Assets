@@ -7,6 +7,7 @@ body.scores .container {
 	box-shadow: 0px 0px 34px 1px #999;
 
 	margin-top: 55px;
+	margin-bottom: 25px;
 	text-align: center;
 
 	opacity: 0;
@@ -493,7 +494,7 @@ body.scores #class-rank-button {
 	text-align: center !important;
 }
 
-.preview h1 {
+body.scores .overview.preview #overview-score h1 {
 	margin-top: 10px;
 }
 
@@ -519,4 +520,18 @@ body.scores .container.show {
 
 h1.scoreFontColor {
 	color: #fff;
+}
+
+iframe#container {
+	min-height: 600px;
+	width: 100%;
+	border: none;
+
+	&.margin-above {
+		margin-top: 25px;
+	}
+
+	&.margin-below {
+		margin-bottom: 25px;
+	}
 }
