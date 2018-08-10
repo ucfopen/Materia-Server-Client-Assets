@@ -38,7 +38,7 @@ Namespace('Materia').CreatorCore = (() => {
 				_tellCreator('onQuestionImportComplete', [msg.data[0]])
 				break
 			default:
-				alert(`Error, unknown message sent to creator core: ${msg.type}`)
+				console.warn(`Error, unknown message sent to creator core: ${msg.type}`)
 				break
 		}
 	}
@@ -51,7 +51,7 @@ Namespace('Materia').CreatorCore = (() => {
 		}
 	}
 
-	const _sendPostMessage = (type, data) => parent.postMessage(JSON.stringify({ type, data }), '*')
+	const _sendPostMessage = (type, data) => parent.postMessage(JSON.stringify({ type, source: 'creator-core', data }), '*')
 
 	const _initNewWidget = (widget, baseUrl, mediaUrl) => {
 		_baseurl = baseUrl
@@ -90,9 +90,13 @@ Namespace('Materia').CreatorCore = (() => {
 
 	const showMediaImporter = types => {
 		if (types == null) {
-			types = ['jpg', 'jpeg', 'gif', 'png']
+			types = ['image']
 		}
 		_sendPostMessage('showMediaImporter', types)
+	}
+
+	const directUploadMedia = mediaData => {
+		_sendPostMessage('directUploadMedia', mediaData)
 	}
 
 	const save = (title, qset, version) => {
@@ -127,6 +131,7 @@ Namespace('Materia').CreatorCore = (() => {
 		alert,
 		getMediaUrl,
 		showMediaImporter,
+		directUploadMedia,
 		cancelSave,
 		save,
 		disableResizeInterval,
