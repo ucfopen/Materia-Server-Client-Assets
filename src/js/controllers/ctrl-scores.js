@@ -357,7 +357,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			.script(`${cdnBase}jqPlot/1.0.9/plugins/jqplot.highlighter.min.js`)
 			.wait(() =>
 				// ========== BUILD THE GRAPH =============
-				scoreSrv.getWidgetInstanceScoreSummary(widgetInstance.id).then(data => {
+				scoreSrv.getWidgetInstanceScoreSummary(widgetInstance.id, (data) => {
 					// add up all semesters data into one dataset
 					_graphData = [
 						['0-9%', 0],
