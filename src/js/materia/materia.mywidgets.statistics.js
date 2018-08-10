@@ -1,6 +1,5 @@
 // Handles the graphs/scoring table
 Namespace('Materia.MyWidgets').Statistics = (() => {
-
 	// Uses jPlot to create the bargraph and piechart
 	// @param    elementId id of the div to place the graph
 	// @param    data the data to graph
