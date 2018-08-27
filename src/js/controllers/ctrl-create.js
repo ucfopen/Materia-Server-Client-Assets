@@ -218,7 +218,6 @@ app.controller('createCtrl', function(
 					case 'media-importer':
 						// options for media-importer postMessages
 						switch (msg.type) {
-							
 							// broadcast by the importer when showMediaImporter is called
 							// if a file is pre-selected (by direct upload pipeline), go ahead and send it over
 							// this behavior only occurs for direct media uploads, bypassing user input
@@ -250,7 +249,7 @@ app.controller('createCtrl', function(
 							default:
 								return console.warn(`Unknown message from creator: ${msg.type}`)
 						}
-				}				
+				}
 			}
 
 			_alert(`Error, cross domain restricted for ${origin}`)
@@ -375,7 +374,7 @@ app.controller('createCtrl', function(
 	// Called by the creator when a direct upload of media is requested - instead of asking user to select one themselves
 	// Displays the media importer (which dispatches 'readyForDirectUpload') and pre-selects the mediaFile to be uploaded
 	const directUploadMedia = media => {
-		showMediaImporter(['jpg','gif','png','mp3'])
+		showMediaImporter(['jpg', 'gif', 'png', 'mp3'])
 		mediaFile = media
 	}
 
