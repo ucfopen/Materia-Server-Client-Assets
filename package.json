@@ -1,6 +1,8 @@
 {
-  "name": "materia-client-assets",
-  "version": "0.3.3",
+  "name": "materia-server-client-assets",
+  "version": "0.3.5",
+  "license": "AGPL-3.0",
+  "description": "Materia Widget Development Kit (MDK) is a local dev environment for quickly building Materia Widgets.",
   "author": "University of Central Florida, Center for Distributed Learning",
   "homepage": "https://ucfopen.github.io/Materia-Docs",
   "scripts": {
