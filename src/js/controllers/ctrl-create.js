@@ -80,7 +80,7 @@ app.controller('createCtrl', function(
 	const onInitFail = msg => {
 		stopHeartBeat()
 		if (msg.toLowerCase() !== 'flash player required.') {
-			_alert(`Failure: ${msg}`)
+			_alert(msg, 'Failure', true, false)
 		}
 	}
 
@@ -246,14 +246,14 @@ app.controller('createCtrl', function(
 							case 'setHeight': // the height of the creator has changed
 								return setHeight(msg.data[0])
 							case 'alert':
-								return _alert(msg.data)
+								return _alert(msg.data.msg, msg.data.title, msg.data.fatal)
 							default:
 								return console.warn(`Unknown message from creator: ${msg.type}`)
 						}
 				}				
 			}
 
-			_alert(`Error, cross domain restricted for ${origin}`)
+			console.warn(`Unknown message from creator: ${origin}`)
 		}
 
 		// setup the postmessage listener
@@ -480,20 +480,11 @@ ${msg.toLowerCase()}`,
 		creator.style.height = `${h}px`
 	}
 
-	const _alert = (msg, title = null, fatal, enableLoginButton) => {
-		if (fatal == null) {
-			fatal = false
-		}
-		if (enableLoginButton == null) {
-			enableLoginButton = false
-		}
-
+	const _alert = (msg, title = 'Warning!', fatal = false, enableLoginButton = false) => {
 		$scope.alert.msg = msg
-		if (title !== null) {
-			$scope.alert.title = title
-		}
+		$scope.alert.title = title
 		$scope.alert.fatal = fatal
-
+		$scope.alert.enableLoginButton = enableLoginButton
 		Please.$apply()
 	}
 
