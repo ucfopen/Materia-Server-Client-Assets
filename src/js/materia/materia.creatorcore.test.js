@@ -38,8 +38,9 @@ describe('creatorcore', () => {
 			type: 'alert',
 			source: 'creator-core',
 			data: {
-				title: message,
-				type: 1
+				msg: message,
+				title: null,
+				fatal: false
 			}
 		})
 
@@ -171,9 +172,9 @@ describe('creatorcore', () => {
 	})
 
 	it('alert sends a postmessage', () => {
-		creatorCore.alert('title', 'msg', 'type')
+		creatorCore.alert('msg', 'title', 'fatal')
 		expect(parent.postMessage).toHaveBeenCalledWith(
-			'{"type":"alert","source":"creator-core","data":{"title":"title","msg":"msg","type":"type"}}',
+			'{"type":"alert","source":"creator-core","data":{"msg":"msg","title":"title","fatal":"fatal"}}',
 			'*'
 		)
 	})
