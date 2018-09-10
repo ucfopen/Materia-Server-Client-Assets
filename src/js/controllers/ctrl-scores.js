@@ -23,6 +23,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	// the play will no longer be connected to the LTI details.
 	// This is a cheap way to hide the button:
 	let hidePlayAgain = document.URL.indexOf('details=1') > -1
+	// get widget id from url like https://my-server.com:8080/scores/nLAmG#play-NbmVXrZe9Wzb
 	const widget_id = document.URL.match(/^.+\/([a-z0-9]+)/i)[1]
 
 	// this is only actually set to something when coming from the profile page
