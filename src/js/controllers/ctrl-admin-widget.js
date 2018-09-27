@@ -55,7 +55,8 @@ app.controller('adminWidgetController', function($scope, Please, adminSrv) {
 	// Initialize
 
 	// since the file input is hidden, watch events on it so we can put selected filenames elsewhere
-	document.getElementById('widget_uploader').addEventListener('change', _onUploaderChange)
+	const uploader = document.getElementById('widget_uploader');
+	if(uploader) uploader.addEventListener('change', _onUploaderChange);
 
 	_displayWidgets()
 })
