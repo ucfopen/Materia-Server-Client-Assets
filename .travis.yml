@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+  - "6"
+cache:
+  yarn: true
+  directories:
+    - "node_modules"
+
+script:
+  # Run CI friendly tests
+  - yarn test:ci
+  # Run prettier for the next test
+  - yarn prettier:run
+  # now check to make sure prettier didn't make any changes
+  - git diff --exit-code ./src
+  # now lets make sure wepack can build ok
+  - yarn build
