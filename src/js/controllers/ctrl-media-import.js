@@ -174,7 +174,7 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 						name: fileName,
 						created: dateString,
 						timestamp: res.created_at,
-						thumb: _getThumbnail(res.id, res.type)
+						thumb: _thumbnailUrl(res.id, res.type)
 					})
 				}
 			})
@@ -185,7 +185,7 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 		})
 	}
 
-	const _getThumbnail = (data, type) => {
+	const _thumbnailUrl = (data, type) => {
 		switch (type) {
 			case 'jpg': // intentional case fall-through
 			case 'jpeg': // intentional case fall-through
@@ -293,6 +293,20 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 		request.send(fd)
 	}
 
+	// creator can send a message with file data
+	const _onPostMessage = event => {
+		// Disable mouse events
+		document
+			.getElementsByClassName('import')[0]
+			.setAttribute('style', 'pointer-events: none; opacity: 0.5')
+
+		// if the post message looks like a file, upload it
+		// let json = JSON.parse(event.data)
+		if (json.name && json.ext && json.src) {
+			_upload(json)
+		}
+	}
+
 	// expose to $scope
 	$scope.select = onMediaSelect
 	$scope.cancel = onCancel
@@ -303,6 +317,14 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 	$scope.displayFiles = []
 	$scope.currentSort = SORT_OPTIONS[0] // initialize using the first sort option
 	$scope.filter = null
+
+	// announce to the creator that the importer is available, if waiting to auto-upload
+	parent.postMessage(
+		JSON.stringify({ type: 'readyForDirectUpload', source: 'media-importer', data: '' }),
+		'*'
+	)
+
+	$window.addEventListener('message', _onPostMessage, false)
 
 	// initialize
 	_loadAllMedia()

@@ -564,6 +564,8 @@
 
 		font-weight: bold;
 		cursor: auto;
+
+		vertical-align: middle;
 	}
 
 	.page .share-widget-container .autoplay-container input {
@@ -571,8 +573,10 @@
 		width: auto;
 		margin-left: 0.5em;
 
-		transform: scale(1.25);
+		font-size: 1.25em;
 		cursor: pointer;
+
+		vertical-align: middle;
 	}
 
 	.page .scores {

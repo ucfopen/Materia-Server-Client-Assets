@@ -23,7 +23,8 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	// the play will no longer be connected to the LTI details.
 	// This is a cheap way to hide the button:
 	let hidePlayAgain = document.URL.indexOf('details=1') > -1
-	const widget_id = document.URL.match(/^[\.\w\/:]+\/([a-z0-9]+)/i)[1]
+	// get widget id from url like https://my-server.com:8080/scores/nLAmG#play-NbmVXrZe9Wzb
+	const widget_id = document.URL.match(/^.+\/([a-z0-9]+)/i)[1]
 
 	// this is only actually set to something when coming from the profile page
 	let play_id = window.location.hash.split('play-')[1]
@@ -179,8 +180,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const _getScoreDetails = () => {
-		const deferred = $q.defer()
-		scoresLoadPromise = deferred
+		scoresLoadPromise = $q.defer()
 		if (isPreview) {
 			currentAttempt = 1
 			scoreSrv.getWidgetInstancePlayScores(null, widgetInstance.id, _displayDetails)
@@ -190,21 +190,22 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			// get the current attempt from the url
 			const hash = getAttemptNumberFromHash()
 			if (currentAttempt === hash) {
-				return
-			}
-			currentAttempt = hash
-			play_id = $scope.attempts[$scope.attempts.length - currentAttempt]['id']
-
-			// display existing data or get more from the server
-			if (details[$scope.attempts.length - currentAttempt] != null) {
-				_displayDetails(details[$scope.attempts.length - currentAttempt])
+				scoresLoadPromise.resolve()
 			} else {
-				scoreSrv.getWidgetInstancePlayScores(play_id, null, _displayDetails)
+				currentAttempt = hash
+				play_id = $scope.attempts[$scope.attempts.length - currentAttempt]['id']
+
+				// display existing data or get more from the server
+				if (details[$scope.attempts.length - currentAttempt] != null) {
+					_displayDetails(details[$scope.attempts.length - currentAttempt])
+				} else {
+					scoreSrv.getWidgetInstancePlayScores(play_id, null, _displayDetails)
+				}
 			}
 		}
 
 		Please.$apply()
-		return deferred.promise
+		return scoresLoadPromise.promise
 	}
 
 	const _displayWidgetInstance = () => {
@@ -559,9 +560,9 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const getAttemptNumberFromHash = () => {
-		const hashStr = window.location.hash.split('-')[1]
-		if (hashStr != null && !isNaN(hashStr)) {
-			return hashStr
+		const match = window.location.hash.match(/^#attempt-(\d+)/)
+		if (match && match[1] != null && !isNaN(match[1])) {
+			return match[1]
 		}
 		return $scope.attempts.length
 	}
