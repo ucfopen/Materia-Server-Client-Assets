@@ -62,11 +62,8 @@ Namespace('Materia').Engine = (() => {
 		_sendPostMessage('addLog', { type, item_id, text, value })
 	}
 
-	const alert = (title, msg, type) => {
-		if (type == null) {
-			type = 1
-		}
-		_sendPostMessage('alert', { title, msg, type })
+	const alert = (title, msg, fatal = false) => {
+		_sendPostMessage('alert', { title, msg, fatal })
 	}
 
 	const getImageAssetUrl = mediaId => `${_mediaUrl}/${mediaId}`
