@@ -65,7 +65,7 @@ html {
 		}
 	}
 
-	input[type=file] {
+	input[type='file'] {
 		display: none;
 	}
 
@@ -106,7 +106,7 @@ html {
 	}
 
 	input {
-		margin-right:20px;
+		margin-right: 20px;
 
 		height: 20px;
 		background: #fff;
@@ -146,7 +146,7 @@ html {
 		border-right: $arrow_size solid transparent;
 	}
 	.sort-asc:after {
-		border-bottom: $arrow_size solid #000 ;
+		border-bottom: $arrow_size solid #000;
 	}
 	.sort-desc:after {
 		border-top: $arrow_size solid #f00;
@@ -172,7 +172,7 @@ html {
 		&:nth-child(odd) {
 			background-color: #eaeaea;
 		}
-		&:hover{
+		&:hover {
 			background-color: #f9d991;
 		}
 

@@ -17,7 +17,7 @@ app.controller('CollaborationController', function(
 	const ESC = 27
 	let lastSearch = ''
 
-	const _search = (nameOrFragment) => {
+	const _search = nameOrFragment => {
 		if (nameOrFragment === lastSearch) {
 			return
 		}
@@ -72,7 +72,7 @@ app.controller('CollaborationController', function(
 		return nameA.localeCompare(nameB)
 	}
 
-	const _searchKeyDown = (event) => {
+	const _searchKeyDown = event => {
 		switch (event.which) {
 			case RIGHT:
 				$scope.selectedIndex++
@@ -122,7 +122,7 @@ app.controller('CollaborationController', function(
 		})
 	}
 
-	const _searchMatchClick = (user) => {
+	const _searchMatchClick = user => {
 		if (!user) {
 			return
 		}
@@ -172,7 +172,7 @@ app.controller('CollaborationController', function(
 		}, 1)
 	}
 
-	const _removeAccess = (user) => {
+	const _removeAccess = user => {
 		user.remove = true
 		$scope.checkForWarning(user)
 	}
@@ -246,13 +246,13 @@ app.controller('CollaborationController', function(
 		})
 	}
 
-	const _checkForWarning = (user) => {
+	const _checkForWarning = user => {
 		if (user.isCurrentUser && user.access <= ACCESS.FULL) {
 			return (user.warning = true)
 		}
 	}
 
-	const _cancelDemote = (user) => {
+	const _cancelDemote = user => {
 		user.warning = false
 		user.remove = false
 		return (user.access = ACCESS.FULL)

@@ -51,7 +51,8 @@ Namespace('Materia').CreatorCore = (() => {
 		}
 	}
 
-	const _sendPostMessage = (type, data) => parent.postMessage(JSON.stringify({ type, source: 'creator-core', data }), '*')
+	const _sendPostMessage = (type, data) =>
+		parent.postMessage(JSON.stringify({ type, source: 'creator-core', data }), '*')
 
 	const _initNewWidget = (widget, baseUrl, mediaUrl) => {
 		_baseurl = baseUrl

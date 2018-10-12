@@ -11,13 +11,13 @@ describe('mediaImportCtrl', function() {
 
 	//create an object roughly matching an asset returned by the API
 	var createAssetObject = (idNumber, title, remote_asset = false, status = null) => {
-		let idString = '00000'.slice(0, ( -1 * ('' + idNumber).length) ) + idNumber
+		let idString = '00000'.slice(0, -1 * ('' + idNumber).length) + idNumber
 		let fileType = title.split('.').pop()
 		return {
 			created_at: '1500000000',
 			file_size: '1000',
 			id: idString,
-			remote_url: remote_asset ? (idString + '.' + fileType) : null,
+			remote_url: remote_asset ? idString + '.' + fileType : null,
 			status: status,
 			title: title,
 			type: fileType
@@ -64,11 +64,11 @@ describe('mediaImportCtrl', function() {
 		})
 
 		Namespace('Materia.Coms.Json').setGateway = setGatewayMock = jest.fn()
-		Namespace('Materia.Coms.Json').send = sendMock = jest.fn().mockImplementation((target) => {
-			switch(target) {
+		Namespace('Materia.Coms.Json').send = sendMock = jest.fn().mockImplementation(target => {
+			switch (target) {
 				case 'assets_get':
 					return {
-						then: jest.fn().mockImplementation((callback) => {
+						then: jest.fn().mockImplementation(callback => {
 							callback(useAssets)
 						})
 					}
@@ -113,10 +113,7 @@ describe('mediaImportCtrl', function() {
 	})
 
 	it('ignores unexpected filetypes', () => {
-		useAssets = [
-			createAssetObject(1, 'file1.unk'),
-			createAssetObject(2, 'image1.png')
-		]
+		useAssets = [createAssetObject(1, 'file1.unk'), createAssetObject(2, 'image1.png')]
 
 		$window.location.hash.substring.mockReturnValueOnce('png,unk')
 
@@ -149,10 +146,7 @@ describe('mediaImportCtrl', function() {
 	})
 
 	it('should generate thumbnail urls correctly', () => {
-		useAssets = [
-			createAssetObject(1, 'image1.png'),
-			createAssetObject(2, 'audio1.mp3')
-		]
+		useAssets = [createAssetObject(1, 'image1.png'), createAssetObject(2, 'audio1.mp3')]
 		$window.location.hash.substring.mockReturnValueOnce('image,audio')
 
 		var $scope = {
@@ -168,7 +162,6 @@ describe('mediaImportCtrl', function() {
 		expect($scope.displayFiles[1].thumb).toEqual('/img/audio.png')
 	})
 
-
 	//jest starts malfunctioning in strange ways when it tries interacting with the upload code
 	//either it's an us issue or a jest issue, either way it's taking too long to figure out
 	//need to pick this back up at some point in the future
@@ -183,14 +176,10 @@ describe('mediaImportCtrl', function() {
 		var controller = $controller('mediaImportCtrl', { $scope })
 
 		//create an approximation of a file for testing
-		let uploadFile = new File(
-			[''],
-			'audio1.mp3',
-			{
-				type: 'audio/mp3',
-				lastModified: new Date(1500000000)
-			}
-		)
+		let uploadFile = new File([''], 'audio1.mp3', {
+			type: 'audio/mp3',
+			lastModified: new Date(1500000000)
+		})
 
 		//normally this would be handled by the browser
 		//we can mock an event to approximate this

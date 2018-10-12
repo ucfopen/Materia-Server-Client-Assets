@@ -20,4 +20,4 @@ app.directive('fileDropper', () => ({
 			}
 		})
 	}
-})
+}))

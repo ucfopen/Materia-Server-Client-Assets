@@ -6,7 +6,7 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 	const SORTING_DESC = 'desc'
 
 	const sortString = (field, a, b) => a[field].toLowerCase().localeCompare(b[field].toLowerCase())
-	const sortNumber = (field, a,b) => a[field] - b[field]
+	const sortNumber = (field, a, b) => a[field] - b[field]
 
 	const SORT_OPTIONS = [
 		{
@@ -65,7 +65,9 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 		const currentStatus = sortOption.status
 
 		// reset all other sorting statusus
-		$scope.sortOptions.forEach(option => {option.status = SORTING_NONE})
+		$scope.sortOptions.forEach(option => {
+			option.status = SORTING_NONE
+		})
 
 		// select the next status in order
 		// NONE -> ASC -> DESC -> ASC -> DESC
@@ -104,24 +106,25 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 
 		const filtered = $scope.displayFiles.filter(file => {
 			//combine file name and type for simplified filtering
-			const simplified = file.name.replace(/\s/g, '').toLowerCase() + file.type + file.created;
+			const simplified = file.name.replace(/\s/g, '').toLowerCase() + file.type + file.created
 			// @TODO: why is this returning?
-			return simplified.includes(search);
-		});
+			return simplified.includes(search)
+		})
 
 		$scope.displayFiles = filtered
 	}
 
 	// just picks the first selected image
 	const uploadFile = e => {
-		const file = e.target.files && e.target.files[0] || e.dataTransfer.files && e.dataTransfer.files[0]
-		if(file) _getFileData(file, _upload)
+		const file =
+			(e.target.files && e.target.files[0]) || (e.dataTransfer.files && e.dataTransfer.files[0])
+		if (file) _getFileData(file, _upload)
 	}
 
 	const _loadAllMedia = file_id => {
 		// load and/or select file for labelling
 		COMS.send('assets_get', []).then(result => {
-			if ( !result || result.msg || result.length == 0) return
+			if (!result || result.msg || result.length == 0) return
 
 			// convert REQUESTED_FILE_TYPES into Allowed Mime Types
 			let allowedFileExtensions = []
@@ -130,16 +133,10 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 					//split the file type out of the full mime type for each allowed mime type
 					let extractedTypes = []
 					MIME_MAP[type].forEach(subtype => {
-						extractedTypes = [
-							...extractedTypes,
-							subtype.split('/')[1]
-						]
+						extractedTypes = [...extractedTypes, subtype.split('/')[1]]
 					})
 
-					allowedFileExtensions = [
-						...allowedFileExtensions,
-						...extractedTypes
-					]
+					allowedFileExtensions = [...allowedFileExtensions, ...extractedTypes]
 				}
 			})
 
@@ -158,18 +155,15 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 					res.id = res.remote_url != null ? res.remote_url : res.id
 
 					// file uploaded - if this result's id matches, stop processing and select this asset now
-					if (
-						file_id != null &&
-						res.id === file_id &&
-						allowedFileExtensions.includes(res.type)
-					) {
+					if (file_id != null && res.id === file_id && allowedFileExtensions.includes(res.type)) {
 						$window.parent.Materia.Creator.onMediaImportComplete([res])
 					}
 
 					//extract everything ahead of the .ext extension as the filename
 					const fileName = res.title.match(/.*(?=\.)/i)[0]
-					const creationDate = new Date(res.created_at*1000)
-					const dateString = [creationDate.getMonth(),
+					const creationDate = new Date(res.created_at * 1000)
+					const dateString = [
+						creationDate.getMonth(),
 						creationDate.getDate(),
 						creationDate.getFullYear()
 					].join('/')
@@ -192,7 +186,7 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 	}
 
 	const _getThumbnail = (data, type) => {
-		switch(type) {
+		switch (type) {
 			case 'jpg': // intentional case fall-through
 			case 'jpeg': // intentional case fall-through
 			case 'png': // intentional case fall-through
@@ -239,18 +233,17 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 
 		REQUESTED_FILE_TYPES.forEach(type => {
 			if (MIME_MAP[type]) {
-				allowedFileExtensions = [
-				...allowedFileExtensions,
-				...MIME_MAP[type]
-				]
+				allowedFileExtensions = [...allowedFileExtensions, ...MIME_MAP[type]]
 			}
 		})
 
 		const mime = dataUrl.split(';')[0].split(':')[1]
 
 		if (mime == null || allowedFileExtensions.indexOf(mime) === -1) {
-			alert('This widget does not support selected file type is not supported. ' +
-				`The allowed types are: ${REQUESTED_FILE_TYPES.join(', ')}.`)
+			alert(
+				'This widget does not support selected file type is not supported. ' +
+					`The allowed types are: ${REQUESTED_FILE_TYPES.join(', ')}.`
+			)
 			return null
 		}
 		return mime

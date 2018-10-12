@@ -24,7 +24,7 @@ app.directive('beardable', function() {
 				}
 			}
 
-			const konamiListener = (event) => {
+			const konamiListener = event => {
 				switch (event.which || event.keyCode) {
 					case 38:
 						if (konami !== 'u') {
