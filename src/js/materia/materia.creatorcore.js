@@ -81,7 +81,7 @@ Namespace('Materia').CreatorCore = (() => {
 	}
 
 	const alert = (msg, title = null, fatal = false) => {
-		_sendPostMessage('alert', { msg, title, fatal})
+		_sendPostMessage('alert', { msg, title, fatal })
 	}
 
 	const getMediaUrl = mediaId => `${_mediaUrl}/${mediaId}`

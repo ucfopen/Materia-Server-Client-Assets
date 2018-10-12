@@ -382,7 +382,7 @@ describe('playerCtrl', () => {
 
 		// test alert post message
 		mockPlease.$apply.mockClear()
-		mockPostMessage(buildPostMessage('alert',{msg: 'aaaahh!'}))
+		mockPostMessage(buildPostMessage('alert', { msg: 'aaaahh!' }))
 		expect(mockPlease.$apply).toHaveBeenCalledTimes(1)
 		expect($scope.alert.msg).toBe('aaaahh!')
 		expect($scope.alert.fatal).toBe(false)
