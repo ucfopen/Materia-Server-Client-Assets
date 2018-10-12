@@ -51,7 +51,8 @@ Namespace('Materia').CreatorCore = (() => {
 		}
 	}
 
-	const _sendPostMessage = (type, data) => parent.postMessage(JSON.stringify({ type, source: 'creator-core', data }), '*')
+	const _sendPostMessage = (type, data) =>
+		parent.postMessage(JSON.stringify({ type, source: 'creator-core', data }), '*')
 
 	const _initNewWidget = (widget, baseUrl, mediaUrl) => {
 		_baseurl = baseUrl
@@ -79,11 +80,8 @@ Namespace('Materia').CreatorCore = (() => {
 		_sendPostMessage('start', null)
 	}
 
-	const alert = (title, msg, type) => {
-		if (type == null) {
-			type = 1
-		}
-		_sendPostMessage('alert', { title, msg, type })
+	const alert = (msg, title = null, fatal = false) => {
+		_sendPostMessage('alert', { msg, title, fatal })
 	}
 
 	const getMediaUrl = mediaId => `${_mediaUrl}/${mediaId}`

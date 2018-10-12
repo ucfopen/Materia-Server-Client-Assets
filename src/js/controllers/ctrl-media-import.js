@@ -106,10 +106,7 @@ app.controller('mediaImportCtrl', function($scope, $sce, $timeout, $window, $doc
 				let allowedMimeTypes = []
 				$scope.fileType.forEach(type => {
 					if (MEDIA_SUBSTITUTIONS[type]) {
-						allowedMimeTypes = [
-							...allowedMimeTypes,
-							...MEDIA_SUBSTITUTIONS[type]
-						]
+						allowedMimeTypes = [...allowedMimeTypes, ...MEDIA_SUBSTITUTIONS[type]]
 					}
 				})
 
@@ -180,19 +177,24 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 	const uploader = new Uploader(config)
 
 	// announce to the creator that the importer is available, if waiting to auto-upload
-	parent.postMessage(JSON.stringify({type:'readyForDirectUpload', source:'media-importer', data:''}), '*')
+	parent.postMessage(
+		JSON.stringify({ type: 'readyForDirectUpload', source: 'media-importer', data: '' }),
+		'*'
+	)
 
 	// if creator returns a file, go ahead and upload it (bypasses user input)
-	const _onPostMessage = function(event){
+	const _onPostMessage = function(event) {
 		// Disable mouse events within the importer while the upload is happening (input from the user is NOT required)
-		document.getElementsByClassName('import')[0].setAttribute('style', 'pointer-events: none; opacity: 0.5')
+		document
+			.getElementsByClassName('import')[0]
+			.setAttribute('style', 'pointer-events: none; opacity: 0.5')
 		let json = JSON.parse(event.data)
 		if (json.name && json.ext && json.src) {
 			uploader.upload(json)
 		}
 	}
 
-	$window.addEventListener("message", _onPostMessage, false)
+	$window.addEventListener('message', _onPostMessage, false)
 
 	// SCOPE VARS
 	// ==========
@@ -221,16 +223,10 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 				//split the file type out of the full mime type for each allowed mime type
 				let extractedTypes = []
 				MEDIA_SUBSTITUTIONS[type].forEach(subtype => {
-					extractedTypes = [
-						...extractedTypes,
-						subtype.split('/')[1]
-					]
+					extractedTypes = [...extractedTypes, subtype.split('/')[1]]
 				})
 
-				allowedFileTypes = [
-					...allowedFileTypes,
-					...extractedTypes
-				]
+				allowedFileTypes = [...allowedFileTypes, ...extractedTypes]
 			}
 		})
 		return allowedFileTypes
@@ -280,11 +276,7 @@ The allowed types are: ${$scope.fileType.join(', ')}.`)
 						res.id = res.remote_url != null ? res.remote_url : res.id
 
 						// file uploaded - if this result's id matches, stop processing and select this asset now
-						if (
-							file_id != null &&
-							res.id === file_id &&
-							allowedFileTypes.includes(res.type)
-						) {
+						if (file_id != null && res.id === file_id && allowedFileTypes.includes(res.type)) {
 							$window.parent.Materia.Creator.onMediaImportComplete([res])
 						}
 

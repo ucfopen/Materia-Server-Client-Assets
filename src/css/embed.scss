@@ -1,5 +1,4 @@
 .container {
-	
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -9,18 +8,17 @@
 	flex-direction: column;
 	justify-content: space-around;
 
-	background: rgba(50,50,50,1);
-	color: #FFFFFF;
+	background: rgba(50, 50, 50, 1);
+	color: #ffffff;
 
 	section.page {
 		width: 620px;
-		background: rgba(0,0,0,0);
+		background: rgba(0, 0, 0, 0);
 	}
 
 	div.widget_info {
-
 		margin: 0;
-		padding: 0;	
+		padding: 0;
 
 		div.widget_icon {
 			position: relative;
@@ -31,7 +29,7 @@
 			height: 80px;
 			margin: 0;
 			padding: 10px;
-	
+
 			img {
 				width: 80px;
 				height: 80px;
@@ -46,7 +44,7 @@
 			padding: 0px 5px 0px 10px;
 
 			li {
-				border-bottom: dotted 1px #FFFFFF;
+				border-bottom: dotted 1px #ffffff;
 			}
 		}
 	}
@@ -55,7 +53,7 @@
 		margin-top: 55px;
 		margin-left: 45px;
 		margin-right: 45px;
-	}	
+	}
 }
 
 .container a {
