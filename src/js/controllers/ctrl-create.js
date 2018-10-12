@@ -218,7 +218,7 @@ app.controller('createCtrl', function(
 					case 'media-importer':
 						// options for media-importer postMessages
 						switch (msg.type) {
-							
+
 							// broadcast by the importer when showMediaImporter is called
 							// if a file is pre-selected (by direct upload pipeline), go ahead and send it over
 							// this behavior only occurs for direct media uploads, bypassing user input
@@ -250,7 +250,7 @@ app.controller('createCtrl', function(
 							default:
 								return console.warn(`Unknown message from creator: ${msg.type}`)
 						}
-				}				
+				}
 			}
 
 			_alert(`Error, cross domain restricted for ${origin}`)

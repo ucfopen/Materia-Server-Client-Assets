@@ -139,7 +139,7 @@ describe('playerCtrl', () => {
 
 		require('./ctrl-player')
 
-		inject(function(
+		inject((
 			_$window_,
 			$rootScope,
 			_$q_,
@@ -147,7 +147,7 @@ describe('playerCtrl', () => {
 			_$timeout_,
 			_$interval_,
 			_$location_
-		) {
+		) => {
 			_scope = $rootScope.$new()
 			$q = _$q_
 			$controller = _$controller_

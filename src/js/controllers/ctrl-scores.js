@@ -123,7 +123,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 					}
 
 				default:
-					console.warn('Invalid postMessage source or no source provided')			
+					console.warn('Invalid postMessage source or no source provided')
 					return false
 			}
 		} else {
@@ -511,8 +511,8 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 				} else {
 					qset = data
 				}
-				
-				return scoresLoadPromise.resolve()					
+
+				return scoresLoadPromise.resolve()
 			})
 		}
 		else {
@@ -618,7 +618,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	$scope.prevMouseOver = () => ($scope.prevAttemptClass = 'open')
 	$scope.prevMouseOut = () => ($scope.prevAttemptClass = '')
 	$scope.prevClick = () => ($scope.prevAttemptClass = 'open')
-	$scope.attemptClick = function() {
+	$scope.attemptClick = () => {
 		if (isMobile.any()) {
 			$scope.prevAttemptClass = ''
 		}

@@ -22,7 +22,7 @@ describe('beardable Directive', function() {
 	beforeEach(() => {
 		global.window.localStorage = { beardMode: 'false' }
 		require('./dir-beardable')
-		inject(function(_$compile_, _$rootScope_) {
+		inject((_$compile_, _$rootScope_) => {
 			$compile = _$compile_
 			$scope = _$rootScope_.$new()
 		})
@@ -39,7 +39,7 @@ describe('beardable Directive', function() {
 		windowEventListenerSpy.mockRestore()
 	})
 
-	it('is disabled when beardmode is off and listens for keydown', function() {
+	it('is disabled when beardmode is off and listens for keydown', () => {
 		window.localStorage.beardMode = false
 		let element = angular.element(html)
 		let compiled = $compile(element)($scope)
@@ -49,7 +49,7 @@ describe('beardable Directive', function() {
 		expect(windowEventListenerSpy).toHaveBeenLastCalledWith('keydown', expect.any(Function))
 	})
 
-	it('is enabled when beardmode is on and listens for keydown', function() {
+	it('is enabled when beardmode is on and listens for keydown', () => {
 		global.window.localStorage.beardMode = 'true'
 		let element = angular.element(html)
 		let compiled = $compile(element)($scope)
@@ -60,7 +60,7 @@ describe('beardable Directive', function() {
 		expect(windowEventListenerSpy).toHaveBeenLastCalledWith('keydown', expect.any(Function))
 	})
 
-	it('enables with the right key events', function() {
+	it('enables with the right key events', () => {
 		global.window.localStorage.beardMode = 'false'
 		let element = angular.element(html)
 		let compiled = $compile(element)($scope)
@@ -80,7 +80,7 @@ describe('beardable Directive', function() {
 		expect(document.getElementById('beard_css')).not.toBeNull()
 	})
 
-	it('disables with the right key events are entered', function() {
+	it('disables with the right key events are entered', () => {
 		global.window.localStorage.beardMode = 'true'
 		let element = angular.element(html)
 		let compiled = $compile(element)($scope)
@@ -101,7 +101,7 @@ describe('beardable Directive', function() {
 		expect(document.getElementById('beard_css')).toBeNull()
 	})
 
-	it('konami code resets when messed up', function() {
+	it('konami code resets when messed up', () => {
 		global.window.localStorage = { beardMode: 'false' }
 		let element = angular.element(html)
 		let compiled = $compile(element)($scope)

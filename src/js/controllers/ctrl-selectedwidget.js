@@ -18,7 +18,7 @@ app.controller('SelectedWidgetController', function(
 	}
 
 	// using 'function' here because this function is executed in another scope chain
-	const _hideModal = function() {
+	const _hideModal = () => {
 		this.$parent.hideModal()
 	}
 

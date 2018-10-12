@@ -17,7 +17,7 @@ app.controller('CollaborationController', function(
 	const ESC = 27
 	let lastSearch = ''
 
-	const _search = function(nameOrFragment) {
+	const _search = (nameOrFragment) => {
 		if (nameOrFragment === lastSearch) {
 			return
 		}
@@ -66,13 +66,13 @@ app.controller('CollaborationController', function(
 		})
 	}
 
-	const sortNames = function(userA, userB) {
+	const sortNames = (userA, userB) => {
 		const nameA = userA.first + ' ' + userA.last
 		const nameB = userB.first + ' ' + userB.last
 		return nameA.localeCompare(nameB)
 	}
 
-	const _searchKeyDown = function(event) {
+	const _searchKeyDown = (event) => {
 		switch (event.which) {
 			case RIGHT:
 				$scope.selectedIndex++
@@ -122,7 +122,7 @@ app.controller('CollaborationController', function(
 		})
 	}
 
-	const _searchMatchClick = function(user) {
+	const _searchMatchClick = (user) => {
 		if (!user) {
 			return
 		}
@@ -172,12 +172,12 @@ app.controller('CollaborationController', function(
 		}, 1)
 	}
 
-	const _removeAccess = function(user) {
+	const _removeAccess = (user) => {
 		user.remove = true
 		$scope.checkForWarning(user)
 	}
 
-	const _updatePermissions = function() {
+	const _updatePermissions = () => {
 		let remove_widget = false
 		const widget_id = $scope.selected.widget.id
 		const permObj = []
@@ -246,13 +246,13 @@ app.controller('CollaborationController', function(
 		})
 	}
 
-	const _checkForWarning = function(user) {
+	const _checkForWarning = (user) => {
 		if (user.isCurrentUser && user.access <= ACCESS.FULL) {
 			return (user.warning = true)
 		}
 	}
 
-	const _cancelDemote = function(user) {
+	const _cancelDemote = (user) => {
 		user.warning = false
 		user.remove = false
 		return (user.access = ACCESS.FULL)

@@ -4,13 +4,13 @@ describe('dateValidation Directive', function() {
 
 	beforeEach(() => {
 		require('./dir-date-validation')
-		inject(function(_$compile_, _$rootScope_) {
+		inject((_$compile_, _$rootScope_) => {
 			$compile = _$compile_
 			$scope = _$rootScope_.$new()
 		})
 	})
 
-	it('valid dates render with valid class', function() {
+	it('valid dates render with valid class', () => {
 		$scope.sampleDate = 'date'
 		let scopeApplySpy = jest.spyOn($scope, '$apply')
 		let html =
@@ -21,7 +21,7 @@ describe('dateValidation Directive', function() {
 		expect(compiled.hasClass('ng-valid')).toBe(true)
 	})
 
-	it('replaces invalid characters for date type', function() {
+	it('replaces invalid characters for date type', () => {
 		$scope.model = { sampleDate: 'initialValue' }
 
 		let html =
@@ -35,7 +35,7 @@ describe('dateValidation Directive', function() {
 		expect(form.mydate.$valid).toBe(true)
 	})
 
-	it('replaces invalid characters for time type', function() {
+	it('replaces invalid characters for time type', () => {
 		$scope.model = { sampleDate: 'initialValue' }
 
 		let html =

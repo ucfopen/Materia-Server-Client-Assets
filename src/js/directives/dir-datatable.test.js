@@ -6,7 +6,7 @@ describe('datatable Directive', function() {
 
 	beforeEach(() => {
 		require('./dir-datatable')
-		inject(function(_$compile_, _$rootScope_, _$timeout_) {
+		inject((_$compile_, _$rootScope_, _$timeout_) => {
 			$compile = _$compile_
 			$scope = _$rootScope_.$new()
 			$timeout = _$timeout_
@@ -16,7 +16,7 @@ describe('datatable Directive', function() {
 		global.$ = jest.fn(() => ({ DataTable }))
 	})
 
-	it('is initialized on the element', function() {
+	it('is initialized on the element', () => {
 		let scopeApplySpy = jest.spyOn($scope, '$apply')
 		let html = '<div datatable>text</div>'
 		let element = angular.element(html)
