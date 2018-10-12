@@ -10,7 +10,7 @@ describe('mediaImportCtrl', function() {
 	var $rootScope
 
 	//create an object roughly matching an asset returned by the API
-	function createAssetObject(idNumber, title, remote_asset = false, status = null) {
+	var createAssetObject = (idNumber, title, remote_asset = false, status = null) => {
 		let idString = '00000'.slice(0, ( -1 * ('' + idNumber).length) ) + idNumber
 		let fileType = title.split('.').pop()
 		return {
@@ -55,11 +55,10 @@ describe('mediaImportCtrl', function() {
 		require('../materia-constants')
 		require('./ctrl-media-import')
 
-		global.S3_ENABLED = false
 		global.MEDIA_UPLOAD_URL = 'https://mediauploadurl.com'
 		global.MEDIA_URL = 'https://mediaurl.com'
 
-		inject(function(_$controller_, _$rootScope_) {
+		inject((_$controller_, _$rootScope_) => {
 			$controller = _$controller_
 			$rootScope = _$rootScope_
 		})
@@ -149,7 +148,7 @@ describe('mediaImportCtrl', function() {
 		expect($scope.displayFiles).toHaveLength(1)
 	})
 
-	it('should generate non-S3 thumbnail urls correctly', () => {
+	it('should generate thumbnail urls correctly', () => {
 		useAssets = [
 			createAssetObject(1, 'image1.png'),
 			createAssetObject(2, 'audio1.mp3')
@@ -169,30 +168,6 @@ describe('mediaImportCtrl', function() {
 		expect($scope.displayFiles[1].thumb).toEqual('/img/audio.png')
 	})
 
-	it('should generate S3 thumbnail urls correctly', () => {
-		useAssets = [
-			createAssetObject(1, 'image1.png', true, 'migrated_asset'),
-			createAssetObject(2, 'image2.jpeg', true, 'migrated_asset'),
-			createAssetObject(3, 'audio1.mp3', true, 'migrated_asset')
-		]
-
-		global.S3_ENABLED = true
-		$window.location.hash.substring.mockReturnValueOnce('image,audio')
-
-		var $scope = {
-			$watch: jest.fn(),
-			$apply: jest.fn()
-		}
-
-		var controller = $controller('mediaImportCtrl', { $scope })
-
-		//case one - should modify the image asset's url to point to the relevant 75x75-pixel thumbnail
-		expect($scope.displayFiles[0].thumb).toEqual('https://mediaurl.com/00001-75x75.png')
-		//case two - 'jpeg' and 'jpg' should be normalized to 'jpg'
-		expect($scope.displayFiles[1].thumb).toEqual('https://mediaurl.com/00002-75x75.jpg')
-		//case three - audio should always refer to relative asset '/img/audio.png'
-		expect($scope.displayFiles[2].thumb).toEqual('/img/audio.png')
-	})
 
 	//jest starts malfunctioning in strange ways when it tries interacting with the upload code
 	//either it's an us issue or a jest issue, either way it's taking too long to figure out
