@@ -7,7 +7,7 @@ describe('mediaImportCtrl', function() {
 	var $controller
 	var $window
 	var mockPlease
-	var $rootScope
+	var $timeout
 
 	//create an object roughly matching an asset returned by the API
 	var createAssetObject = (idNumber, title, remote_asset = false, status = null) => {
@@ -23,6 +23,15 @@ describe('mediaImportCtrl', function() {
 			type: fileType
 		}
 	}
+
+	const XHR = {
+		open : jest.fn(),
+		send : jest.fn(),
+		setRequestHeader: jest.fn()
+	}
+
+	XMLHttpRequest = jest.fn().mockImplementation(() => XHR)
+
 
 	var useAssets
 	var defaultAssets = [
@@ -47,6 +56,9 @@ describe('mediaImportCtrl', function() {
 				hash: {
 					substring: jest.fn()
 				}
+			},
+			parent:{
+				postMessage: jest.fn()
 			}
 		}
 		app.factory('$window', () => $window)
@@ -58,9 +70,9 @@ describe('mediaImportCtrl', function() {
 		global.MEDIA_UPLOAD_URL = 'https://mediauploadurl.com'
 		global.MEDIA_URL = 'https://mediaurl.com'
 
-		inject((_$controller_, _$rootScope_) => {
+		inject((_$controller_, _$timeout_) => {
 			$controller = _$controller_
-			$rootScope = _$rootScope_
+			$timeout = _$timeout_
 		})
 
 		Namespace('Materia.Coms.Json').setGateway = setGatewayMock = jest.fn()
@@ -82,13 +94,15 @@ describe('mediaImportCtrl', function() {
 		Namespace('Materia.Creator').onMediaImportComplete = jest.fn()
 
 		useAssets = []
+
+		XHR.open.mockReset()
+		XHR.send.mockReset()
 	})
 
 	it('reacts to users not having any assets', () => {
 		$window.location.hash.substring.mockReturnValueOnce('image')
 
 		var $scope = {
-			$watch: jest.fn(),
 			$apply: jest.fn()
 		}
 
@@ -103,12 +117,11 @@ describe('mediaImportCtrl', function() {
 		$window.location.hash.substring.mockReturnValue('image')
 
 		var $scope = {
-			$watch: jest.fn(),
 			$apply: jest.fn()
 		}
 
 		var controller = $controller('mediaImportCtrl', { $scope })
-
+		$timeout.flush()
 		expect($scope.displayFiles).toHaveLength(3)
 	})
 
@@ -118,12 +131,11 @@ describe('mediaImportCtrl', function() {
 		$window.location.hash.substring.mockReturnValueOnce('png,unk')
 
 		var $scope = {
-			$watch: jest.fn(),
 			$apply: jest.fn()
 		}
 
 		var controller = $controller('mediaImportCtrl', { $scope })
-
+		$timeout.flush()
 		expect($scope.displayFiles).toHaveLength(1)
 	})
 
@@ -136,12 +148,11 @@ describe('mediaImportCtrl', function() {
 		$window.location.hash.substring.mockReturnValueOnce('image')
 
 		var $scope = {
-			$watch: jest.fn(),
 			$apply: jest.fn()
 		}
 
 		var controller = $controller('mediaImportCtrl', { $scope })
-
+		$timeout.flush()
 		expect($scope.displayFiles).toHaveLength(1)
 	})
 
@@ -150,26 +161,116 @@ describe('mediaImportCtrl', function() {
 		$window.location.hash.substring.mockReturnValueOnce('image,audio')
 
 		var $scope = {
-			$watch: jest.fn(),
 			$apply: jest.fn()
 		}
 
 		var controller = $controller('mediaImportCtrl', { $scope })
-
+		$timeout.flush()
 		//case one - images should be MEDIA_URL/assetid/thumbnail
 		expect($scope.displayFiles[0].thumb).toEqual('https://mediaurl.com/00001/thumbnail')
 		//case two - audio should always refer to relative asset '/img/audio.png'
 		expect($scope.displayFiles[1].thumb).toEqual('/img/audio.png')
 	})
 
+	it('announces readyForDirectUpload via postmessage before loading media', () => {
+		useAssets = [
+			createAssetObject(1, 'image1.png', true),
+			createAssetObject(2, 'image2.png', true, 'migrated_asset')
+		]
+
+		$window.location.hash.substring.mockReturnValueOnce('image')
+
+		var $scope = {
+			$apply: jest.fn()
+		}
+
+		var controller = $controller('mediaImportCtrl', { $scope })
+		expect($window.parent.postMessage).toHaveBeenCalledTimes(1)
+		expect($window.parent.postMessage.mock.calls[0]).toMatchSnapshot()
+	})
+
+	it('adds an event listener for postMessage', () => {
+		$window.location.hash.substring.mockReturnValueOnce('image')
+
+		var $scope = {
+			$apply: jest.fn()
+		}
+
+		var controller = $controller('mediaImportCtrl', { $scope })
+		expect($window.addEventListener).toHaveBeenCalledWith('message', expect.any(Function), false)
+	})
+
+	it('uploads from post messages', () => {
+		$window.location.hash.substring.mockReturnValueOnce('image')
+
+		var $scope = {
+			$apply: jest.fn()
+		}
+
+		// mock dom elements when diabling clicks
+		jest
+			.spyOn(document, 'getElementsByClassName')
+			.mockReturnValueOnce([{ setAttribute: jest.fn() }])
+
+		var controller = $controller('mediaImportCtrl', { $scope })
+		var _onPostMessage = $window.addEventListener.mock.calls[0][1]
+
+		// send a postmessage
+		_onPostMessage({
+			data: JSON.stringify({
+				name: 'mock-file-name',
+				ext: '.png',
+				mime: 'image/png',
+				src: 'mock-image-data',
+			})
+		})
+
+		expect(XHR.open).toHaveBeenCalledTimes(1)
+		expect(XHR.open).toHaveBeenCalledWith('POST', 'https://mediauploadurl.com')
+		expect(XHR.send).toHaveBeenCalledTimes(1)
+
+		// set the lastMotified date of the file
+		const formData = XHR.send.mock.calls[0][0]
+
+		expect(formData.get('name')).toBe('mock-file-name')
+		expect(formData.get('Content-Type')).toBe('image/png')
+		expect(formData.get('file')).toBeInstanceOf(File)
+	})
+
+	it('skips incompatible post messages', () => {
+		$window.location.hash.substring.mockReturnValueOnce('image')
+
+		var $scope = {
+			$apply: jest.fn()
+		}
+
+		// mock dom elements when diabling clicks
+		jest
+			.spyOn(document, 'getElementsByClassName')
+			.mockReturnValueOnce([{ setAttribute: jest.fn() }])
+
+		var controller = $controller('mediaImportCtrl', { $scope })
+		var _onPostMessage = $window.addEventListener.mock.calls[0][1]
+
+		// send a postmessage
+		_onPostMessage({
+			data: JSON.stringify({
+				name: 'mock-file-name',
+				ext: '.png',
+			})
+		})
+
+		expect(XHR.open).toHaveBeenCalledTimes(0)
+		expect(XHR.send).toHaveBeenCalledTimes(0)
+	})
+
 	//jest starts malfunctioning in strange ways when it tries interacting with the upload code
 	//either it's an us issue or a jest issue, either way it's taking too long to figure out
 	//need to pick this back up at some point in the future
-	xit('should upload files successfully', () => {
+	it('should upload files successfully', (done) => {
 		$window.location.hash.substring.mockReturnValueOnce('image,audio')
 
 		var $scope = {
-			$watch: jest.fn(),
 			$apply: jest.fn()
 		}
 
@@ -193,5 +294,21 @@ describe('mediaImportCtrl', function() {
 			}
 		}
 		$scope.uploadFile(uploadEvent)
+
+		// some crappy aysnc stuff is happening that we have to wait for
+		setTimeout(() => {
+			expect(XHR.open).toHaveBeenCalledTimes(1)
+			expect(XHR.open).toHaveBeenCalledWith('POST', 'https://mediauploadurl.com')
+			expect(XHR.send).toHaveBeenCalledTimes(1)
+
+			const formData = XHR.send.mock.calls[0][0]
+
+			expect(formData.get('name')).toBe('audio1.mp3')
+			expect(formData.get('Content-Type')).toBe('audio/mp3')
+			expect(formData.get('file')).toBeInstanceOf(File)
+			done()
+ 		}, 10);
+
+
 	})
 })

@@ -1,9 +1,10 @@
 const app = angular.module('materia')
 
-app.controller('mediaImportCtrl', function($scope, $window) {
+app.controller('mediaImportCtrl', function($scope, $window, $timeout) {
 	const SORTING_NONE = false
 	const SORTING_ASC = 'asc'
 	const SORTING_DESC = 'desc'
+
 
 	const sortString = (field, a, b) => a[field].toLowerCase().localeCompare(b[field].toLowerCase())
 	const sortNumber = (field, a, b) => a[field] - b[field]
@@ -202,7 +203,6 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 
 	const _getFileData = (file, callback) => {
 		const dataReader = new FileReader()
-
 		// File size is measured in bytes
 		if (file.size > 60000000) {
 			alert(
@@ -272,7 +272,6 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 		const fd = new FormData()
 		fd.append('name', fileData.name)
 		fd.append('Content-Type', fileData.mime)
-		fd.append('success_action_status', '201')
 		fd.append('file', _dataURItoBlob(fileData.src, fileData.mime), fileData.name)
 
 		const request = new XMLHttpRequest()
@@ -295,16 +294,29 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 
 	// creator can send a message with file data
 	const _onPostMessage = event => {
+		// does the event look like an image message?
+		let json = JSON.parse(event.data)
+		if (!json.name || !json.ext || !json.src) return
+
+		// cancel media loading
+		$timeout.cancel(initialLoadTimeout)
+
 		// Disable mouse events
 		document
 			.getElementsByClassName('import')[0]
 			.setAttribute('style', 'pointer-events: none; opacity: 0.5')
 
-		// if the post message looks like a file, upload it
-		// let json = JSON.parse(event.data)
-		if (json.name && json.ext && json.src) {
-			_upload(json)
+		_upload(json)
+	}
+
+	const _announceReady = () => {
+		// announce to the creator that the importer is available, if waiting to auto-upload
+		let msg = {
+			type: 'readyForDirectUpload',
+			source: 'media-importer',
+			data: ''
 		}
+		$window.parent.postMessage(JSON.stringify(msg),'*')
 	}
 
 	// expose to $scope
@@ -318,14 +330,8 @@ app.controller('mediaImportCtrl', function($scope, $window) {
 	$scope.currentSort = SORT_OPTIONS[0] // initialize using the first sort option
 	$scope.filter = null
 
-	// announce to the creator that the importer is available, if waiting to auto-upload
-	parent.postMessage(
-		JSON.stringify({ type: 'readyForDirectUpload', source: 'media-importer', data: '' }),
-		'*'
-	)
-
-	$window.addEventListener('message', _onPostMessage, false)
-
 	// initialize
-	_loadAllMedia()
+	$window.addEventListener('message', _onPostMessage, false)
+	_announceReady()
+	const initialLoadTimeout = $timeout(() => {_loadAllMedia()}, 200) // load media soon
 })
