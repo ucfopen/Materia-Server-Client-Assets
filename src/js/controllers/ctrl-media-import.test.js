@@ -25,13 +25,12 @@ describe('mediaImportCtrl', function() {
 	}
 
 	const XHR = {
-		open : jest.fn(),
-		send : jest.fn(),
+		open: jest.fn(),
+		send: jest.fn(),
 		setRequestHeader: jest.fn()
 	}
 
 	XMLHttpRequest = jest.fn().mockImplementation(() => XHR)
-
 
 	var useAssets
 	var defaultAssets = [
@@ -57,7 +56,7 @@ describe('mediaImportCtrl', function() {
 					substring: jest.fn()
 				}
 			},
-			parent:{
+			parent: {
 				postMessage: jest.fn()
 			}
 		}
@@ -221,7 +220,7 @@ describe('mediaImportCtrl', function() {
 				name: 'mock-file-name',
 				ext: '.png',
 				mime: 'image/png',
-				src: 'mock-image-data',
+				src: 'mock-image-data'
 			})
 		})
 
@@ -256,7 +255,7 @@ describe('mediaImportCtrl', function() {
 		_onPostMessage({
 			data: JSON.stringify({
 				name: 'mock-file-name',
-				ext: '.png',
+				ext: '.png'
 			})
 		})
 
@@ -267,7 +266,7 @@ describe('mediaImportCtrl', function() {
 	//jest starts malfunctioning in strange ways when it tries interacting with the upload code
 	//either it's an us issue or a jest issue, either way it's taking too long to figure out
 	//need to pick this back up at some point in the future
-	it('should upload files successfully', (done) => {
+	it('should upload files successfully', done => {
 		$window.location.hash.substring.mockReturnValueOnce('image,audio')
 
 		var $scope = {
@@ -307,8 +306,6 @@ describe('mediaImportCtrl', function() {
 			expect(formData.get('Content-Type')).toBe('audio/mp3')
 			expect(formData.get('file')).toBeInstanceOf(File)
 			done()
- 		}, 10);
-
-
+		}, 10)
 	})
 })

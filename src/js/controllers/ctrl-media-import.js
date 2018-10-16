@@ -5,7 +5,6 @@ app.controller('mediaImportCtrl', function($scope, $window, $timeout) {
 	const SORTING_ASC = 'asc'
 	const SORTING_DESC = 'desc'
 
-
 	const sortString = (field, a, b) => a[field].toLowerCase().localeCompare(b[field].toLowerCase())
 	const sortNumber = (field, a, b) => a[field] - b[field]
 
@@ -316,7 +315,7 @@ app.controller('mediaImportCtrl', function($scope, $window, $timeout) {
 			source: 'media-importer',
 			data: ''
 		}
-		$window.parent.postMessage(JSON.stringify(msg),'*')
+		$window.parent.postMessage(JSON.stringify(msg), '*')
 	}
 
 	// expose to $scope
@@ -333,5 +332,7 @@ app.controller('mediaImportCtrl', function($scope, $window, $timeout) {
 	// initialize
 	$window.addEventListener('message', _onPostMessage, false)
 	_announceReady()
-	const initialLoadTimeout = $timeout(() => {_loadAllMedia()}, 200) // load media soon
+	const initialLoadTimeout = $timeout(() => {
+		_loadAllMedia()
+	}, 200) // load media soon
 })
