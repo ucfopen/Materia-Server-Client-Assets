@@ -41,7 +41,7 @@ describe('adminUserController', function() {
 		require('../services/srv-admin')
 		require('./ctrl-admin-user')
 
-		inject(function(_$controller_, _$q_, _adminSrv_, _$rootScope_) {
+		inject((_$controller_, _$q_, _adminSrv_, _$rootScope_) => {
 			$controller = _$controller_
 			$q = _$q_
 			adminSrv = _adminSrv_

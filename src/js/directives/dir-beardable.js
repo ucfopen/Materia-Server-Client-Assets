@@ -4,11 +4,11 @@ const app = angular.module('materia')
 app.directive('beardable', function() {
 	return {
 		restrict: 'A',
-		controller: function($window) {
+		controller($window) {
 			let beardMode = $window.localStorage.beardMode === 'true'
 			let konami = ''
 
-			const updateBeardCss = function() {
+			const updateBeardCss = () => {
 				const hasBeardCss = document.getElementById('beard_css') != null
 				if (beardMode && !hasBeardCss) {
 					// enabled and needs css
@@ -24,7 +24,7 @@ app.directive('beardable', function() {
 				}
 			}
 
-			const konamiListener = function(event) {
+			const konamiListener = event => {
 				switch (event.which || event.keyCode) {
 					case 38:
 						if (konami !== 'u') {

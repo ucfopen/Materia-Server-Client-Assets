@@ -29,7 +29,7 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 
 	// Populates the details page with content
 	// @object The current widget.
-	var _populateDefaults = function(widget) {
+	var _populateDefaults = widget => {
 		const { clean_name } = widget
 
 		$scope.widget = {

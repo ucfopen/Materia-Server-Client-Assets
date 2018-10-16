@@ -561,7 +561,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 	const getAttemptNumberFromHash = () => {
 		const match = window.location.hash.match(/^#attempt-(\d+)/)
-		if(match && match[1] != null && !isNaN(match[1])){
+		if (match && match[1] != null && !isNaN(match[1])) {
 			return match[1]
 		}
 		return $scope.attempts.length
@@ -615,7 +615,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	$scope.prevMouseOver = () => ($scope.prevAttemptClass = 'open')
 	$scope.prevMouseOut = () => ($scope.prevAttemptClass = '')
 	$scope.prevClick = () => ($scope.prevAttemptClass = 'open')
-	$scope.attemptClick = function() {
+	$scope.attemptClick = () => {
 		if (isMobile.any()) {
 			$scope.prevAttemptClass = ''
 		}
