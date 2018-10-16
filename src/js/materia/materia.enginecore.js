@@ -12,7 +12,7 @@ Namespace('Materia').Engine = (() => {
 			case 'initWidget':
 				_baseUrl = msg.data[2]
 				_mediaUrl = msg.data[3]
-				_initWidget(msg.data[0], msg.data[1])
+				_initWidget(msg.data[0], msg.data[1], msg.data[4])
 				break
 			default:
 				throw new Error(`Error: Engine Core received unknown post message: ${msg.type}`)
@@ -25,8 +25,8 @@ Namespace('Materia').Engine = (() => {
 	}
 
 	// Called by Materia.Player when your widget Engine should start the user experience
-	const _initWidget = (qset, instance) => {
-		_widgetClass.start(instance, qset.data, qset.version)
+	const _initWidget = (qset, instance, play_state = null) => {
+		_widgetClass.start(instance, qset.data, qset.version, play_state)
 		_instance = instance
 	}
 
@@ -68,6 +68,10 @@ Namespace('Materia').Engine = (() => {
 
 	const getImageAssetUrl = mediaId => `${_mediaUrl}/${mediaId}`
 
+	const save = payload => {
+		_sendPostMessage('save', payload)
+	}
+
 	const end = showScoreScreenAfter => {
 		if (showScoreScreenAfter == null) {
 			showScoreScreenAfter = true
@@ -100,6 +104,7 @@ Namespace('Materia').Engine = (() => {
 		addLog,
 		alert,
 		getImageAssetUrl,
+		save,
 		end,
 		sendPendingLogs,
 		sendStorage,

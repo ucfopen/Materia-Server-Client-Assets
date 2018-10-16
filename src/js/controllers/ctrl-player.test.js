@@ -86,6 +86,7 @@ describe('playerCtrl', () => {
 		}))
 
 		global.PLAY_ID = 'ff88gg'
+		global.PLAY_STATE = ''
 		// mock question_set_get
 		mockSendPromiseOnce({})
 

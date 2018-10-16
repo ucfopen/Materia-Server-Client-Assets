@@ -22,6 +22,8 @@ app.controller('playerCtrl', function(
 	let expectedOrigin = null
 	// ID of the current play, received from embedded inline script variables
 	let play_id = null
+	// state of the current play, set according to the current widget
+	let play_state = null
 	// hold onto the qset from the instance
 	let qset = null
 	// the time the widget starts playing
@@ -92,6 +94,12 @@ app.controller('playerCtrl', function(
 		}
 	}
 
+	const _save = payload => {
+		if ($scope.isPreview) return
+		play_state = payload
+		Materia.Coms.Json.send('play_state_save', [play_id, play_state])
+	}
+
 	const _end = (showScoreScreenAfter = true) => {
 		switch (endState) {
 			case 'sent':
@@ -148,7 +156,7 @@ app.controller('playerCtrl', function(
 			'initWidget',
 			widgetType === '.swf'
 				? [qset, convertedInstance]
-				: [qset, convertedInstance, BASE_URL, MEDIA_URL]
+				: [qset, convertedInstance, BASE_URL, MEDIA_URL, play_state]
 		)
 		if (!$scope.isPreview) {
 			heartbeatInterval = $interval(_sendAllPendingLogs, PLAYER.LOG_INTERVAL) // if not in preview mode, set the interval to send logs
@@ -255,6 +263,8 @@ app.controller('playerCtrl', function(
 					return _onWidgetReady()
 				case 'addLog':
 					return _addLog(msg.data)
+				case 'save':
+					return _save(msg.data)
 				case 'end':
 					return _end(msg.data)
 				case 'sendStorage':
@@ -354,6 +364,7 @@ app.controller('playerCtrl', function(
 		} else {
 			// get the play id from the embedded variable on the page:
 			play_id = PLAY_ID
+			play_state = PLAY_STATE ? JSON.parse(PLAY_STATE) : null
 
 			if (play_id != null) {
 				deferred.resolve()
