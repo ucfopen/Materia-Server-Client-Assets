@@ -4,12 +4,17 @@ node_js:
 cache:
   yarn: true
   directories:
-  - node_modules
+    - node_modules
+before_install:
+  - npm config set spin false
+  - npm install -g npm@^5
+install:
+  - yarn install ---ignore-engines
 script:
-- yarn prettier:run
-- git diff --exit-code ./src
-- yarn test:ci
-- yarn build
+  - yarn prettier:run
+  - git diff --exit-code ./src
+  - yarn test:ci
+  - yarn build
 deploy:
   provider: npm
   email: iturgeon+npm@gmail.com
