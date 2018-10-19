@@ -1,17 +1,20 @@
 language: node_js
 node_js:
-  - "6"
+- '6'
 cache:
   yarn: true
   directories:
-    - "node_modules"
-
+  - node_modules
 script:
-  # Run CI friendly tests
-  - yarn test:ci
-  # Run prettier for the next test
-  - yarn prettier:run
-  # now check to make sure prettier didn't make any changes
-  - git diff --exit-code ./src
-  # now lets make sure wepack can build ok
-  - yarn build
+- yarn prettier:run
+- git diff --exit-code ./src
+- yarn test:ci
+- yarn build
+deploy:
+  provider: npm
+  email: iturgeon+npm@gmail.com
+  api_key:
+    secure: m/rf7GPRY6ItoD+pNccrBpNW9d95duFUBturNpMxcaL6+vYsK2nkXvxKvN0duRjjfTJBnzEP07Y/Yn+CYPJQpFlE1ZX7e1U6QfJv+OMIuADgs9wFfPcQi24iCbyRRaaMb0Cf1NpuB2WTxhr0QeuPt82zunoMI1HU5WBkcXJ4SWebjYokERp9ssWoT3Si44bfaP3Z2oElbjSnS22VUYMGzMMAEo2Hj1HPZJUVcuF6XgIbtgz37mXQi5QaKzTdHkEUWp0yyST/5HFvCOBVP2f6MldJi3uRJYySo3mDEVJmsEEYrfn2Gx54fEcROBzDDfCREeydZ+IfGg3f4sJseIgyHg4JLHidSL4ZvjBm01gV2+WW+ZzwMUSpqhlVQmkBer710edt4+PBtPOfhk1tC97eK0Xoh/5JE04Tkv/gjpZ6J0gWgJNpT9t4LHB8+plPpmG5Yb/0Yvhpackd6IoJW4JKSyUCyyrKSKOMceO/vjEAZCLohp4d5ZKQzH1XFN4PRjQ3itAqmRpWTJPkLzst+EadrspcA6g2ahjRhWhX/dYB8V+UdXwCHYvknLM7+GJfD2aNLIHkjXNjZ5YK0QrGDhIbnu42oiM7+oh1A1RePi3DXzAUzCKDv08SYdLplD6fOqV/FigyhwgLcLN/1DGw8hGQ/kSflACKEbjUiUcEEpnpB/8=
+  on:
+    tags: true
+    repo: ucfopen/Materia-Server-Client-Assets
