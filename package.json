@@ -7,7 +7,7 @@
   "homepage": "https://ucfopen.github.io/Materia-Docs",
   "scripts": {
     "test": "TZ=Etc/UTC jest --verbose",
-    "test:dev": "TZ=Etc/UTC jest --verbose --watch --coverage --coverageReporters html",
+    "test:dev": "TZ=Etc/UTC jest --verbose --watch --coverage",
     "test:ci": "TZ=Etc/UTC CI=true jest --ci --useStderr --coverage --coverageReporters text-summary cobertura",
     "build": "webpack -p",
     "build-watch": "webpack --watch",
@@ -29,11 +29,20 @@
     ]
   },
   "jest": {
-    "testURL": "http://localhost",
+    "verbose": false,
+    "coverageReporters": ["text", "lcov"],
     "setupTestFrameworkScriptFile": "./testSetup.js",
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}"
-    ]
+    ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 38,
+        "branches": 29,
+        "functions": 29,
+        "lines": 38
+      }
+    }
   },
   "dependencies": {
     "angular": "1.6.9",
