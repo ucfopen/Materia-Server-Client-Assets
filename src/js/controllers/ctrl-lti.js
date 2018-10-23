@@ -9,7 +9,7 @@ app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, wi
 		$scope.showRefreshArrow = true
 	}
 
-	const loadWidgets = function(fakeDelay) {
+	const loadWidgets = fakeDelay => {
 		if (fakeDelay == null) {
 			fakeDelay = 1
 		}
@@ -43,7 +43,7 @@ app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, wi
 		)
 	}
 
-	const _highlight = function(widget) {
+	const _highlight = widget => {
 		for (let w of Array.from($scope.widgets)) {
 			w.selected = false
 		}

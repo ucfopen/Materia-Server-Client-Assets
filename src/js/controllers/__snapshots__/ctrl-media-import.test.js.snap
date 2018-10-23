@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mediaImportCtrl announces readyForDirectUpload via postmessage before loading media 1`] = `
+Array [
+  "{\\"type\\":\\"readyForDirectUpload\\",\\"source\\":\\"media-importer\\",\\"data\\":\\"\\"}",
+  "*",
+]
+`;

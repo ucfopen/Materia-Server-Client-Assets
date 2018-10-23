@@ -66,9 +66,9 @@ describe('enginecore', () => {
 	})
 
 	it('alert sends a postmessage', () => {
-		Engine.alert('title', 'msg', 'type')
+		Engine.alert('title', 'msg', 'fatal')
 		expect(parent.postMessage).toHaveBeenCalledWith(
-			'{"type":"alert","data":{"title":"title","msg":"msg","type":"type"}}',
+			'{"type":"alert","data":{"title":"title","msg":"msg","fatal":"fatal"}}',
 			'*'
 		)
 	})

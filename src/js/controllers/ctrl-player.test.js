@@ -139,15 +139,7 @@ describe('playerCtrl', () => {
 
 		require('./ctrl-player')
 
-		inject(function(
-			_$window_,
-			$rootScope,
-			_$q_,
-			_$controller_,
-			_$timeout_,
-			_$interval_,
-			_$location_
-		) {
+		inject((_$window_, $rootScope, _$q_, _$controller_, _$timeout_, _$interval_, _$location_) => {
 			_scope = $rootScope.$new()
 			$q = _$q_
 			$controller = _$controller_
@@ -382,7 +374,7 @@ describe('playerCtrl', () => {
 
 		// test alert post message
 		mockPlease.$apply.mockClear()
-		mockPostMessage(buildPostMessage('alert', 'aaaahh!'))
+		mockPostMessage(buildPostMessage('alert', { msg: 'aaaahh!' }))
 		expect(mockPlease.$apply).toHaveBeenCalledTimes(1)
 		expect($scope.alert.msg).toBe('aaaahh!')
 		expect($scope.alert.fatal).toBe(false)
@@ -446,7 +438,7 @@ describe('playerCtrl', () => {
 		expect(mockPlease.$apply).toHaveBeenCalledTimes(1)
 		expect($scope.alert.msg).toBe('eh2')
 		expect($scope.alert.fatal).toBe(false)
-		expect($scope.alert.title).toBe('')
+		expect($scope.alert.title).toBe('Warning!')
 	})
 
 	it('successfully throws an error with a weird post message', () => {
