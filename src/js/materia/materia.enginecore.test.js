@@ -34,6 +34,7 @@ describe('enginecore', () => {
 		expect(Engine.sendStorage).toBeDefined()
 		expect(Engine.disableResizeInterval).toBeDefined()
 		expect(Engine.setHeight).toBeDefined()
+		expect(Engine.setVerticalScroll).toBeDefined()
 		expect(Engine.escapeScriptTags).toBeDefined()
 	})
 
@@ -127,6 +128,15 @@ describe('enginecore', () => {
 		let ex = JSON.stringify({
 			type: 'setHeight',
 			data: [200]
+		})
+		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
+	})
+
+	it('setVerticalScroll sends message', () => {
+		Engine.setVerticalScroll(0)
+		let ex = JSON.stringify({
+			type: 'setVerticalScroll',
+			data: [0]
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})

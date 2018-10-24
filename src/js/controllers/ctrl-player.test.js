@@ -352,6 +352,44 @@ describe('playerCtrl', () => {
 		expect(centerStyle.height).toBe('600px')
 	})
 
+	it('successfully scrolls to a location on the page', () => {
+		let {
+			$scope,
+			controller,
+			mockCreateElement,
+			mockPostMessageFromWidget,
+			mockPostMessage,
+			mockHref,
+			embedStyle,
+			previewStyle,
+			widgetStyle,
+			centerStyle,
+			widgetInstance,
+			mockGetEl
+		} = setupDomStuff()
+
+		// mock widget start
+		mockPostMessage(buildPostMessage('start', ''))
+		_scope.$digest() // make sure defer from post message completes
+
+		//
+		let mockEmbedTargetEl = {
+			getBoundingClientRect: jest.fn().mockReturnValueOnce({
+				y: 0
+			})
+		}
+
+		jest.spyOn(document, 'getElementById')
+			.mockReturnValueOnce(mockEmbedTargetEl)
+
+		expect($window.scrollY).toBe(0)
+
+		jest.spyOn($window, 'scrollTo')
+
+		mockPostMessage(buildPostMessage('setVerticalScroll', [300]))
+		expect($window.scrollTo).toHaveBeenCalledWith(0, 300)
+	})
+
 	it('engine core alert is handled', () => {
 		let {
 			$scope,
