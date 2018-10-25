@@ -529,7 +529,8 @@ app.controller('playerCtrl', function(
 
 	const _setVerticalScroll = location => {
 		const containerElement = document.getElementById('container')
-		const calculatedLocation = window.scrollY + containerElement.getBoundingClientRect().y + location
+		const calculatedLocation =
+			window.scrollY + containerElement.getBoundingClientRect().y + location
 
 		window.scrollTo(0, calculatedLocation)
 	}

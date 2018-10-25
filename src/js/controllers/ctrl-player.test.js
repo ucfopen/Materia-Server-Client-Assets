@@ -379,8 +379,7 @@ describe('playerCtrl', () => {
 			})
 		}
 
-		jest.spyOn(document, 'getElementById')
-			.mockReturnValueOnce(mockEmbedTargetEl)
+		jest.spyOn(document, 'getElementById').mockReturnValueOnce(mockEmbedTargetEl)
 
 		expect($window.scrollY).toBe(0)
 
