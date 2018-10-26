@@ -89,6 +89,10 @@ Namespace('Materia').Engine = (() => {
 		}
 	}
 
+	const setVerticalScroll = location => {
+		_sendPostMessage('setVerticalScroll', [location])
+	}
+
 	const disableResizeInterval = () => {
 		clearInterval(_resizeInterval)
 	}
@@ -105,6 +109,7 @@ Namespace('Materia').Engine = (() => {
 		sendStorage,
 		disableResizeInterval,
 		setHeight, // allows the widget to resize its iframe container to fit the height of its contents
+		setVerticalScroll, // allows the widget to scroll the page to a specific location
 		escapeScriptTags
 	}
 })()
