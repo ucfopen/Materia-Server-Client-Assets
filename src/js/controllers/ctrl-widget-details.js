@@ -6,7 +6,7 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 		.pop()
 		.split('-')
 		.shift()
-
+	
 	const tooltipDescriptions = {
 		Customizable:
 			'As the widget creator, you supply the widget with data to make it relevant to your course.',
@@ -31,7 +31,14 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 	// @object The current widget.
 	var _populateDefaults = function(widget) {
 		const { clean_name } = widget
-
+		
+		// const creator_guide = widget.creator_guide.replace('_helper-docs/src/', '')
+		// const player_guide = widget.player_guide.replace('_helper-docs/src/', '')
+		const regex_guide_type = /.*\/(.*\..*)/g
+		const creator_guide = regex_guide_type.exec(widget.creator_guide)[1]
+		regex_guide_type.lastIndex = 0
+		const player_guide = regex_guide_type.exec(widget.player_guide)[1]
+		
 		$scope.widget = {
 			name: widget.name,
 			icon: Materia.Image.iconUrl(widget.dir, 394),
@@ -40,7 +47,9 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 			demourl: document.location.pathname + '/demo',
 			creatorurl: document.location.pathname + '/create',
 			supported_data: widget.meta_data['supported_data'].map(_tooltipObject),
-			features: widget.meta_data['features'].map(_tooltipObject)
+			features: widget.meta_data['features'].map(_tooltipObject),
+			creator_guide: document.location.pathname + '/' + creator_guide,
+			player_guide: document.location.pathname + '/' + player_guide
 		}
 
 		$scope.show = true

@@ -84,6 +84,7 @@ module.exports = {
       jsPath+'/controllers/ctrl-question-import.js',
       jsPath+'/controllers/ctrl-selectedwidget.js',
       jsPath+'/controllers/ctrl-widget-settings.js',
+      
       jsPath+'/directives/dir-beardable.js',
       jsPath+'/directives/dir-datatable.js',
       jsPath+'/directives/dir-date-validation.js',
@@ -121,6 +122,10 @@ module.exports = {
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.scorecore.js',
     ],
+    'js/details.js': [
+      jsPath+'/materia-namespace.js',
+      jsPath+'/controllers/ctrl-guide.js',
+    ]
   }),
   module: {
     rules: [
