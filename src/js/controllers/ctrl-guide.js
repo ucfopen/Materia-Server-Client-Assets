@@ -6,14 +6,12 @@ app.controller('guideCtrl', function(Please, $scope, $q, widgetSrv) {
     let guideType = null
     let guide = null
 
-    // Refactor this: with regex
     if (window.location.pathname.includes("creatorGuide.html")) {
         nameArr = window.location.pathname.replace('/widgets/', '').replace('/creatorGuide.html', '').split('/')
         guideType = "creatorGuide"
     } else {
         nameArr = window.location.pathname.replace('/widgets/', '').replace('/playerGuide.html', '').split('/')
         guideType = "playerGuide"
-        console.log(guideType)
     }
 
     const widgetID = nameArr

@@ -6,7 +6,6 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 		.pop()
 		.split('-')
 		.shift()
-	
 	const tooltipDescriptions = {
 		Customizable:
 			'As the widget creator, you supply the widget with data to make it relevant to your course.',
@@ -31,9 +30,6 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 	// @object The current widget.
 	var _populateDefaults = function(widget) {
 		const { clean_name } = widget
-		
-		// const creator_guide = widget.creator_guide.replace('_helper-docs/src/', '')
-		// const player_guide = widget.player_guide.replace('_helper-docs/src/', '')
 		const regex_guide_type = /.*\/(.*\..*)/g
 		const creator_guide = regex_guide_type.exec(widget.creator_guide)[1]
 		regex_guide_type.lastIndex = 0
