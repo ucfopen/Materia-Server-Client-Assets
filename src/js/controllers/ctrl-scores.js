@@ -590,7 +590,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			return
 		}
 		$scope.show = true
-		_sendToWidget('initWidget', [qset, scoreTable, widgetInstance, isPreview])
+		_sendToWidget('initWidget', [qset, scoreTable, widgetInstance, isPreview, MEDIA_URL])
 	}
 
 	const _sendWidgetUpdate = () => {

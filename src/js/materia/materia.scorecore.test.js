@@ -31,6 +31,7 @@ describe('Materia.ScoreCore', () => {
 	})
 
 	it('defines expected public methods', () => {
+		expect(ScoreCore.getMediaUrl).toBeDefined()
 		expect(ScoreCore.hideResultsTable).toBeDefined()
 		expect(ScoreCore.hideScoresOverview).toBeDefined()
 		expect(ScoreCore.requestScoreDistribution).toBeDefined()
@@ -83,6 +84,19 @@ describe('Materia.ScoreCore', () => {
 			'{"type":"setHeight","source":"score-core","data":[1]}',
 			'*'
 		)
+	})
+
+	it('getMediaUrl returns an expected url', () => {
+		ScoreCore.start({ start: jest.fn() })
+		let _onPostMessage = window.addEventListener.mock.calls[0][1]
+		_onPostMessage({
+			data: JSON.stringify({
+				type: 'initWidget',
+				data: ['qset', 'scoreTable', 'widgetInstance', 'isPreview', 'mediaUrl']
+			})
+		})
+
+		expect(ScoreCore.getMediaUrl('fR93X')).toBe('mediaUrl/fR93X')
 	})
 
 	it('sends a request to set height if setHeight is given nothing', () => {
