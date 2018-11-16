@@ -9,10 +9,10 @@ Namespace('Materia').ScoreCore = (() => {
 			case 'initWidget':
 				_mediaUrl = msg.data[4]
 				_widgetClass.start(
-					msg.data[2],        // instance
-					msg.data[0].data,   // qset.data
-					msg.data[1],        // scoreTable
-					msg.data[3],        // isPreview
+					msg.data[2], // instance
+					msg.data[0].data, // qset.data
+					msg.data[1], // scoreTable
+					msg.data[3], // isPreview
 					msg.data[0].version // qset.version
 				)
 				break
