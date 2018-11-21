@@ -74,6 +74,7 @@ describe('enginecore', () => {
 		)
 	})
 
+	// deprecated funtion, test to check that it functions for old widgets that use it
 	it('getImageAssetUrl returns an expected url', () => {
 		Engine.start({ start: jest.fn() })
 		let _onPostMessage = window.addEventListener.mock.calls[0][1]
@@ -85,6 +86,19 @@ describe('enginecore', () => {
 		})
 
 		expect(Engine.getImageAssetUrl('fR93X')).toBe('mediaUrl/fR93X')
+	})
+
+	it('getMediaUrl returns an expected url', () => {
+		Engine.start({ start: jest.fn() })
+		let _onPostMessage = window.addEventListener.mock.calls[0][1]
+		_onPostMessage({
+			data: JSON.stringify({
+				type: 'initWidget',
+				data: ['qset', 'instance', 'baseUrl', 'mediaUrl']
+			})
+		})
+
+		expect(Engine.getMediaUrl('fR93X')).toBe('mediaUrl/fR93X')
 	})
 
 	it('end sends post message and defaults to show score screen', () => {

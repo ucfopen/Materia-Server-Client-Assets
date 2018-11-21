@@ -66,7 +66,7 @@ Namespace('Materia').Engine = (() => {
 		_sendPostMessage('alert', { title, msg, fatal })
 	}
 
-	const getImageAssetUrl = mediaId => `${_mediaUrl}/${mediaId}`
+	const getMediaUrl = mediaId => `${_mediaUrl}/${mediaId}`
 
 	const end = showScoreScreenAfter => {
 		if (showScoreScreenAfter == null) {
@@ -103,7 +103,8 @@ Namespace('Materia').Engine = (() => {
 		start,
 		addLog,
 		alert,
-		getImageAssetUrl,
+		getImageAssetUrl: getMediaUrl, // will be deprecated - use getMediaUrl
+		getMediaUrl: getMediaUrl,
 		end,
 		sendPendingLogs,
 		sendStorage,
