@@ -240,7 +240,7 @@ app.controller('mediaImportCtrl', function($scope, $window, $timeout) {
 
 		if (mime == null || allowedFileExtensions.indexOf(mime) === -1) {
 			alert(
-				'This widget does not support selected file type is not supported. ' +
+				'This widget does not support selected file type. ' +
 					`The allowed types are: ${REQUESTED_FILE_TYPES.join(', ')}.`
 			)
 			return null
