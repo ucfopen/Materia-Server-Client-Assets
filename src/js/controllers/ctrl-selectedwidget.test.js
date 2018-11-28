@@ -5,15 +5,6 @@ describe('adminWidgetController', () => {
 	var $q
 	var $rootScope
 	var $scope
-	var widgetUploaderChangeListener
-
-	let mockPromiseOnce = (mock, result) => {
-		mock.mockImplementationOnce((n, arg, cb) => {
-			const deferred = $q.defer()
-			deferred.resolve(result)
-			return deferred.promise
-		})
-	}
 
 	beforeEach(() => {
 		mockPlease = { $apply: jest.fn() }
@@ -38,20 +29,11 @@ describe('adminWidgetController', () => {
 			$rootScope = _$rootScope_
 		})
 
-		Namespace('Materia.Image').iconUrl = jest.fn(() => 'iconurl')
-
-		// set up the controller
-		let getElementById = jest.spyOn(document, 'getElementById')
-		widgetUploaderChangeListener = jest.fn()
-		getElementById.mockReturnValueOnce({
-			addEventListener: widgetUploaderChangeListener
-		})
-		jest.spyOn(adminSrv, 'getWidgets')
-		mockPromiseOnce(adminSrv.getWidgets, ['sampleval'])
 		$scope = {
 			$watch: jest.fn(),
 			$on: jest.fn()
 		}
+
 		var controller = $controller('SelectedWidgetController', { $scope })
 	})
 
@@ -73,7 +55,7 @@ describe('adminWidgetController', () => {
 		expect($scope.alert).toBeDefined()
 	})
 
-	it('_hideModal uses a flexible scope', () => {
+	it('hideModal uses a flexible scope', () => {
 		expect($scope.hideModal).toBeDefined()
 
 		this.$parent = {
