@@ -10,9 +10,9 @@ describe('mediaImportCtrl', function() {
 	var $timeout
 
 	//create an object roughly matching an asset returned by the API
-	var createAssetObject = (idNumber, title, remote_asset = false, status = null) => {
+	var createAssetObject = (idNumber, title, type = null, remote_asset = false, status = null) => {
 		let idString = '00000'.slice(0, -1 * ('' + idNumber).length) + idNumber
-		let fileType = title.split('.').pop()
+		let fileType = type ? type : title.split('.').pop()
 		return {
 			created_at: '1500000000',
 			file_size: '1000',
@@ -39,7 +39,10 @@ describe('mediaImportCtrl', function() {
 		createAssetObject(3, 'image1.png'),
 		createAssetObject(4, 'image2.jpg'),
 		createAssetObject(5, 'image3.jpg'),
-		createAssetObject(6, 'invalid1.exe')
+		createAssetObject(6, 'invalid1.exe'),
+		createAssetObject(7, 'image4.gif'),
+		// used to test names w/o extensions
+		createAssetObject(8, 'valid image without extension in title', 'jpg')
 	]
 
 	beforeEach(() => {
@@ -110,7 +113,7 @@ describe('mediaImportCtrl', function() {
 		expect($scope.displayFiles).toHaveLength(0)
 	})
 
-	it('grabs a list of assets', () => {
+	it('grabs a list of valid image assets', () => {
 		useAssets = defaultAssets
 
 		$window.location.hash.substring.mockReturnValue('image')
@@ -121,7 +124,8 @@ describe('mediaImportCtrl', function() {
 
 		var controller = $controller('mediaImportCtrl', { $scope })
 		$timeout.flush()
-		expect($scope.displayFiles).toHaveLength(3)
+		expect($scope.displayFiles).toHaveLength(5)
+		expect($scope.displayFiles).toMatchSnapshot()
 	})
 
 	it('ignores unexpected filetypes', () => {
@@ -140,8 +144,8 @@ describe('mediaImportCtrl', function() {
 
 	it('ignores remote assets that were not successfully migrated', () => {
 		useAssets = [
-			createAssetObject(1, 'image1.png', true),
-			createAssetObject(2, 'image2.png', true, 'migrated_asset')
+			createAssetObject(1, 'image1.png', null, true),
+			createAssetObject(2, 'image2.png', null, true, 'migrated_asset')
 		]
 
 		$window.location.hash.substring.mockReturnValueOnce('image')
@@ -173,8 +177,8 @@ describe('mediaImportCtrl', function() {
 
 	it('announces readyForDirectUpload via postmessage before loading media', () => {
 		useAssets = [
-			createAssetObject(1, 'image1.png', true),
-			createAssetObject(2, 'image2.png', true, 'migrated_asset')
+			createAssetObject(1, 'image1.png', null, true),
+			createAssetObject(2, 'image2.png', null, true, 'migrated_asset')
 		]
 
 		$window.location.hash.substring.mockReturnValueOnce('image')
