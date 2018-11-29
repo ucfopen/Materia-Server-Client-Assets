@@ -160,7 +160,7 @@ app.controller('mediaImportCtrl', function($scope, $window, $timeout) {
 					}
 
 					//extract everything ahead of the .ext extension as the filename
-					const fileName = res.title.match(/.*(?=\.)/i)[0]
+					const fileName = res.title.split('.').shift()
 					const creationDate = new Date(res.created_at * 1000)
 					const dateString = [
 						creationDate.getMonth(),
