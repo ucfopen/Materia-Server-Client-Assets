@@ -326,24 +326,28 @@ body.scores .details table tr {
 
 body.scores .details table tr {
 	&:not(.has_feedback) {
-		td, th {
+		td,
+		th {
 			border-bottom: 10px solid #72808f;
 		}
 	}
 	&.has_feedback {
-		td, th {
+		td,
+		th {
 			border-bottom: solid 1px #c3c5c8;
 		}
 	}
 
 	&:not(.feedback) {
-		td, th {
+		td,
+		th {
 			background: #e3e5e8;
 			border-right: solid 1px #c3c5c8;
 		}
 	}
 
-	td, th {
+	td,
+	th {
 		padding: 18px 15px;
 	}
 }
