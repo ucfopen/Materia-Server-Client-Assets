@@ -312,41 +312,51 @@ body.scores .details h1 {
 	margin: 23px 0px;
 }
 
-body.scores .details ul {
-	list-style-type: none;
-	display: table;
-	/*padding:1px;*/
+body.scores .details table {
 	padding: 0px;
 	width: 95%;
 	margin: 0 auto;
 	border-collapse: collapse;
-	/*background:#c3c5c8;*/
 }
 
-body.scores .details ul li {
-	display: table-row;
+body.scores .details table tr {
 	background: #e3e5e8;
 	word-break: word-break;
 }
 
-body.scores .details ul li div,
-body.scores .details ul li h3 {
-	display: table-cell;
-	padding: 18px 15px;
-	background: #e3e5e8;
-	border-bottom: 10px solid #72808f;
-	border-right: solid 1px #c3c5c8;
+body.scores .details table tr {
+	&:not(.has_feedback) {
+		td, th {
+			border-bottom: 10px solid #72808f;
+		}
+	}
+	&.has_feedback {
+		td, th {
+			border-bottom: solid 1px #c3c5c8;
+		}
+	}
+
+	&:not(.feedback) {
+		td, th {
+			background: #e3e5e8;
+			border-right: solid 1px #c3c5c8;
+		}
+	}
+
+	td, th {
+		padding: 18px 15px;
+	}
 }
-body.scores .details ul li:last-child div {
+body.scores .details table tr:last-child td {
 	border-bottom: 0px;
 }
 
-body.scores .details ul li div {
+body.scores .details table tr td {
 	vertical-align: middle;
 	padding: 18px 24px;
 }
 
-body.scores .details ul li h3 {
+body.scores .details table tr th {
 	text-align: center;
 	text-transform: uppercase;
 	font-size: 14px;
@@ -356,55 +366,53 @@ body.scores .details ul li h3 {
 	border-bottom: solid 2px #c3c5c8 !important;
 }
 
-body.scores .details ul li h3:first-child {
+body.scores .details table tr th:first-child {
 	font-size: 0px;
 }
 
-body.scores .details ul li .question-number {
+body.scores .details table tr .question-number {
 	height: 50px;
 	width: 50px;
 }
 
-body.scores .details ul li div.index span {
+body.scores .details table tr td.index span {
 	margin: 0px auto;
 	font-size: 12px;
 	display: block;
 	text-align: center;
 }
 
-body.scores .details ul li div.response {
+body.scores .details table tr td.response {
 	white-space: pre-wrap;
 }
 
-body.scores .details ul li.no-value div.response,
-body.scores .details ul li.partial-value div.response {
+body.scores .details table tr.no-value td.response,
+body.scores .details table tr.partial-value td.response {
 	background-color: #e2dee1;
 	font-weight: bold;
 }
 
-body.scores .details ul li.full-value div.response {
+body.scores .details table tr.full-value td.response {
 	font-weight: bold;
 	background-color: #d7e3d6;
 }
 
-body.scores .details ul li.ignored-value div {
+body.scores .details table tr.ignored-value td {
 	background-color: #d3d5d8;
 }
 
-body.scores .details ul li div.question {
+body.scores .details table tr td.question {
 	text-align: left;
 	max-width: 300px;
 }
 
-body.scores .details ul li.single_column {
-	position: relative;
+body.scores .details table tr.single_column {
 	background: rgb(255, 255, 255) transparent;
 	background: rgba(255, 255, 255, 0);
 	height: 80px;
 }
 
-body.scores .details ul li.single_column p {
-	position: absolute;
+body.scores .details table tr.single_column p {
 	padding: 18px 60px;
 	margin: 0;
 	text-align: center;
@@ -414,18 +422,19 @@ body.scores .details ul li.single_column p {
 	background-color: #e3e5e8;
 	z-index: 5;
 	vertical-align: middle;
-	left: 5%;
-	right: 5%;
 }
 
-body.scores .details ul li.single_column .index {
+body.scores .details table tr.feedback td {
+	padding-top: 0;
+}
+
+body.scores .details table tr.feedback p {
+	background-color: #f8f0be !important;
+}
+
+body.scores .details table tr.single_column .index {
 	position: absolute;
 	z-index: 10;
-}
-
-body.scores .details ul .feedback p {
-	background-color: #f8f0be !important;
-	margin-top: -9px !important;
 }
 
 body.scores .graph {
