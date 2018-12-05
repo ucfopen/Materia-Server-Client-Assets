@@ -321,16 +321,10 @@ body.scores .details table {
 
 body.scores .details table tr {
 	background: #e3e5e8;
-	word-break: word-break;
+	word-break: break-word;
 }
 
 body.scores .details table tr {
-	&:not(.has_feedback) {
-		td,
-		th {
-			border-bottom: 10px solid #72808f;
-		}
-	}
 	&.has_feedback {
 		td,
 		th {
@@ -339,6 +333,8 @@ body.scores .details table tr {
 	}
 
 	&:not(.feedback) {
+		box-shadow: 0px 10px 0px 0px rgba(0,0,0,.1);
+
 		td,
 		th {
 			background: #e3e5e8;
@@ -413,7 +409,6 @@ body.scores .details table tr td.question {
 body.scores .details table tr.single_column {
 	background: rgb(255, 255, 255) transparent;
 	background: rgba(255, 255, 255, 0);
-	height: 80px;
 }
 
 body.scores .details table tr.single_column p {
@@ -434,6 +429,7 @@ body.scores .details table tr.feedback td {
 
 body.scores .details table tr.feedback p {
 	background-color: #f8f0be !important;
+	box-shadow: 0px 10px 0px 0px rgba(0,0,0,.1);
 }
 
 body.scores .details table tr.single_column .index {
