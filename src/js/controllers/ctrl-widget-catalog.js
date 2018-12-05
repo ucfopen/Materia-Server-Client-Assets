@@ -10,8 +10,7 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, widgetSrv) {
 	}
 
 	const _hideFiltered = () => {
-		for (let i = 0; i < $scope.widgets.length; i++) {
-			var widget = $scope.widgets[i]
+		for (let widget of $scope.widgets) {
 			var wFeatures = widget.meta_data.features
 			var wSupport = widget.meta_data.supported_data
 			widget.visible = true
@@ -20,32 +19,12 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, widgetSrv) {
 				const filterOn = $scope.filters[filterName]
 				const metaValue = featureKeys[filterName]
 
-				if (filterOn && wFeatures.indexOf(metaValue) < 0 && wSupport.indexOf(metaValue) < 0) {
+				if (filterOn && !wFeatures.includes(metaValue) && !wSupport.includes(metaValue)) {
 					widget.visible = false
 					break
 				}
 			}
 		}
-	}
-
-	const _displayWidgets = () => {
-		let type = $scope.displayAll ? 'all' : 'featured'
-		Materia.Set.Throbber.startSpin('.page')
-		widgetSrv.getWidgetsByType(type).then(widgets => {
-			if (!widgets || !widgets.length || !widgets.length > 0) {
-				return
-			}
-			// setup some default values
-			widgets.forEach(widget => {
-				widget.icon = Materia.Image.iconUrl(widget.dir, 92)
-				widget.visible = true
-			})
-
-			Materia.Set.Throbber.stopSpin('.page')
-			$scope.$watchCollection('filters', _hideFiltered)
-			$scope.widgets = widgets
-			Please.$apply()
-		})
 	}
 
 	// expose to scope
@@ -60,8 +39,19 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, widgetSrv) {
 		media: false
 	}
 
-	$scope.$watch('displayAll', () => {
-		_displayWidgets()
+	// load list of widgets
+	widgetSrv.getWidgetsByType('all').then(widgets => {
+		if (!widgets || !widgets.length || !widgets.length > 0) {
+			return
+		}
+		// setup some default values
+		widgets.forEach(widget => {
+			widget.icon = Materia.Image.iconUrl(widget.dir, 92)
+			widget.visible = true
+		})
+		$scope.$watchCollection('filters', _hideFiltered)
+		$scope.widgets = widgets
+		Please.$apply()
 	})
 
 	// DISPLAY_TYPE can be rendered in the page by the server
