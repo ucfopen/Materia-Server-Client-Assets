@@ -333,7 +333,7 @@ body.scores .details table tr {
 	}
 
 	&:not(.feedback) {
-		box-shadow: 0px 10px 0px 0px rgba(0,0,0,.1);
+		box-shadow: 0px 10px 0px 0px rgba(0, 0, 0, 0.1);
 
 		td,
 		th {
@@ -429,7 +429,7 @@ body.scores .details table tr.feedback td {
 
 body.scores .details table tr.feedback p {
 	background-color: #f8f0be !important;
-	box-shadow: 0px 10px 0px 0px rgba(0,0,0,.1);
+	box-shadow: 0px 10px 0px 0px rgba(0, 0, 0, 0.1);
 }
 
 body.scores .details table tr.single_column .index {
