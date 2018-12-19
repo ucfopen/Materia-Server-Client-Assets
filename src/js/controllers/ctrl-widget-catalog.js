@@ -1,7 +1,18 @@
 const app = angular.module('materia')
-app.controller('widgetCatalogCtrl', function(Please, $scope, widgetSrv) {
+app.controller('widgetCatalogCtrl', function(Please, $scope, $window, widgetSrv) {
+	$scope.displayAll = false // TODO not used
+	$scope.widgets = []
+	$scope.query = ""
+	$scope.count = -1
+	$scope.filters = {
+		scorable: false,
+		mobile: false,
+		media: false,
+		qa: false,
+		mc: false
+	}
+
 	const featureKeys = {
-		customizable: 'Customizable',
 		scorable: 'Scorable',
 		mobile: 'Mobile Friendly',
 		qa: 'Question/Answer',
@@ -9,34 +20,39 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, widgetSrv) {
 		media: 'Media'
 	}
 
-	const _hideFiltered = () => {
-		for (let widget of $scope.widgets) {
-			var wFeatures = widget.meta_data.features
-			var wSupport = widget.meta_data.supported_data
-			widget.visible = true
+	// checks filters and returns true if the widget should be shown, false if filtered out
+	const _showWidget = widget => {
+		const wFeatures = widget.meta_data.features
+		const wSupport = widget.meta_data.supported_data
 
-			for (let filterName in $scope.filters) {
-				const filterOn = $scope.filters[filterName]
-				const metaValue = featureKeys[filterName]
+		for (let filterName in $scope.filters) {
+			const filterOn = $scope.filters[filterName]
+			const metaValue = featureKeys[filterName]
 
-				if (filterOn && !wFeatures.includes(metaValue) && !wSupport.includes(metaValue)) {
-					widget.visible = false
-					break
-				}
+			if (filterOn && !wFeatures.includes(metaValue) && !wSupport.includes(metaValue)) {
+				return false
 			}
 		}
+
+		if ($scope.query.length) {
+			const re = new RegExp($scope.query, 'i')
+			return re.test(widget.name)
+		}
+
+		return true
 	}
 
-	// expose to scope
-
-	$scope.displayAll = false
-	$scope.widgets = []
-	$scope.filters = {
-		scorable: false,
-		customizable: false,
-		qa: false,
-		mc: false,
-		media: false
+	const _createGrid = () => {
+		$scope.count = 0
+		for (let widget of $scope.widgets) {
+			if (_showWidget(widget)) {
+				widget.visible = true
+				$scope.count++
+			} else {
+				widget.visible = false
+			}
+		}
+		Please.$apply()
 	}
 
 	// load list of widgets
@@ -46,14 +62,26 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, widgetSrv) {
 		}
 		// setup some default values
 		widgets.forEach(widget => {
-			widget.icon = Materia.Image.iconUrl(widget.dir, 92)
+			widget.icon = Materia.Image.iconUrl(widget.dir, 275)
 			widget.visible = true
 		})
-		$scope.$watchCollection('filters', _hideFiltered)
 		$scope.widgets = widgets
-		Please.$apply()
+
+		// draw the grid once widgets are initially sized (need height)
+		_createGrid()
+		$scope.$watch('query', _createGrid)
+		$scope.$watchCollection('filters', _createGrid)
+		// redraw the grid whenever the window is resized
+		angular.element($window).bind('resize', _checkResize)
 	})
 
+	const _checkResize = () => {
+		$scope.isMini = document.getElementById('widgets-container').scrollWidth < 860
+		Please.$apply()
+	}
+	_checkResize()
+
+	// TODO this doesn't do anything
 	// DISPLAY_TYPE can be rendered in the page by the server
 	if (typeof DISPLAY_TYPE !== 'undefined' && DISPLAY_TYPE === 'all') {
 		$scope.displayAll = true

@@ -367,26 +367,10 @@ dl.inline_def {
 	}
 
 	dd {
-		display: block;
-		float: left;
-		margin: 0;
-		margin-left: 4px;
+		display: inline-block;
+		margin: 0 4px;
 		font-size: 12px;
 	}
-}
-
-
-
-dl.features_list {
-	display: none;
-}
-
-dl.blurb dd {
-	font-size: 10px;
-}
-
-dl.blurb dt {
-	display: none;
 }
 
 .widget a.feature,
