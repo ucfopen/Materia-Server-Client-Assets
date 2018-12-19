@@ -157,6 +157,24 @@ a.external {
 	padding-bottom: 10px;
 }
 
+#mobile-menu-toggle {
+	display: none;
+}
+
+#mobile-menu-toggle + label {
+	display: none;
+}
+
+#mobile-menu-background {
+	display: none;
+	background: rgba(black, 0.2);
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
 nav {
 	display: block;
 	margin-top: 16px;
@@ -166,20 +184,108 @@ nav {
 			display: inline;
 			padding: 0 10px 0 0;
 
-			a {
-				font-family: 'Lato', arial, serif;
-				font-weight: bold;
-				font-size: 17px;
+			&.logout a {
+				position: absolute;
+				right: 20px;
+				bottom: 13px;
+				font-size: 14px;
 			}
 
-			a,
-			#main a {
-				color: #0093e7;
+			a {
+				font-family: 'Lato', arial, serif;
+				font-size: 17px;
 				font-weight: bold;
 				margin: 0;
 				padding: 0;
 			}
 		}
+	}
+}
+
+@media (max-width: 720px) {
+	nav {
+		display: none;
+		position: absolute;
+		top: 60px;
+		right: 0;
+		padding: 20px;
+		text-align: right;
+		background: white;
+
+		ul {
+			li {
+				display: block;
+				padding: 5px;
+
+				&.logout a {
+					font-size: 14px;
+					position: static;
+				}
+
+				a {
+					font-family: 'Lato', arial, serif;
+					font-size: 17px;
+					font-weight: bold;
+					margin: 0;
+					padding: 0;
+				}
+			}
+		}
+	}
+
+	#mobile-menu-toggle:checked {
+		~ nav {
+			display: block;
+		}
+
+		~ #mobile-menu-background {
+			display: block;
+		}
+	}
+
+	#mobile-menu-toggle + label {
+		display: block;
+		position: absolute;
+		right: 30px;
+
+		> div {
+			height: 30px;
+			width: 25px;
+			border: 1px solid #888;
+			padding: 2px 5px;
+			border-radius: 3px;
+			position: relative;
+			top: -5px;
+
+			div {
+				height: 2px;
+				width: 25px;
+				background: #333;
+				position: relative;
+				top: 14px;
+
+				&:before,
+				&:after {
+					content: " ";
+					height: 2px;
+					width: 25px;
+					background: #333;
+					position: absolute;
+				}
+
+				&:before {
+					top: -8px;
+				}
+
+				&:after {
+					top: 8px;
+				}
+			}
+		}
+	}
+
+	header .user.avatar {
+		top: 30px;
 	}
 }
 
@@ -219,12 +325,6 @@ nav {
 	}
 }
 
-.logout a {
-	position: absolute;
-	right: 20px;
-	bottom: 13px;
-	font-size: 14px;
-}
 .messages a {
 	position: absolute;
 	right: 20px;
