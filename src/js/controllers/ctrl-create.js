@@ -497,6 +497,15 @@ ${msg.toLowerCase()}`,
 			}
 			// assumes questions is already a JSON string
 			questions = JSON.parse(questions)
+
+			//strip id from all imported questions and answers to avoid collisions
+			questions.forEach(question => {
+				question.answers.forEach(answer => {
+					answer.id = null
+				})
+				question.id = null
+			})
+
 			return sendToCreator('onQuestionImportComplete', [questions])
 		},
 
