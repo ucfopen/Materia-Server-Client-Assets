@@ -29,12 +29,6 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 	// Populates the details page with content
 	// @object The current widget.
 	var _populateDefaults = function(widget) {
-		const { clean_name } = widget
-		const regex_guide_type = /.*\/(.*\..*)/g
-		const creator_guide = regex_guide_type.exec(widget.creator_guide)[1]
-		regex_guide_type.lastIndex = 0
-		const player_guide = regex_guide_type.exec(widget.player_guide)[1]
-		
 		$scope.widget = {
 			name: widget.name,
 			icon: Materia.Image.iconUrl(widget.dir, 394),
@@ -44,8 +38,8 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 			creatorurl: document.location.pathname + '/create',
 			supported_data: widget.meta_data['supported_data'].map(_tooltipObject),
 			features: widget.meta_data['features'].map(_tooltipObject),
-			creator_guide: document.location.pathname + '/' + creator_guide,
-			player_guide: document.location.pathname + '/' + player_guide
+			creators_guide: (widget.creator_guide  == '' ? null : document.location.pathname + '/creators-guide'),
+			players_guide: (widget.player_guide  == '' ? null : document.location.pathname + '/players-guide')
 		}
 
 		$scope.show = true

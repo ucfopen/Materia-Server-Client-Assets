@@ -120,10 +120,6 @@ module.exports = {
     'js/materia.scorecore.js': [
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.scorecore.js',
-    ],
-    'js/details.js': [
-      jsPath+'/materia-namespace.js',
-      jsPath+'/controllers/ctrl-guide.js',
     ]
   }),
   module: {
