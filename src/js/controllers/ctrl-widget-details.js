@@ -20,27 +20,29 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 		Fullscreen: 'This widget may be allowed to temporarily take up your entire screen.'
 	}
 
-	const _tooltipObject = txt => ({
-		text: txt,
+	const _tooltipObject = text => ({
+		text,
 		show: false,
 		description:
-			tooltipDescriptions[txt] || 'This feature has no additional information associated with it.'
+			tooltipDescriptions[text] || 'This feature has no additional information associated with it.'
 	})
 
 	// Populates the details page with content
 	// @object The current widget.
 	var _populateDefaults = widget => {
 		const { clean_name } = widget
+		const date = new Date(widget['created_at'] * 1000)
 
 		$scope.widget = {
 			name: widget.name,
-			icon: Materia.Image.iconUrl(widget.dir, 394),
+			icon: Materia.Image.iconUrl(widget.dir, 60),
 			subheader: widget.meta_data['subheader'],
 			about: widget.meta_data['about'],
 			demourl: document.location.pathname + '/demo',
 			creatorurl: document.location.pathname + '/create',
 			supported_data: widget.meta_data['supported_data'].map(_tooltipObject),
-			features: widget.meta_data['features'].map(_tooltipObject)
+			features: widget.meta_data['features'].map(_tooltipObject),
+			created: date.toLocaleDateString()
 		}
 
 		$scope.show = true
@@ -49,15 +51,11 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 			$scope.widget.about = 'No description available.'
 		}
 
-		$scope.widget.screenshots = []
-
-		$scope.widget.scr
-
-		SCREENSHOT_AMOUNT.forEach(i => {
-			$scope.widget.screenshots.push({
+		$scope.widget.screenshots = SCREENSHOT_AMOUNT.map( i => {
+			return {
 				a: Materia.Image.screenshotUrl(widget.dir, i),
 				img: Materia.Image.screenshotThumbUrl(widget.dir, i)
-			})
+			}
 		})
 
 		Please.$apply()
