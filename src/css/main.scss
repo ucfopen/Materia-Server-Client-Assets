@@ -246,7 +246,8 @@ nav {
 	#mobile-menu-toggle + label {
 		display: block;
 		position: absolute;
-		right: 30px;
+		right: 15px;
+		top: 20px;
 
 		> div {
 			height: 30px;
@@ -254,8 +255,6 @@ nav {
 			border: 1px solid #888;
 			padding: 2px 5px;
 			border-radius: 3px;
-			position: relative;
-			top: -5px;
 
 			div {
 				height: 2px;
@@ -282,10 +281,6 @@ nav {
 				}
 			}
 		}
-	}
-
-	header .user.avatar {
-		top: 30px;
 	}
 }
 
