@@ -16,7 +16,7 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 			'Users provide a typed response or associate a predefined answer with each question.',
 		'Multiple Choice':
 			'Users select a response from a collection of possible answers to questions provided by the widget.',
-		'Mobile Friendly': 'Designed with HTML5 to work on mobile devices like the iPad and iPhone',
+		'Mobile Friendly': 'Designed with HTML5 to work on mobile devices like the iPad and iPhone.',
 		Fullscreen: 'This widget may be allowed to temporarily take up your entire screen.'
 	}
 
@@ -42,9 +42,12 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 			creatorurl: document.location.pathname + '/create',
 			supported_data: widget.meta_data['supported_data'].map(_tooltipObject),
 			features: widget.meta_data['features'].map(_tooltipObject),
-			created: date.toLocaleDateString()
+			created: date.toLocaleDateString(),
+			width: widget.width,
+			height: widget.height
 		}
 
+		_checkIfDemoFits()
 		$scope.show = true
 
 		if (widget.meta_data['about'] === 'undefined') {
@@ -59,6 +62,26 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 		})
 
 		Please.$apply()
+
+		// override onbeforeunload event from embedded player
+		if ($scope.demoFits) {
+			setTimeout(() => {window.onbeforeunload = () => undefined}, 10)
+		}
+	}
+
+	// checks if the demo will fit in the user's viewport
+	// if so, embed the demo onto this page; hide otherwise
+	const _checkIfDemoFits = () => {
+		const sizeNeeded = ~~$scope.widget.width + 50
+		const userWidth = document.documentElement.clientWidth
+		if (userWidth > sizeNeeded) {
+			$scope.demoFits = true
+			if (sizeNeeded > 850) {
+				document.querySelector(".widget .page").style.maxWidth = `${sizeNeeded}px`
+			}
+		} else {
+			console.log("it don't fit")
+		}
 	}
 
 	// expose to scope
@@ -67,6 +90,11 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 	$scope.goback = {
 		text: 'Go back to the widget catalog',
 		url: '/widgets'
+	}
+	$scope.showDemoCover = true
+	$scope.demoFits = false
+	$scope.showDemoClicked = () => {
+		$scope.showDemoCover = false
 	}
 
 	// initialize
