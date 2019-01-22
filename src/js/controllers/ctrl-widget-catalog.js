@@ -3,6 +3,7 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, widgetSrv)
 	$scope.displayAll = false // TODO not used
 	$scope.widgets = []
 	$scope.query = ""
+	$scope.isMini = true
 	$scope.count = -1
 	$scope.filters = {
 		scorable: false,
@@ -76,7 +77,8 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, widgetSrv)
 	})
 
 	const _checkResize = () => {
-		$scope.isMini = document.getElementById('widgets-container').scrollWidth < 860
+		const width = document.getElementById('widgets-container').scrollWidth
+		$scope.isMini = width > 860 && width < 900 ? $scope.isMini : width < 900
 		Please.$apply()
 	}
 	_checkResize()

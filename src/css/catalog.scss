@@ -17,6 +17,7 @@
 		color: #777;
 		padding: 10px;
 		display: flex;
+		justify-content: space-between;
 
 		&.mini {
 			flex-direction: column;
@@ -30,7 +31,6 @@
 
 		h1 {
 			margin: 0;
-			flex-grow: 1;
 		}
 
 		.search {
