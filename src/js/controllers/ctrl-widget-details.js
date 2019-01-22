@@ -35,7 +35,7 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 
 		$scope.widget = {
 			name: widget.name,
-			icon: Materia.Image.iconUrl(widget.dir, 60),
+			icon: Materia.Image.iconUrl(widget.dir, 92),
 			subheader: widget.meta_data['subheader'],
 			about: widget.meta_data['about'],
 			demourl: document.location.pathname + '/demo',
@@ -56,17 +56,14 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 
 		$scope.widget.screenshots = SCREENSHOT_AMOUNT.map( i => {
 			return {
-				a: Materia.Image.screenshotUrl(widget.dir, i),
-				img: Materia.Image.screenshotThumbUrl(widget.dir, i)
+				full: Materia.Image.screenshotUrl(widget.dir, i),
+				thumb: Materia.Image.screenshotThumbUrl(widget.dir, i)
 			}
 		})
+		$scope.demoScreenshot = `url(${$scope.widget.screenshots[0].full})`
 
-		Please.$apply()
 
-		// override onbeforeunload event from embedded player
-		if ($scope.demoFits) {
-			setTimeout(() => {window.onbeforeunload = () => undefined}, 10)
-		}
+		Please.$apply();
 	}
 
 	// checks if the demo will fit in the user's viewport
@@ -79,8 +76,6 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 			if (sizeNeeded > 850) {
 				document.querySelector(".widget .page").style.maxWidth = `${sizeNeeded}px`
 			}
-		} else {
-			console.log("it don't fit")
 		}
 	}
 
@@ -93,9 +88,12 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 	}
 	$scope.showDemoCover = true
 	$scope.demoFits = false
+	$scope.selectedImage = 0
 	$scope.showDemoClicked = () => {
 		$scope.showDemoCover = false
+		setTimeout(() => {window.onbeforeunload = () => undefined}, 10)
 	}
+	$scope.selectImage = i => $scope.selectedImage = i
 
 	// initialize
 

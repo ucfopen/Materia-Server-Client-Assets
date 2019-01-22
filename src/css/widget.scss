@@ -10,18 +10,25 @@
 	.top {
 		background: #eee;
 		color: #333;
-		padding: 10px;
-		display: flex;
+		padding: 10px 20px;
 
 		img {
-			height: 60px;
+			height: 92px;
 			position: absolute;
 		}
 
 		h1 {
-			margin: 0 0 0 75px;
+			margin: 0 0 0 110px;
 			font-size: 2em;
 		}
+
+		p {
+			margin: 0 0 0 110px;
+		}
+	}
+
+	.widget-about {
+		display: none; // shown on mobile
 	}
 
 	.arrow {
@@ -44,26 +51,42 @@
 		padding: 25px;
 
 		.pics {
-			margin: 30px 0 0;
-			padding: 0;
+			margin: 25px 0 45px;
 			display: flex;
-			justify-content: space-evenly;
-			background: #ffffff;
 
-			li {
-				padding-right: 20px;
-				list-style: none;
-				height: 100%;
-				margin: auto 0;
-
-				&:last-of-type {
-					padding-right: 0;
-				}
+			.full-pic {
+				max-width: 80%;
 
 				img {
-					cursor: zoom-in;
-					box-shadow: 1px 2px 5px #888;
 					width: 100%;
+				}
+			}
+
+			.pics-picker {
+				margin: 20px 0 0 10px;
+				padding: 10px;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-evenly;
+				background: #ffffff;
+
+				li {
+					list-style: none;
+					margin: auto 0;
+					cursor: pointer;
+
+					&:last-of-type {
+						margin-right: 0;
+					}
+
+					img {
+						box-shadow: 1px 2px 5px #888;
+						width: 100%;
+
+						&.selected {
+							box-shadow: 1px 2px 5px #888, 0 0 2px 1px #aaa, 0 0 7px 4px #444;
+						}
+					}
 				}
 			}
 		}
@@ -81,10 +104,9 @@
 
 		#demo-container {
 			position: relative;
-			margin: 20px auto;
+			margin: 25px auto 45px;
 
 			#demo-cover {
-				background: rgba(230, 230, 230, 0.95);
 				height: 100%;
 				width: 100%;
 				display: flex;
@@ -92,6 +114,61 @@
 				align-items: center;
 				justify-content: center;
 				text-align: center;
+				cursor: pointer;
+				background-repeat: no-repeat;
+				background-size: contain;
+
+				&:hover {
+					#demo-cover-background {
+						opacity: 0.7;
+					}
+
+					a {
+						opacity: 1;
+						text-decoration: underline;
+					}
+				}
+
+				&.hidden {
+					opacity: 0;
+					visibility: hidden;
+					transition: 1500ms;
+
+					a {
+						opacity: 0;
+						transform: scale(2)
+					}
+				}
+
+				#demo-cover-background {
+					background: radial-gradient(ellipse farthest-corner at center center, rgba(255, 255, 255, 0.85) 20%, rgba(190, 190, 190, 0.97) 100%) repeat scroll 0% 0%;
+					position: absolute;
+					height: 100%;
+					width: 100%;
+					transition: 1500ms;
+				}
+
+				a {
+					transition: 500ms;
+					font-family: 'Lato', arial, serif;
+					font-weight: 700;
+					text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+					box-shadow: 1px 2px 4px #888;
+					font-size: 22px;
+					user-select: none;
+					border: 3px solid #525252;
+					border-radius: 4px;
+					padding: 10px 20px;
+					cursor: pointer;
+					color: #525252;
+					background: #c4dd61;
+					z-index: 2;
+					opacity: 0.9;
+
+					span.arrow {
+						margin-bottom: -1px;
+					}
+				}
 			}
 
 			.center {
@@ -113,10 +190,12 @@
 			display: flex;
 			justify-content: space-between;
 			flex-wrap: wrap-reverse;
+			margin-top: 20px;
 
 			dl {
 				line-height: 30px;
-				width: 500px;
+				width: 400px;
+				margin-top: 0;
 
 				dt {
 					font-size: 14px;
@@ -157,7 +236,6 @@
 					}
 				}
 			}
-
 
 			#last-updated {
 				font-style: italic;
@@ -200,16 +278,15 @@
 				}
 			}
 		}
-
 	}
 }
 
-@media (max-width: 850px) {
+@media (max-width: 720px) {
 	.widget .page {
 		margin: 0 8px 12px;
 
 		.top {
-			padding: 6px 10px;
+			padding: 10px;
 
 			img {
 				height: 50px;
@@ -219,31 +296,60 @@
 				font-size: 1.5em;
 				margin-left: 60px;
 			}
+
+			p {
+				display: none;
+			}
 		}
 
-		.widget_detail {
-			.bottom {
-				dl {
-					width: 100%;
-					text-align: center;
+		.widget-about {
+			display: block;
+			margin-top: 5px;
+		}
 
-					dt {
-						float: none;
-						line-height: normal;
-						margin-top: 10px;
-					}
+		#demo-container {
+			display: none;
+		}
 
-					dd .tooltip {
-						left: 10%;
-						right: 10%;
-						width: auto;
-					}
+		.pics {
+			display: block;
+
+			.full-pic {
+				max-width: 100%;
+			}
+
+			.pics-picker {
+				padding: 0;
+				flex-direction: row;
+				margin-left: 0;
+
+				li {
+					margin-right: 20px;
+				}
+			}
+		}
+
+		.widget_detail .bottom {
+			dl {
+				width: 100%;
+				text-align: center;
+
+				dt {
+					float: none;
+					line-height: normal;
+					margin-top: 10px;
 				}
 
-				.widget-action-buttons {
-					width: 100%;
-					text-align: center;
+				dd .tooltip {
+					left: 10%;
+					right: 10%;
+					width: auto;
 				}
+			}
+
+			.widget-action-buttons {
+				width: 100%;
+				text-align: center;
 			}
 		}
 	}
