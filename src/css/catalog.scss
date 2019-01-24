@@ -1,6 +1,5 @@
 .catalog .container {
-	margin: 0 auto;
-	margin-top: 25px;
+	margin: 25px auto;
 	position: relative;
 
 	section.page {
@@ -14,7 +13,7 @@
 
 	.top {
 		background: #eee;
-		color: #777;
+		color: #6c6c6c;
 		padding: 10px;
 		display: flex;
 		justify-content: space-between;
@@ -195,6 +194,14 @@
 			box-shadow: 1px 2px 4px #888;
 			opacity: 1;
 
+			&:hover {
+				box-shadow: 1px 2px 4px #888, 1px 3px 10px 2px #888;
+
+				h1 {
+					text-decoration: underline;
+				}
+			}
+
 			&.ng-hide-add,
 			&.ng-hide-remove {
 				transition-duration: 250ms;
@@ -208,13 +215,10 @@
 			}
 
 			.infocard {
-				z-index: 20;
-				margin-top: 5px;
-				padding-bottom: 10px;
-				border-radius: 5px;
-				overflow: visible;
-				color: #000000;
+				color: black;
 				opacity: 1;
+				display: block;
+				height: 100%;
 
 				&:hover {
 					text-decoration: none;
@@ -233,7 +237,7 @@
 					width: 100%;
 					box-sizing: border-box;
 					padding-left: 130px;
-					background: linear-gradient(#7ba7f2, #4474c3);
+					background: #eee;
 					border-radius: 5px 5px 0px 0px;
 
 					h1 {
@@ -241,7 +245,7 @@
 						font-size: 18px;
 						font-family: 'Lato-Black', arial, serif;
 						margin: 10px 5px 2px;
-						color: #ffffff;
+						color: #333;
 					}
 				}
 
@@ -283,10 +287,10 @@
 		}
 
 		&.mini {
-			grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 
 			.widget {
-				min-width: 150px;
+				min-width: 170px;
 				text-align: center;
 
 				.infocard {
