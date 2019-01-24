@@ -69,6 +69,9 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 	// checks if the demo will fit in the user's viewport
 	// if so, embed the demo onto this page; hide otherwise
 	const _checkIfDemoFits = () => {
+		if (~~$scope.widget.width == 0) {
+			return // don't allow widgets with scalable width
+		}
 		const sizeNeeded = ~~$scope.widget.width + 50
 		const userWidth = document.documentElement.clientWidth
 		if (userWidth > sizeNeeded) {
