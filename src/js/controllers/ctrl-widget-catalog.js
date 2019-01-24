@@ -72,16 +72,7 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, widgetSrv)
 		_createGrid()
 		$scope.$watch('query', _createGrid)
 		$scope.$watchCollection('filters', _createGrid)
-		// redraw the grid whenever the window is resized
-		angular.element($window).bind('resize', _checkResize)
 	})
-
-	const _checkResize = () => {
-		const width = document.getElementById('widgets-container').scrollWidth
-		$scope.isMini = width > 860 && width < 900 ? $scope.isMini : width < 900
-		Please.$apply()
-	}
-	_checkResize()
 
 	// TODO this doesn't do anything
 	// DISPLAY_TYPE can be rendered in the page by the server

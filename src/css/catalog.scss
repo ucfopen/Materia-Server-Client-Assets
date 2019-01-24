@@ -8,25 +8,15 @@
 		border: rgba(0, 0, 0, 0.11) 1px solid;
 		box-shadow: 1px 3px 10px #888;
 		width: 96%;
-		max-width: 2000px;
+		max-width: 1500px;
 	}
 
 	.top {
 		background: #eee;
 		color: #6c6c6c;
-		padding: 10px;
+		padding: 10px 15px;
 		display: flex;
 		justify-content: space-between;
-
-		&.mini {
-			flex-direction: column;
-			text-align: center;
-
-			.search {
-				margin: auto;
-				padding-top: 10px;
-			}
-		}
 
 		h1 {
 			margin: 0;
@@ -82,28 +72,7 @@
 	#filters-container {
 		display: flex;
 		justify-content: space-between;
-		padding: 5px 20px;
-
-		&.mini {
-			padding: 0 5px;
-			flex-direction: column;
-			text-align: center;
-
-			div {
-				margin: auto;
-
-				legend {
-					margin-top: 5px;
-					font-size: 14px;
-				}
-
-				label {
-					padding: 5px;
-					font-size: 13px;
-				}
-			}
-
-		}
+		padding: 15px;
 
 		legend {
 			color: #555;
@@ -193,6 +162,7 @@
 			background-color: #ffffff;
 			box-shadow: 1px 2px 4px #888;
 			opacity: 1;
+			position: relative;
 
 			&:hover {
 				box-shadow: 1px 2px 4px #888, 1px 3px 10px 2px #888;
@@ -285,8 +255,32 @@
 				}
 			}
 		}
+	}
+}
 
-		&.mini {
+@media (max-width: 960px) {
+	.catalog .container {
+		#filters-container {
+			padding: 0 5px;
+			flex-direction: column;
+			text-align: center;
+
+			div {
+				margin: auto;
+
+				legend {
+					margin-top: 5px;
+					font-size: 14px;
+				}
+
+				label {
+					padding: 5px;
+					font-size: 13px;
+				}
+			}
+		}
+
+		#widgets-container {
 			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 
 			.widget {
@@ -311,6 +305,47 @@
 
 					.blurb-holder {
 						margin: 3px;
+
+						dl.features_list {
+							display: none;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+@media (max-width: 720px) {
+	.catalog .container {
+		.top {
+			flex-direction: column;
+			text-align: center;
+
+			.search {
+				margin: auto;
+				padding-top: 10px;
+			}
+		}
+
+		#widgets-container {
+			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+
+			.widget {
+				min-width: 130px;
+
+				.infocard {
+					img {
+						width: 90px;
+						height: 90px;
+					}
+
+					header h1 {
+						font-size: 16px;
+					}
+
+					dl {
+						line-height: 16px;
 					}
 				}
 			}
