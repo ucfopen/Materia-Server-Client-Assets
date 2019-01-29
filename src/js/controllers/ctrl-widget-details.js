@@ -62,7 +62,6 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 		})
 		$scope.demoScreenshot = `url(${$scope.widget.screenshots[0].full})`
 
-
 		Please.$apply();
 	}
 
@@ -97,6 +96,8 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 		setTimeout(() => {window.onbeforeunload = () => undefined}, 10)
 	}
 	$scope.selectImage = i => $scope.selectedImage = i
+	$scope.nextImage = i => $scope.selectedImage = ($scope.selectedImage + 1) % 3
+	$scope.prevImage = i => $scope.selectedImage = ($scope.selectedImage + 2) % 3
 
 	// initialize
 
