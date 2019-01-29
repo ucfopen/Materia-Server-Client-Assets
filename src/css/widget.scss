@@ -1,99 +1,176 @@
 .widget {
 	.page {
 		margin: 0 auto 20px;
-		background: #ffffff;
 		max-width: 850px;
 		border-radius: 3px;
-		box-shadow: 1px 3px 10px #888;
-	}
-
-	.top {
-		background: #eee;
-		color: #333;
-		padding: 10px 20px;
-
-		img {
-			height: 92px;
-			position: absolute;
-		}
-
-		h1 {
-			margin: 0 0 0 110px;
-			font-size: 2em;
-		}
-
-		p {
-			margin: 0 0 0 110px;
-		}
-	}
-
-	.widget-about {
-		display: none; // shown on mobile
-	}
-
-	.arrow {
-		padding-top: 19px;
-		margin-bottom: -4px;
-		width: 17px;
-		height: 0px;
-		margin-right: 5px;
-		margin-left: -2px;
-		display: inline-block;
-		background: url(../../../img/arrow.png) no-repeat bottom;
-
-		&.arrow_right {
-			background: url(../../../img/arrow_right.png) no-repeat bottom;
-		}
 	}
 
 	.widget_detail {
-		margin: 0 auto;
-		padding: 25px;
+		background: #ffffff;
+		box-shadow: 1px 3px 10px #888;
+		margin: 0 10px;
+		border-radius: 4px;
+
+		.top {
+			background: #eee;
+			border-radius: 4px 4px 0 0;
+			color: #333;
+			padding: 10px 20px;
+			min-height: 65px;
+
+			img {
+				height: 92px;
+				position: absolute;
+			}
+
+			h1 {
+				margin: 0 0 0 110px;
+				font-size: 2em;
+			}
+
+			p {
+				margin: 0 0 0 110px;
+			}
+		}
+
+		.widget-about {
+			display: none; // shown on mobile
+		}
+
+		.arrow {
+			padding-top: 19px;
+			margin-bottom: -4px;
+			width: 17px;
+			height: 0px;
+			margin-right: 5px;
+			margin-left: -2px;
+			display: inline-block;
+			background: url(../../../img/arrow.png) no-repeat bottom;
+
+			&.arrow_right {
+				background: url(../../../img/arrow_right.png) no-repeat bottom;
+			}
+		}
 
 		.pics {
-			margin: 25px 0 45px;
-			display: flex;
+			margin: 25px 60px 45px;
+			position: relative;
+			text-align: center;
 
-			.full-pic {
-				max-width: 80%;
+			.full-pic img {
+				width: 100%;
+				-webkit-user-select: none;
+				-khtml-user-select: none;
+				-moz-user-select: none;
+				-o-user-select: none;
+				user-select: none;
+				-webkit-user-drag: none;
+				-khtml-user-drag: none;
+				-moz-user-drag: none;
+				-o-user-drag: none;
+				user-drag: none;
+			}
 
-				img {
-					width: 100%;
+			// adapted from slick (https://github.com/kenwheeler/slick)
+			button.pic-arrow {
+				font-size: 0;
+				line-height: 0;
+				position: absolute;
+				top: calc(50% - 20px);
+				display: block;
+				width: 25px;
+				height: 25px;
+				padding: 0;
+				cursor: pointer;
+				color: transparent;
+				border: none;
+				outline: none;
+				background: transparent;
+
+				&:first-of-type {
+					left: -40px;
+
+					&:before {
+						content: "<"
+					}
+				}
+
+				&:last-of-type {
+					right: -40px;
+
+					&:before {
+						content: ">"
+					}
+				}
+
+				&:before {
+					position: absolute;
+					top: 0;
+					left: 0;
+					font-size: 22px;
+					line-height: 1;
+					width: 25px;
+					height: 25px;
+					border-radius: 3px;
+					background-color: black;
+					text-align: center;
+					opacity: .5;
+					color: white;
+				}
+
+				&:hover:before {
+					opacity: 0.7;
+				}
+
+				&:focus:before {
+					opacity: 1;
 				}
 			}
 
-			.pics-picker {
-				margin: 20px 0 0 10px;
-				padding: 10px;
-				display: flex;
-				flex-direction: column;
-				justify-content: space-evenly;
-				background: #ffffff;
+			button.pic-dot {
+				margin: 10px;
+				padding: 0;
+				position: relative;
+				font-size: 0;
+				line-height: 0;
+				display: inline-block;
+				width: 10px;
+				height: 10px;
+				cursor: pointer;
+				color: transparent;
+				border: 0;
+				outline: none;
+				background: transparent;
 
-				li {
-					list-style: none;
-					margin: auto 0;
-					cursor: pointer;
+				&:before {
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: 10px;
+					height: 10px;
+					content: " ";
+					border-radius: 100%;
+					background-color: black;
+					opacity: .25;
+				}
 
-					&:last-of-type {
-						margin-right: 0;
-					}
+				&:hover:before {
+					opacity: 0.5;
+				}
 
-					img {
-						box-shadow: 1px 2px 5px #888;
-						width: 100%;
+				&:focus:before {
+					opacity: 0.5;
+				}
 
-						&.selected {
-							box-shadow: 1px 2px 5px #888, 0 0 2px 1px #aaa, 0 0 7px 4px #444;
-						}
-					}
+				&.selected:before {
+					opacity: 1;
 				}
 			}
 		}
 
 		#demo-container {
 			position: relative;
-			margin: 25px auto 45px;
+			margin: 25px auto 30px;
 
 			#demo-cover {
 				height: 100%;
@@ -179,12 +256,12 @@
 			display: flex;
 			justify-content: space-between;
 			flex-wrap: wrap-reverse;
-			margin-top: 20px;
+			padding: 20px;
 
 			dl {
 				line-height: 30px;
-				width: 400px;
 				margin-top: 0;
+				flex-grow: 1;
 
 				dt {
 					font-size: 14px;
@@ -272,10 +349,9 @@
 
 @media (max-width: 720px) {
 	.widget .page {
-		margin: 0 8px 12px;
-
 		.top {
 			padding: 10px;
+			min-height: auto;
 
 			img {
 				height: 50px;
@@ -293,7 +369,8 @@
 
 		.widget-about {
 			display: block;
-			margin-top: 5px;
+			margin-top: 25px;
+			padding: 0 20px;
 		}
 
 		#demo-container {
@@ -302,25 +379,37 @@
 
 		.pics {
 			display: block;
+			position: relative;
+			margin: 25px 20px 25px;
 
 			.full-pic {
 				max-width: 100%;
 			}
 
-			.pics-picker {
-				padding: 0;
-				flex-direction: row;
-				margin-left: 0;
+			button.pic-arrow {
+				height: 20px;
+				width: 20px;
+				top: calc(100% - 28px);
 
-				li {
-					margin-right: 20px;
+				&:before {
+					height: 20px;
+					width: 20px;
+					line-height: 20px;
+					font-size: 18px;
+				}
+
+				&:first-of-type {
+					left: 5px;
+				}
+
+				&:last-of-type {
+					right: 5px;
 				}
 			}
 		}
 
 		.widget_detail .bottom {
 			dl {
-				width: 100%;
 				text-align: center;
 
 				dt {
