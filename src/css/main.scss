@@ -76,7 +76,6 @@ header {
 	padding: 35px 0 0 136px;
 	margin: 0 0 25px 0;
 	display: block;
-	height: 43px;
 
 	background: #fff url(../../../img/header_border.png) 0% 100% repeat-x;
 	height: 49px;
@@ -161,20 +160,6 @@ a.external {
 	display: none;
 }
 
-#mobile-menu-toggle + label {
-	display: none;
-}
-
-#mobile-menu-background {
-	display: none;
-	background: rgba(black, 0.2);
-	position: fixed;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
-}
-
 nav {
 	display: block;
 	margin-top: 16px;
@@ -202,20 +187,56 @@ nav {
 	}
 }
 
+// mobile header
 @media (max-width: 720px) {
+	header {
+		min-height: 49px;
+		height: auto;
+		overflow: hidden;
+		padding: 0;
+
+		h1.logo {
+			display: inline-block;
+			position: static;
+		}
+
+		.user.avatar {
+			position: static;
+			display: inline-block;
+			max-width: calc(100% - 185px);
+		}
+	}
+
 	nav {
-		display: none;
-		position: absolute;
-		top: 60px;
-		right: 0;
-		padding: 20px;
+		visibility: hidden;
+		opacity: 0;
+		max-height: 0;
+		padding: 0 20px;
 		text-align: right;
-		background: white;
+		transition: all ease 500ms;
 
 		ul {
 			li {
 				display: block;
 				padding: 5px;
+
+				&.nav_expandable {
+					&:hover ul li {
+						display: inline-block;
+						padding: 0 10px 5px;
+						height: auto;
+					}
+
+					ul {
+						top: 0;
+						bottom: 0;
+						right: 75px;
+						left: auto;
+						border-bottom: none;
+						border-left: none;
+						padding: 5px;
+					}
+				}
 
 				&.logout a {
 					font-size: 14px;
@@ -233,52 +254,71 @@ nav {
 		}
 	}
 
-	#mobile-menu-toggle:checked {
-		~ nav {
-			display: block;
-		}
-
-		~ #mobile-menu-background {
-			display: block;
-		}
-	}
-
-	#mobile-menu-toggle + label {
+	// mobile hamburger menu
+	#mobile-menu-toggle {
 		display: block;
 		position: absolute;
 		right: 15px;
-		top: 20px;
+		top: 25px;
+		height: 35px;
+		width: 37px;
+		border: 1px solid #888;
+		padding: 2px 5px;
+		border-radius: 3px;
+		text-align: left;
+		background: none;
+		box-shadow: none;
 
-		> div {
-			height: 30px;
-			width: 25px;
-			border: 1px solid #888;
-			padding: 2px 5px;
-			border-radius: 3px;
+		&.expanded {
+			~ nav {
+				visibility: visible;
+				max-height: 175px;
+				margin-bottom: 25px;
+				opacity: 1;
+			}
+
+			+ label {
+				background: #eee;
+			}
 
 			div {
+				transform: rotate(50deg) translate(6px, -8px);
+				width: 18px;
+				&:before {
+					opacity: 0;
+					width: 0;
+					transform: rotate(-50deg) translate(-6px, 8px);
+				}
+				&:after {
+					transform: rotate(-100deg) translate(0, -7px);
+					width: 18px;
+				}
+			}
+		}
+
+		div {
+			transition: all 300ms ease;
+			height: 2px;
+			width: 25px;
+			background: #333;
+			position: relative;
+
+			&:before,
+			&:after {
+				transition: all 300ms ease;
+				content: " ";
 				height: 2px;
 				width: 25px;
 				background: #333;
-				position: relative;
-				top: 14px;
+				position: absolute;
+			}
 
-				&:before,
-				&:after {
-					content: " ";
-					height: 2px;
-					width: 25px;
-					background: #333;
-					position: absolute;
-				}
+			&:before {
+				top: -8px;
+			}
 
-				&:before {
-					top: -8px;
-				}
-
-				&:after {
-					top: 8px;
-				}
+			&:after {
+				top: 8px;
 			}
 		}
 	}
