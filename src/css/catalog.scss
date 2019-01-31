@@ -83,15 +83,11 @@
 		.filter-labels-container {
 			display: inline-flex;
 
-			label {
+			button {
 				padding: 10px 12px;
 				font-size: 14px;
 				float: left;
 				background: white;
-
-				input[type='checkbox'] {
-					display: none;
-				}
 
 				&:last-of-type {
 					border-radius: 0 3px 3px 0;
