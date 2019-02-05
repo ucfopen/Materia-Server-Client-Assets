@@ -81,6 +81,59 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 		}
 	}
 
+	const _pics = document.getElementById("pics-scroller");
+	const _hammer = new Hammer(_pics, {})
+	let _offset = 0
+	_hammer.on('pan', e => {
+		let x = e.deltaX + _offset;
+		if (x > 0) x = x / 10 // overflow effect on left edge
+
+		const rightEdge = _pics.children[2].offsetLeft * -1
+		x = Math.max(x, rightEdge + (x-rightEdge)/10) // overflow right
+
+		_pics.style.transition = ""
+		_pics.style.transform = `translate3D(${x}px, 0, 0)`
+
+		// snap to the closest image when released
+		if (e.isFinal) {
+			_offset = x
+			snapClosest(x + e.overallVelocityX * 250)
+		}
+	})
+
+	const snapClosest = (x, animate = true) => {
+		if (_pics.children.length < 3) return // pics not loaded yet
+		_offset = x
+		let minDiff = 9999
+		for (let i = 0; i < 3; i++) {
+			const childOffset = _pics.children[i].offsetLeft * -1
+			const diff = Math.abs(childOffset - x)
+			if (diff < minDiff) {
+				minDiff = diff
+				_offset = childOffset
+				$scope.selectedImage = i
+			}
+		}
+
+		_pics.style.transform = `translate3D(${_offset}px, 0, 0)`
+		if (animate) {
+			_pics.style.transition = "ease transform 500ms"
+		} else {
+			_pics.style.transition = ""
+		}
+
+		Please.$apply();
+	}
+
+	const snapToImage = () => {
+		const i = $scope.selectedImage
+		if (_pics.children.length && _pics.children[i]) {
+			_offset = _pics.children[i].offsetLeft * -1
+			_pics.style.transform = `translate3D(${_offset}px, 0, 0)`
+			_pics.style.transition = "ease transform 500ms"
+		}
+	}
+
 	// expose to scope
 
 	$scope.widget = { icon: `${STATIC_CROSSDOMAIN}img/default/default-icon-275.png` }
@@ -98,6 +151,8 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 	$scope.selectImage = i => $scope.selectedImage = i
 	$scope.nextImage = i => $scope.selectedImage = ($scope.selectedImage + 1) % 3
 	$scope.prevImage = i => $scope.selectedImage = ($scope.selectedImage + 2) % 3
+	$scope.$watch('selectedImage', snapToImage)
+	window.onresize = () => snapClosest(_offset, false);
 
 	// initialize
 
