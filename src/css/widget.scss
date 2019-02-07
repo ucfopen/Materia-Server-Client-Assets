@@ -86,56 +86,33 @@
 			}
 
 			button.pic-arrow {
-				font-size: 0;
-				line-height: 0;
 				position: absolute;
 				top: calc(50% - 20px);
 				display: block;
-				width: 25px;
-				height: 25px;
+				width: 24px;
+				height: 24px;
 				padding: 0;
 				cursor: pointer;
-				color: transparent;
 				border: none;
 				outline: none;
-				background: transparent;
+				fill: white;
+				background: black;
+				border-radius: 100%;
+				opacity: 0.5;
 
 				&:first-of-type {
 					left: -40px;
-
-					&:before {
-						content: "<"
-					}
 				}
 
 				&:last-of-type {
 					right: -40px;
-
-					&:before {
-						content: ">"
-					}
 				}
 
-				&:before {
-					position: absolute;
-					top: 0;
-					left: 0;
-					font-size: 22px;
-					line-height: 1;
-					width: 25px;
-					height: 25px;
-					border-radius: 3px;
-					background-color: black;
-					text-align: center;
-					opacity: .5;
-					color: white;
-				}
-
-				&:hover:before {
+				&:hover {
 					opacity: 0.7;
 				}
 
-				&:focus:before {
+				&:focus {
 					opacity: 1;
 				}
 			}
@@ -164,7 +141,7 @@
 					content: " ";
 					border-radius: 100%;
 					background-color: black;
-					opacity: .25;
+					opacity: 0.25;
 				}
 
 				&:hover:before {
@@ -231,10 +208,8 @@
 					transition: 500ms;
 					font-family: 'Lato', arial, serif;
 					font-weight: 700;
-					text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
 					box-shadow: 1px 2px 4px #888;
 					font-size: 22px;
-					user-select: none;
 					border: 3px solid #525252;
 					border-radius: 4px;
 					padding: 10px 20px;
@@ -344,15 +319,13 @@
 				}
 
 				.green {
-					background: #b2cd43;
-					background-image: linear-gradient(#d1e776, #a6c430);
-					border-color: #95a74e;
-					color: #4d5822;
+					background: #c4dd61;
+					border: 1px solid #525252;
+					color: #525252;
+					border-radius: 4px;
 
 					&:hover {
-						background: #a2c129;
-						background-image: linear-gradient(#a6c430, #d1e776);
-						text-decoration: none;
+						background: #d1e776;
 					}
 				}
 			}
@@ -400,16 +373,9 @@
 			}
 
 			button.pic-arrow {
-				height: 20px;
-				width: 20px;
+				height: 24px;
+				width: 24px;
 				top: calc(100% - 28px);
-
-				&:before {
-					height: 20px;
-					width: 20px;
-					line-height: 20px;
-					font-size: 18px;
-				}
 
 				&:first-of-type {
 					left: 5px;
