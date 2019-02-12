@@ -103,7 +103,7 @@ app.controller('SelectedWidgetController', function(
 	}
 
 	const _showCopyDialog = () => {
-		if (($scope.selected.accessLevel != ACCESS.VISIBLE)) {
+		if ($scope.selected.accessLevel != ACCESS.VISIBLE) {
 			$scope.show.copyModal = true
 		}
 	}
