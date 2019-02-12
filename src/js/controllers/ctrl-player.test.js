@@ -384,8 +384,8 @@ describe('playerCtrl', () => {
 		expect($window.scrollY).toBe(0)
 
 		//can't always rely on window.scrollTo to be available
-		jest.spyOn($window, 'scrollTo').mockImplementationOnce(value => {
-			return value;
+		jest.spyOn($window, 'scrollTo').mockImplementationOnce((x, y) => {
+			return true
 		})
 
 		mockPostMessage(buildPostMessage('setVerticalScroll', [300]))
