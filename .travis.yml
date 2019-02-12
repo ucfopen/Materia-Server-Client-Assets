@@ -10,7 +10,7 @@ before_install:
 - npm install -g npm@^5
 script:
 - yarn prettier:run
-- git diff --exit-code ./src
+- yarn prettier:detectchanges
 - yarn test:ci
 - yarn build
 deploy:

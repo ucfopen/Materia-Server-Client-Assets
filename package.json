@@ -14,19 +14,14 @@
     "build-dev": "webpack",
     "prettier:run": "prettier --write 'src/**/*.{js,scss}'",
     "prettier:debug": "prettier -l 'src/**/*.{js,scss}'",
-    "precommit": "yarn test && lint-staged"
+    "prettier:detectchanges": "git diff --exit-code ./src || (echo '!! Prettier created files that need to be manually added.'; exit 1;)",
+    "precommit": "yarn test && yarn prettier:run && yarn prettier:detectchanges"
   },
   "prettier": {
     "printWidth": 100,
     "semi": false,
     "useTabs": true,
     "singleQuote": true
-  },
-  "lint-staged": {
-    "src/**/*.{js,scss}": [
-      "yarn prettier --write --",
-      "git add"
-    ]
   },
   "jest": {
     "verbose": false,
@@ -63,7 +58,6 @@
     "extract-text-webpack-plugin": "^3.0.0",
     "husky": "^0.14.3",
     "jest": "^23.6.0",
-    "lint-staged": "^7.0.5",
     "node-sass": "^4.5.3",
     "prettier": "^1.11.1",
     "sass-loader": "^6.0.6",
