@@ -500,9 +500,11 @@ ${msg.toLowerCase()}`,
 
 			//strip id from all imported questions and answers to avoid collisions
 			questions.forEach(question => {
-				question.answers.forEach(answer => {
-					answer.id = null
-				})
+				if (question.answers && question.answers.length > 0) {
+					question.answers.forEach(answer => {
+						answer.id = null
+					})
+				}
 				question.id = null
 			})
 
