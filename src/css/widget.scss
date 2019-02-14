@@ -295,39 +295,57 @@
 					font-size: 14px;
 				}
 
-				dd {
-					a.feature,
-					a.supported_data {
-						cursor: default;
-						font-size: 13px;
-						padding: 2px 6px;
-					}
+				a.feature,
+				a.supported_data {
+					cursor: default;
+					font-size: 13px;
+					padding: 2px 6px;
+					position: relative;
 
-					a.guide {
-						font-size: 13px;
-						border: 1px solid gray;
-						color: gray;
-						padding: 2px 6px;
-						border-radius: 3px;
+					&:hover {
+						background: #0357a5;
 
-						&:hover {
-							background-color: #eee;
-							color: #111;
+						&:after {
+							content: "";
+							position: absolute;
+							width: 0;
+							height: 0;
+							border-left: 6px solid transparent;
+							border-right: 6px solid transparent;
+							border-top: 6px solid #0357a5;
+							right: 0;
+							left: 0;
+							bottom: -6px;
+							margin: auto;
 						}
 					}
 
-					.tooltip {
-						position: absolute;
-						z-index: 99;
-						padding: 15px;
-						background: #eee;
-						width: 250px;
-						border-radius: 15px;
-						box-shadow: 1px 2px 5px #888;
-						display: none;
-						line-height: 15px;
-						font-size: 12px;
+				}
+
+				a.guide {
+					font-size: 13px;
+					border: 1px solid gray;
+					color: gray;
+					padding: 2px 6px;
+					border-radius: 3px;
+
+					&:hover {
+						background-color: #eee;
+						color: #111;
 					}
+				}
+
+				.tooltip {
+					position: absolute;
+					z-index: 99;
+					padding: 15px;
+					background: #eee;
+					width: 250px;
+					border-radius: 15px;
+					box-shadow: 1px 2px 5px #888;
+					display: none;
+					line-height: 15px;
+					font-size: 12px;
 				}
 			}
 
@@ -439,7 +457,7 @@
 			}
 
 			#pics-scroller {
-				div {
+				> div {
 					img {
 						margin-bottom: 20px;
 					}
@@ -455,18 +473,18 @@
 			.bottom {
 				dl {
 					text-align: center;
+				}
 
-					dt {
-						float: none;
-						line-height: normal;
-						margin-top: 10px;
-					}
+				dt {
+					float: none;
+					line-height: normal;
+					margin-top: 10px;
+				}
 
-					dd .tooltip {
-						left: 10%;
-						right: 10%;
-						width: auto;
-					}
+				.tooltip {
+					left: 10%;
+					right: 10%;
+					width: auto;
 				}
 
 				.widget-action-buttons {
