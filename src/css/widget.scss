@@ -2,7 +2,22 @@
 	.page {
 		margin: 0 auto 20px;
 		max-width: 850px;
-		border-radius: 3px;
+	}
+
+	#widget-about {
+		display: none; // shown on mobile
+	}
+
+	a.green,
+	button.green {
+		background: #c4dd61;
+		border: 1px solid #525252;
+		color: #525252;
+		border-radius: 4px;
+
+		&:hover {
+			background: #d5ea7f;
+		}
 	}
 
 	.widget_detail {
@@ -33,57 +48,11 @@
 			}
 		}
 
-		.widget-about {
-			display: none; // shown on mobile
-		}
-
-		.arrow {
-			padding-top: 19px;
-			margin-bottom: -4px;
-			width: 17px;
-			height: 0px;
-			margin-right: 5px;
-			margin-left: -2px;
-			display: inline-block;
-			background: url(../../../img/arrow.png) no-repeat bottom;
-
-			&.arrow_right {
-				background: url(../../../img/arrow_right.png) no-repeat bottom;
-			}
-		}
 
 		.pics {
-			margin: 25px 60px 45px;
+			margin: 35px 60px 45px;
 			position: relative;
 			text-align: center;
-
-			// adapted from slick (https://github.com/kenwheeler/slick)
-			#pics-scroller-container {
-				overflow: hidden;
-				width: 100%;
-
-				#pics-scroller {
-					display: flex;
-
-					img {
-						width: 100%;
-						height: 100%;
-						margin: auto;
-						flex-grow: 0;
-						flex-shrink: 0;
-						-webkit-user-select: none;
-						-khtml-user-select: none;
-						-moz-user-select: none;
-						-o-user-select: none;
-						user-select: none;
-						-webkit-user-drag: none;
-						-khtml-user-drag: none;
-						-moz-user-drag: none;
-						-o-user-drag: none;
-						user-drag: none;
-					}
-				}
-			}
 
 			button.pic-arrow {
 				position: absolute;
@@ -118,7 +87,7 @@
 			}
 
 			button.pic-dot {
-				margin: 10px;
+				margin: 12px 10px;
 				padding: 0;
 				position: relative;
 				font-size: 0;
@@ -156,78 +125,149 @@
 					opacity: 1;
 				}
 			}
+
+			// adapted from slick (https://github.com/kenwheeler/slick)
 		}
 
-		#demo-container {
-			position: relative;
-			margin: 25px auto 30px;
+		#pics-scroller-container {
+			overflow: hidden;
+			width: 100%;
+		}
 
-			#demo-cover {
-				height: 100%;
+		#pics-scroller {
+			display: flex;
+
+			> div {
 				width: 100%;
-				display: flex;
-				position: absolute;
-				align-items: center;
-				justify-content: center;
-				text-align: center;
-				cursor: pointer;
-				background-repeat: no-repeat;
-				background-size: contain;
+				height: 100%;
+				min-height: 150px;
+				margin: auto 2px;
+				flex-grow: 0;
+				flex-shrink: 0;
+				padding: 5px;
+				background: #333;
+				box-sizing: border-box;
+				border-radius: 3px;
+				position: relative;
+				cursor: grab;
 
-				&:hover {
-					#demo-cover-background {
-						opacity: 0.7;
-					}
-
-					button {
-						opacity: 1;
-						text-decoration: underline;
-					}
+				&.playing {
+					background: #005813;
 				}
 
-				&.hidden {
-					opacity: 0;
-					visibility: hidden;
-					transition: 1500ms;
-
-					button {
-						opacity: 0;
-						transform: scale(2)
-					}
+				&:active {
+					cursor: grabbing;
 				}
 
-				#demo-cover-background {
-					background: radial-gradient(ellipse farthest-corner at center center, rgba(255, 255, 255, 0.85) 20%, rgba(190, 190, 190, 0.97) 100%) repeat scroll 0% 0%;
-					position: absolute;
-					height: 100%;
+				img {
 					width: 100%;
-					transition: 1500ms;
+					height: 100%;
+					margin: auto auto 37px;
+					flex-grow: 0;
+					flex-shrink: 0;
+					border-radius: 3px;
+					-webkit-user-select: none;
+					-khtml-user-select: none;
+					-moz-user-select: none;
+					-o-user-select: none;
+					user-select: none;
+					-webkit-user-drag: none;
+					-khtml-user-drag: none;
+					-moz-user-drag: none;
+					-o-user-drag: none;
+					user-drag: none;
 				}
+
+				h3 {
+					position: absolute;
+					bottom: 0;
+					left: 0;
+					right: 0;
+					text-align: right;
+					color: white;
+					margin: 0;
+					padding: 10px 30px;
+					font-size: 15px;
+					height: 20px;
+				}
+			}
+		}
+
+		#demo-cover {
+			height: auto;
+			width: auto;
+			display: flex;
+			position: absolute;
+			margin: 5px 5px 45px;
+			border-radius: 3px;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			background-repeat: no-repeat;
+			background-size: contain;
+
+			&.hidden {
+				opacity: 0.5;
+				visibility: hidden;
+				transition: 5000ms;
 
 				button {
-					transition: 500ms;
-					font-family: 'Lato', arial, serif;
-					font-weight: 700;
-					box-shadow: 1px 2px 4px #888;
-					font-size: 22px;
-					border: 3px solid #525252;
-					border-radius: 4px;
-					padding: 10px 20px;
-					cursor: pointer;
-					color: #525252;
-					background: #c4dd61;
-					z-index: 2;
-					opacity: 0.9;
-
-					span.arrow {
-						margin-bottom: -1px;
-					}
+					opacity: 0;
+					transform: scale(2);
 				}
 			}
 
+			button {
+				transition: 500ms;
+				font-family: 'Lato', arial, serif;
+				font-weight: 700;
+				box-shadow: 1px 2px 4px #888;
+				text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+				font-size: 22px;
+				border: 3px solid #525252;
+				padding: 10px 20px 10px 50px;
+				position: relative;
+				cursor: pointer;
+				z-index: 2;
+				opacity: 1;
+				cursor: pointer;
+
+				&:hover {
+					text-decoration: underline;
+
+					+ #demo-cover-background {
+						opacity: 0.7;
+					}
+				}
+
+				svg {
+					fill: #535353;
+					transform: scale(1.5);
+					position: absolute;
+					top: 11px;
+					left: 18px;
+				}
+			}
+		}
+
+		#demo-cover-background {
+			background: radial-gradient(ellipse farthest-corner at center center, rgba(255, 255, 255, 0.85) 20%, rgba(190, 190, 190, 0.97) 100%) repeat scroll 0% 0%;
+			position: absolute;
+			height: 100%;
+			width: 100%;
+			transition: 1500ms;
+		}
+
+		#player-container {
+			position: relative;
+			z-index: 2;
+
 			.center {
-				margin: 0 auto;
-				box-shadow: 0px 0px 34px 1px #999;
+				margin: 0 auto 38px;
 
 				iframe {
 					width: 100%;
@@ -291,12 +331,6 @@
 				}
 			}
 
-			#last-updated {
-				font-style: italic;
-				color: #b5b5b5;
-				font-size: 0.9em;
-			}
-
 			.widget-action-buttons {
 				width: 230px;
 				text-align: right;
@@ -316,97 +350,129 @@
 				p {
 					margin-top: 0;
 					padding: 0;
-				}
 
-				.green {
-					background: #c4dd61;
-					border: 1px solid #525252;
-					color: #525252;
-					border-radius: 4px;
-
-					&:hover {
-						background: #d1e776;
-					}
 				}
+			}
+
+			#createLink {
+				padding-left: 45px;
+
+				svg {
+					position: absolute;
+					fill: #535353;
+					top: 5px;
+					left: 17px;
+				}
+			}
+
+			#last-updated {
+				font-style: italic;
+				color: #b5b5b5;
+				font-size: 0.9em;
 			}
 		}
 	}
 }
 
 @media (max-width: 720px) {
-	.widget .page {
-		.top {
-			padding: 10px;
-			min-height: auto;
-
-			img {
-				height: 50px;
-			}
-
-			h1 {
-				font-size: 1.5em;
-				margin-left: 60px;
-			}
-
-			p {
-				display: none;
-			}
-		}
-
-		.widget-about {
+	.widget {
+		#widget-about {
 			display: block;
 			margin-top: 25px;
 			padding: 0 20px;
 		}
 
-		#demo-container {
-			display: none;
-		}
+		.widget_detail {
+			.top {
+				padding: 10px;
+				min-height: auto;
 
-		.pics {
-			display: block;
-			position: relative;
-			margin: 25px 20px 25px;
-
-			.full-pic {
-				max-width: 100%;
-			}
-
-			button.pic-arrow {
-				height: 24px;
-				width: 24px;
-				top: calc(100% - 28px);
-
-				&:first-of-type {
-					left: 5px;
+				img {
+					height: 50px;
 				}
 
-				&:last-of-type {
-					right: 5px;
-				}
-			}
-		}
-
-		.widget_detail .bottom {
-			dl {
-				text-align: center;
-
-				dt {
-					float: none;
-					line-height: normal;
-					margin-top: 10px;
+				h1 {
+					font-size: 1.5em;
+					margin-left: 60px;
 				}
 
-				dd .tooltip {
-					left: 10%;
-					right: 10%;
-					width: auto;
+				p {
+					display: none;
 				}
 			}
 
-			.widget-action-buttons {
-				width: 100%;
-				text-align: center;
+			#demo-cover {
+				margin-bottom: 28px;
+
+				button {
+					font-size: 18px;
+					border-width: 1px;
+					padding: 7px 23px 8px 43px;
+
+					svg {
+						transform: scale(1.2);
+						top: 6px;
+						left: 15px;
+					}
+				}
+			}
+
+			.pics {
+				display: block;
+				position: relative;
+				margin: 25px 20px 25px;
+
+				button.pic-arrow {
+					height: 24px;
+					width: 24px;
+					top: calc(100% - 29px);
+
+					&:first-of-type {
+						left: 5px;
+					}
+
+					&:last-of-type {
+						right: 5px;
+					}
+				}
+
+			}
+
+			#pics-scroller {
+				div {
+					img {
+						margin-bottom: 20px;
+					}
+
+					h3 {
+						padding: 5px 10px;
+						font-size: 14px;
+						height: 18px;
+					}
+				}
+			}
+
+			.bottom {
+				dl {
+					text-align: center;
+
+					dt {
+						float: none;
+						line-height: normal;
+						margin-top: 10px;
+					}
+
+					dd .tooltip {
+						left: 10%;
+						right: 10%;
+						width: auto;
+					}
+				}
+
+				.widget-action-buttons {
+					width: 100%;
+					text-align: center;
+				}
 			}
 		}
 	}
