@@ -148,7 +148,7 @@
 		padding-bottom: 10px;
 		position: relative;
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(430px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
 
 		.widget {
 			min-width: 400px;
@@ -301,7 +301,7 @@
 		}
 
 		#widgets-container {
-			grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+			grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
 
 			.widget {
 				min-width: 200px;
@@ -361,7 +361,7 @@
 		}
 
 		#widgets-container {
-			grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+			grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 
 			.widget {
 				min-width: 150px;
