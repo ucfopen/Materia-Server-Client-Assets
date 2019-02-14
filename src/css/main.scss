@@ -269,16 +269,16 @@ nav {
 		background: none;
 		box-shadow: none;
 
+		&:hover {
+			background: #eee;
+		}
+
 		&.expanded {
 			~ nav {
 				visibility: visible;
 				max-height: 175px;
 				margin-bottom: 25px;
 				opacity: 1;
-			}
-
-			+ label {
-				background: #eee;
 			}
 
 			div {
