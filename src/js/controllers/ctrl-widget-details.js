@@ -29,7 +29,7 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 
 	// Populates the details page with content
 	// @object The current widget.
-	var _populateDefaults = widget => {
+	const _populateDefaults = widget => {
 		const { clean_name } = widget
 		const date = new Date(widget['created_at'] * 1000)
 
@@ -43,11 +43,12 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 			supported_data: widget.meta_data['supported_data'].map(_tooltipObject),
 			features: widget.meta_data['features'].map(_tooltipObject),
 			created: date.toLocaleDateString(),
-			width: widget.width,
-			height: widget.height
+			width: ~~widget.width,
+			height: ~~widget.height
 		}
 
-		_checkIfDemoFits()
+		const sizeNeeded = ($scope.widget.width || 700) + 150
+		$scope.maxPageWidth = sizeNeeded + "px"
 		$scope.show = true
 
 		if (widget.meta_data['about'] === 'undefined') {
@@ -62,33 +63,37 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 		})
 		$scope.demoScreenshot = `url(${$scope.widget.screenshots[0].full})`
 
-		Please.$apply();
+		Please.$apply()
 	}
 
-	// checks if the demo will fit in the user's viewport
-	// if so, embed the demo onto this page; hide otherwise
-	const _checkIfDemoFits = () => {
-		if (~~$scope.widget.width == 0) {
-			return // don't allow widgets with scalable width
+	const isWideEnough = () => {
+		if ($scope.widget.width == 0) {
+			return false // don't allow widgets with scalable width
 		}
-		const sizeNeeded = ~~$scope.widget.width + 50
+		// 150 in padding/margins needed
+		const sizeNeeded = ($scope.widget.width || 700) + 150
+		$scope.maxPageWidth = sizeNeeded + "px"
 		const userWidth = document.documentElement.clientWidth
-		if (userWidth > sizeNeeded) {
-			$scope.demoFits = true
-			if (sizeNeeded > 850) {
-				document.querySelector(".widget .page").style.maxWidth = `${sizeNeeded}px`
-			}
-		}
+		return userWidth > sizeNeeded
 	}
 
-	const _pics = document.getElementById("pics-scroller");
-	const _hammer = new Hammer(_pics, {})
+	const _pics = document.getElementById("pics-scroller")
+	const _hammer = new Hammer(_pics)
 	let _offset = 0
 	_hammer.on('pan', e => {
-		let x = e.deltaX + _offset;
-		if (x > 0) x = x / 10 // overflow effect on left edge
+		if (e.center.x == 0 && e.center.y == 0) {
+			// fixes hammer/chrome issue with touch vertical scrolling
+			// (see hammerjs issue #1050)
+			return
+		}
 
-		const rightEdge = _pics.children[2].offsetLeft * -1
+		// note: deltaX is positive when dragging right (ie going back)
+		let x = e.deltaX + _offset
+
+		// if the pan goes off the edge, divide the overflow amount by 10
+		if (x > 0) x = x / 10 // overflow left
+
+		const rightEdge = _pics.children[3].offsetLeft * -1
 		x = Math.max(x, rightEdge + (x-rightEdge)/10) // overflow right
 
 		_pics.style.transition = ""
@@ -102,10 +107,10 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 	})
 
 	const snapClosest = (x, animate = true) => {
-		if (_pics.children.length < 3) return // pics not loaded yet
-		_offset = x
+		if (_pics.children.length < 4) return // pics not loaded yet
+
 		let minDiff = 9999
-		for (let i = 0; i < 3; i++) {
+		for (let i = 0; i < 4; i++) {
 			const childOffset = _pics.children[i].offsetLeft * -1
 			const diff = Math.abs(childOffset - x)
 			if (diff < minDiff) {
@@ -116,15 +121,11 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 		}
 
 		_pics.style.transform = `translate3D(${_offset}px, 0, 0)`
-		if (animate) {
-			_pics.style.transition = "ease transform 500ms"
-		} else {
-			_pics.style.transition = ""
-		}
-
-		Please.$apply();
+		_pics.style.transition = animate ? "ease transform 500ms" : ""
+		Please.$apply()
 	}
 
+	// scroll to image at $scope.selectedImage (when arrows/dots are clicked)
 	const snapToImage = () => {
 		const i = $scope.selectedImage
 		if (_pics.children.length && _pics.children[i]) {
@@ -137,32 +138,30 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 	// expose to scope
 
 	$scope.widget = { icon: `${STATIC_CROSSDOMAIN}img/default/default-icon-275.png` }
-	$scope.goback = {
-		text: 'Go back to the widget catalog',
-		url: '/widgets'
-	}
 	$scope.showDemoCover = true
-	$scope.demoFits = false
 	$scope.selectedImage = 0
 	$scope.showDemoClicked = () => {
-		$scope.showDemoCover = false
-		setTimeout(() => {window.onbeforeunload = () => undefined}, 10)
+		if (isWideEnough()) {
+			$scope.demoHeight = ($scope.widget.height + 48) + "px"
+			$scope.demoWidth = ($scope.widget.width + 10) + "px"
+			$scope.showDemoCover = false
+
+			// don't show player's onbeforeunload dialog
+			setTimeout(() => {window.onbeforeunload = () => undefined}, 10)
+		} else {
+			window.location = $scope.widget.demourl
+		}
 	}
+
 	$scope.selectImage = i => $scope.selectedImage = i
-	$scope.nextImage = i => $scope.selectedImage = ($scope.selectedImage + 1) % 3
-	$scope.prevImage = i => $scope.selectedImage = ($scope.selectedImage + 2) % 3
+	$scope.nextImage = i => $scope.selectedImage = ($scope.selectedImage + 1) % 4
+	$scope.prevImage = i => $scope.selectedImage = ($scope.selectedImage + 3) % 4
 	$scope.$watch('selectedImage', snapToImage)
-	window.onresize = () => snapClosest(_offset, false);
+	window.onresize = () => snapClosest(_offset, false)
 
 	// initialize
 
 	widgetSrv.getWidgetInfo(widgetID).then(widget => {
 		_populateDefaults(widget)
-		if (nameArr.length > 1) {
-			$scope.goback = {
-				url: '/',
-				text: 'Go back to the front page'
-			}
-		}
 	})
 })
