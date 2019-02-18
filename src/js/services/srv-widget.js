@@ -233,6 +233,15 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		}
 	}
 
+	const canBePublishedByCurrentUser = (inst_id) => {
+		const deferred = $q.defer()
+		Materia.Coms.Json.send('publish_verify', [inst_id]).then(response => {
+			deferred.resolve(response)
+		})
+
+		return deferred.promise
+	}
+
 	return {
 		getWidgets,
 		getWidgetsByType,
@@ -245,6 +254,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		selectWidgetFromHashUrl,
 		convertAvailibilityDates,
 		copyWidget,
-		deleteWidget
+		deleteWidget,
+		canBePublishedByCurrentUser
 	}
 })

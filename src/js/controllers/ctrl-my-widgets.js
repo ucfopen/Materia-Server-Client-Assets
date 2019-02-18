@@ -70,6 +70,7 @@ app.controller('MyWidgetsController', function(
 			.all([
 				userServ.get(),
 				selectedWidgetSrv.getUserPermissions(),
+				selectedWidgetSrv.getPublishPermission(),
 				selectedWidgetSrv.getDateRanges()
 			])
 			.then(data => {
@@ -80,6 +81,7 @@ app.controller('MyWidgetsController', function(
 
 				$scope.user = data[0]
 				$scope.perms = data[1]
+				$scope.canPublish = data[2]
 				populateAccess()
 
 				$timeout.cancel(loadScoresTimout)
@@ -135,6 +137,7 @@ app.controller('MyWidgetsController', function(
 		$scope.selected.shareable = false
 		$scope.selected.hasScores = false
 		$scope.perms.collaborators = []
+		$scope.canPublish = false
 
 		// TODO
 		$scope.perms.error = false
@@ -257,7 +260,10 @@ app.controller('MyWidgetsController', function(
 		guestAccess: false,
 		embeddedOnly: false
 	}
-	$scope.perms = { collaborators: [] }
+	$scope.perms = {
+		collaborators: []
+	}
+	$scope.canPublish = false
 	$scope.show = {
 		collaborationModal: false,
 		availabilityModal: false,
