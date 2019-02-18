@@ -160,8 +160,7 @@ app.controller('createCtrl', function(
 
 	const canPublish = () => {
 		const deferred = $q.defer()
-		widgetSrv.canBePublishedByCurrentUser(instance.id)
-		.then(canPublish => {
+		widgetSrv.canBePublishedByCurrentUser(instance.id).then(canPublish => {
 			$scope.canPublish = canPublish
 			deferred.resolve()
 		})
