@@ -14,6 +14,7 @@
     "build-dev": "webpack",
     "prettier:run": "prettier --write 'src/**/*.{js,scss}'",
     "prettier:debug": "prettier -l 'src/**/*.{js,scss}'",
+    "prettier:detectchanges": "git diff --exit-code ./src || (echo '!! Prettier created files that need to be manually added.'; exit 1;)",
     "precommit": "yarn test && lint-staged"
   },
   "prettier": {
@@ -24,7 +25,7 @@
   },
   "lint-staged": {
     "src/**/*.{js,scss}": [
-      "yarn prettier --write --",
+      "yarn prettier --write",
       "git add"
     ]
   },
