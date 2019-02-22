@@ -76,14 +76,6 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		})
 	}
 
-	const getPublishPermission = () => {
-		const deferred = $q.defer()
-		Materia.Coms.Json.send('publish_verify', [_widget.widget.id]).then(response => {
-			deferred.resolve(response)
-		})
-		return deferred.promise
-	}
-
 	const getPlayLogsForSemester = (term, year) => {
 		const deferred = $q.defer()
 
@@ -226,7 +218,6 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		getSelectedId,
 		getScoreSummaries,
 		getUserPermissions,
-		getPublishPermission,
 		getPlayLogsForSemester,
 		getDateRanges,
 		getSemesterFromTimestamp,

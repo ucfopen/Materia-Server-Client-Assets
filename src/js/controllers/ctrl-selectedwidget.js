@@ -56,16 +56,17 @@ app.controller('SelectedWidgetController', function(
 
 	const _editWidget = () => {
 		if ($scope.selected.editable) {
-			Materia.Coms.Json.send('widget_instance_lock', [$scope.selected.widget.id]).then(success => {
-				if (success) {
+			Materia.Coms.Json.send('edit_verify', [$scope.selected.widget.id]).then(response => {
+				if (response.is_locked) {
+					$scope.alert.msg =
+						'This widget is currently locked, you will be able to edit this widget when it is no longer being edited by somebody else.'
+				} else {
 					if ($scope.selected.widget.is_draft) {
 						window.location = $scope.selected.edit
 					} else {
-						$scope.show.editPublishedWarning = true
+						if (response.can_publish) $scope.show.editPublishedWarning = true
+						else $scope.show.restrictedPublishWarning = true
 					}
-				} else {
-					$scope.alert.msg =
-						'This widget is currently locked, you will be able to edit this widget when it is no longer being edited by somebody else.'
 				}
 				Please.$apply()
 			})
