@@ -34,6 +34,8 @@ describe('adminWidgetController', () => {
 			$on: jest.fn()
 		}
 
+		Namespace('Materia.Coms.Json').send = sendMock = jest.fn()
+
 		var controller = $controller('SelectedWidgetController', { $scope })
 	})
 
@@ -66,5 +68,15 @@ describe('adminWidgetController', () => {
 		// this will not pass if $scope.hideModal is an arrow function
 		$scope.hideModal.bind(this)()
 		expect(this.$parent.hideModal).toHaveBeenCalled()
+	})
+
+	it('does nothing if a widget is not editable', () => {
+		$scope.selected = {
+			editable: false
+		}
+
+		$scope.editWidget()
+
+		expect(Materia.Coms.Json.send).not.toHaveBeenCalled()
 	})
 })
