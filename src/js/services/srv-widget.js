@@ -247,9 +247,9 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		}
 	}
 
-	const canBePublishedByCurrentUser = inst_id => {
+	const canBePublishedByCurrentUser = widget_id => {
 		const deferred = $q.defer()
-		Materia.Coms.Json.send('widget_publish_perms_verify', [inst_id]).then(response => {
+		Materia.Coms.Json.send('widget_publish_perms_verify', [widget_id]).then(response => {
 			deferred.resolve(response)
 		})
 
