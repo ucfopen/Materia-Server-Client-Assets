@@ -76,9 +76,10 @@ app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		})
 	}
 
-	const getPublishPermission = () => {
+	const getPublishPermission = (widget_id = null) => {
+		if (widget_id === null) widget_id = _widget.widget.id
 		const deferred = $q.defer()
-		Materia.Coms.Json.send('widget_publish_perms_verify', [_widget.widget.id]).then(response => {
+		Materia.Coms.Json.send('widget_publish_perms_verify', [widget_id]).then(response => {
 			deferred.resolve(response)
 		})
 		return deferred.promise

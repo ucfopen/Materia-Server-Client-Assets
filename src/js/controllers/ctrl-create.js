@@ -158,7 +158,7 @@ app.controller('createCtrl', function(
 		}
 	}
 
-	const canPublish = () => {
+	const checkUserPublishPerms = () => {
 		const deferred = $q.defer()
 		widgetSrv.canBePublishedByCurrentUser(widget_id).then(canPublish => {
 			$scope.canPublish = canPublish
@@ -555,7 +555,7 @@ ${msg.toLowerCase()}`,
 					.then(widgetSrv.getWidget)
 					.then(embed)
 					.then(initCreator)
-					.then(canPublish)
+					.then(checkUserPublishPerms)
 					.then(showButtons)
 					.then(startHeartBeat)
 					.catch(onInitFail)
@@ -567,7 +567,7 @@ ${msg.toLowerCase()}`,
 			.then(widgetSrv.getWidgetInfo)
 			.then(embed)
 			.then(initCreator)
-			.then(canPublish)
+			.then(checkUserPublishPerms)
 			.then(showButtons)
 			.then(startHeartBeat)
 			.catch(onInitFail)
