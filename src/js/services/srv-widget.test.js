@@ -416,7 +416,9 @@ describe('widgetSrv', () => {
 
 		expect(Materia.Coms.Json.send).toHaveBeenCalledWith('widget_instance_lock', [1])
 		expect(promiseSpy).not.toHaveBeenCalled()
-		expect(promiseCatch).toHaveBeenCalledWith('This widget is currently locked, you will be able to edit this widget when it is no longer being edited by somebody else.')
+		expect(promiseCatch).toHaveBeenCalledWith(
+			'This widget is currently locked, you will be able to edit this widget when it is no longer being edited by somebody else.'
+		)
 	})
 
 	it('locks a widget', () => {
@@ -439,9 +441,7 @@ describe('widgetSrv', () => {
 		mockSendPromiseOnce(true)
 
 		let promiseSpy = jest.fn()
-		_service
-			.canBePublishedByCurrentUser(1)
-			.then(promiseSpy)
+		_service.canBePublishedByCurrentUser(1).then(promiseSpy)
 		$scope.$digest() // processes promise
 
 		expect(Materia.Coms.Json.send).toHaveBeenCalledWith('widget_publish_perms_verify', [1])
