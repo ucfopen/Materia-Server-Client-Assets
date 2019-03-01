@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
+app.controller('widgetDetailsController', function(Please, $scope, $window, widgetSrv) {
 	const SCREENSHOT_AMOUNT = [1, 2, 3]
 	const nameArr = window.location.pathname.replace('/widgets/', '').split('/')
 	const widgetID = nameArr
@@ -149,7 +149,7 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 			// don't show player's onbeforeunload dialog
 			setTimeout(() => {window.onbeforeunload = () => undefined}, 10)
 		} else {
-			window.location = $scope.widget.demourl
+			$window.location = $scope.widget.demourl
 		}
 	}
 
