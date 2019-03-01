@@ -70,6 +70,7 @@ describe('adminWidgetController', () => {
 			is_editable: 'f',
 			is_scorable: 'f',
 			is_playable: 'f',
+			restrict_publish: 'f',
 			meta_data: {
 				about: 'f',
 				excerpt: 'f',

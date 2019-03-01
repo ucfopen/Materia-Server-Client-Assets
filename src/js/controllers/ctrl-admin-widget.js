@@ -8,6 +8,7 @@ app.controller('adminWidgetController', function($scope, Please, adminSrv) {
 			is_editable: widget.is_editable,
 			is_scorable: widget.is_scorable,
 			is_playable: widget.is_playable,
+			restrict_publish: widget.restrict_publish,
 			about: widget.meta_data.about,
 			excerpt: widget.meta_data.excerpt,
 			demo: widget.meta_data.demo
