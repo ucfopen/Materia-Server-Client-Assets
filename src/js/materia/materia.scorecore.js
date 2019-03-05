@@ -19,7 +19,8 @@ Namespace('Materia').ScoreCore = (() => {
 			case 'updateWidget':
 				_widgetClass.update(
 					msg.data[0].data, // qset.data
-					msg.data[1] // scoreTable
+					msg.data[1], // scoreTable
+					msg.data[0].version // qset.version
 				)
 				break
 			case 'scoreDistribution':

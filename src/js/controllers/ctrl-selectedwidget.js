@@ -18,7 +18,7 @@ app.controller('SelectedWidgetController', function(
 	}
 
 	// using 'function' here because this function is executed in another scope chain
-	const _hideModal = () => {
+	const _hideModal = function() {
 		this.$parent.hideModal()
 	}
 
@@ -103,7 +103,7 @@ app.controller('SelectedWidgetController', function(
 	}
 
 	const _showCopyDialog = () => {
-		if (($scope.selected.accessLevel = ACCESS.VISIBLE)) {
+		if ($scope.selected.accessLevel != ACCESS.VISIBLE) {
 			$scope.show.copyModal = true
 		}
 	}
