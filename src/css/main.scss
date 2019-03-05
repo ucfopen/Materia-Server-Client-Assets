@@ -108,7 +108,6 @@ header {
 		margin: 0;
 		padding: 0;
 	}
-
 }
 
 h1.logo {
@@ -306,7 +305,7 @@ nav {
 			&:before,
 			&:after {
 				transition: all 300ms ease;
-				content: " ";
+				content: ' ';
 				height: 2px;
 				width: 25px;
 				background: #333;
@@ -819,7 +818,6 @@ dl.inline_def {
 	}
 }
 
-
 .get_flash {
 	margin-top: 25px;
 
@@ -851,7 +849,6 @@ dl.inline_def {
 		padding: 0;
 	}
 }
-
 
 .error-support {
 	margin-top: 58px;
@@ -923,7 +920,6 @@ dl.inline_def {
 		font-size: 30px;
 	}
 }
-
 
 .bottom_header {
 	text-align: center;
@@ -1058,83 +1054,6 @@ hr {
 	color: #aaa;
 	padding: 0;
 	margin: 0;
-}
-
-/*********
-Fancybox Overrides
-*********/
-#fancybox-left-ico,
-#fancybox-right-ico {
-	background-color: rgba(0, 0, 0, 0.5);
-	background-image: none;
-	position: absolute;
-	top: 50%;
-	left: 0 !important;
-	margin: -50px 0 0 -120px;
-	width: 100px;
-	height: 100px;
-	border-radius: 100%;
-	cursor: pointer;
-	z-index: 1102;
-	display: block !important;
-	transition: 200ms all;
-}
-
-#fancybox-close {
-	position: absolute;
-	top: 20px;
-	right: 20px;
-	background: none;
-	color: rgba(255, 255, 255, 0.7);
-	background-color: rgba(0, 0, 0, 0.5);
-	width: 40px;
-	height: 40px;
-	border-radius: 100%;
-	text-align: center;
-	vertical-align: middle;
-}
-#fancybox-close:after {
-	line-height: 34.5px;
-	font-size: 40px;
-	margin: 0px;
-	content: '\00D7';
-}
-#fancybox-close:hover {
-	text-decoration: none;
-}
-#fancybox-left-ico {
-	background-position: 51px -30px;
-}
-#fancybox-right-ico {
-	background-position: 51px -60px;
-	left: auto !important;
-	right: -120px !important;
-}
-#fancybox-left:hover,
-#fancybox-right:hover {
-	visibility: visible; /* IE6 */
-}
-#fancybox-left-ico:before {
-	position: absolute;
-	left: 28px;
-	top: 20px;
-	width: 0;
-	height: 0;
-	border-top: 30px solid transparent;
-	border-bottom: 30px solid transparent;
-	border-right: 30px solid rgba(255, 255, 255, 0.7);
-	content: '';
-}
-#fancybox-right-ico:before {
-	position: absolute;
-	top: 20px;
-	right: 28px;
-	width: 0;
-	height: 0;
-	border-top: 30px solid transparent;
-	border-bottom: 30px solid transparent;
-	border-left: 30px solid rgba(255, 255, 255, 0.7);
-	content: '';
 }
 
 @media only screen and (min-device-pixel-ratio: 2),
