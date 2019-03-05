@@ -48,7 +48,6 @@
 			}
 		}
 
-
 		.pics {
 			margin: 35px 60px 45px;
 			position: relative;
@@ -107,7 +106,7 @@
 					left: 0;
 					width: 10px;
 					height: 10px;
-					content: " ";
+					content: ' ';
 					border-radius: 100%;
 					background-color: black;
 					opacity: 0.25;
@@ -125,7 +124,6 @@
 					opacity: 1;
 				}
 			}
-
 		}
 
 		// pic scroller adapted from slick (github.com/kenwheeler/slick)
@@ -217,7 +215,7 @@
 					padding-right: 45px;
 
 					&:after {
-						content: "";
+						content: '';
 						width: 20px;
 						height: 20px;
 						position: absolute;
@@ -268,7 +266,12 @@
 		}
 
 		#demo-cover-background {
-			background: radial-gradient(ellipse farthest-corner at center center, rgba(255, 255, 255, 0.85) 20%, rgba(190, 190, 190, 0.97) 100%) repeat scroll 0% 0%;
+			background: radial-gradient(
+					ellipse farthest-corner at center center,
+					rgba(255, 255, 255, 0.85) 20%,
+					rgba(190, 190, 190, 0.97) 100%
+				)
+				repeat scroll 0% 0%;
 			position: absolute;
 			height: 100%;
 			width: 100%;
@@ -320,7 +323,7 @@
 						background: #0357a5;
 
 						&:after {
-							content: "";
+							content: '';
 							position: absolute;
 							width: 0;
 							height: 0;
@@ -333,7 +336,6 @@
 							margin: auto;
 						}
 					}
-
 				}
 
 				a.guide {
@@ -382,7 +384,6 @@
 				p {
 					margin-top: 0;
 					padding: 0;
-
 				}
 			}
 
@@ -467,7 +468,6 @@
 						right: 5px;
 					}
 				}
-
 			}
 
 			#pics-scroller {
@@ -513,22 +513,28 @@
 @-webkit-keyframes sk-rotatePlane {
 	0% {
 		-webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-		transform: perspective(120px) rotateX(0deg) rotateY(0deg); }
+		transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+	}
 	50% {
 		-webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-		transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg); }
+		transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+	}
 	100% {
 		-webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-		transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg); }
+		transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+	}
 }
 @keyframes sk-rotatePlane {
 	0% {
 		-webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-		transform: perspective(120px) rotateX(0deg) rotateY(0deg); }
+		transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+	}
 	50% {
 		-webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-		transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg); }
+		transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+	}
 	100% {
 		-webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-		transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg); }
+		transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+	}
 }

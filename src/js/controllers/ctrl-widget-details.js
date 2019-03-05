@@ -48,14 +48,14 @@ app.controller('widgetDetailsController', function(Please, $scope, $window, widg
 		}
 
 		const sizeNeeded = ($scope.widget.width || 700) + 150
-		$scope.maxPageWidth = sizeNeeded + "px"
+		$scope.maxPageWidth = sizeNeeded + 'px'
 		$scope.show = true
 
 		if (widget.meta_data['about'] === 'undefined') {
 			$scope.widget.about = 'No description available.'
 		}
 
-		$scope.widget.screenshots = SCREENSHOT_AMOUNT.map( i => {
+		$scope.widget.screenshots = SCREENSHOT_AMOUNT.map(i => {
 			return {
 				full: Materia.Image.screenshotUrl(widget.dir, i),
 				thumb: Materia.Image.screenshotThumbUrl(widget.dir, i)
@@ -72,12 +72,12 @@ app.controller('widgetDetailsController', function(Please, $scope, $window, widg
 		}
 		// 150 in padding/margins needed
 		const sizeNeeded = ($scope.widget.width || 700) + 150
-		$scope.maxPageWidth = sizeNeeded + "px"
+		$scope.maxPageWidth = sizeNeeded + 'px'
 		const userWidth = document.documentElement.clientWidth
 		return userWidth > sizeNeeded
 	}
 
-	const _pics = document.getElementById("pics-scroller")
+	const _pics = document.getElementById('pics-scroller')
 	const _hammer = new Hammer(_pics)
 	let _offset = 0
 	_hammer.on('pan', e => {
@@ -94,9 +94,9 @@ app.controller('widgetDetailsController', function(Please, $scope, $window, widg
 		if (x > 0) x = x / 10 // overflow left
 
 		const rightEdge = _pics.children[3].offsetLeft * -1
-		x = Math.max(x, rightEdge + (x-rightEdge)/10) // overflow right
+		x = Math.max(x, rightEdge + (x - rightEdge) / 10) // overflow right
 
-		_pics.style.transition = ""
+		_pics.style.transition = ''
 		_pics.style.transform = `translate3D(${x}px, 0, 0)`
 
 		// snap to the closest image when released
@@ -121,7 +121,7 @@ app.controller('widgetDetailsController', function(Please, $scope, $window, widg
 		}
 
 		_pics.style.transform = `translate3D(${_offset}px, 0, 0)`
-		_pics.style.transition = animate ? "ease transform 500ms" : ""
+		_pics.style.transition = animate ? 'ease transform 500ms' : ''
 		Please.$apply()
 	}
 
@@ -131,7 +131,7 @@ app.controller('widgetDetailsController', function(Please, $scope, $window, widg
 		if (_pics.children.length && _pics.children[i]) {
 			_offset = _pics.children[i].offsetLeft * -1
 			_pics.style.transform = `translate3D(${_offset}px, 0, 0)`
-			_pics.style.transition = "ease transform 500ms"
+			_pics.style.transition = 'ease transform 500ms'
 		}
 	}
 
@@ -142,20 +142,22 @@ app.controller('widgetDetailsController', function(Please, $scope, $window, widg
 	$scope.selectedImage = 0
 	$scope.showDemoClicked = () => {
 		if (isWideEnough()) {
-			$scope.demoHeight = ($scope.widget.height + 48) + "px"
-			$scope.demoWidth = ($scope.widget.width + 10) + "px"
+			$scope.demoHeight = $scope.widget.height + 48 + 'px'
+			$scope.demoWidth = $scope.widget.width + 10 + 'px'
 			$scope.showDemoCover = false
 
 			// don't show player's onbeforeunload dialog
-			setTimeout(() => {window.onbeforeunload = () => undefined}, 10)
+			setTimeout(() => {
+				window.onbeforeunload = () => undefined
+			}, 10)
 		} else {
 			$window.location = $scope.widget.demourl
 		}
 	}
 
-	$scope.selectImage = i => $scope.selectedImage = i
-	$scope.nextImage = i => $scope.selectedImage = ($scope.selectedImage + 1) % 4
-	$scope.prevImage = i => $scope.selectedImage = ($scope.selectedImage + 3) % 4
+	$scope.selectImage = i => ($scope.selectedImage = i)
+	$scope.nextImage = i => ($scope.selectedImage = ($scope.selectedImage + 1) % 4)
+	$scope.prevImage = i => ($scope.selectedImage = ($scope.selectedImage + 3) % 4)
 	$scope.$watch('selectedImage', snapToImage)
 	window.onresize = () => snapClosest(_offset, false)
 
