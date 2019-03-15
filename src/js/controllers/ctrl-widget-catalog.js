@@ -13,7 +13,6 @@ if (window.location.href.includes('/widgets') && !window.location.href.includes(
 app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location, widgetSrv) {
 	const filterList = {}
 	const mapCleanToFilter = {} // key is clean name, value is filter object
-	let featuredWidgets = []
 	const displayedWidgets = []
 	let allWidgets = []
 
@@ -109,11 +108,9 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 
 		if ($scope.isFiltered) {
 			// dont display featured - place everything in widgets
-			$scope.featuredWidgets = []
 			$scope.widgets = widgets
 		} else {
 			// no filters active - show the featured list
-			$scope.featuredWidgets = featuredWidgets = widgets.filter(w => w.in_catalog == '1')
 			$scope.widgets = widgets.filter(w => w.in_catalog != '1')
 		}
 
@@ -145,18 +142,19 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 			})
 
 			$scope.totalWidgets = allWidgets.length
+			$scope.featuredWidgets = allWidgets.filter(w => w.in_catalog == '1')
 
 			// start watching search input
 			$scope.$watch('search', _onSearch)
-
-			// prevents animation on initial load
-			$scope.ready = true
 
 			// load the filters now because they come from the widgets
 			_getFiltersFromURL()
 
 			// update the display
 			_updateWidgetDisplay()
+
+			// prevents animation on initial load; set after initial $apply
+			$scope.ready = true
 		})
 	}
 
@@ -180,12 +178,11 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 	$scope.clearFilters = clearFilters
 	$scope.clearFiltersAndSearch = clearFiltersAndSearch
 	$scope.toggleFilter = toggleFilter
-	$scope.featuredWidgets = featuredWidgets
 	$scope.widgets = []
 	$scope.filters = filterList
 	$scope.isFiltered = false
 
-	// with html mode is on, angular  processes location changes
+	// with html mode is on, angular processes location changes
 	// We have to manually change url when needed
 	$scope.$on('$locationChangeStart', (e, newUrl) => {
 		if (!newUrl.includes('/widgets') || newUrl.includes('-')) {
