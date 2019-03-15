@@ -165,5 +165,10 @@ module.exports = {
   },
   plugins: [
     new ExtractTextPlugin('[name]'), // pull the css out of webpack
-  ]
+  ],
+  resolve: {
+      alias: {
+          'node_modules': path.join(__dirname, 'node_modules')
+      }
+  }
 };

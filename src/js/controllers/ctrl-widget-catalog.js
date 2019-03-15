@@ -1,3 +1,4 @@
+import toSnakeCase from 'node_modules/js-snakecase'
 const app = angular.module('materia')
 
 if (window.location.href.includes('/widgets') && !window.location.href.includes('-')) {
@@ -10,151 +11,187 @@ if (window.location.href.includes('/widgets') && !window.location.href.includes(
 }
 
 app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location, widgetSrv) {
-	$scope.displayAll = false
-	$scope.widgets = []
-	$scope.query = ''
-	$scope.count = -1
-	$scope.mobileFiltersOpen = false
-	$scope.ready = false
-	$scope.filters = {
-		Scorable: {
-			active: false,
-			text: 'Collects Scores',
-			clean: 'scorable'
-		},
-		'Mobile Friendly': {
-			active: false,
-			text: 'Mobile Friendly',
-			clean: 'mobile_friendly'
-		},
-		Media: {
-			active: false,
-			text: 'Uploadable Media',
-			clean: 'media'
-		},
-		'Question/Answer': {
-			active: false,
-			text: 'Question/Answer',
-			clean: 'question_answer'
-		},
-		'Multiple Choice': {
-			active: false,
-			text: 'Multiple Choice',
-			clean: 'multiple_choice'
-		}
+	const filterList = {}
+	const mapCleanToFilter = {} // key is clean name, value is filter object
+	let featuredWidgets = []
+	const displayedWidgets = []
+	let allWidgets = []
+
+	const showFilters = () => {
+		$scope.isShowingFilters = true
 	}
 
-	const uncleanMap = {
-		scorable: 'Scorable',
-		mobile_friendly: 'Mobile Friendly',
-		media: 'Media',
-		question_answer: 'Question/Answer',
-		multiple_choice: 'Multiple Choice'
+	const clearFilters = () => {
+		// set all filters to false
+		Object.values(filterList).forEach(filter => setFilter(filter, false))
+
+		// close the filters list
+		$scope.isShowingFilters = false
+
+		// redraw
+		_updateWidgetDisplay()
 	}
 
-	$scope.toggleDisplayAll = () => {
-		$scope.displayAll = !$scope.displayAll
-		const path = $scope.displayAll ? 'widgets/all' : 'widgets'
-		$location.path(path).replace()
-		resortWidgets()
-		_createGrid()
+	const clearFiltersAndSearch = () => {
+		// clear the search string
+		$scope.search = ''
+
+		// clearFilters will redraw and clear filters
+		clearFilters()
 	}
 
-	const resortWidgets = () => {
-		$scope.widgets = $scope[$scope.displayAll ? 'alphabetical' : 'featuredFirst']
+	const toggleFilter = (filterName, createGrid = true) => {
+		const filter = filterList[filterName]
+		setFilter(filter, !filter.isActive)
+		if (createGrid) _updateWidgetDisplay()
 	}
 
-	$scope.toggleFeature = feature => {
-		$scope.filters[feature].active = !$scope.filters[feature].active
-		const val = $scope.filters[feature].active || null
-		const cleanName = $scope.filters[feature].clean
+	const setFilter = (filter, value) => {
+		filter.isActive = value
+		const val = filter.isActive || null
+		const cleanName = filter.clean
 		$location.search(cleanName, val).replace()
-		_createGrid()
+	}
+
+	const _registerFilter = (name, appendLabel = '') => {
+		const clean = toSnakeCase(name)
+		const filter = {
+			isActive: false,
+			text: `${name}${appendLabel}`,
+			clean
+		}
+		filterList[name] = filter
+		mapCleanToFilter[clean] = filter
+		return filter
+	}
+
+	const _getFiltersFromWidgets = widgets => {
+		widgets.forEach(widget => {
+			widget.meta_data.features.forEach(feature => {
+				if (filterList.hasOwnProperty(feature)) return
+				_registerFilter(feature)
+			})
+			widget.meta_data.supported_data.forEach(data => {
+				if (filterList.hasOwnProperty(data)) return
+				_registerFilter(data, ' Questions')
+			})
+		})
 	}
 
 	// checks filters and returns true if the widget should be shown, false if filtered out
-	const _showWidget = widget => {
+	const _isWidgetVisible = widget => {
 		const wFeatures = widget.meta_data.features
 		const wSupport = widget.meta_data.supported_data
 
-		for (let filterName in $scope.filters) {
-			const filterOn = $scope.filters[filterName].active
+		// check for filter matches
+		for (let filterName in filterList) {
+			const isActive = filterList[filterName].isActive
 
-			if (filterOn && !wFeatures.includes(filterName) && !wSupport.includes(filterName)) {
+			if (isActive && !wFeatures.includes(filterName) && !wSupport.includes(filterName)) {
 				return false
 			}
 		}
 
-		if ($scope.query.length) {
-			const re = new RegExp($scope.query, 'i')
+		// check for search matches
+		if ($scope.search.length) {
+			const re = new RegExp($scope.search, 'i')
 			return re.test(widget.name)
 		}
 
 		return true
 	}
 
-	const _createGrid = () => {
-		$scope.count = 0
-		for (let widget of $scope.widgets) {
-			if (_showWidget(widget)) {
-				widget.visible = true
-				$scope.count++
-			} else {
-				widget.visible = false
-			}
-		}
+	const _updateWidgetDisplay = () => {
+		const widgets = allWidgets.filter(w => _isWidgetVisible(w))
+		$scope.count = widgets.length
+		$scope.activeFilters = Object.keys(filterList).filter(key => filterList[key].isActive)
+		$scope.isFiltered = widgets.length != allWidgets.length
 
-		$scope.activeFilters = Object.keys($scope.filters).filter(key => $scope.filters[key].active)
+		if ($scope.isFiltered) {
+			// dont display featured - place everything in widgets
+			$scope.featuredWidgets = []
+			$scope.widgets = widgets
+		} else {
+			// no filters active - show the featured list
+			$scope.featuredWidgets = featuredWidgets = widgets.filter(w => w.in_catalog == '1')
+			$scope.widgets = widgets.filter(w => w.in_catalog != '1')
+		}
 
 		Please.$apply()
 	}
 
-	const _updateQuery = () => {
-		const val = $scope.query || null
-		$location.search('query', val).replace()
-		_createGrid()
+	const _updateSearchFilter = () => {
+		const val = $scope.search || null
+		$location.search('search', val).replace()
 	}
 
-	// load list of widgets
-	widgetSrv.getWidgetsByType('all').then(widgets => {
-		if (!widgets || !widgets.length || !widgets.length > 0) {
-			return
-		}
-		widgets.forEach(widget => {
-			widget.icon = Materia.Image.iconUrl(widget.dir, 275)
+	const _onSearch = () => {
+		_updateSearchFilter()
+		_updateWidgetDisplay()
+	}
+
+	const _loadWidgets = () => {
+		// load list of widgets
+		widgetSrv.getWidgetsByType('all').then(widgets => {
+			if (!widgets || !widgets.length || !widgets.length > 0) {
+				return
+			}
+			allWidgets = widgets
+			_getFiltersFromWidgets(widgets)
+
+			// memoize icon paths
+			widgets.forEach(widget => {
+				widget.icon = Materia.Image.iconUrl(widget.dir, 275)
+			})
+
+			$scope.totalWidgets = allWidgets.length
+
+			// start watching search input
+			$scope.$watch('search', _onSearch)
+
+			// prevents animation on initial load
+			$scope.ready = true
+
+			// load the filters now because they come from the widgets
+			_getFiltersFromURL()
+
+			// update the display
+			_updateWidgetDisplay()
 		})
+	}
 
-		const featured = widgets.filter(w => w.in_catalog == '1')
-		const notFeatured = widgets.filter(w => w.in_catalog == '0')
-		$scope.featuredFirst = [...featured, ...notFeatured]
-		$scope.alphabetical = widgets
-		resortWidgets()
-
-		$scope.$watch('query', _updateQuery)
-		_createGrid()
-		$scope.ready = true // prevents animation on initial load
-	})
-
-	// load filters from url
-	for (let key in $location.search()) {
-		if (key == 'query') {
-			$scope.query = $location.search().query
-		} else if (uncleanMap[key]) {
-			$scope.filters[uncleanMap[key]].active = true
+	const _getFiltersFromURL = () => {
+		for (let key in $location.search()) {
+			if (key == 'search') {
+				$scope.search = $location.search().search
+			} else if (mapCleanToFilter[key]) {
+				mapCleanToFilter[key].isActive = true
+				$scope.isShowingFilters = true
+			}
 		}
 	}
 
-	if ($location.path().includes('all')) {
-		$scope.displayAll = true
-	}
+	$scope.search = ''
+	$scope.totalWidgets = -1
+	$scope.isShowingFilters = false
+	$scope.ready = false
+	$scope.activeFilters = []
+	$scope.showFilters = showFilters
+	$scope.clearFilters = clearFilters
+	$scope.clearFiltersAndSearch = clearFiltersAndSearch
+	$scope.toggleFilter = toggleFilter
+	$scope.featuredWidgets = featuredWidgets
+	$scope.widgets = []
+	$scope.filters = filterList
+	$scope.isFiltered = false
 
-	$scope.activeFilters = Object.keys($scope.filters).filter(key => $scope.filters[key].active)
-
-	// with html mode is on, angular will have to process all location changes
-	// means we have to manually change url when needed
+	// with html mode is on, angular  processes location changes
+	// We have to manually change url when needed
 	$scope.$on('$locationChangeStart', (e, newUrl) => {
 		if (!newUrl.includes('/widgets') || newUrl.includes('-')) {
 			$window.location = newUrl
 		}
 	})
+
+	_loadWidgets()
 })

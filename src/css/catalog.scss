@@ -11,6 +11,7 @@
 		box-shadow: 1px 3px 10px #888;
 		width: 96%;
 		max-width: 1500px;
+		overflow: hidden;
 	}
 
 	.mobile-only {
@@ -21,21 +22,35 @@
 		background: #eee;
 		color: #6c6c6c;
 		padding: 10px 15px;
-		display: flex;
-		justify-content: space-between;
+		position: relative;
+		z-index: 2;
 
 		h1 {
 			margin: 0;
+			display: inline-block;
+		}
+
+		.filter-toggle {
+			display: inline-block;
+			position: absolute;
+			right: 212px;
+			top: 5px;
+			font-size: 0.8em;
+			margin: 10px 15px;
 		}
 
 		.search {
-			position: relative;
+			position: absolute;
 			padding-bottom: 30px;
 			width: 215px;
+			max-width: 42%;
+			right: 10px;
+			top: 10px;
 
 			.search-icon {
 				position: absolute;
-				margin: 5px 0px 0px 12px;
+				top: 5px;
+				left: 6px;
 				height: 16px;
 				width: 20px;
 				background: url('../../../../img/magnifyingglass.png') 5px 50% no-repeat;
@@ -43,7 +58,7 @@
 
 			.search-close {
 				position: absolute;
-				right: 10px;
+				right: 6px;
 				margin-top: 3px;
 				color: rgb(221, 221, 221);
 				cursor: pointer;
@@ -53,7 +68,7 @@
 				position: absolute;
 				border: none;
 				outline: none;
-				width: 165px;
+				width: calc(100% - 48px);
 				left: 35px;
 				background: transparent;
 				padding-top: 4px;
@@ -65,9 +80,9 @@
 
 			.textbox-background {
 				position: absolute;
-				width: 205px;
+				width: 100%;
 				height: 25px;
-				left: 9px;
+				left: 0;
 				background: #fff;
 				border: solid 1px #b0b0b0;
 				border-radius: 12px;
@@ -75,65 +90,38 @@
 		}
 	}
 
-	#featured-first {
-		text-align: center;
-
-		button {
-			border: none;
-			background: #eee;
-			color: black;
-			border-radius: 3px;
-			font-size: 16px;
-			padding: 8px 20px;
-			margin: 5px;
-			outline: none;
-			cursor: pointer;
-
-			&:focus {
-				text-decoration: underline;
-			}
-		}
-
-		div {
-			display: inline-block;
-			width: 32px;
-			height: 15px;
-			border-radius: 10px;
-			margin-left: 5px;
-			background: #bbb;
-			border: 1px solid #999;
-			position: relative;
-			top: 1px;
-
-			&:after {
-				content: '';
-				position: absolute;
-				height: 13px;
-				width: 17px;
-				background: white;
-				top: 1px;
-				left: 1px;
-				border-radius: 10px;
-				transition: all ease 0.3s;
-			}
-
-			&.on {
-				background: #3498db;
-				border-color: #555;
-
-				&:after {
-					left: 14px;
-				}
-			}
-		}
+	.cancel_button {
+		display: inline-block;
+		background: none;
+		border: 0;
+		color: #3690e6;
+		margin: 0;
+		font-size: 0.9em;
 	}
 
 	#filters-container {
+		z-index: 1;
 		display: flex;
 		justify-content: space-between;
 		flex-direction: column;
-		padding: 10px 15px;
+		padding: 10px;
 		position: relative;
+		background: #d1d1d1;
+
+		&.ng-enter,
+		&.ng-leave {
+			transition: all 0.2s;
+		}
+
+		&.ng-enter,
+		&.ng-leave.ng-leave-active {
+			margin-top: -100px;
+		}
+
+		&.ng-leave,
+		&.ng-enter.ng-enter-active {
+			margin-top: 0;
+		}
 
 		legend {
 			text-align: left;
@@ -144,6 +132,8 @@
 
 		.filter-labels-container {
 			display: flex;
+			justify-content: center;
+			flex-wrap: wrap;
 
 			button {
 				padding: 10px 12px;
@@ -152,26 +142,18 @@
 				background: white;
 				position: relative;
 
-				&:last-of-type {
-					border-radius: 0 3px 3px 0;
-				}
-
-				&:first-of-type {
-					border-radius: 3px 0 0 3px;
-				}
-
-				&:not(:first-child) {
-					margin-left: -3px;
-				}
-
-				&:hover {
-					cursor: pointer;
-					text-decoration: underline;
-				}
-
 				&.feature-button {
-					border: 1px solid #3498db;
-					color: #3498db;
+					cursor: pointer;
+					background: #f2f2f2;
+					border: 0;
+					margin: 3px 3px;
+					border-radius: 5px;
+					padding: 8px 10px;
+
+					&:hover {
+						background: #95d0f9;
+						color: white;
+					}
 
 					&.selected {
 						background: #3498db;
@@ -192,14 +174,36 @@
 		font-style: italic;
 	}
 
-	#widgets-container {
-		padding: 10px 0;
+	.widget-group {
+		border: 1px dashed #c6c6c9;
+		margin: 31px 10px 0;
+		border-radius: 17px;
+
+		.container-label {
+			margin-top: -14px;
+			font-size: 1.3em;
+			color: #a0a0a0;
+			text-align: center;
+
+			span {
+				padding: 0 20px;
+				display: inline-block;
+				background: white;
+			}
+		}
+	}
+
+	.widgets-container {
 		position: relative;
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+
+		&:not(.featured) {
+			margin: 22px 10px;
+		}
 
 		.widget {
-			min-width: 400px;
+			min-width: 300px;
 			min-height: 135px;
 			margin: 15px;
 			border-radius: 5px;
@@ -312,8 +316,13 @@
 						font-size: 10px;
 
 						&.supported-feature {
-							background: #bfe5ff;
+							background: #eeeeee;
 							color: #444;
+
+							&.selected {
+								background: #3498db;
+								color: white;
+							}
 						}
 					}
 				}
@@ -333,14 +342,14 @@
 		#filters-container {
 			padding: 10px 5px;
 			text-align: center;
-			margin: auto 10px;
+			margin: auto 0;
 
 			legend {
 				font-size: 14px;
 			}
 		}
 
-		#widgets-container {
+		.widgets-container {
 			grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
 
 			.widget {
@@ -390,19 +399,26 @@
 
 @media (max-width: 720px) {
 	.catalog {
+		.desktop-only {
+			display: none !important;
+		}
+
 		.mobile-only {
 			display: block;
 		}
 
+		section.page {
+			overflow: visible;
+		}
+
 		.top {
 			flex-direction: column;
-			text-align: center;
 			position: relative;
 			padding: 10px 15px 5px;
 
 			.search {
 				margin: auto;
-				padding-top: 10px;
+				padding-top: 0;
 			}
 		}
 
@@ -454,37 +470,12 @@
 			}
 		}
 
-		#featured-first {
-			text-align: center;
-			position: static;
-
-			button {
-				font-size: 13px;
-				padding: 5px 12px;
-			}
-
-			div {
-				width: 25px;
-				height: 13px;
-				margin-left: 3px;
-
-				&:after {
-					height: 11px;
-					width: 14px;
-				}
-
-				&.on:after {
-					left: 10px;
-				}
-			}
-		}
-
 		#filters-container {
 			display: none;
 		}
 
-		#widgets-container {
-			grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+		.widgets-container {
+			grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
 
 			.widget {
 				min-width: 150px;

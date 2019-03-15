@@ -3763,6 +3763,11 @@ js-base64@^2.1.8, js-base64@^2.1.9:
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.4.3.tgz#2e545ec2b0f2957f41356510205214e98fad6582"
   integrity sha512-H7ErYLM34CvDMto3GbD6xD0JLUGYXR3QTcH6B/tr4Hi/QpSThnCsIp+Sy5FRTw3B0d6py4HcNkW7nO/wdtGWEw==
 
+js-snakecase@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/js-snakecase/-/js-snakecase-1.2.0.tgz#61cf6f3d2e931757a49ce05197e9acd1448192b8"
+  integrity sha512-2XYxKNXlue3JpUYYhT5hfI87Z57hLm1n1AdVhqhxDX1NxupWrz9PqLToFgXLh1tYe4KVSVX1qyR+1jPe1bEjsg==
+
 js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
