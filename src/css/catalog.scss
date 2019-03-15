@@ -43,7 +43,7 @@
 			position: absolute;
 			width: 215px;
 			max-width: 42%;
-			right: 10PX;
+			right: 10px;
 			top: 10px;
 
 			.search-icon {
@@ -53,13 +53,13 @@
 				height: 16px;
 				width: 20px;
 				fill: #898686;
-				svg{
+				svg {
 					height: 100%;
 					width: 100%;
 				}
 
-				&.not-empty{
-					fill: rgba(255,255,255,.8);
+				&.not-empty {
+					fill: rgba(255, 255, 255, 0.8);
 				}
 			}
 
@@ -72,9 +72,9 @@
 				height: 0px;
 				top: 8px;
 				right: 15px;
-				opacity: .8;
+				opacity: 0.8;
 
-				&:hover{
+				&:hover {
 					opacity: 1;
 				}
 
@@ -89,7 +89,7 @@
 					transform: rotate(45deg);
 				}
 
-				&:after{
+				&:after {
 					transform: rotate(-45deg);
 				}
 			}
@@ -109,12 +109,11 @@
 				&::-ms-clear {
 					display: none;
 				}
-				&.ng-not-empty{
+				&.ng-not-empty {
 					background: #3498db;
 					color: white;
 				}
 			}
-
 		}
 	}
 
@@ -132,36 +131,29 @@
 		display: flex;
 		justify-content: space-between;
 		flex-direction: column;
-		padding: 10px;
 		position: relative;
 		background: #d1d1d1;
+		overflow: hidden;
 
-		&.ng-enter,
-		&.ng-leave {
-			transition: all 0.2s;
+		&.ready {
+			transition: all 0.3s ease;
 		}
 
 		&.ng-enter,
 		&.ng-leave.ng-leave-active {
-			margin-top: -50px;
+			max-height: 0;
 		}
 
 		&.ng-leave,
 		&.ng-enter.ng-enter-active {
-			margin-top: 0;
-		}
-
-		legend {
-			text-align: left;
-			color: #555;
-			margin-bottom: 3px;
-			margin-left: -2px;
+			max-height: 200px;
 		}
 
 		.filter-labels-container {
 			display: flex;
 			justify-content: center;
 			flex-wrap: wrap;
+			margin: 10px;
 
 			button {
 				padding: 10px 12px;
@@ -179,17 +171,12 @@
 					padding: 8px 10px;
 
 					&:hover {
-						background: #95d0f9;
-						color: white;
+						background: #bfe5ff;
 					}
 
 					&.selected {
 						background: #3498db;
 						color: white;
-
-						+ .selected {
-							border-left-color: white;
-						}
 					}
 				}
 			}
@@ -249,16 +236,19 @@
 			}
 
 			&.ready {
-				&.ng-hide-add,
-				&.ng-hide-remove {
-					transition-duration: 250ms;
-					transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-				}
+				transition: all ease 250ms;
 			}
 
-			&.ng-hide {
+			&.ng-enter,
+			&.ng-leave.ng-leave-active {
 				opacity: 0;
 				transform: scale(0.1);
+			}
+
+			&.ng-enter.ng-enter-active,
+			&.ng-leave {
+				opacity: 1;
+				transform: none;
 			}
 
 			.infocard {
@@ -327,7 +317,7 @@
 				.widget-info {
 					margin-left: 135px;
 					margin-right: 5px;
-					font-size: .88em;
+					font-size: 0.88em;
 				}
 
 				dl {
@@ -370,12 +360,11 @@
 @media (max-width: 960px) {
 	.catalog {
 		#filters-container {
-			padding: 10px 5px;
 			text-align: center;
 			margin: auto 0;
 
-			legend {
-				font-size: 14px;
+			.filter-labels-container {
+				margin: 10px 5px;
 			}
 		}
 
@@ -415,7 +404,7 @@
 					}
 
 					.widget-info {
-						margin: 3px;
+						margin: 8px;
 
 						dl.features_list {
 							display: none;
@@ -448,11 +437,10 @@
 
 			.search {
 				margin: auto;
-				padding-top: 0;
 			}
 
-			h1{
-				font-size: 1.4em;
+			h1 {
+				font-size: 1.2em;
 			}
 		}
 
@@ -496,7 +484,8 @@
 			border-radius: 3px;
 			width: 190px;
 			z-index: 3;
-			left: 5px;
+			left: 10px;
+			top: 67px;
 
 			label {
 				display: block;
