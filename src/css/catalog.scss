@@ -41,52 +41,80 @@
 
 		.search {
 			position: absolute;
-			padding-bottom: 30px;
 			width: 215px;
 			max-width: 42%;
-			right: 10px;
+			right: 10PX;
 			top: 10px;
 
 			.search-icon {
 				position: absolute;
-				top: 5px;
-				left: 6px;
+				top: 6px;
+				left: 9px;
 				height: 16px;
 				width: 20px;
-				background: url('../../../../img/magnifyingglass.png') 5px 50% no-repeat;
-			}
+				fill: #898686;
+				svg{
+					height: 100%;
+					width: 100%;
+				}
 
-			.search-close {
-				position: absolute;
-				right: 6px;
-				margin-top: 3px;
-				color: rgb(221, 221, 221);
-				cursor: pointer;
-			}
-
-			.textbox {
-				position: absolute;
-				border: none;
-				outline: none;
-				width: calc(100% - 48px);
-				left: 35px;
-				background: transparent;
-				padding-top: 4px;
-				font-size: 16px;
-				&::-ms-clear {
-					display: none;
+				&.not-empty{
+					fill: rgba(255,255,255,.8);
 				}
 			}
 
-			.textbox-background {
+			.search-close {
+				cursor: pointer;
 				position: absolute;
+				border: none;
+				background: none;
+				width: 16px;
+				height: 0px;
+				top: 8px;
+				right: 15px;
+				opacity: .8;
+
+				&:hover{
+					opacity: 1;
+				}
+
+				&:before,
+				&:after {
+					position: absolute;
+					left: 8px;
+					content: ' ';
+					height: 14px;
+					width: 2px;
+					background-color: white;
+					transform: rotate(45deg);
+				}
+
+				&:after{
+					transform: rotate(-45deg);
+				}
+			}
+
+			input {
+				position: absolute;
+				box-sizing: border-box;
+				border: none;
 				width: 100%;
-				height: 25px;
-				left: 0;
+				right: 0;
+				padding: 4px 0 4px 35px;
+				font-size: 16px;
 				background: #fff;
 				border: solid 1px #b0b0b0;
 				border-radius: 12px;
+
+				&::-ms-clear {
+					display: none;
+				}
+				&.ng-not-empty{
+					background: #3498db;
+					color: white;
+				}
 			}
+
 		}
 	}
 
@@ -115,7 +143,7 @@
 
 		&.ng-enter,
 		&.ng-leave.ng-leave-active {
-			margin-top: -100px;
+			margin-top: -50px;
 		}
 
 		&.ng-leave,
@@ -247,6 +275,7 @@
 				.header {
 					float: left;
 					margin-top: -4px;
+					margin-bottom: 4px;
 					z-index: -10;
 					width: 100%;
 					box-sizing: border-box;
@@ -258,7 +287,7 @@
 						display: block;
 						font-size: 18px;
 						font-family: 'Lato-Black', arial, serif;
-						margin: 10px 5px 2px;
+						margin: 7px 5px 5px;
 						color: #333;
 
 						&.featured {
@@ -295,9 +324,10 @@
 					}
 				}
 
-				.blurb-holder {
-					margin-left: 130px;
+				.widget-info {
+					margin-left: 135px;
 					margin-right: 5px;
+					font-size: .88em;
 				}
 
 				dl {
@@ -384,7 +414,7 @@
 						display: inherit;
 					}
 
-					.blurb-holder {
+					.widget-info {
 						margin: 3px;
 
 						dl.features_list {
@@ -419,6 +449,10 @@
 			.search {
 				margin: auto;
 				padding-top: 0;
+			}
+
+			h1{
+				font-size: 1.4em;
 			}
 		}
 
