@@ -8,6 +8,7 @@ if (window.location.href.includes('/widgets') && !window.location.href.includes(
 			requireBase: false
 		})
 	})
+	app.requires.push('ngAnimate')
 }
 
 app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location, widgetSrv) {
