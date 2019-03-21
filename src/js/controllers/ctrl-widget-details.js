@@ -1,5 +1,14 @@
 const app = angular.module('materia')
-app.controller('widgetDetailsController', function(Please, $scope, $window, widgetSrv) {
+app.controller('widgetDetailsController', function(
+	Please,
+	$scope,
+	$window,
+	$document,
+	$timeout,
+	widgetSrv
+) {
+	let _pics
+	let _offset
 	const SCREENSHOT_AMOUNT = [1, 2, 3]
 	const nameArr = window.location.pathname.replace('/widgets/', '').split('/')
 	const widgetID = nameArr
@@ -30,8 +39,8 @@ app.controller('widgetDetailsController', function(Please, $scope, $window, widg
 	// Populates the details page with content
 	// @object The current widget.
 	const _populateDefaults = widget => {
-		const { clean_name } = widget
 		const date = new Date(widget['created_at'] * 1000)
+		$scope.test = 'abc'
 
 		$scope.widget = {
 			name: widget.name,
@@ -71,40 +80,42 @@ app.controller('widgetDetailsController', function(Please, $scope, $window, widg
 			return false // don't allow widgets with scalable width
 		}
 		// 150 in padding/margins needed
-		const sizeNeeded = ($scope.widget.width || 700) + 150
+		const sizeNeeded = $scope.widget.width + 150
 		$scope.maxPageWidth = sizeNeeded + 'px'
-		const userWidth = document.documentElement.clientWidth
+		const userWidth = $scope.getWidth()
 		return userWidth > sizeNeeded
 	}
 
-	const _pics = document.getElementById('pics-scroller')
-	const _hammer = new Hammer(_pics)
-	let _offset = 0
-	_hammer.on('pan', e => {
-		if (e.center.x == 0 && e.center.y == 0) {
-			// fixes hammer/chrome issue with touch vertical scrolling
-			// (see hammerjs issue #1050)
-			return
-		}
+	const initHammer = () => {
+		_pics = document.getElementById('pics-scroller')
+		const _hammer = new Hammer(_pics)
+		_offset = 0
+		_hammer.on('pan', e => {
+			if (e.center.x == 0 && e.center.y == 0) {
+				// fixes hammer/chrome issue with touch vertical scrolling
+				// (see hammerjs issue #1050)
+				return
+			}
 
-		// note: deltaX is positive when dragging right (ie going back)
-		let x = e.deltaX + _offset
+			// note: deltaX is positive when dragging right (ie going back)
+			let x = e.deltaX + _offset
 
-		// if the pan goes off the edge, divide the overflow amount by 10
-		if (x > 0) x = x / 10 // overflow left
+			// if the pan goes off the edge, divide the overflow amount by 10
+			if (x > 0) x = x / 10 // overflow left
 
-		const rightEdge = _pics.children[3].offsetLeft * -1
-		x = Math.max(x, rightEdge + (x - rightEdge) / 10) // overflow right
+			const rightEdge = _pics.children[3].offsetLeft * -1
+			x = Math.max(x, rightEdge + (x - rightEdge) / 10) // overflow right
 
-		_pics.style.transition = ''
-		_pics.style.transform = `translate3D(${x}px, 0, 0)`
+			_pics.style.transition = ''
+			_pics.style.transform = `translate3D(${x}px, 0, 0)`
 
-		// snap to the closest image when released
-		if (e.isFinal) {
-			_offset = x
-			snapClosest(x + e.overallVelocityX * 250)
-		}
-	})
+			// snap to the closest image when released
+			if (e.isFinal) {
+				_offset = x
+				snapClosest(x + e.overallVelocityX * 250)
+			}
+		})
+	}
 
 	const snapClosest = (x, animate = true) => {
 		if (_pics.children.length < 4) return // pics not loaded yet
@@ -135,34 +146,38 @@ app.controller('widgetDetailsController', function(Please, $scope, $window, widg
 		}
 	}
 
-	// expose to scope
-
-	$scope.widget = { icon: `${STATIC_CROSSDOMAIN}img/default/default-icon-275.png` }
-	$scope.showDemoCover = true
-	$scope.selectedImage = 0
-	$scope.showDemoClicked = () => {
+	const _showDemoClicked = () => {
 		if (isWideEnough()) {
 			$scope.demoHeight = $scope.widget.height + 48 + 'px'
 			$scope.demoWidth = $scope.widget.width + 10 + 'px'
 			$scope.showDemoCover = false
 
 			// don't show player's onbeforeunload dialog
-			setTimeout(() => {
-				window.onbeforeunload = () => undefined
+			$timeout(() => {
+				$window.onbeforeunload = () => undefined
 			}, 10)
 		} else {
 			$window.location = $scope.widget.demourl
 		}
 	}
 
+	// expose to scope
+
+	$scope.widget = { icon: `${STATIC_CROSSDOMAIN}img/default/default-icon-275.png` }
+	$scope.showDemoCover = true
+	$scope.selectedImage = 0
+	$scope.showDemoClicked = _showDemoClicked
+
 	$scope.selectImage = i => ($scope.selectedImage = i)
 	$scope.nextImage = i => ($scope.selectedImage = ($scope.selectedImage + 1) % 4)
 	$scope.prevImage = i => ($scope.selectedImage = ($scope.selectedImage + 3) % 4)
 	$scope.$watch('selectedImage', snapToImage)
-	window.onresize = () => snapClosest(_offset, false)
+	$window.onresize = () => snapClosest(_offset, false)
+	$scope.getWidth = () => $document[0].documentElement.clientWidth
 
 	// initialize
 
+	initHammer()
 	widgetSrv.getWidgetInfo(widgetID).then(widget => {
 		_populateDefaults(widget)
 	})
