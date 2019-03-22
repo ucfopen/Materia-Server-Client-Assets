@@ -188,6 +188,12 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 	$scope.$on('$locationChangeStart', (e, newUrl) => {
 		if (!newUrl.includes('/widgets') || newUrl.includes('-')) {
 			$window.location = newUrl
+		} else if ($scope.totalWidgets != -1) {
+			// handles the "Widget Catalog" link in the header
+			const urlParamCount = Object.keys($location.search()).length
+			if (urlParamCount == 0) {
+				clearFiltersAndSearch()
+			}
 		}
 	})
 
