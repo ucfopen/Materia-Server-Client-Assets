@@ -2,7 +2,7 @@ import toSnakeCase from 'js-snakecase'
 
 const app = angular.module('materia')
 
-if (window.location.href.includes('/widgets') && !window.location.href.includes('-')) {
+if (window.location.href.match(/\/widgets($|\/\D|\?)/g)) {
 	app.config(function($locationProvider) {
 		$locationProvider.html5Mode({
 			enabled: true,
@@ -22,17 +22,17 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 		$scope.isShowingFilters = true
 	}
 
-	const clearFilters = () => {
+	const clearFilters = (hideFilters = true) => {
 		// set all filters to false
 		Object.values(filterList).forEach(filter => setFilter(filter, false))
 
-		$scope.isShowingFilters = false
+		if (hideFilters) $scope.isShowingFilters = false
 		_updateWidgetDisplay()
 	}
 
-	const clearFiltersAndSearch = () => {
+	const clearFiltersAndSearch = (hideFilters = true) => {
 		$scope.search = ''
-		clearFilters()
+		clearFilters(hideFilters)
 	}
 
 	const toggleFilter = (filterName, createGrid = true) => {
@@ -173,13 +173,13 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 	// with html mode on, angular processes location changes
 	// We have to manually change url when needed
 	$scope.$on('$locationChangeStart', (e, newUrl) => {
-		if (!newUrl.includes('/widgets') || newUrl.includes('-')) {
+		if (!newUrl.match(/\/widgets($|\/\D|\?)/g)) {
 			$window.location = newUrl
 		} else if ($scope.totalWidgets != -1) {
 			// handles the "Widget Catalog" link in the header
 			const urlParamCount = Object.keys($location.search()).length
 			if (urlParamCount == 0) {
-				clearFiltersAndSearch()
+				clearFiltersAndSearch(false)
 			}
 		}
 	})
