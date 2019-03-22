@@ -1,4 +1,5 @@
-import toSnakeCase from 'node_modules/js-snakecase'
+import toSnakeCase from 'js-snakecase'
+
 const app = angular.module('materia')
 
 if (window.location.href.includes('/widgets') && !window.location.href.includes('-')) {
