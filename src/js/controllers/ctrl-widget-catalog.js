@@ -25,18 +25,12 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 		// set all filters to false
 		Object.values(filterList).forEach(filter => setFilter(filter, false))
 
-		// close the filters list
 		$scope.isShowingFilters = false
-
-		// redraw
 		_updateWidgetDisplay()
 	}
 
 	const clearFiltersAndSearch = () => {
-		// clear the search string
 		$scope.search = ''
-
-		// clearFilters will redraw and clear filters
 		clearFilters()
 	}
 
@@ -62,18 +56,15 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 		}
 		filterList[name] = filter
 		mapCleanToFilter[clean] = filter
-		return filter
 	}
 
 	const _getFiltersFromWidgets = widgets => {
 		widgets.forEach(widget => {
 			widget.meta_data.features.forEach(feature => {
-				if (filterList.hasOwnProperty(feature)) return
-				_registerFilter(feature)
+				if (!filterList.hasOwnProperty(feature)) _registerFilter(feature)
 			})
 			widget.meta_data.supported_data.forEach(data => {
-				if (filterList.hasOwnProperty(data)) return
-				_registerFilter(data, ' Questions')
+				if (!filterList.hasOwnProperty(data)) _registerFilter(data, ' Questions')
 			})
 		})
 	}
@@ -108,7 +99,7 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 		$scope.isFiltered = widgets.length != allWidgets.length
 
 		if ($scope.isFiltered) {
-			// dont display featured - place everything in widgets
+			// don't display featured - place everything in widgets
 			$scope.widgets = widgets
 		} else {
 			// no filters active - show the featured list
@@ -118,13 +109,9 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 		Please.$apply()
 	}
 
-	const _updateSearchFilter = () => {
+	const _onSearch = () => {
 		const val = $scope.search || null
 		$location.search('search', val).replace()
-	}
-
-	const _onSearch = () => {
-		_updateSearchFilter()
 		_updateWidgetDisplay()
 	}
 
@@ -151,7 +138,6 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 			// load the filters now because they come from the widgets
 			_getFiltersFromURL()
 
-			// update the display
 			_updateWidgetDisplay()
 
 			// prevents animation on initial load; set after initial $apply
@@ -183,7 +169,7 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 	$scope.filters = filterList
 	$scope.isFiltered = false
 
-	// with html mode is on, angular processes location changes
+	// with html mode on, angular processes location changes
 	// We have to manually change url when needed
 	$scope.$on('$locationChangeStart', (e, newUrl) => {
 		if (!newUrl.includes('/widgets') || newUrl.includes('-')) {
