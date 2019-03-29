@@ -24,7 +24,9 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 
 	const clearFilters = (hideFilters = true) => {
 		// set all filters to false
-		Object.values(filterList).forEach(filter => setFilter(filter, false))
+		for (let filter in filterList) {
+			setFilter(filterList[filter], false)
+		}
 
 		if (hideFilters) $scope.isShowingFilters = false
 		_updateWidgetDisplay()
@@ -35,16 +37,16 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 		clearFilters(hideFilters)
 	}
 
-	const toggleFilter = (filterName, createGrid = true) => {
+	const toggleFilter = filterName => {
 		const filter = filterList[filterName]
 		setFilter(filter, !filter.isActive)
-		if (createGrid) _updateWidgetDisplay()
+		_updateWidgetDisplay()
 	}
 
 	const setFilter = (filter, value) => {
 		filter.isActive = value
-		const val = filter.isActive || null
 		const cleanName = filter.clean
+		const val = filter.isActive || null
 		$location.search(cleanName, val).replace()
 	}
 
@@ -185,4 +187,11 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 	})
 
 	_loadWidgets()
+
+	/* develblock:start */
+	// these method are exposed for testing
+	$scope.jestTest = {
+		getLocalVar: name => eval(name)
+	}
+	/* develblock:end */
 })
