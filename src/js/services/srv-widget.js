@@ -233,6 +233,10 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		}
 	}
 
+	const canBePublishedByCurrentUser = widget_id => {
+		return selectedWidgetSrv.getPublishPermission(widget_id)
+	}
+
 	return {
 		getWidgets,
 		getWidgetsByType,
@@ -245,6 +249,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		selectWidgetFromHashUrl,
 		convertAvailibilityDates,
 		copyWidget,
-		deleteWidget
+		deleteWidget,
+		canBePublishedByCurrentUser
 	}
 })
