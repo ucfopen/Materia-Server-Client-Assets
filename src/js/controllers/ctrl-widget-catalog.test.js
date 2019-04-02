@@ -5,6 +5,7 @@ describe('widgetCatalogController', () => {
 	var $rootScope
 	var $scope
 	var $window
+	var $location
 	var $timeout
 	var location
 	var sendMock
@@ -34,7 +35,7 @@ describe('widgetCatalogController', () => {
 			demo: '2',
 			excerpt: 'more information about the widget',
 			features: ['feature2', 'feature3'],
-			supported_data: ['supported2']
+			supported_data: ['supported1', 'supported2']
 		},
 		name: 'widget2'
 	}
@@ -68,7 +69,8 @@ describe('widgetCatalogController', () => {
 		app.factory('$window', () => mockWindow)
 
 		// manually set the url
-		window.history.pushState({}, '', 'http://localhost/widgets')
+		const mockUrl = 'http://localhost/widgets?customizable&search=widget&fake_feature'
+		window.history.pushState({}, '', mockUrl)
 
 		require('../materia-namespace')
 		require('../materia-constants')
@@ -103,10 +105,11 @@ describe('widgetCatalogController', () => {
 			return deferred.promise
 		})
 
-		inject((_$controller_, _$window_, _$timeout_, _$q_, _$rootScope_) => {
+		inject((_$controller_, _$window_, _$timeout_, _$location_, _$q_, _$rootScope_) => {
 			$controller = _$controller_
 			$window = _$window_
 			$timeout = _$timeout_
+			$location = _$location_
 			$q = _$q_
 			$rootScope = _$rootScope_
 		})
@@ -115,6 +118,16 @@ describe('widgetCatalogController', () => {
 			$watch: jest.fn(),
 			$on: jest.fn()
 		}
+
+		// mock to get/set url params
+		$location.search = jest.fn((key, val) => {
+			if (!key) {
+				return { feature1: true, search: 'widget', fake_feature: true }
+			}
+			return {
+				replace: jest.fn()
+			}
+		})
 
 		var controller = $controller('widgetCatalogCtrl', { $scope })
 		$timeout.flush()
@@ -139,19 +152,19 @@ describe('widgetCatalogController', () => {
 		// the widgets were requested
 		expect(sendMock).toHaveBeenCalledTimes(1)
 
-		//the defaults are still default
-		expect($scope.search).toBe('')
+		// initial state set based on url params
+		expect($scope.search).toBe('widget')
 		expect($scope.ready).toBe(true)
-		expect($scope.isShowingFilters).toBe(false)
-		expect($scope.activeFilters).toEqual([])
-		expect($scope.isFiltered).toBe(false)
+		expect($scope.isShowingFilters).toBe(true)
+		expect($scope.activeFilters).toEqual(['feature1'])
+		expect($scope.isFiltered).toBe(true)
 
 		// widgets sent back from the API are mocked above - just do a quick check to make sure we have what we need
 		expect($scope.totalWidgets).toBe(3)
 		expect($scope.featuredWidgets).toContain(widget1)
 		expect($scope.featuredWidgets.length).toBe(1)
-		expect($scope.widgets).toContain(widget2)
-		expect($scope.widgets.length).toBe(2)
+		expect($scope.widgets).toContain(widget1)
+		expect($scope.widgets.length).toBe(1)
 
 		//available filters should be constructed from widget metadata
 		const numFilters = Object.keys($scope.filters).length
@@ -177,18 +190,7 @@ describe('widgetCatalogController', () => {
 	})
 
 	it('filters out widgets correctly', () => {
-		// expect all the filters to be false
-		for (let filterName in $scope.filters) {
-			expect($scope.filters[filterName].isActive).toBe(false)
-		}
-		expect($scope.isFiltered).toBe(false)
-		expect($scope.widgets.length).toBe(2)
-		expect($scope.widgets[0].name).toBe('widget2')
-		expect($scope.widgets[1].name).toBe('widget3')
-
-		$scope.toggleFilter('feature1')
-
-		// make sure only the one filter was affected
+		// expect all the filters to be false except 'feature1'
 		for (let filterName in $scope.filters) {
 			expect($scope.filters[filterName].isActive).toBe(filterName == 'feature1')
 		}
@@ -196,42 +198,42 @@ describe('widgetCatalogController', () => {
 		expect($scope.widgets.length).toBe(1)
 		expect($scope.widgets[0].name).toBe('widget1')
 
-		// toggle again, so everything should be back to false
+		// turn off that filter
+		$scope.toggleFilter('feature1')
+
+		// now all the filters are off (except search='widget')
+		for (let filterName in $scope.filters) {
+			expect($scope.filters[filterName].isActive).toBe(false)
+		}
+
+		// even though there is a search query set, it doesn't filter anything out
+		// so isFiltered stays false
+		expect($scope.search).toBe('widget')
+		expect($scope.isFiltered).toBe(false)
+
+		expect($scope.featuredWidgets.length).toBe(1)
+		expect($scope.featuredWidgets[0].name).toBe('widget1')
+		expect($scope.widgets.length).toBe(2)
+		expect($scope.widgets[0].name).toBe('widget2')
+		expect($scope.widgets[1].name).toBe('widget3')
+
+		// toggle again
 		$scope.toggleFilter('feature1')
 		for (let filterName in $scope.filters) {
-			expect($scope.filters[filterName].isActive).toBe(false)
+			expect($scope.filters[filterName].isActive).toBe(filterName == 'feature1')
 		}
-		expect($scope.isFiltered).toBe(false)
-		expect($scope.widgets.length).toBe(2)
-		expect($scope.widgets[0].name).toBe('widget2')
-		expect($scope.widgets[1].name).toBe('widget3')
-	})
-
-	it('will swap the featured section out when a filter is applied', () => {
-		// first two widgets have 'feature3', should just filter out widget3
-		// expect all the filters to be false
-		for (let filterName in $scope.filters) {
-			expect($scope.filters[filterName].isActive).toBe(false)
-		}
-		expect($scope.widgets.length).toBe(2)
-		expect($scope.widgets[0].name).toBe('widget2')
-		expect($scope.widgets[1].name).toBe('widget3')
-
-		$scope.toggleFilter('feature3')
-		// make sure only the one filter was affected
-		for (let filterName in $scope.filters) {
-			expect($scope.filters[filterName].isActive).toBe(filterName == 'feature3')
-		}
-
-		// check the new list, which should include a featured widget (widget1)
 		expect($scope.isFiltered).toBe(true)
-		expect($scope.widgets.length).toBe(2)
+		expect($scope.widgets.length).toBe(1)
 		expect($scope.widgets[0].name).toBe('widget1')
-		expect($scope.widgets[1].name).toBe('widget2')
 	})
 
 	it('will filter widgets based on a search query', () => {
-		expect($scope.search).toBe('')
+		// disable the filter to test search
+		expect($scope.filters['feature1'].isActive).toBe(true)
+		$scope.toggleFilter('feature1')
+		expect($scope.filters['feature1'].isActive).toBe(false)
+
+		// set the search query
 		$scope.search = '1'
 		const _onSearch = $scope.jestTest.getLocalVar('_onSearch')
 		_onSearch()
@@ -248,17 +250,16 @@ describe('widgetCatalogController', () => {
 	})
 
 	it('can toggle whether the filters are showing', () => {
-		expect($scope.isShowingFilters).toBe(false)
-		$scope.showFilters()
 		expect($scope.isShowingFilters).toBe(true)
 		$scope.clearFilters()
 		expect($scope.isShowingFilters).toBe(false)
+		$scope.showFilters()
+		expect($scope.isShowingFilters).toBe(true)
 	})
 
 	it('can clear the filters', () => {
-		$scope.toggleFilter('feature1')
-		$scope.toggleFilter('feature2')
-		$scope.search = 'widget'
+		expect($scope.filters['feature1'].isActive).toBe(true)
+		expect($scope.search).toBe('widget')
 		$scope.clearFiltersAndSearch()
 
 		// expect all the filters to be false
@@ -267,11 +268,4 @@ describe('widgetCatalogController', () => {
 		}
 		expect($scope.search).toBe('')
 	})
-
-	/* TODO need to figure out how to manually set/change URL for this test
-	it('will show the filters if it loads with some filters in the URL', () => {
-		expect(false).toBe(true)
-	})
-
-	*/
 })
