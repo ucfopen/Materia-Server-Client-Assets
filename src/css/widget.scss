@@ -88,7 +88,6 @@
 			button.demo-dot {
 				margin: 0;
 				padding: 2px 8px 3px 18px;
-				top: -1px;
 				position: relative;
 				background-color: #c0c0c0;
 				color: white;
@@ -96,6 +95,8 @@
 				box-shadow: none;
 				border-radius: 6px;
 				cursor: pointer;
+				vertical-align: top;
+				top: 7px;
 
 				&:before {
 					content: ' ';

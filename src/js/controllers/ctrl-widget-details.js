@@ -9,7 +9,6 @@ app.controller('widgetDetailsController', function(
 ) {
 	let _pics
 	let _offset
-	const SCREENSHOT_AMOUNT = [1, 2, 3]
 	const nameArr = window.location.pathname.replace('/widgets/', '').split('/')
 	const widgetID = nameArr
 		.pop()
@@ -46,7 +45,7 @@ app.controller('widgetDetailsController', function(
 			name: widget.name,
 			icon: Materia.Image.iconUrl(widget.dir, 92),
 			subheader: widget.meta_data['subheader'],
-			about: widget.meta_data['about'],
+			about: widget.meta_data['about'] || 'No description available.',
 			demourl: document.location.pathname + '/demo',
 			creatorurl: document.location.pathname + '/create',
 			supported_data: widget.meta_data['supported_data'].map(_tooltipObject),
@@ -56,20 +55,19 @@ app.controller('widgetDetailsController', function(
 			height: ~~widget.height
 		}
 
+		$scope.numScreenshots = ~~widget.meta_data.num_screenshots || 3
+
 		const sizeNeeded = ($scope.widget.width || 700) + 150
 		$scope.maxPageWidth = sizeNeeded + 'px'
 		$scope.show = true
 
-		if (widget.meta_data['about'] === 'undefined') {
-			$scope.widget.about = 'No description available.'
-		}
-
-		$scope.widget.screenshots = SCREENSHOT_AMOUNT.map(i => {
-			return {
+		$scope.widget.screenshots = []
+		for (let i = 1; i <= $scope.numScreenshots; i++) {
+			$scope.widget.screenshots.push({
 				full: Materia.Image.screenshotUrl(widget.dir, i),
 				thumb: Materia.Image.screenshotThumbUrl(widget.dir, i)
-			}
-		})
+			})
+		}
 		$scope.demoScreenshot = `url(${$scope.widget.screenshots[0].full})`
 
 		Please.$apply()
@@ -103,7 +101,8 @@ app.controller('widgetDetailsController', function(
 			// if the pan goes off the edge, divide the overflow amount by 10
 			if (x > 0) x = x / 10 // overflow left
 
-			const rightEdge = _pics.children[3].offsetLeft * -1
+			const lastIndex = $scope.numScreenshots
+			const rightEdge = _pics.children[lastIndex].offsetLeft * -1
 			x = Math.max(x, rightEdge + (x - rightEdge) / 10) // overflow right
 
 			_pics.style.transition = ''
@@ -118,10 +117,10 @@ app.controller('widgetDetailsController', function(
 	}
 
 	const snapClosest = (x, animate = true) => {
-		if (_pics.children.length < 4) return // pics not loaded yet
+		if (_pics.children.length < 2) return // pics not loaded yet
 
 		let minDiff = 9999
-		for (let i = 0; i < 4; i++) {
+		for (let i = 0; i <= $scope.numScreenshots; i++) {
 			const childOffset = _pics.children[i].offsetLeft * -1
 			const diff = Math.abs(childOffset - x)
 			if (diff < minDiff) {
@@ -169,8 +168,13 @@ app.controller('widgetDetailsController', function(
 	$scope.showDemoClicked = _showDemoClicked
 
 	$scope.selectImage = i => ($scope.selectedImage = i)
-	$scope.nextImage = i => ($scope.selectedImage = ($scope.selectedImage + 1) % 4)
-	$scope.prevImage = i => ($scope.selectedImage = ($scope.selectedImage + 3) % 4)
+	$scope.nextImage = i => {
+		$scope.selectedImage = ($scope.selectedImage + 1) % ($scope.numScreenshots + 1)
+	}
+	$scope.prevImage = i => {
+		$scope.selectedImage =
+			($scope.selectedImage + $scope.numScreenshots) % ($scope.numScreenshots + 1)
+	}
 	$scope.$watch('selectedImage', snapToImage)
 	$window.onresize = () => snapClosest(_offset, false)
 	$scope.getWidth = () => $document[0].documentElement.clientWidth
