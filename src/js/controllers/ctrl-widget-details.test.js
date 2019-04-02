@@ -12,6 +12,20 @@ describe('widgetDetailsController', () => {
 	var iconUrlMock
 	var screenshotUrlMock
 	var screenshotThumbMock
+	var widgetPromise
+	var getWidthMock
+
+	const baseWidget = {
+		name: 'hi',
+		meta_data: {
+			subheader: 'subheader',
+			about: 'about',
+			supported_data: ['supported1', 'supported2'],
+			features: ['feature1', 'feature2']
+		},
+		width: '700',
+		height: '700'
+	}
 
 	beforeEach(() => {
 		mockPlease = { $apply: jest.fn() }
@@ -45,21 +59,19 @@ describe('widgetDetailsController', () => {
 		require('hammerjs')
 		require('./ctrl-widget-details')
 
+		inject((_$controller_, _$document_, _$window_, _$timeout_, _$q_, _$rootScope_) => {
+			$controller = _$controller_
+			$document = _$document_
+			$window = _$window_
+			$timeout = _$timeout_
+			$q = _$q_
+			$rootScope = _$rootScope_
+		})
+
+		widgetPromise = $q.defer()
+
 		Namespace('Materia.Coms.Json').send = sendMock = jest.fn(() => {
-			const deferred = $q.defer()
-			const widget = {
-				name: 'hi',
-				meta_data: {
-					subheader: 'subheader',
-					about: 'about',
-					supported_data: ['supported1', 'supported2'],
-					features: ['feature1', 'feature2']
-				},
-				width: '700',
-				height: '700'
-			}
-			deferred.resolve([widget])
-			return deferred.promise
+			return widgetPromise.promise
 		})
 
 		Namespace('Materia.Image').iconUrl = iconUrlMock = jest.fn(() => {
@@ -80,25 +92,25 @@ describe('widgetDetailsController', () => {
 			return deferred.promise
 		})
 
-		inject((_$controller_, _$document_, _$window_, _$timeout_, _$q_, _$rootScope_) => {
-			$controller = _$controller_
-			$document = _$document_
-			$window = _$window_
-			$timeout = _$timeout_
-			$q = _$q_
-			$rootScope = _$rootScope_
-		})
-
 		$scope = {
 			$watch: jest.fn(),
 			$on: jest.fn()
 		}
 
 		var controller = $controller('widgetDetailsController', { $scope })
-		$timeout.flush()
 	})
 
+	const setup = (customWidget = false, pageWidth = 1000) => {
+		const widget = customWidget || baseWidget
+		widgetPromise.resolve([widget])
+		$timeout.flush()
+
+		getWidthMock = jest.spyOn($scope, 'getWidth')
+		getWidthMock.mockReturnValue(pageWidth)
+	}
+
 	it('defines expected scope vars', () => {
+		setup()
 		expect($scope.widget).toBeDefined()
 		expect($scope.widget.icon).toBeDefined()
 		expect($scope.showDemoCover).toBe(true)
@@ -110,10 +122,7 @@ describe('widgetDetailsController', () => {
 	})
 
 	it('will load the demo inline if the page is wide enough', () => {
-		// pretend the page width is 1000px
-		let getWidth = jest.spyOn($scope, 'getWidth')
-		getWidth.mockReturnValueOnce(1000)
-		expect(sendMock).toHaveBeenCalledTimes(1)
+		setup()
 
 		$scope.showDemoCover = false
 
@@ -126,11 +135,11 @@ describe('widgetDetailsController', () => {
 
 	it('will redirect to the demo if the page is not wide enough', () => {
 		// pretend the page width is 300px
-		let getWidth = jest.spyOn($scope, 'getWidth')
-		getWidth.mockReturnValueOnce(300)
+		setup(false, 300)
 
 		$scope.showDemoCover = false
-		const url = ($scope.widget.demourl = 'localhost/widget-demo')
+		const url = 'localhost/widget-demo'
+		$scope.widget.demourl = url
 
 		$scope.showDemoClicked()
 
@@ -139,9 +148,9 @@ describe('widgetDetailsController', () => {
 	})
 
 	it('will always open a resizable demo as a new page', () => {
-		// pretend the page width is 1000px
-		let getWidth = jest.spyOn($scope, 'getWidth')
-		getWidth.mockReturnValueOnce(1000)
+		let customWidget = JSON.parse(JSON.stringify(baseWidget))
+		customWidget.width = 0
+		setup(customWidget)
 
 		// set the widget to have a width of 0, meaning that it is resizable
 		$scope.widget.width = 0
@@ -155,16 +164,18 @@ describe('widgetDetailsController', () => {
 	})
 
 	it('will remove the unload event if the inline demo adds one', () => {
-		let getWidth = jest.spyOn($scope, 'getWidth')
-		getWidth.mockReturnValueOnce(1000)
+		setup()
 
+		expect($scope.showDemoCover).toBe(true)
 		$scope.showDemoClicked()
+		expect($scope.showDemoCover).toBe(false)
 		$timeout.flush()
 
 		expect($window.onbeforeunload()).toBe(undefined)
 	})
 
 	it('will go to the next image properly', () => {
+		setup()
 		expect($scope.selectedImage).toBe(0)
 		$scope.nextImage()
 		expect($scope.selectedImage).toBe(1)
@@ -177,6 +188,7 @@ describe('widgetDetailsController', () => {
 	})
 
 	it('will go to the previous image properly', () => {
+		setup()
 		expect($scope.selectedImage).toBe(0)
 		$scope.prevImage()
 		expect($scope.selectedImage).toBe(3)
@@ -189,8 +201,16 @@ describe('widgetDetailsController', () => {
 	})
 
 	it('can jump to a specific image', () => {
+		setup()
 		expect($scope.selectedImage).toBe(0)
 		$scope.selectImage(3)
 		expect($scope.selectedImage).toBe(3)
+	})
+
+	it('will properly set the about section for a widget without one', () => {
+		let customWidget = JSON.parse(JSON.stringify(baseWidget))
+		customWidget.meta_data.about = ''
+		setup(customWidget)
+		expect($scope.widget.about).toBe('No description available.')
 	})
 })

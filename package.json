@@ -57,6 +57,7 @@
     "ngmodal": "ucfcdl/ngModal#v1.2.2"
   },
   "devDependencies": {
+    "angular-animate": "1.6.9",
     "angular-mocks": "1.6.9",
     "babel-core": "^6.26.0",
     "babel-jest": "^23.6.0",
