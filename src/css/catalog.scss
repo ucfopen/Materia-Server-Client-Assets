@@ -421,6 +421,10 @@
 
 @media (max-width: 720px) {
 	.catalog {
+		.container {
+			margin-top: 10px;
+		}
+
 		.desktop-only {
 			display: none !important;
 		}

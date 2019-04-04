@@ -193,6 +193,7 @@ nav {
 		height: auto;
 		overflow: hidden;
 		padding: 0;
+		margin-bottom: 8px;
 
 		h1.logo {
 			display: inline-block;
@@ -267,10 +268,6 @@ nav {
 		text-align: left;
 		background: none;
 		box-shadow: none;
-
-		&:hover {
-			background: #eee;
-		}
 
 		&.expanded {
 			~ nav {

@@ -4,6 +4,32 @@
 		max-width: 850px;
 	}
 
+	#breadcrumb-container {
+		display: inline-block;
+		position: relative;
+		top: -10px;
+		margin-left: 10px;
+		padding: 5px 10px;
+		background: #eee;
+		border-radius: 3px;
+		font-size: 12px;
+		border: 1px solid #ccc;
+
+		.breadcrumb {
+			display: inline-block;
+
+			a {
+				color: black;
+			}
+		}
+
+		svg {
+			position: relative;
+			height: 15px;
+			top: 2px;
+		}
+	}
+
 	#widget-about {
 		display: none; // shown on mobile
 	}
@@ -434,6 +460,13 @@
 
 @media (max-width: 720px) {
 	.widget {
+		#breadcrumb-container {
+			padding: 3px 10px;
+			margin-bottom: 10px;
+			top: 0;
+			max-width: calc(100% - 40px);
+		}
+
 		#widget-about {
 			display: block;
 			margin-top: 25px;
