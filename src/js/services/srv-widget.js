@@ -60,7 +60,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 				deferred.resolve(id)
 			} else {
 				deferred.reject(
-					'This widget is currently locked, you will be able to edit this widget when it is no longer being edited by somebody else.'
+					'Someone else is editing this widget, you will be able to edit after they finish.'
 				)
 			}
 		})
