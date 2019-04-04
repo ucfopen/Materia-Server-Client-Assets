@@ -158,6 +158,15 @@ app.controller('createCtrl', function(
 		}
 	}
 
+	const checkUserPublishPerms = () => {
+		const deferred = $q.defer()
+		widgetSrv.canBePublishedByCurrentUser(widget_id).then(canPublish => {
+			$scope.canPublish = canPublish
+			deferred.resolve()
+		})
+		return deferred.promise
+	}
+
 	// build a my-widgets url to a specific widget
 	const getMyWidgetsUrl = instid => `${BASE_URL}my-widgets#${instid}`
 
@@ -532,6 +541,7 @@ ${msg.toLowerCase()}`,
 	$scope.saveText = 'Save Draft'
 	$scope.previewText = 'Preview'
 	$scope.publishText = 'Publish...'
+	$scope.canPublish = false
 	$scope.invalid = false
 	$scope.modal = false
 	$scope.requestSave = _requestSave
@@ -556,6 +566,7 @@ ${msg.toLowerCase()}`,
 					.then(widgetSrv.getWidget)
 					.then(embed)
 					.then(initCreator)
+					.then(checkUserPublishPerms)
 					.then(showButtons)
 					.then(startHeartBeat)
 					.catch(onInitFail)
@@ -567,6 +578,7 @@ ${msg.toLowerCase()}`,
 			.then(widgetSrv.getWidgetInfo)
 			.then(embed)
 			.then(initCreator)
+			.then(checkUserPublishPerms)
 			.then(showButtons)
 			.then(startHeartBeat)
 			.catch(onInitFail)
