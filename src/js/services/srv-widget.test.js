@@ -417,7 +417,7 @@ describe('widgetSrv', () => {
 		expect(Materia.Coms.Json.send).toHaveBeenCalledWith('widget_instance_lock', [1])
 		expect(promiseSpy).not.toHaveBeenCalled()
 		expect(promiseCatch).toHaveBeenCalledWith(
-			'This widget is currently locked, you will be able to edit this widget when it is no longer being edited by somebody else.'
+			'Someone else is editing this widget, you will be able to edit after they finish.'
 		)
 	})
 
