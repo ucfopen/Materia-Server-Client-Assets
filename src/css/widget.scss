@@ -377,19 +377,6 @@
 					}
 				}
 
-				a.guide {
-					font-size: 13px;
-					border: 1px solid gray;
-					color: gray;
-					padding: 2px 6px;
-					border-radius: 3px;
-
-					&:hover {
-						background-color: #eee;
-						color: #111;
-					}
-				}
-
 				.tooltip {
 					position: absolute;
 					z-index: 99;
