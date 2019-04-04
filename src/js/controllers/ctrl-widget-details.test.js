@@ -123,10 +123,11 @@ describe('widgetDetailsController', () => {
 
 	it('will load the demo inline if the page is wide enough', () => {
 		setup()
+		sendMock = jest.fn('play-id')
 
 		$scope.showDemoCover = false
-
 		$scope.showDemoClicked()
+		$timeout.flush()
 
 		expect($scope.demoWidth).toBe('710px')
 		expect($scope.demoHeight).toBe('748px')
@@ -165,9 +166,11 @@ describe('widgetDetailsController', () => {
 
 	it('will remove the unload event if the inline demo adds one', () => {
 		setup()
+		sendMock = jest.fn('play-id')
 
 		expect($scope.showDemoCover).toBe(true)
 		$scope.showDemoClicked()
+		$timeout.flush()
 		expect($scope.showDemoCover).toBe(false)
 		$timeout.flush()
 

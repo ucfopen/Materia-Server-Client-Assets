@@ -147,14 +147,19 @@ app.controller('widgetDetailsController', function(
 
 	const _showDemoClicked = () => {
 		if (isWideEnough()) {
-			$scope.demoHeight = $scope.widget.height + 48 + 'px'
-			$scope.demoWidth = $scope.widget.width + 10 + 'px'
-			$scope.showDemoCover = false
+			$scope.demoLoading = true
+			Materia.Coms.Json.send('session_play_create', [$scope.inst_id]).then(playId => {
+				window.PLAY_ID = playId
+				$scope.demoHeight = $scope.widget.height + 48 + 'px'
+				$scope.demoWidth = $scope.widget.width + 10 + 'px'
+				$scope.showDemoCover = false
+				Please.$apply()
 
-			// don't show player's onbeforeunload dialog
-			$timeout(() => {
-				$window.onbeforeunload = () => undefined
-			}, 10)
+				// don't show player's onbeforeunload dialog
+				$timeout(() => {
+					$window.onbeforeunload = () => undefined
+				}, 10)
+			})
 		} else {
 			$window.location = $scope.widget.demourl
 		}

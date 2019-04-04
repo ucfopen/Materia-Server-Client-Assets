@@ -213,7 +213,8 @@
 				position: relative;
 				cursor: grab;
 
-				&.playing {
+				&.playing,
+				&.loading {
 					background: #b944cc;
 				}
 
@@ -262,7 +263,8 @@
 			background-repeat: no-repeat;
 			background-size: contain;
 
-			&.hidden {
+			&.hidden,
+			&.loading {
 				transform: translate3d(0, 0, 0); // safari fix for loading animation
 
 				button {
