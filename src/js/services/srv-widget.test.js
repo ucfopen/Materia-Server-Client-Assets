@@ -63,6 +63,7 @@ describe('widgetSrv', () => {
 		expect(_service.getWidgetsByType).toBeDefined()
 		expect(_service.getWidget).toBeDefined()
 		expect(_service.getWidgetInfo).toBeDefined()
+		expect(_service.lockWidget).toBeDefined()
 		expect(_service.sortWidgets).toBeDefined()
 		expect(_service.saveWidget).toBeDefined()
 		expect(_service.removeWidget).toBeDefined()
@@ -400,5 +401,50 @@ describe('widgetSrv', () => {
 		_service.selectWidgetFromHashUrl()
 		$scope.$digest() // processes promise
 		expect(_selectedWidgetSrv.notifyAccessDenied).toHaveBeenCalled()
+	})
+
+	it('rejects with a message when a widget is already locked', () => {
+		mockSendPromiseOnce(false)
+
+		let promiseSpy = jest.fn()
+		let promiseCatch = jest.fn()
+		_service
+			.lockWidget(1)
+			.then(promiseSpy)
+			.catch(promiseCatch)
+		$scope.$digest() // processes promise
+
+		expect(Materia.Coms.Json.send).toHaveBeenCalledWith('widget_instance_lock', [1])
+		expect(promiseSpy).not.toHaveBeenCalled()
+		expect(promiseCatch).toHaveBeenCalledWith(
+			'This widget is currently locked, you will be able to edit this widget when it is no longer being edited by somebody else.'
+		)
+	})
+
+	it('locks a widget', () => {
+		mockSendPromiseOnce(true)
+
+		let promiseSpy = jest.fn()
+		let promiseCatch = jest.fn()
+		_service
+			.lockWidget(1)
+			.then(promiseSpy)
+			.catch(promiseCatch)
+		$scope.$digest() // processes promise
+
+		expect(Materia.Coms.Json.send).toHaveBeenCalledWith('widget_instance_lock', [1])
+		expect(promiseSpy).toHaveBeenCalledWith(1)
+		expect(promiseCatch).not.toHaveBeenCalled()
+	})
+
+	it('checks whether a widget can be published by the current user', () => {
+		mockSendPromiseOnce(true)
+
+		let promiseSpy = jest.fn()
+		_service.canBePublishedByCurrentUser(1).then(promiseSpy)
+		$scope.$digest() // processes promise
+
+		expect(Materia.Coms.Json.send).toHaveBeenCalledWith('widget_publish_perms_verify', [1])
+		expect(promiseSpy).toHaveBeenCalledWith(true)
 	})
 })

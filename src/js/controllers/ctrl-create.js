@@ -158,11 +158,15 @@ app.controller('createCtrl', function(
 		}
 	}
 
-	const checkUserPublishPerms = () => {
+	const checkUserPublishPerms = widgetData => {
 		const deferred = $q.defer()
 		widgetSrv.canBePublishedByCurrentUser(widget_id).then(canPublish => {
 			$scope.canPublish = canPublish
-			deferred.resolve()
+
+			if (!widgetData.is_draft && !canPublish)
+				deferred.reject('Widget type can not be edited by students after publishing.')
+
+			deferred.resolve(widgetData)
 		})
 		return deferred.promise
 	}
@@ -563,10 +567,11 @@ ${msg.toLowerCase()}`,
 		getQset().then(() => {
 			if (!$scope.invalid) {
 				$q(resolve => resolve(inst_id))
+					.then(widgetSrv.lockWidget)
 					.then(widgetSrv.getWidget)
+					.then(checkUserPublishPerms)
 					.then(embed)
 					.then(initCreator)
-					.then(checkUserPublishPerms)
 					.then(showButtons)
 					.then(startHeartBeat)
 					.catch(onInitFail)
@@ -576,9 +581,9 @@ ${msg.toLowerCase()}`,
 		// initialize a new creator
 		$q(resolve => resolve(widget_id))
 			.then(widgetSrv.getWidgetInfo)
+			.then(checkUserPublishPerms)
 			.then(embed)
 			.then(initCreator)
-			.then(checkUserPublishPerms)
 			.then(showButtons)
 			.then(startHeartBeat)
 			.catch(onInitFail)
