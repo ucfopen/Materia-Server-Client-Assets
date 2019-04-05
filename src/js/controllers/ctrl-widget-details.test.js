@@ -21,7 +21,8 @@ describe('widgetDetailsController', () => {
 			subheader: 'subheader',
 			about: 'about',
 			supported_data: ['supported1', 'supported2'],
-			features: ['feature1', 'feature2']
+			features: ['feature1', 'feature2'],
+			demo: 'abCD1'
 		},
 		width: '700',
 		height: '700'
@@ -109,6 +110,14 @@ describe('widgetDetailsController', () => {
 		getWidthMock.mockReturnValue(pageWidth)
 	}
 
+	const mockSessionCreate = () => {
+		return (Namespace('Materia.Coms.Json').send = jest.fn(() => {
+			return {
+				then: cb => cb('play-id')
+			}
+		}))
+	}
+
 	it('defines expected scope vars', () => {
 		setup()
 		expect($scope.widget).toBeDefined()
@@ -123,11 +132,10 @@ describe('widgetDetailsController', () => {
 
 	it('will load the demo inline if the page is wide enough', () => {
 		setup()
-		sendMock = jest.fn('play-id')
+		const sessionCreateMock = mockSessionCreate()
 
 		$scope.showDemoCover = false
 		$scope.showDemoClicked()
-		$timeout.flush()
 
 		expect($scope.demoWidth).toBe('710px')
 		expect($scope.demoHeight).toBe('748px')
@@ -166,13 +174,12 @@ describe('widgetDetailsController', () => {
 
 	it('will remove the unload event if the inline demo adds one', () => {
 		setup()
-		sendMock = jest.fn('play-id')
+		const sessionCreateMock = mockSessionCreate()
 
 		expect($scope.showDemoCover).toBe(true)
 		$scope.showDemoClicked()
 		$timeout.flush()
 		expect($scope.showDemoCover).toBe(false)
-		$timeout.flush()
 
 		expect($window.onbeforeunload()).toBe(undefined)
 	})
@@ -215,5 +222,23 @@ describe('widgetDetailsController', () => {
 		customWidget.meta_data.about = ''
 		setup(customWidget)
 		expect($scope.widget.about).toBe('No description available.')
+	})
+
+	it('defines inst_id for the embedded demo', () => {
+		// the embedded demo (ctrl-player.js) relies on $scope.inst_id to get the qset
+		setup()
+		expect($scope.inst_id).toBe('abCD1')
+	})
+
+	it('gets a play-id only when the demo is stared', () => {
+		setup()
+		const sessionCreateMock = mockSessionCreate()
+
+		$scope.showDemoClicked()
+
+		// player expects PLAY_ID var to be defined
+		expect($window.PLAY_ID).toBe('play-id')
+		expect(sessionCreateMock).toHaveBeenCalledTimes(1)
+		expect(sessionCreateMock).toHaveBeenCalledWith('session_play_create', ['abCD1'])
 	})
 })
