@@ -54,6 +54,9 @@ app.controller('widgetDetailsController', function(
 			height: ~~widget.height
 		}
 
+		// inst_id needs to be set for the embedded demo
+		$scope.inst_id = widget.meta_data.demo
+
 		$scope.numScreenshots = ~~widget.meta_data.num_screenshots || 3
 
 		const sizeNeeded = ($scope.widget.width || 700) + 150
@@ -148,7 +151,7 @@ app.controller('widgetDetailsController', function(
 		if (isWideEnough()) {
 			$scope.demoLoading = true
 			Materia.Coms.Json.send('session_play_create', [$scope.inst_id]).then(playId => {
-				window.PLAY_ID = playId
+				$window.PLAY_ID = playId
 				$scope.demoHeight = $scope.widget.height + 48 + 'px'
 				$scope.demoWidth = $scope.widget.width + 10 + 'px'
 				$scope.showDemoCover = false
