@@ -39,7 +39,6 @@ app.controller('widgetDetailsController', function(
 	// @object The current widget.
 	const _populateDefaults = widget => {
 		const date = new Date(widget['created_at'] * 1000)
-		$scope.test = 'abc'
 
 		$scope.widget = {
 			name: widget.name,
