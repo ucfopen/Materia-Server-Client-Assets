@@ -154,7 +154,8 @@ describe('Materia.ScoreCore', () => {
 		})
 		expect(mockWidget.update).toHaveBeenCalledWith(
 			[{ qset: 'updated_data' }], //qset.data
-			{ score: 'updated_table' } //scoreTable
+			{ score: 'updated_table' }, //scoreTable
+			0 //qset.version
 		)
 	})
 
