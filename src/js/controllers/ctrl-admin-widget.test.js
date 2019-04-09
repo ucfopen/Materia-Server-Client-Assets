@@ -25,7 +25,7 @@ describe('adminWidgetController', () => {
 		require('../services/srv-admin')
 		require('./ctrl-admin-widget')
 
-		inject(function(_$controller_, _$q_, _adminSrv_, _$rootScope_) {
+		inject((_$controller_, _$q_, _adminSrv_, _$rootScope_) => {
 			$controller = _$controller_
 			$q = _$q_
 			adminSrv = _adminSrv_

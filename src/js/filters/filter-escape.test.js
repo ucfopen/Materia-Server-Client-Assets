@@ -5,7 +5,7 @@ describe('escape filter', function() {
 		filter = testGetFilter('escape')
 	})
 
-	it('OBJECT_TYPES to contain expected data', function() {
+	it('OBJECT_TYPES to contain expected data', () => {
 		expect(filter).not.toBeNull()
 		expect(filter('<test>')).toBe('%3Ctest%3E')
 	})
