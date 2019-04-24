@@ -38,8 +38,9 @@ describe('creatorcore', () => {
 			type: 'alert',
 			source: 'creator-core',
 			data: {
-				title: message,
-				type: 1
+				msg: message,
+				title: null,
+				fatal: false
 			}
 		})
 
@@ -91,11 +92,14 @@ describe('creatorcore', () => {
 
 	it('start sends a postmessage', () => {
 		creatorCore.start({})
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"start","source":"creator-core","data":null}', '*')
+		expect(parent.postMessage).toHaveBeenCalledWith(
+			'{"type":"start","source":"creator-core","data":null}',
+			'*'
+		)
 	})
 
 	it('reacts properly to initNewWidget post messages', () => {
-		mockPostMessageFromWidget('initNewWidget','creator-core', ['widgetObj', 'baseUrl', 'mediaUrl'])
+		mockPostMessageFromWidget('initNewWidget', 'creator-core', ['widgetObj', 'baseUrl', 'mediaUrl'])
 
 		expect(mockCreator.initNewWidget).toHaveBeenCalledWith('widgetObj')
 		expectOnlyCreatorMethodCalledToBe('initNewWidget')
@@ -149,9 +153,11 @@ describe('creatorcore', () => {
 	})
 
 	it('reacts properly to unknown post messages', () => {
-		jest.spyOn(console,'warn')
+		jest.spyOn(console, 'warn')
 		mockPostMessageFromWidget('undefinedMessageType', 'unknown-source', ['payload'])
-		expect(console.warn).toHaveBeenCalledWith('Error, unknown message sent to creator core: undefinedMessageType')
+		expect(console.warn).toHaveBeenCalledWith(
+			'Error, unknown message sent to creator core: undefinedMessageType'
+		)
 	})
 
 	it('reacts properly if the creator class is missing an expected method', () => {
@@ -171,9 +177,9 @@ describe('creatorcore', () => {
 	})
 
 	it('alert sends a postmessage', () => {
-		creatorCore.alert('title', 'msg', 'type')
+		creatorCore.alert('msg', 'title', 'fatal')
 		expect(parent.postMessage).toHaveBeenCalledWith(
-			'{"type":"alert","source":"creator-core","data":{"title":"title","msg":"msg","type":"type"}}',
+			'{"type":"alert","source":"creator-core","data":{"msg":"msg","title":"title","fatal":"fatal"}}',
 			'*'
 		)
 	})
@@ -265,13 +271,19 @@ describe('creatorcore', () => {
 
 	it('sends a request to set height if setHeight is given the current height', () => {
 		creatorCore.setHeight(1)
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","source":"creator-core","data":[1]}', '*')
+		expect(parent.postMessage).toHaveBeenCalledWith(
+			'{"type":"setHeight","source":"creator-core","data":[1]}',
+			'*'
+		)
 	})
 
 	it('sends a request to set height if setHeight is given nothing', () => {
 		mockHeightGetter()
 		creatorCore.setHeight()
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","source":"creator-core","data":[10]}', '*')
+		expect(parent.postMessage).toHaveBeenCalledWith(
+			'{"type":"setHeight","source":"creator-core","data":[10]}',
+			'*'
+		)
 	})
 
 	it('properly sets a resize interval for auto-resizing widgets', () => {
@@ -283,7 +295,10 @@ describe('creatorcore', () => {
 
 		creatorCore.start(mockCreator)
 		jest.runOnlyPendingTimers()
-		expect(parent.postMessage).toHaveBeenCalledWith('{"type":"setHeight","source":"creator-core","data":[10]}', '*')
+		expect(parent.postMessage).toHaveBeenCalledWith(
+			'{"type":"setHeight","source":"creator-core","data":[10]}',
+			'*'
+		)
 	})
 
 	it('disables the resize interval correctly', () => {

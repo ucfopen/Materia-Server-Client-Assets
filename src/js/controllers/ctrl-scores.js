@@ -23,7 +23,8 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	// the play will no longer be connected to the LTI details.
 	// This is a cheap way to hide the button:
 	let hidePlayAgain = document.URL.indexOf('details=1') > -1
-	const widget_id = document.URL.match(/^[\.\w\/:]+\/([a-z0-9]+)/i)[1]
+	// get widget id from url like https://my-server.com:8080/scores/nLAmG#play-NbmVXrZe9Wzb
+	const widget_id = document.URL.match(/^.+\/([a-z0-9]+)/i)[1]
 
 	// this is only actually set to something when coming from the profile page
 	let play_id = window.location.hash.split('play-')[1]
@@ -39,7 +40,8 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 	const _displayScoreData = (inst_id, play_id) => {
 		const deferred = $q.defer()
-		widgetSrv.getWidget(inst_id)
+		widgetSrv
+			.getWidget(inst_id)
 			.then(instance => {
 				widgetInstance = instance
 				$scope.guestAccess = widgetInstance.guest_access
@@ -64,11 +66,10 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		if (score_screen) {
 			const splitSpot = score_screen.lastIndexOf('.')
 			if (splitSpot != -1) {
-				if (score_screen.substring(0,4) == 'http') {
+				if (score_screen.substring(0, 4) == 'http') {
 					// allow player paths to be absolute urls
 					enginePath = score_screen
-				}
-				else {
+				} else {
 					// link to the static file
 					enginePath = WIDGET_URL + widgetInstance.widget.dir + score_screen
 				}
@@ -83,8 +84,8 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		embedDonePromise = deferred
 
 		scoreWidget = document.querySelector('#container')
-		$scope.htmlPath = enginePath + "?" + widgetInstance.widget.created_at
-		$scope.type = "html"
+		$scope.htmlPath = enginePath + '?' + widgetInstance.widget.created_at
+		$scope.type = 'html'
 
 		// setup the postmessage listener
 		window.addEventListener('message', _onPostMessage, false)
@@ -97,16 +98,15 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			const msg = JSON.parse(e.data)
 			switch (msg.source) {
 				case 'score-core':
-
 					switch (msg.type) {
 						case 'start':
 							return _onWidgetReady()
 						case 'setHeight':
 							return _setHeight(msg.data[0])
 						case 'hideResultsTable':
-							return $scope.showResultsTable = false
+							return ($scope.showResultsTable = false)
 						case 'hideScoresOverview':
-							return $scope.showScoresOverview = false
+							return ($scope.showScoresOverview = false)
 						case 'requestScoreDistribution':
 							return _getScoreDistribution()
 						default:
@@ -116,20 +116,19 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 				case 'score-controller':
 					switch (msg.type) {
-						case 'materiaScoreRecorded': return false // let this one pass through, it's not intended for score-core but rather a parent platform (like Obojobo)
+						case 'materiaScoreRecorded':
+							return false // let this one pass through, it's not intended for score-core but rather a parent platform (like Obojobo)
 						default:
 							console.warn(`Unknown PostMessage received from score controller: ${msg.type}`)
 							return false
 					}
 
 				default:
-					console.warn('Invalid postMessage source or no source provided')			
+					console.warn('Invalid postMessage source or no source provided')
 					return false
 			}
 		} else {
-			throw new Error(
-				`Error, cross domain restricted for ${origin}`
-			)
+			throw new Error(`Error, cross domain restricted for ${origin}`)
 		}
 	}
 
@@ -181,8 +180,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const _getScoreDetails = () => {
-		const deferred = $q.defer()
-		scoresLoadPromise = deferred
+		scoresLoadPromise = $q.defer()
 		if (isPreview) {
 			currentAttempt = 1
 			scoreSrv.getWidgetInstancePlayScores(null, widgetInstance.id, _displayDetails)
@@ -192,21 +190,22 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			// get the current attempt from the url
 			const hash = getAttemptNumberFromHash()
 			if (currentAttempt === hash) {
-				return
-			}
-			currentAttempt = hash
-			play_id = $scope.attempts[$scope.attempts.length - currentAttempt]['id']
-
-			// display existing data or get more from the server
-			if (details[$scope.attempts.length - currentAttempt] != null) {
-				_displayDetails(details[$scope.attempts.length - currentAttempt])
+				scoresLoadPromise.resolve()
 			} else {
-				scoreSrv.getWidgetInstancePlayScores(play_id, null, _displayDetails)
+				currentAttempt = hash
+				play_id = $scope.attempts[$scope.attempts.length - currentAttempt]['id']
+
+				// display existing data or get more from the server
+				if (details[$scope.attempts.length - currentAttempt] != null) {
+					_displayDetails(details[$scope.attempts.length - currentAttempt])
+				} else {
+					scoreSrv.getWidgetInstancePlayScores(play_id, null, _displayDetails)
+				}
 			}
 		}
 
 		Please.$apply()
-		return deferred.promise
+		return scoresLoadPromise.promise
 	}
 
 	const _displayWidgetInstance = () => {
@@ -276,7 +275,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	const _displayAttempts = (play_id, deferred) => {
 		if (isPreview) {
 			currentAttempt = 1
-			_getScoreDetails().then( () => {
+			_getScoreDetails().then(() => {
 				deferred.resolve()
 			})
 		} else {
@@ -303,14 +302,14 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 					// changing the hash will call _getScoreDetails()
 					hashAllowUpdate = false
 					window.location.hash = `#attempt-${matchedAttempt}`
-					_getScoreDetails().then( () => {
+					_getScoreDetails().then(() => {
 						deferred.resolve()
 					})
 				} else if (getAttemptNumberFromHash() === undefined) {
 					window.location.hash = `#attempt-${$scope.attempts.length}`
 					deferred.resolve()
 				} else {
-					_getScoreDetails().then( () => {
+					_getScoreDetails().then(() => {
 						deferred.resolve()
 					})
 				}
@@ -357,7 +356,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			.script(`${cdnBase}jqPlot/1.0.9/plugins/jqplot.highlighter.min.js`)
 			.wait(() =>
 				// ========== BUILD THE GRAPH =============
-				scoreSrv.getWidgetInstanceScoreSummary(widgetInstance.id, (data) => {
+				scoreSrv.getWidgetInstanceScoreSummary(widgetInstance.id, data => {
 					// add up all semesters data into one dataset
 					_graphData = [
 						['0-9%', 0],
@@ -437,7 +436,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			)
 	}
 
-	const _displayDetails = (results) => {
+	const _displayDetails = results => {
 		let score
 
 		if (!$scope.customScoreScreen) {
@@ -500,22 +499,20 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		scoreTable = deets.details[0].table
 		if ($scope.customScoreScreen) {
 			const created_at = ~~deets.overview.created_at
-			scoreSrv.getWidgetInstanceQSet(play_id, widget_id, created_at, (data) => {
-
+			scoreSrv.getWidgetInstanceQSet(play_id, widget_id, created_at, data => {
 				if (
 					(data != null ? data.title : undefined) === 'Permission Denied' ||
-						data.title === 'error'
+					data.title === 'error'
 				) {
 					$scope.invalid = true
 					Please.$apply()
 				} else {
 					qset = data
 				}
-				
-				return scoresLoadPromise.resolve()					
+
+				return scoresLoadPromise.resolve()
 			})
-		}
-		else {
+		} else {
 			scoresLoadPromise.resolve()
 		}
 	}
@@ -563,9 +560,9 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const getAttemptNumberFromHash = () => {
-		const hashStr = window.location.hash.split('-')[1]
-		if (hashStr != null && !isNaN(hashStr)) {
-			return hashStr
+		const match = window.location.hash.match(/^#attempt-(\d+)/)
+		if (match && match[1] != null && !isNaN(match[1])) {
+			return match[1]
 		}
 		return $scope.attempts.length
 	}
@@ -575,7 +572,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const _getScoreDistribution = () => {
-		scoreSrv.getScoreDistribution(widgetInstance.id, (data) => {
+		scoreSrv.getScoreDistribution(widgetInstance.id, data => {
 			_sendToWidget('scoreDistribution', [data])
 		})
 	}
@@ -593,14 +590,14 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			return
 		}
 		$scope.show = true
-		_sendToWidget('initWidget', [qset, scoreTable, widgetInstance, isPreview])
+		_sendToWidget('initWidget', [qset, scoreTable, widgetInstance, isPreview, MEDIA_URL])
 	}
 
 	const _sendWidgetUpdate = () => {
 		_sendToWidget('updateWidget', [qset, scoreTable])
 	}
 
-	const _setHeight = (h) => {
+	const _setHeight = h => {
 		const min_h = widgetInstance.widget.height
 		let desiredHeight = Math.max(h, min_h)
 		scoreWidget.style.height = `${desiredHeight}px`
@@ -618,7 +615,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	$scope.prevMouseOver = () => ($scope.prevAttemptClass = 'open')
 	$scope.prevMouseOut = () => ($scope.prevAttemptClass = '')
 	$scope.prevClick = () => ($scope.prevAttemptClass = 'open')
-	$scope.attemptClick = function() {
+	$scope.attemptClick = () => {
 		if (isMobile.any()) {
 			$scope.prevAttemptClass = ''
 		}
@@ -630,16 +627,15 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			hashAllowUpdate = true
 			return
 		}
-		_getScoreDetails()
-			.then( () => {
-				if ($scope.customScoreScreen) {
-					_sendWidgetUpdate()
-				}
-			})
+		_getScoreDetails().then(() => {
+			if ($scope.customScoreScreen) {
+				_sendWidgetUpdate()
+			}
+		})
 	})
 
 	// Initialize
-	_displayScoreData(widget_id, play_id).then( () => {
+	_displayScoreData(widget_id, play_id).then(() => {
 		if ($scope.customScoreScreen) {
 			embedDonePromise.promise.then(_sendWidgetInit)
 		}

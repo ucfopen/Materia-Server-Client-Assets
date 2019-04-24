@@ -62,14 +62,11 @@ Namespace('Materia').Engine = (() => {
 		_sendPostMessage('addLog', { type, item_id, text, value })
 	}
 
-	const alert = (title, msg, type) => {
-		if (type == null) {
-			type = 1
-		}
-		_sendPostMessage('alert', { title, msg, type })
+	const alert = (title, msg, fatal = false) => {
+		_sendPostMessage('alert', { title, msg, fatal })
 	}
 
-	const getImageAssetUrl = mediaId => `${_mediaUrl}/${mediaId}`
+	const getMediaUrl = mediaId => `${_mediaUrl}/${mediaId}`
 
 	const end = showScoreScreenAfter => {
 		if (showScoreScreenAfter == null) {
@@ -92,6 +89,10 @@ Namespace('Materia').Engine = (() => {
 		}
 	}
 
+	const setVerticalScroll = location => {
+		_sendPostMessage('setVerticalScroll', [location])
+	}
+
 	const disableResizeInterval = () => {
 		clearInterval(_resizeInterval)
 	}
@@ -102,12 +103,14 @@ Namespace('Materia').Engine = (() => {
 		start,
 		addLog,
 		alert,
-		getImageAssetUrl,
+		getImageAssetUrl: getMediaUrl, // will be deprecated - use getMediaUrl
+		getMediaUrl: getMediaUrl,
 		end,
 		sendPendingLogs,
 		sendStorage,
 		disableResizeInterval,
 		setHeight, // allows the widget to resize its iframe container to fit the height of its contents
+		setVerticalScroll, // allows the widget to scroll the page to a specific location
 		escapeScriptTags
 	}
 })()

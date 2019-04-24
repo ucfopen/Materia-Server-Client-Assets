@@ -139,15 +139,7 @@ describe('playerCtrl', () => {
 
 		require('./ctrl-player')
 
-		inject(function(
-			_$window_,
-			$rootScope,
-			_$q_,
-			_$controller_,
-			_$timeout_,
-			_$interval_,
-			_$location_
-		) {
+		inject((_$window_, $rootScope, _$q_, _$controller_, _$timeout_, _$interval_, _$location_) => {
 			_scope = $rootScope.$new()
 			$q = _$q_
 			$controller = _$controller_
@@ -360,6 +352,43 @@ describe('playerCtrl', () => {
 		expect(centerStyle.height).toBe('600px')
 	})
 
+	it('successfully scrolls to a location on the page', () => {
+		let {
+			$scope,
+			controller,
+			mockCreateElement,
+			mockPostMessageFromWidget,
+			mockPostMessage,
+			mockHref,
+			embedStyle,
+			previewStyle,
+			widgetStyle,
+			centerStyle,
+			widgetInstance,
+			mockGetEl
+		} = setupDomStuff()
+
+		// mock widget start
+		mockPostMessage(buildPostMessage('start', ''))
+		_scope.$digest() // make sure defer from post message completes
+
+		//
+		let mockEmbedTargetEl = {
+			getBoundingClientRect: jest.fn().mockReturnValueOnce({
+				y: 0
+			})
+		}
+
+		jest.spyOn(document, 'getElementById').mockReturnValueOnce(mockEmbedTargetEl)
+
+		expect($window.scrollY).toBe(0)
+
+		jest.spyOn($window, 'scrollTo')
+
+		mockPostMessage(buildPostMessage('setVerticalScroll', [300]))
+		expect($window.scrollTo).toHaveBeenCalledWith(0, 300)
+	})
+
 	it('engine core alert is handled', () => {
 		let {
 			$scope,
@@ -382,7 +411,7 @@ describe('playerCtrl', () => {
 
 		// test alert post message
 		mockPlease.$apply.mockClear()
-		mockPostMessage(buildPostMessage('alert', 'aaaahh!'))
+		mockPostMessage(buildPostMessage('alert', { msg: 'aaaahh!' }))
 		expect(mockPlease.$apply).toHaveBeenCalledTimes(1)
 		expect($scope.alert.msg).toBe('aaaahh!')
 		expect($scope.alert.fatal).toBe(false)
@@ -446,7 +475,7 @@ describe('playerCtrl', () => {
 		expect(mockPlease.$apply).toHaveBeenCalledTimes(1)
 		expect($scope.alert.msg).toBe('eh2')
 		expect($scope.alert.fatal).toBe(false)
-		expect($scope.alert.title).toBe('')
+		expect($scope.alert.title).toBe('Warning!')
 	})
 
 	it('successfully throws an error with a weird post message', () => {

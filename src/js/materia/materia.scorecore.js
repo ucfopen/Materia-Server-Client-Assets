@@ -1,11 +1,13 @@
 Namespace('Materia').ScoreCore = (() => {
 	let _lastHeight = -1
+	let _mediaUrl = null
 	let _widgetClass = null
 
 	const _onPostMessage = e => {
 		const msg = JSON.parse(e.data)
 		switch (msg.type) {
 			case 'initWidget':
+				_mediaUrl = msg.data[4]
 				_widgetClass.start(
 					msg.data[2], // instance
 					msg.data[0].data, // qset.data
@@ -17,7 +19,8 @@ Namespace('Materia').ScoreCore = (() => {
 			case 'updateWidget':
 				_widgetClass.update(
 					msg.data[0].data, // qset.data
-					msg.data[1] // scoreTable
+					msg.data[1], // scoreTable
+					msg.data[0].version // qset.version
 				)
 				break
 			case 'scoreDistribution':
@@ -39,6 +42,8 @@ Namespace('Materia').ScoreCore = (() => {
 	const hideScoresOverview = () => {
 		_sendPostMessage('hideScoresOverview')
 	}
+
+	const getMediaUrl = mediaId => `${_mediaUrl}/${mediaId}`
 
 	const requestScoreDistribution = () => {
 		_sendPostMessage('requestScoreDistribution')
@@ -63,6 +68,7 @@ Namespace('Materia').ScoreCore = (() => {
 	}
 
 	return {
+		getMediaUrl,
 		hideResultsTable,
 		hideScoresOverview,
 		requestScoreDistribution,

@@ -12,7 +12,7 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 		Scorable: 'This widget collects scores, and is well suited to gauge performance.',
 		Media: 'This widget uses image media as part of its supported data.',
 		'Question/Answer':
-			'Users provide a typed response or associate a predefined answer wih each question.',
+			'Users provide a typed response or associate a predefined answer with each question.',
 		'Multiple Choice':
 			'Users select a response from a collection of possible answers to questions provided by the widget.',
 		'Mobile Friendly': 'Designed with HTML5 to work on mobile devices like the iPad and iPhone',
@@ -28,7 +28,9 @@ app.controller('widgetDetailsController', function(Please, $scope, widgetSrv) {
 
 	// Populates the details page with content
 	// @object The current widget.
-	var _populateDefaults = function(widget) {
+	var _populateDefaults = widget => {
+		const { clean_name } = widget
+
 		$scope.widget = {
 			name: widget.name,
 			icon: Materia.Image.iconUrl(widget.dir, 394),

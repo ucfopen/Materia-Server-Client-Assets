@@ -4,13 +4,13 @@ describe('ngEnter Directive', function() {
 
 	beforeEach(() => {
 		require('./dir-ngenter')
-		inject(function(_$compile_, _$rootScope_) {
+		inject((_$compile_, _$rootScope_) => {
 			$compile = _$compile_
 			$scope = _$rootScope_.$new()
 		})
 	})
 
-	it('executes callback on enter key', function() {
+	it('executes callback on enter key', () => {
 		$scope.enterHandler = jest.fn()
 		var element = angular.element('<div class="okyea" ng-enter="enterHandler()">test</div>')
 		var compiled = $compile(element)($scope)

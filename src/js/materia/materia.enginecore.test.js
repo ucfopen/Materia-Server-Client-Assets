@@ -34,6 +34,7 @@ describe('enginecore', () => {
 		expect(Engine.sendStorage).toBeDefined()
 		expect(Engine.disableResizeInterval).toBeDefined()
 		expect(Engine.setHeight).toBeDefined()
+		expect(Engine.setVerticalScroll).toBeDefined()
 		expect(Engine.escapeScriptTags).toBeDefined()
 	})
 
@@ -66,13 +67,14 @@ describe('enginecore', () => {
 	})
 
 	it('alert sends a postmessage', () => {
-		Engine.alert('title', 'msg', 'type')
+		Engine.alert('title', 'msg', 'fatal')
 		expect(parent.postMessage).toHaveBeenCalledWith(
-			'{"type":"alert","data":{"title":"title","msg":"msg","type":"type"}}',
+			'{"type":"alert","data":{"title":"title","msg":"msg","fatal":"fatal"}}',
 			'*'
 		)
 	})
 
+	// deprecated funtion, test to check that it functions for old widgets that use it
 	it('getImageAssetUrl returns an expected url', () => {
 		Engine.start({ start: jest.fn() })
 		let _onPostMessage = window.addEventListener.mock.calls[0][1]
@@ -84,6 +86,19 @@ describe('enginecore', () => {
 		})
 
 		expect(Engine.getImageAssetUrl('fR93X')).toBe('mediaUrl/fR93X')
+	})
+
+	it('getMediaUrl returns an expected url', () => {
+		Engine.start({ start: jest.fn() })
+		let _onPostMessage = window.addEventListener.mock.calls[0][1]
+		_onPostMessage({
+			data: JSON.stringify({
+				type: 'initWidget',
+				data: ['qset', 'instance', 'baseUrl', 'mediaUrl']
+			})
+		})
+
+		expect(Engine.getMediaUrl('fR93X')).toBe('mediaUrl/fR93X')
 	})
 
 	it('end sends post message and defaults to show score screen', () => {
@@ -127,6 +142,15 @@ describe('enginecore', () => {
 		let ex = JSON.stringify({
 			type: 'setHeight',
 			data: [200]
+		})
+		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
+	})
+
+	it('setVerticalScroll sends message', () => {
+		Engine.setVerticalScroll(0)
+		let ex = JSON.stringify({
+			type: 'setVerticalScroll',
+			data: [0]
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})

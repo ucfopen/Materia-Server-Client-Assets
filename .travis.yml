@@ -1,0 +1,27 @@
+language: node_js
+node_js:
+- '6'
+cache:
+  yarn: true
+  directories:
+  - node_modules
+before_install:
+- npm config set spin false
+- npm install -g npm@^5
+script:
+- yarn prettier:run
+- git diff --exit-code ./src
+- yarn test:ci
+- yarn build
+deploy:
+  skip_cleanup: true
+  provider: npm
+  email: iturgeon+npm@gmail.com
+  on:
+    tags: true
+    repo: ucfopen/Materia-Server-Client-Assets
+  api_key:
+    secure: ZSoXqFZRB6pgO2j6E8XbvIkqjqENrLHCI9AfqNTPG85EtsU4rpXMiI9WtZWL7n5R4R58yzLvc9+6exqSzSESYdNF+VfIanY2utsaHrYiZcUwSI5vgvLHEg1Pvmh40A0ERbblP/LNKfy2ofyczBvBB1zz4CLZBTUTWOSI8fm0CNQ2iSr9wxetG0jO3+v+gcC3MDE5t+DvuaQedXI8VKnRvhLPypuxX/ONEiOe3HK3lDOlJCbL6acHGXstn/wKJ3vHOBKMEbAB4SWtik0En9fKYmV8xXp3OIAFjWxNZmWbDYRIKVn2Eyrm2G7CKc/R9uTEyowOK9d7832hafkoPW/Fa6JZJufcR4AbfUUWPuCZT7mtjBoP42QSUlhkkLP4kkcYXxJeOEAFq5taw0TScxKHfUIKK/GBjDoXDFbOnxDNRLk2Zu402APwHaR2KpysRXowDrgl+O5HJnmj7XApRrR6TfMA8oKym2D0YoDRPE/8diu8YMrtmpjMcPXvXacax1GpVp59W0CunN9+zrxvO7Oy4gAhvZZF2FJfSPBkd7LA8u8Hxmrn1vgE/MFHfeA8morkXzwlDBQ2Edsh4/k0VsE4FeQkljN1/D0ckSQRIOwlzb0dZnaSh5s61eV3lWApbv8OZ6IWyC+Uz3hROnEHAs6hvbGe7xwcB/aMvXjO7017gew=
+notifications:
+  slack:
+    secure: pbqgHSnFFCEU1iL5Zp8Do0Pcgf23dZ5YjF0bauYAY+Wrgc85DF0m7n/s3Sdw3mTLvmF6Q4JFTqHRfuU30YGQir4QBpnfLKqZuDG11L/J5BqZ1+vKA2byjCOByKVOM1uO4MEbIF+EDsQ6MkGY1PBiatqJ8wcyC0Og/zLyy72oInaClHRRKiTKqQSssZ1ZgDAB6xa7Xb0X72YOZnaxcICuK69VCN93MQwlROq/TyAtj6IHPBnG5vvwutP5UlHBM3tW6CmQeyu8bcGLAwaObHk62Hh065cW8UIFt6L1GVPFNZ8No4J4dA+1CS99ROiRNgrRsWnT/u459SnSE6VJsU/QAw5W+3YBQpCSMMnQZSL8x/J93Qm8cCEAKsliXAOfEl7J3JY5VsxCDJ8OW7ihWwP1LFaSwdwcQTjx9xIvuyTf3x/kLse3Jhb5vQ7bH4jxLNKzlAnLFJok9ytJ+V1CfJmiJ/hcihBEQJRjRXybuk2P4heCoDqYhFCq9bIwErOGVXoXzooE2PM5FSqy1u9Y9ww3o5Qf30GBTDxazVpVCXAjYMl8agamIDWYJpBP9SqOA/wobPB5t06pcyBsZddjJdfx23QIBaahOedb51kacLZVSMycBgZDaEhw7a9W8yH9q9t9DPSNzA1wCGqwiFGonTN0t+vppUwaFlma4E7MuiShKaI=

@@ -47,7 +47,7 @@ app.controller('playerCtrl', function(
 	// dom element where the widget is embedded
 	let embedTargetEl
 
-	const _alert = (msg, title = '', fatal = false) => {
+	const _alert = (msg, title = 'Warning!', fatal = false) => {
 		$scope.alert.msg = msg
 		$scope.alert.title = title
 		$scope.alert.fatal = fatal
@@ -262,9 +262,11 @@ app.controller('playerCtrl', function(
 				case 'sendPendingLogs':
 					return _sendAllPendingLogs()
 				case 'alert':
-					return _alert(msg.data, 'Warning!', false)
+					return _alert(msg.data.msg, msg.data.title, msg.fatal)
 				case 'setHeight':
 					return _setHeight(msg.data[0])
+				case 'setVerticalScroll':
+					return _setVerticalScroll(msg.data[0])
 				case 'initialize':
 					break
 				default:
@@ -523,6 +525,14 @@ app.controller('playerCtrl', function(
 		let el = document.getElementsByClassName('center')[0]
 		let desiredHeight = Math.max(h, min_h)
 		el.style.height = `${desiredHeight}px`
+	}
+
+	const _setVerticalScroll = location => {
+		const containerElement = document.getElementById('container')
+		const calculatedLocation =
+			window.scrollY + containerElement.getBoundingClientRect().y + location
+
+		window.scrollTo(0, calculatedLocation)
 	}
 
 	const _showScoreScreen = () => {
