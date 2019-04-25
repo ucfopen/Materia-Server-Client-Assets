@@ -12,7 +12,7 @@
 
 		h1 {
 			flex-grow: 1;
-			margin: 10px 0;
+			margin: 10px 0 0 8px;
 		}
 
 		#guide-tabs {
@@ -20,26 +20,22 @@
 
 			&.players-guide {
 				a:first-of-type {
-					background: #ffce8c;
+					background: #333;
 				}
 			}
 
 			&.creators-guide {
 				a:nth-of-type(2) {
-					background: #ffce8c;
+					background: #333;
 				}
 			}
 
 			a {
-				padding: 10px 15px;
-				background: lighten(#ffce8c, 15%);
-				color: black;
+				padding: 8px 15px;
+				background: lighten(#333, 20%);
+				color: white;
 				border-radius: 10px 10px 0 0;
-				margin: 10px 0 0 10px;
-			}
-
-			a:hover {
-				background: darken(#ffce8c, 10%);
+				margin: 15px 0 0 10px;
 			}
 		}
 	}
@@ -49,9 +45,8 @@
 			height: calc(100vh - 200px);
 			width: 100%;
 			box-sizing: border-box;
-			border: none;
-			border-radius: 3px;
-			border: 8px solid #ffce8c;
+			border-radius: 3px 0 3px 3px;
+			border: 8px solid #333;
 		}
 	}
 }
@@ -63,7 +58,26 @@
 			margin: 5px;
 		}
 
-		#guide-container {
+		#top {
+			flex-direction: column;
+
+			h1 {
+				margin: 0;
+				font-size: 20px;
+			}
+
+			#guide-tabs {
+				justify-content: flex-end;
+
+				a {
+					padding: 6px 15px;
+					background: lighten(#333, 20%);
+					color: white;
+					border-radius: 10px 10px 0 0;
+					margin: 10px 0 0 10px;
+					font-size: 14px;
+				}
+			}
 		}
 	}
 }

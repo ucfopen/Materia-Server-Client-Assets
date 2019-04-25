@@ -48,14 +48,15 @@ app.controller('widgetDetailsController', function(
 			creatorurl: document.location.pathname + '/create',
 			supported_data: widget.meta_data['supported_data'].map(_tooltipObject),
 			features: widget.meta_data['features'].map(_tooltipObject),
-			creators_guide:
-				widget.creator_guide == '' ? null : document.location.pathname + '/creators-guide',
-			players_guide:
-				widget.player_guide == '' ? null : document.location.pathname + '/players-guide',
+			creators_guide: document.location.pathname + '/creators-guide',
+			players_guide: document.location.pathname + '/players-guide',
 			created: date.toLocaleDateString(),
 			width: ~~widget.width,
 			height: ~~widget.height
 		}
+
+		$scope.hasPlayerGuide = widget.player_guide != ''
+		$scope.hasCreatorGuide = widget.creator_guide != ''
 
 		// inst_id needs to be set for the embedded demo
 		$scope.inst_id = widget.meta_data.demo
