@@ -257,7 +257,9 @@ app.controller('MyWidgetsController', function(
 		guestAccess: false,
 		embeddedOnly: false
 	}
-	$scope.perms = { collaborators: [] }
+	$scope.perms = {
+		collaborators: []
+	}
 	$scope.show = {
 		collaborationModal: false,
 		availabilityModal: false,
@@ -266,7 +268,8 @@ app.controller('MyWidgetsController', function(
 		exportModal: false,
 		deleteDialog: false,
 		embedToggle: false,
-		editPublishedWarning: false
+		editPublishedWarning: false,
+		restrictedPublishWarning: false
 	}
 	$scope.SCORE_TAB_GRAPH = 0
 	$scope.SCORE_TAB_INDIVIDUAL = 1

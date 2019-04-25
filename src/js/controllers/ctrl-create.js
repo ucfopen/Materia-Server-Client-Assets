@@ -158,6 +158,19 @@ app.controller('createCtrl', function(
 		}
 	}
 
+	const checkUserPublishPerms = widgetData => {
+		const deferred = $q.defer()
+		widgetSrv.canBePublishedByCurrentUser(widget_id).then(canPublish => {
+			$scope.canPublish = canPublish
+
+			if (!widgetData.is_draft && !canPublish)
+				deferred.reject('Widget type can not be edited by students after publishing.')
+
+			deferred.resolve(widgetData)
+		})
+		return deferred.promise
+	}
+
 	// build a my-widgets url to a specific widget
 	const getMyWidgetsUrl = instid => `${BASE_URL}my-widgets#${instid}`
 
@@ -497,6 +510,17 @@ ${msg.toLowerCase()}`,
 			}
 			// assumes questions is already a JSON string
 			questions = JSON.parse(questions)
+
+			//strip id from all imported questions and answers to avoid collisions
+			questions.forEach(question => {
+				if (question.answers && question.answers.length > 0) {
+					question.answers.forEach(answer => {
+						answer.id = null
+					})
+				}
+				question.id = null
+			})
+
 			return sendToCreator('onQuestionImportComplete', [questions])
 		},
 
@@ -521,6 +545,7 @@ ${msg.toLowerCase()}`,
 	$scope.saveText = 'Save Draft'
 	$scope.previewText = 'Preview'
 	$scope.publishText = 'Publish...'
+	$scope.canPublish = false
 	$scope.invalid = false
 	$scope.modal = false
 	$scope.requestSave = _requestSave
@@ -542,7 +567,9 @@ ${msg.toLowerCase()}`,
 		getQset().then(() => {
 			if (!$scope.invalid) {
 				$q(resolve => resolve(inst_id))
+					.then(widgetSrv.lockWidget)
 					.then(widgetSrv.getWidget)
+					.then(checkUserPublishPerms)
 					.then(embed)
 					.then(initCreator)
 					.then(showButtons)
@@ -554,6 +581,7 @@ ${msg.toLowerCase()}`,
 		// initialize a new creator
 		$q(resolve => resolve(widget_id))
 			.then(widgetSrv.getWidgetInfo)
+			.then(checkUserPublishPerms)
 			.then(embed)
 			.then(initCreator)
 			.then(showButtons)
