@@ -122,8 +122,11 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 		// load list of widgets
 		widgetSrv.getWidgetsByType('all').then(widgets => {
 			if (!widgets || !widgets.length || !widgets.length > 0) {
+				$scope.noWidgetsInstalled = true
+				Please.$apply()
 				return
 			}
+			$scope.noWidgetsInstalled = false
 			allWidgets = widgets
 			_getFiltersFromWidgets(widgets)
 
@@ -161,6 +164,7 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 
 	$scope.search = ''
 	$scope.totalWidgets = -1
+	$scope.noWidgetsInstalled = false
 	$scope.isShowingFilters = false
 	$scope.ready = false
 	$scope.activeFilters = []

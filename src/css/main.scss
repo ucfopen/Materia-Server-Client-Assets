@@ -423,8 +423,6 @@ h3 {
 	background: #ffba5d;
 	background-image: linear-gradient(#ffce8c, #ffa42a);
 
-	border-radius: 6px;
-	border: #fdb34f 1px solid;
 	font-weight: 700;
 	color: #694d28;
 	text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
@@ -435,8 +433,20 @@ h3 {
 	display: inline-block;
 	user-select: none;
 
+	border: 1px solid #525252;
+	border-radius: 4px;
+
 	.ng-modal & {
 		margin: 5px auto;
+	}
+
+	&.green {
+		background: #c4dd61;
+		color: #525252;
+
+		&:hover {
+			background: #d5ea7f;
+		}
 	}
 }
 
