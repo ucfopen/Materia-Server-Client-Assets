@@ -1,3 +1,6 @@
+$color-features: #0093e7;
+$color-features-active: #0357a5;
+
 .widget {
 	.page {
 		margin: 0 auto 20px;
@@ -34,12 +37,98 @@
 		display: none; // shown on mobile
 	}
 
-	a.green{
-		background: #c4dd61;
-		color: #525252;
+	.feature-list {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		margin-bottom: 12px;
 
-		&:hover {
-			background: #d5ea7f;
+		.feature-heading {
+			font-size: 14px;
+			margin-right: 10px;
+		}
+
+		.feature {
+			margin-top: 0;
+
+			.feature-description {
+				display: inline-block;
+				margin: 0 4px;
+				font-size: 12px;
+			}
+
+			.feature-name {
+				font-size: 14px;
+				cursor: default;
+				position: relative;
+				border-radius: 2px;
+				background: $color-features;
+				color: #fff;
+				padding: 2px 6px;
+				margin-right: 5px;
+
+				font-weight: 700;
+				font-family: 'Lato', arial, serif;
+				display: block;
+
+				&:hover {
+					background: $color-features-active;
+
+					&:after {
+						content: '';
+						position: absolute;
+						width: 0;
+						height: 0;
+						border-left: 6px solid transparent;
+						border-right: 6px solid transparent;
+						border-top: 6px solid $color-features-active;
+						right: 0;
+						left: 0;
+						bottom: -6px;
+						margin: auto;
+					}
+				}
+			}
+
+			.feature-description {
+				margin-top: 7px;
+				position: absolute;
+				z-index: 99;
+				padding: 15px;
+				color: white;
+				background: $color-features-active;
+				width: 250px;
+				border-radius: 15px;
+				box-shadow: 1px 2px 5px #888;
+				line-height: 18px;
+				font-size: 14px;
+			}
+		}
+	}
+
+	a {
+		&.customizable {
+			background: #e53f1f;
+			color: #fff;
+		}
+
+		&.scorable {
+			background: #abe51f;
+			color: #405118;
+		}
+
+		&.scorable:hover {
+			color: #abe51f;
+			background: #405118;
+		}
+
+		&.green {
+			background: #c4dd61;
+			color: #525252;
+
+			&:hover {
+				background: #d5ea7f;
+			}
 		}
 	}
 
@@ -47,6 +136,7 @@
 		background: #ffffff;
 		box-shadow: 1px 3px 10px #888;
 		margin: 0 10px;
+		padding-bottom: 70px;
 		border-radius: 4px;
 
 		.top {
@@ -362,62 +452,13 @@
 		}
 
 		.bottom {
-			display: flex;
-			justify-content: space-between;
-			flex-wrap: wrap-reverse;
-			padding: 20px;
-
-			dl {
-				line-height: 30px;
-				margin-top: 0;
-				flex-grow: 1;
-
-				dt {
-					font-size: 14px;
-				}
-
-				a.feature,
-				a.supported_data {
-					cursor: default;
-					font-size: 13px;
-					padding: 2px 6px;
-					position: relative;
-
-					&:hover {
-						background: #0357a5;
-
-						&:after {
-							content: '';
-							position: absolute;
-							width: 0;
-							height: 0;
-							border-left: 6px solid transparent;
-							border-right: 6px solid transparent;
-							border-top: 6px solid #0357a5;
-							right: 0;
-							left: 0;
-							bottom: -6px;
-							margin: auto;
-						}
-					}
-				}
-
-				.tooltip {
-					position: absolute;
-					z-index: 99;
-					padding: 15px;
-					background: #eee;
-					width: 250px;
-					border-radius: 15px;
-					box-shadow: 1px 2px 5px #888;
-					line-height: 15px;
-					font-size: 12px;
-				}
-			}
+			padding: 0 55px;
 
 			.widget-action-buttons {
 				width: 230px;
 				text-align: right;
+				float: right;
+				margin-top: -22px;
 
 				h4 {
 					color: #b5b5b5;
@@ -472,7 +513,30 @@
 			padding: 0 20px;
 		}
 
+		.feature-list {
+			justify-content: center;
+
+			.feature-heading {
+				text-align: center;
+				flex-basis: 100%;
+				margin-bottom: 10px;
+			}
+		}
+
 		.widget_detail {
+			.bottom {
+				.widget-action-buttons {
+					float: none;
+					margin: 0 auto;
+					text-align: center;
+				}
+
+				#last-updated {
+					text-align: center;
+					display: block;
+				}
+			}
+
 			.top {
 				padding: 10px;
 				min-height: auto;
@@ -542,29 +606,6 @@
 						font-size: 14px;
 						height: 18px;
 					}
-				}
-			}
-
-			.bottom {
-				dl {
-					text-align: center;
-				}
-
-				dt {
-					float: none;
-					line-height: normal;
-					margin-top: 10px;
-				}
-
-				.tooltip {
-					left: 10%;
-					right: 10%;
-					width: auto;
-				}
-
-				.widget-action-buttons {
-					width: 100%;
-					text-align: center;
 				}
 			}
 		}

@@ -348,6 +348,21 @@
 							}
 						}
 					}
+
+					dt {
+						font-weight: 700;
+						font-size: 12px;
+						font-family: 'Lato', arial, serif;
+						display: block;
+						float: left;
+						clear: left;
+					}
+
+					dd {
+						display: inline-block;
+						margin: 0 4px;
+						font-size: 12px;
+					}
 				}
 			}
 		}
