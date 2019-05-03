@@ -115,6 +115,11 @@ amdefine@>=0.0.4:
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
 
+angular-animate@1.6.9:
+  version "1.6.9"
+  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.6.9.tgz#a0f926c1ba3190bd8929ef966a7fa79760682622"
+  integrity sha512-3/fqrmT6mJgB2O6oDvXDlNP6AJVqUXLWZq/P87Xo7Wt0JjcSmhJSQ02Yp7gm0Pkd5SXMKHICLpn/iEJPyse9fg==
+
 angular-mocks@1.6.9:
   version "1.6.9"
   resolved "https://registry.yarnpkg.com/angular-mocks/-/angular-mocks-1.6.9.tgz#4fed8c8293a5080e0919a7ff0dcf0f704864b7ba"
@@ -2681,6 +2686,11 @@ growly@^1.3.0:
   resolved "https://registry.yarnpkg.com/growly/-/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"
   integrity sha1-8QdIy+dq+WS3yWyTxrzCivEgwIE=
 
+hammerjs@2.0.8:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/hammerjs/-/hammerjs-2.0.8.tgz#04ef77862cff2bb79d30f7692095930222bf60f1"
+  integrity sha1-BO93hiz/K7edMPdpIJWTAiK/YPE=
+
 handlebars@^4.0.3:
   version "4.0.11"
   resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.11.tgz#630a35dfe0294bc281edae6ffc5d329fc7982dcc"
@@ -3762,6 +3772,11 @@ js-base64@^2.1.8, js-base64@^2.1.9:
   version "2.4.3"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.4.3.tgz#2e545ec2b0f2957f41356510205214e98fad6582"
   integrity sha512-H7ErYLM34CvDMto3GbD6xD0JLUGYXR3QTcH6B/tr4Hi/QpSThnCsIp+Sy5FRTw3B0d6py4HcNkW7nO/wdtGWEw==
+
+js-snakecase@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/js-snakecase/-/js-snakecase-1.2.0.tgz#61cf6f3d2e931757a49ce05197e9acd1448192b8"
+  integrity sha512-2XYxKNXlue3JpUYYhT5hfI87Z57hLm1n1AdVhqhxDX1NxupWrz9PqLToFgXLh1tYe4KVSVX1qyR+1jPe1bEjsg==
 
 js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
