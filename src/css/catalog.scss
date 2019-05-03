@@ -323,7 +323,8 @@
 					font-size: 0.88em;
 				}
 
-				dl {
+				ul {
+					padding: 0;
 					width: 100%;
 					line-height: 20px;
 					overflow-y: auto;
@@ -332,36 +333,20 @@
 					margin-top: 5px;
 					margin-bottom: 5px;
 
-					&.features_list dd {
+					li {
 						border-radius: 3px;
 						margin: 3px 6px;
 						padding: 1px 6px;
 						font-size: 10px;
-
-						&.supported-feature {
-							background: #eeeeee;
-							color: #444;
-
-							&.selected {
-								background: #3498db;
-								color: white;
-							}
-						}
-					}
-
-					dt {
-						font-weight: 700;
-						font-size: 12px;
-						font-family: 'Lato', arial, serif;
-						display: block;
-						float: left;
-						clear: left;
-					}
-
-					dd {
+						background: #eeeeee;
+						color: #444;
 						display: inline-block;
-						margin: 0 4px;
 						font-size: 12px;
+
+						&.selected {
+							background: #3498db;
+							color: white;
+						}
 					}
 				}
 			}
