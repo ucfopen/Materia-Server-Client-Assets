@@ -2,6 +2,10 @@ import toSnakeCase from 'js-snakecase'
 
 const app = angular.module('materia')
 
+// when the current url matches the widget catalog
+// then use html5Mode to allow the filters and search to update the url
+// and add ng-animate
+// ex: /widgets or /widgets/1-adventrue
 if (window.location.href.match(/\/widgets($|\/\D|\?)/g)) {
 	app.config(function($locationProvider) {
 		$locationProvider.html5Mode({
@@ -9,6 +13,7 @@ if (window.location.href.match(/\/widgets($|\/\D|\?)/g)) {
 			requireBase: false
 		})
 	})
+
 	app.requires.push('ngAnimate')
 }
 
@@ -122,8 +127,11 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 		// load list of widgets
 		widgetSrv.getWidgetsByType('all').then(widgets => {
 			if (!widgets || !widgets.length || !widgets.length > 0) {
+				$scope.noWidgetsInstalled = true
+				Please.$apply()
 				return
 			}
+			$scope.noWidgetsInstalled = false
 			allWidgets = widgets
 			_getFiltersFromWidgets(widgets)
 
@@ -161,6 +169,7 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 
 	$scope.search = ''
 	$scope.totalWidgets = -1
+	$scope.noWidgetsInstalled = false
 	$scope.isShowingFilters = false
 	$scope.ready = false
 	$scope.activeFilters = []
