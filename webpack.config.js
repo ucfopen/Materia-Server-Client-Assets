@@ -121,7 +121,7 @@ module.exports = {
     'js/materia.scorecore.js': [
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.scorecore.js',
-    ],
+    ]
   }),
   module: {
     rules: [
