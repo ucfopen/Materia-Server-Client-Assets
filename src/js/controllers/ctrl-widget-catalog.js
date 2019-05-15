@@ -68,12 +68,17 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 
 	const _getFiltersFromWidgets = widgets => {
 		widgets.forEach(widget => {
-			widget.meta_data.features.forEach(feature => {
-				if (!filterList.hasOwnProperty(feature)) _registerFilter(feature)
-			})
-			widget.meta_data.supported_data.forEach(data => {
-				if (!filterList.hasOwnProperty(data)) _registerFilter(data, ' Questions')
-			})
+			if (widget.meta_data.hasOwnProperty('features')) {
+				widget.meta_data.features.forEach(feature => {
+					if (!filterList.hasOwnProperty(feature)) _registerFilter(feature)
+				})
+			}
+
+			if (widget.meta_data.hasOwnProperty('supported_data')) {
+				widget.meta_data.supported_data.forEach(data => {
+					if (!filterList.hasOwnProperty(data)) _registerFilter(data, ' Questions')
+				})
+			}
 		})
 	}
 
@@ -84,10 +89,15 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 
 		// check for filter matches
 		for (let filterName in filterList) {
-			const isActive = filterList[filterName].isActive
-
-			if (isActive && !wFeatures.includes(filterName) && !wSupport.includes(filterName)) {
-				return false
+			// this filter is active
+			if (filterList[filterName].isActive) {
+				// widget has features/support and the feature isn't in either
+				if (
+					(!wFeatures || !wFeatures.includes(filterName)) &&
+					(!wSupport || !wSupport.includes(filterName))
+				) {
+					return false
+				}
 			}
 		}
 
