@@ -1,27 +1,23 @@
-const glob = require('glob');
-const path = require('path');
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
-
+const glob = require('glob')
+const path = require('path')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
 const jsPath = path.join(__dirname, 'src', 'js')
 const cssPath = path.join(__dirname, 'src', 'css')
 const outPath = path.join(__dirname, 'dist')
 
-// Create object with:
-// Key = output name, Value = sass file
-// for every scss file in the directory
-// EX: { 'css/<filename>.css' : './src/css/filename.scss', ...}
-let css = {}
-glob.sync(path.join(cssPath, '*.scss')).forEach(function(file){
-  css['css/'+path.basename(file, '.scss')+'.css'] = file
-})
-
 module.exports = {
-  stats: {children: false}, // reduce noising webpack print output
-  entry: Object.assign(css, {
+  stats: { children: false, modules: false },
+  entry: {
+    // webpack requires workarounds have entries be non-js files
+    // so we'll just accept that webpack will create one here
+    // and we'll clean it up after with clean-webpack-plugin
+    '.placeholder-delete-css': glob.sync(cssPath+"/*.scss"),
+
     // materia.js present on every page on the server except inside widget iframe & error pages
     // contains common libs used by other scripts
     // contains everything needed by all pages that don't require a login
-    'js/materia.js':[
+    'materia':[
+      // polyfills
       "core-js/es6/array",
       "core-js/fn/array/includes",
       "core-js/es6/symbol",
@@ -30,6 +26,7 @@ module.exports = {
       "core-js/fn/string/includes",
       "core-js/web/dom-collections",
       "whatwg-fetch",
+      // end polyfills
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.coms.json.js',
       jsPath+'/materia/materia.flashcheck.js',
@@ -57,7 +54,7 @@ module.exports = {
       'ngmodal/dist/ng-modal.min.js'
     ],
     // student.js - all the stuff needed to be a student. play, view scores, profile
-    'js/student.js': [
+    'student': [
       jsPath+'/controllers/ctrl-player.js',
       jsPath+'/controllers/ctrl-profile.js',
       jsPath+'/controllers/ctrl-scores.js',
@@ -74,7 +71,7 @@ module.exports = {
       jsPath+'/services/srv-scores.js',
     ],
     // author.js - all scripts for creating content: my widgets, widget authoring, lti picker
-    'js/author.js': [
+    'author': [
       jsPath+'/controllers/ctrl-collaboration.js',
       jsPath+'/controllers/ctrl-create.js',
       jsPath+'/controllers/ctrl-export-scores.js',
@@ -102,27 +99,27 @@ module.exports = {
       jsPath+'/services/srv-scores.js',
     ],
     // only used on admin interface pages
-    'js/admin.js':[
+    'admin':[
       jsPath+'/controllers/ctrl-admin-user.js',
       jsPath+'/controllers/ctrl-admin-widget.js',
       jsPath+'/services/srv-admin.js',
     ],
-    'js/materia.creatorcore.js': [
+    'materia.creatorcore': [
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.creatorcore.js',
     ],
-    'js/materia.enginecore.js': [
+    'materia.enginecore': [
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.enginecore.js',
       jsPath+'/materia/materia.score.js',
       jsPath+'/materia/materia.storage.manager.js',
       jsPath+'/materia/materia.storage.table.js',
     ],
-    'js/materia.scorecore.js': [
+    'materia.scorecore': [
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.scorecore.js',
     ]
-  }),
+  },
   module: {
     rules: [
       {
@@ -136,11 +133,19 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: [
-              'es2015',
-              ['env', {
-                targets: { browsers: ["last 2 versions", "ie >= 11"]},
-                debug: true
-              }]
+              [
+                '@babel/preset-env',
+                {
+                  debug: true,
+                  targets: {
+                    browsers: [
+                      ">0.25%",
+                      "not ie 10",
+                      "not op_mini all"
+                    ]
+                  },
+                }
+              ]
             ],
             plugins: [
               require('babel-plugin-angularjs-annotate'),]
@@ -149,25 +154,35 @@ module.exports = {
       },
       // SASS files
       {
-        test: /\.scss$/,
-        use: ExtractTextPlugin.extract({
-          use: [
-            'css-loader?url=false', // disable the css-loaders' function of locating image urls
-            'sass-loader'
-          ]
-        })
+        test: /\.(sa|sc|c)ss$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'css/[name].css'
+            },
+          },
+          'extract-loader',
+          'css-loader?url=false', // disable the css-loaders' function of locating image urls
+          'sass-loader'
+        ]
       }
     ]
   },
   output: {
     path: outPath,
-    filename: '[name]'
+    filename: 'js/[name].js'
   },
-  plugins: [
-    new ExtractTextPlugin('[name]'), // pull the css out of webpack
+  plugins:[
+    new CleanWebpackPlugin({
+      // enable this to delete the placeholder webpack generates for css
+      protectWebpackAssets: false,
+      cleanAfterEveryBuildPatterns: ['js/.placeholder-delete-css.js']
+    }),
   ],
   resolve: {
       alias: {
+          // allow the code to require from node_modules
           'node_modules': path.join(__dirname, 'node_modules')
       }
   }
