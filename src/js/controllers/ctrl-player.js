@@ -576,8 +576,7 @@ app.controller('playerCtrl', function(
 	$window.onbeforeunload = _beforeUnload
 
 	$timeout(() => {
-		$q
-			.all([_getWidgetInstance(), _startPlaySession()])
+		$q.all([_getWidgetInstance(), _startPlaySession()])
 			.then(_getQuestionSet)
 			.then(_embed)
 			.then(_sendWidgetInit)

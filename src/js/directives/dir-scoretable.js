@@ -39,7 +39,7 @@ app.directive('scoreTable', function(selectedWidgetSrv, $window) {
 
 					// make the play duration readable
 					let duration = 0
-					const mins = (log.elapsed - log.elapsed % 60) / 60
+					const mins = (log.elapsed - (log.elapsed % 60)) / 60
 					const secs = log.elapsed % 60
 
 					if (mins !== 0) {
