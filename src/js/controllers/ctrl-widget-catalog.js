@@ -18,10 +18,15 @@ if (window.location.href.match(/\/widgets($|\/\D|\?)/g)) {
 }
 
 app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location, widgetSrv) {
-	const filterList = {}
+	const filterList = {} // key is raw filter name, value is filter object
 	const mapCleanToFilter = {} // key is clean name, value is filter object
 	const displayedWidgets = []
 	let allWidgets = []
+
+	const resetFilters = () => {
+		for (i in filterList) delete filterList[i]
+		for (i in mapCleanToFilter) delete mapCleanToFilter[i]
+	}
 
 	const showFilters = () => {
 		$scope.isShowingFilters = true
@@ -68,12 +73,17 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 
 	const _getFiltersFromWidgets = widgets => {
 		widgets.forEach(widget => {
-			widget.meta_data.features.forEach(feature => {
-				if (!filterList.hasOwnProperty(feature)) _registerFilter(feature)
-			})
-			widget.meta_data.supported_data.forEach(data => {
-				if (!filterList.hasOwnProperty(data)) _registerFilter(data, ' Questions')
-			})
+			if (widget.meta_data.hasOwnProperty('features')) {
+				widget.meta_data.features.forEach(feature => {
+					if (!filterList.hasOwnProperty(feature)) _registerFilter(feature)
+				})
+			}
+
+			if (widget.meta_data.hasOwnProperty('supported_data')) {
+				widget.meta_data.supported_data.forEach(data => {
+					if (!filterList.hasOwnProperty(data)) _registerFilter(data, ' Questions')
+				})
+			}
 		})
 	}
 
@@ -84,10 +94,15 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 
 		// check for filter matches
 		for (let filterName in filterList) {
-			const isActive = filterList[filterName].isActive
-
-			if (isActive && !wFeatures.includes(filterName) && !wSupport.includes(filterName)) {
-				return false
+			// this filter is active
+			if (filterList[filterName].isActive) {
+				// widget has features/support and the feature isn't in either
+				if (
+					(!wFeatures || !wFeatures.includes(filterName)) &&
+					(!wSupport || !wSupport.includes(filterName))
+				) {
+					return false
+				}
 			}
 		}
 
@@ -125,18 +140,19 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 
 	const _loadWidgets = () => {
 		// load list of widgets
-		widgetSrv.getWidgetsByType('all').then(widgets => {
-			if (!widgets || !widgets.length || !widgets.length > 0) {
-				$scope.noWidgetsInstalled = true
-				Please.$apply()
-				return
+		widgetSrv.getWidgetsByType('all').then(loaded => {
+			if (!loaded || !loaded.length || !loaded.length > 0) {
+				resetFilters()
+				loaded = []
 			}
-			$scope.noWidgetsInstalled = false
-			allWidgets = widgets
-			_getFiltersFromWidgets(widgets)
+			allWidgets = loaded
+
+			$scope.noWidgetsInstalled = allWidgets.length == 0
+
+			_getFiltersFromWidgets(allWidgets)
 
 			// memoize icon paths
-			widgets.forEach(widget => {
+			allWidgets.forEach(widget => {
 				widget.icon = Materia.Image.iconUrl(widget.dir, 275)
 			})
 
@@ -157,6 +173,7 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 	}
 
 	const _getFiltersFromURL = () => {
+		$scope.isShowingFilters = false
 		for (let key in $location.search()) {
 			if (key == 'search') {
 				$scope.search = $location.search().search
@@ -169,6 +186,7 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 
 	$scope.search = ''
 	$scope.totalWidgets = -1
+	$scope.count = -1
 	$scope.noWidgetsInstalled = false
 	$scope.isShowingFilters = false
 	$scope.ready = false
@@ -176,6 +194,7 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 	$scope.showFilters = showFilters
 	$scope.clearFilters = clearFilters
 	$scope.clearFiltersAndSearch = clearFiltersAndSearch
+	$scope.featuredWidgets = []
 	$scope.toggleFilter = toggleFilter
 	$scope.widgets = []
 	$scope.filters = filterList
