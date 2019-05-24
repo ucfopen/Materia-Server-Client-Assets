@@ -65,7 +65,7 @@
     "angular-mocks": "1.6.9",
     "babel-jest": "^24.6.0",
     "babel-loader": "^8.0.6",
-    "babel-plugin-angularjs-annotate": "^0.8.2",
+    "babel-plugin-angularjs-annotate": "^0.10.0",
     "babel-polyfill": "^6.26.0",
     "clean-webpack-plugin": "^2.0.2",
     "css-loader": "^0.28.4",
