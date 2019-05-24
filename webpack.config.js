@@ -1,22 +1,27 @@
-const glob = require('glob')
-const path = require('path')
+const glob = require('glob');
+const path = require('path');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const jsPath = path.join(__dirname, 'src', 'js')
 const cssPath = path.join(__dirname, 'src', 'css')
 const outPath = path.join(__dirname, 'dist')
 
-module.exports = {
-  stats: { children: false, modules: false },
-  entry: {
-    // webpack requires workarounds have entries be non-js files
-    // so we'll just accept that webpack will create one here
-    // and we'll clean it up after with clean-webpack-plugin
-    '.placeholder-delete-css': glob.sync(cssPath+"/*.scss"),
+// Create object with:
+// Key = output name, Value = sass file
+// for every scss file in the directory
+// EX: { 'css/<filename>.css' : './src/css/filename.scss', ...}
+let cssEntries = {}
+glob.sync(path.join(cssPath, '*.scss')).forEach(function(file){
+  cssEntries['css/'+path.basename(file, '.scss')+'.css'] = file
+})
 
+module.exports = {
+  stats: { children: false, modules: false }, // reduce noising webpack print output
+  entry: {...cssEntries, ...{
     // materia.js present on every page on the server except inside widget iframe & error pages
     // contains common libs used by other scripts
     // contains everything needed by all pages that don't require a login
-    'materia':[
+    'js/materia.js':[
       // polyfills
       "core-js/es6/array",
       "core-js/fn/array/includes",
@@ -54,7 +59,7 @@ module.exports = {
       'ngmodal/dist/ng-modal.min.js'
     ],
     // student.js - all the stuff needed to be a student. play, view scores, profile
-    'student': [
+    'js/student.js': [
       jsPath+'/controllers/ctrl-player.js',
       jsPath+'/controllers/ctrl-profile.js',
       jsPath+'/controllers/ctrl-scores.js',
@@ -71,7 +76,7 @@ module.exports = {
       jsPath+'/services/srv-scores.js',
     ],
     // author.js - all scripts for creating content: my widgets, widget authoring, lti picker
-    'author': [
+    'js/author.js': [
       jsPath+'/controllers/ctrl-collaboration.js',
       jsPath+'/controllers/ctrl-create.js',
       jsPath+'/controllers/ctrl-export-scores.js',
@@ -99,27 +104,27 @@ module.exports = {
       jsPath+'/services/srv-scores.js',
     ],
     // only used on admin interface pages
-    'admin':[
+    'js/admin.js':[
       jsPath+'/controllers/ctrl-admin-user.js',
       jsPath+'/controllers/ctrl-admin-widget.js',
       jsPath+'/services/srv-admin.js',
     ],
-    'materia.creatorcore': [
+    'js/materia.creatorcore.js': [
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.creatorcore.js',
     ],
-    'materia.enginecore': [
+    'js/materia.enginecore.js': [
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.enginecore.js',
       jsPath+'/materia/materia.score.js',
       jsPath+'/materia/materia.storage.manager.js',
       jsPath+'/materia/materia.storage.table.js',
     ],
-    'materia.scorecore': [
+    'js/materia.scorecore.js': [
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.scorecore.js',
     ]
-  },
+  }},
   module: {
     rules: [
       {
@@ -136,7 +141,6 @@ module.exports = {
               [
                 '@babel/preset-env',
                 {
-                  debug: true,
                   targets: {
                     browsers: [
                       ">0.25%",
@@ -154,31 +158,23 @@ module.exports = {
       },
       // SASS files
       {
-        test: /\.(sa|sc|c)ss$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: 'css/[name].css'
-            },
-          },
-          'extract-loader',
-          'css-loader?url=false', // disable the css-loaders' function of locating image urls
-          'sass-loader'
-        ]
+        test: /\.scss$/,
+        use: ExtractTextPlugin.extract({
+          use: [
+            'css-loader?url=false', // disable the css-loaders' function of locating image urls
+            'sass-loader'
+          ]
+        })
       }
     ]
   },
   output: {
     path: outPath,
-    filename: 'js/[name].js'
+    filename: '[name]'
   },
-  plugins:[
-    new CleanWebpackPlugin({
-      // enable this to delete the placeholder webpack generates for css
-      protectWebpackAssets: false,
-      cleanAfterEveryBuildPatterns: ['js/.placeholder-delete-css.js']
-    }),
+  plugins: [
+    new CleanWebpackPlugin(), // clear the dist folder before build
+    new ExtractTextPlugin('[name]'), // pull the css out of webpack
   ],
   resolve: {
       alias: {
