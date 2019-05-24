@@ -20,10 +20,12 @@
 
 	.top {
 		background: #eee;
-		color: #6c6c6c;
+		color: #333;
 		padding: 10px 15px;
 		position: relative;
 		z-index: 2;
+
+		font-family: 'Lato-Black', arial, serif;
 
 		h1 {
 			margin: 0;
@@ -200,8 +202,10 @@
 		.container-label {
 			margin-top: -14px;
 			font-size: 1.3em;
-			color: #a0a0a0;
+			color: #888888;
 			text-align: center;
+
+			font-family: 'Lato-Black', arial, serif;
 
 			span {
 				padding: 0 20px;
@@ -226,12 +230,14 @@
 			margin: 15px;
 			border-radius: 5px;
 			background-color: #ffffff;
-			box-shadow: 1px 2px 4px #888;
+			border: solid 1px #bababa;
+			box-shadow: 0px 0px 3px #dedede;
 			opacity: 1;
 			position: relative;
 
 			&:hover {
-				box-shadow: 1px 2px 4px #888, 1px 3px 10px 2px #888;
+				background-color: #e2f3ff;
+				box-shadow: 0px 0px 4px #888; // 1px 3px 10px 2px #888;
 
 				h1 {
 					text-decoration: underline;
@@ -267,7 +273,7 @@
 
 				.header {
 					float: left;
-					margin-top: -4px;
+					// margin-top: -4px;
 					margin-bottom: 4px;
 					z-index: -10;
 					width: 100%;
@@ -292,12 +298,12 @@
 						font-size: 14px;
 						font-weight: bold;
 						margin: 0;
-						padding: 5px 10px;
+						padding: 6px 10px;
 						font-family: 'Lato-Black', arial, serif;
 						background: #bfe5ff;
 						border-radius: 0 5px 0 0;
 						position: absolute;
-						top: -3px;
+						// top: -3px;
 						right: 0;
 
 						svg {
@@ -335,7 +341,7 @@
 
 					li {
 						border-radius: 3px;
-						margin: 3px 6px;
+						margin: 3px 10px 3px 0px;
 						padding: 1px 6px;
 						font-size: 10px;
 						background: #eeeeee;
