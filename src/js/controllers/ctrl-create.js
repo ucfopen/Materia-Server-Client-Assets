@@ -227,7 +227,9 @@ app.controller('createCtrl', function(
 			const origin = `${e.origin}/`
 			if (origin === STATIC_CROSSDOMAIN || origin === BASE_URL) {
 				const msg = JSON.parse(e.data)
-				switch (msg.source) { // currently 'creator-core' || 'media-importer' - can be extended to other sources
+				switch (
+					msg.source // currently 'creator-core' || 'media-importer' - can be extended to other sources
+				) {
 					case 'media-importer':
 						// options for media-importer postMessages
 						switch (msg.type) {

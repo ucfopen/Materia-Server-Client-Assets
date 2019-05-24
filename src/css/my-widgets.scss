@@ -999,13 +999,13 @@
 /*        Availability Popup                                       */
 /* *************************************************************** */
 
-@import 'partials/availability_modal';
+@import 'partials/widget_availability_modal';
 
 /* *************************************************************** */
 /*        Sharing Popup                                            */
 /* *************************************************************** */
 
-@import 'partials/share_modal';
+@import 'partials/widget_share_modal';
 
 .toggle_transfer {
 	text-decoration: underline;
@@ -1065,19 +1065,19 @@
 /*        Copying Popup                                            */
 /* *************************************************************** */
 
-@import 'partials/copy_modal';
+@import 'partials/widget_copy_modal';
 
 /* *************************************************************** */
 /*        Edit Published Widget Popup                              	*/
 /* *************************************************************** */
 
-@import 'partials/edit_published_modal';
+@import 'partials/widget_edit_published_modal';
 
 /* *************************************************************** */
 /*        Deletion Popup                                           */
 /* *************************************************************** */
 
-@import 'partials/delete_widget_modal';
+@import 'partials/widget_delete_modal';
 
 /* *************************************************************** */
 /*        CSV POPUP PAGE                                           */

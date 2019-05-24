@@ -66,32 +66,30 @@ app.controller('MyWidgetsController', function(
 
 		populateDisplay()
 
-		$q
-			.all([
-				userServ.get(),
-				selectedWidgetSrv.getUserPermissions(),
-				selectedWidgetSrv.getDateRanges()
-			])
-			.then(data => {
-				// don't render an old display if they user has clicked another widget
-				if ($scope.selected.widget.id !== currentId) {
-					return
-				}
+		$q.all([
+			userServ.get(),
+			selectedWidgetSrv.getUserPermissions(),
+			selectedWidgetSrv.getDateRanges()
+		]).then(data => {
+			// don't render an old display if they user has clicked another widget
+			if ($scope.selected.widget.id !== currentId) {
+				return
+			}
 
-				$scope.user = data[0]
-				$scope.perms = data[1]
-				populateAccess()
+			$scope.user = data[0]
+			$scope.perms = data[1]
+			populateAccess()
 
-				$timeout.cancel(loadScoresTimout)
+			$timeout.cancel(loadScoresTimout)
 
-				// load the scores a little later
-				loadScoresTimout = $timeout(() => {
-					selectedWidgetSrv.getScoreSummaries().then(scores => {
-						$scope.selected.scores = scores
-						populateScores()
-					})
-				}, 300)
-			})
+			// load the scores a little later
+			loadScoresTimout = $timeout(() => {
+				selectedWidgetSrv.getScoreSummaries().then(scores => {
+					$scope.selected.scores = scores
+					populateScores()
+				})
+			}, 300)
+		})
 	}
 
 	const populateAttempts = attemptsAllowed => {
