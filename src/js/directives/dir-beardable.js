@@ -15,7 +15,7 @@ app.directive('beardable', function() {
 					const link = document.createElement('link')
 					link.id = 'beard_css'
 					link.rel = 'stylesheet'
-					link.href = `${STATIC_CROSSDOMAIN}css/beard_mode.css`
+					link.href = `${STATIC_CROSSDOMAIN}css/beard-mode.css`
 					document.head.appendChild(link)
 				} else if (hasBeardCss) {
 					// disabled and has css

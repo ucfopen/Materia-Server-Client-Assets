@@ -15,7 +15,9 @@ Namespace('Materia.Scores').Scoregraphics = (() => {
 			const dotColor =
 				greyMode === true
 					? '#C3C5C8'
-					: parseInt(percent, 10) !== 1 ? '#e2dcdf' : 'rgba(106, 148, 81, .2)'
+					: parseInt(percent, 10) !== 1
+					? '#e2dcdf'
+					: 'rgba(106, 148, 81, .2)'
 
 			//
 			context.strokeStyle = greyMode === true ? '#B3B5B8' : '#db8081'
