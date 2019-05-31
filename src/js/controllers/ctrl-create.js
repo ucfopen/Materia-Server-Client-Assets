@@ -163,7 +163,9 @@ app.controller('createCtrl', function(
 		widgetSrv.canBePublishedByCurrentUser(widget_id).then(canPublish => {
 			$scope.canPublish = canPublish
 
-			if (!widgetData.is_draft && !canPublish)
+			// if the widget is published and the current user can not publish it, then they can not edit it
+			// also make sure that this isn't the creation of a new widget - which technically is also not a draft
+			if (typeof widgetData.is_draft != 'undefined' && !widgetData.is_draft && !canPublish)
 				deferred.reject('Widget type can not be edited by students after publishing.')
 
 			deferred.resolve(widgetData)
