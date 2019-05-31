@@ -158,14 +158,20 @@ app.controller('createCtrl', function(
 		}
 	}
 
-	const checkUserPublishPerms = widgetData => {
+	const prePublishPermsCheck = widgetData => {
+		const deferred = $q.defer()
+		checkUserPublishPerms(widgetData, true).then(() => deferred.resolve(widgetData))
+		return deferred.promise
+	}
+
+	const checkUserPublishPerms = (widgetData, newInstance) => {
 		const deferred = $q.defer()
 		widgetSrv.canBePublishedByCurrentUser(widget_id).then(canPublish => {
 			$scope.canPublish = canPublish
 
 			// if the widget is published and the current user can not publish it, then they can not edit it
 			// also make sure that this isn't the creation of a new widget - which technically is also not a draft
-			if (typeof widgetData.is_draft != 'undefined' && !widgetData.is_draft && !canPublish)
+			if (!newInstance && !widgetData.is_draft && !canPublish)
 				deferred.reject('Widget type can not be edited by students after publishing.')
 
 			deferred.resolve(widgetData)
@@ -585,7 +591,7 @@ ${msg.toLowerCase()}`,
 		// initialize a new creator
 		$q(resolve => resolve(widget_id))
 			.then(widgetSrv.getWidgetInfo)
-			.then(checkUserPublishPerms)
+			.then(prePublishPermsCheck)
 			.then(embed)
 			.then(initCreator)
 			.then(showButtons)
