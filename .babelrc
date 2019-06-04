@@ -1,0 +1,18 @@
+{
+	"presets": [
+		[
+			"@babel/preset-env",
+			{
+				debug: true,
+				targets: {
+					browsers: [
+						">0.25%",
+						"not ie 10",
+						"not op_mini all"
+					]
+				}
+			}
+		],
+		"jest"
+	]
+}

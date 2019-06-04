@@ -266,15 +266,6 @@
 		display: inline;
 	}
 
-	.page .header .widgetname {
-		position: absolute;
-		top: 3px;
-		right: 9px;
-		font-size: 15px;
-		color: #666;
-		margin: 0px;
-	}
-
 	.page .header + p {
 		padding: 0 0 0 10px;
 		margin: 0;
@@ -479,104 +470,100 @@
 		border-top: 1px solid rgba(0, 0, 0, 0.3);
 		display: inline-block;
 		padding: 22px 20px 4px 20px;
+		width: 100%;
 		font-size: 10pt;
-		width: 638px;
 		margin: 0;
+		padding-left: 100px;
 		position: relative;
+		box-sizing: border-box;
 		background: rgba(0, 0, 0, 0.05) url(../../../img/widget_link_icon.png) no-repeat 20px 20px;
-	}
 
-	.page .share-widget-container h3 {
-		font-size: 1.4em;
-		margin: 0;
-		margin-bottom: 8px;
-		padding-left: 80px;
-	}
+		h3 {
+			font-size: 1.4em;
+			margin: 0;
+			margin-bottom: 8px;
 
-	.page .share-widget-container p {
-		font-family: 'Lucida Grande', sans-serif;
-	}
+			a {
+				font-size: 13px;
+				margin-left: 10px;
+				font-weight: normal;
+			}
+		}
 
-	.page .share-widget-container span {
-		cursor: pointer;
-		color: #1778af;
-		text-decoration: underline;
-		font-family: 'Lucida Grande', sans-serif;
-	}
+		.share-help {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+		}
 
-	.page .share-widget-container span:hover {
-		color: #0093e7;
-	}
+		.link {
+			cursor: pointer;
+			color: #1778af;
+			text-decoration: underline;
 
-	.page .share-widget-container textarea {
-		width: 631px;
-		height: 60px;
-		margin: 0;
-		font-size: 0.9em;
-		font-family: monospace;
-		margin-bottom: 6px;
-	}
+			&:hover {
+				color: #0093e7;
+			}
+		}
 
-	.page .share-widget-container input:not(.unstyled) {
-		width: 548px;
-		margin: 0;
-		height: 1.5em;
-		font-size: 1.1em;
-		padding-left: 3px;
-		cursor: text;
-		margin-left: 80px;
-	}
+		#play_link {
+			width: 100%;
+			margin: 0;
+			height: 1.5em;
+			font-size: 1.1em;
+			padding-left: 3px;
+			cursor: text;
 
-	.page .share-widget-container input::-ms-clear {
-		display: none;
-	}
+			&::-ms-clear {
+				display: none;
+			}
 
-	.page .share-widget-container input:disabled {
-		cursor: default;
-		user-select: none;
-	}
+			&:disabled {
+				cursor: default;
+				user-select: none;
+			}
+		}
 
-	.page .share-widget-container.draft {
-		padding-bottom: 46px;
-		cursor: default;
+		.draft {
+			padding-bottom: 46px;
+			cursor: default;
 
-		opacity: 0.5;
-		user-select: none;
-	}
+			opacity: 0.5;
+			user-select: none;
 
-	.page .share-widget-container.draft p {
-		display: none;
-	}
+			p {
+				display: none;
+			}
+		}
 
-	.page .share-widget-container .autoplay-container {
-		margin-top: 0.5em;
-		vertical-align: top;
-		position: relative;
-		height: 2em;
-	}
+		.embed-options {
+			vertical-align: top;
+			color: black;
+			position: relative;
+			font-family: Lato, arial, serif;
 
-	.page .share-widget-container .autoplay-container span {
-		margin-left: 0.5em;
-		vertical-align: top;
+			#embed_link {
+				width: 100%;
+				height: auto;
+				margin: 0;
+				font-size: 0.9em;
+				font-family: monospace;
+				margin-bottom: 6px;
+			}
 
-		color: #000000;
-		text-decoration: none;
+			h4 {
+				display: inline-block;
+				margin: 12px 0px 0px;
+			}
 
-		font-weight: bold;
-		cursor: auto;
-
-		vertical-align: middle;
-	}
-
-	.page .share-widget-container .autoplay-container input {
-		display: inline-block;
-		width: auto;
-		margin-left: 0.5em;
-
-		font-size: 1.25em;
-		cursor: pointer;
-
-		vertical-align: middle;
+			input {
+				display: inline-block;
+				width: auto;
+				margin-left: 0.5em;
+				cursor: pointer;
+				vertical-align: middle;
+			}
+		}
 	}
 
 	.page .scores {
@@ -999,13 +986,13 @@
 /*        Availability Popup                                       */
 /* *************************************************************** */
 
-@import 'partials/availability_modal';
+@import 'partials/widget_availability_modal';
 
 /* *************************************************************** */
 /*        Sharing Popup                                            */
 /* *************************************************************** */
 
-@import 'partials/share_modal';
+@import 'partials/widget_share_modal';
 
 .toggle_transfer {
 	text-decoration: underline;
@@ -1065,19 +1052,19 @@
 /*        Copying Popup                                            */
 /* *************************************************************** */
 
-@import 'partials/copy_modal';
+@import 'partials/widget_copy_modal';
 
 /* *************************************************************** */
 /*        Edit Published Widget Popup                              	*/
 /* *************************************************************** */
 
-@import 'partials/edit_published_modal';
+@import 'partials/widget_edit_published_modal';
 
 /* *************************************************************** */
 /*        Deletion Popup                                           */
 /* *************************************************************** */
 
-@import 'partials/delete_widget_modal';
+@import 'partials/widget_delete_modal';
 
 /* *************************************************************** */
 /*        CSV POPUP PAGE                                           */

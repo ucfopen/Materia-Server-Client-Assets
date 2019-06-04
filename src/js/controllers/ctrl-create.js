@@ -158,6 +158,27 @@ app.controller('createCtrl', function(
 		}
 	}
 
+	const prePublishPermsCheck = widgetData => {
+		const deferred = $q.defer()
+		checkUserPublishPerms(widgetData, true).then(() => deferred.resolve(widgetData))
+		return deferred.promise
+	}
+
+	const checkUserPublishPerms = (widgetData, newInstance) => {
+		const deferred = $q.defer()
+		widgetSrv.canBePublishedByCurrentUser(widget_id).then(canPublish => {
+			$scope.canPublish = canPublish
+
+			// if the widget is published and the current user can not publish it, then they can not edit it
+			// also make sure that this isn't the creation of a new widget - which technically is also not a draft
+			if (!newInstance && !widgetData.is_draft && !canPublish)
+				deferred.reject('Widget type can not be edited by students after publishing.')
+
+			deferred.resolve(widgetData)
+		})
+		return deferred.promise
+	}
+
 	// build a my-widgets url to a specific widget
 	const getMyWidgetsUrl = instid => `${BASE_URL}my-widgets#${instid}`
 
@@ -214,7 +235,9 @@ app.controller('createCtrl', function(
 			const origin = `${e.origin}/`
 			if (origin === STATIC_CROSSDOMAIN || origin === BASE_URL) {
 				const msg = JSON.parse(e.data)
-				switch (msg.source) { // currently 'creator-core' || 'media-importer' - can be extended to other sources
+				switch (
+					msg.source // currently 'creator-core' || 'media-importer' - can be extended to other sources
+				) {
 					case 'media-importer':
 						// options for media-importer postMessages
 						switch (msg.type) {
@@ -497,6 +520,17 @@ ${msg.toLowerCase()}`,
 			}
 			// assumes questions is already a JSON string
 			questions = JSON.parse(questions)
+
+			//strip id from all imported questions and answers to avoid collisions
+			questions.forEach(question => {
+				if (question.answers && question.answers.length > 0) {
+					question.answers.forEach(answer => {
+						answer.id = null
+					})
+				}
+				question.id = null
+			})
+
 			return sendToCreator('onQuestionImportComplete', [questions])
 		},
 
@@ -521,6 +555,7 @@ ${msg.toLowerCase()}`,
 	$scope.saveText = 'Save Draft'
 	$scope.previewText = 'Preview'
 	$scope.publishText = 'Publish...'
+	$scope.canPublish = false
 	$scope.invalid = false
 	$scope.modal = false
 	$scope.requestSave = _requestSave
@@ -542,7 +577,9 @@ ${msg.toLowerCase()}`,
 		getQset().then(() => {
 			if (!$scope.invalid) {
 				$q(resolve => resolve(inst_id))
+					.then(widgetSrv.lockWidget)
 					.then(widgetSrv.getWidget)
+					.then(checkUserPublishPerms)
 					.then(embed)
 					.then(initCreator)
 					.then(showButtons)
@@ -554,6 +591,7 @@ ${msg.toLowerCase()}`,
 		// initialize a new creator
 		$q(resolve => resolve(widget_id))
 			.then(widgetSrv.getWidgetInfo)
+			.then(prePublishPermsCheck)
 			.then(embed)
 			.then(initCreator)
 			.then(showButtons)

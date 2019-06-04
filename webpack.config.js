@@ -1,7 +1,7 @@
 const glob = require('glob');
 const path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-
+const CleanWebpackPlugin = require('clean-webpack-plugin')
 const jsPath = path.join(__dirname, 'src', 'js')
 const cssPath = path.join(__dirname, 'src', 'css')
 const outPath = path.join(__dirname, 'dist')
@@ -10,18 +10,19 @@ const outPath = path.join(__dirname, 'dist')
 // Key = output name, Value = sass file
 // for every scss file in the directory
 // EX: { 'css/<filename>.css' : './src/css/filename.scss', ...}
-let css = {}
+let cssEntries = {}
 glob.sync(path.join(cssPath, '*.scss')).forEach(function(file){
-  css['css/'+path.basename(file, '.scss')+'.css'] = file
+  cssEntries['css/'+path.basename(file, '.scss')+'.css'] = file
 })
 
 module.exports = {
-  stats: {children: false}, // reduce noising webpack print output
-  entry: Object.assign(css, {
+  stats: { children: false, modules: false }, // reduce noising webpack print output
+  entry: {...cssEntries, ...{
     // materia.js present on every page on the server except inside widget iframe & error pages
     // contains common libs used by other scripts
     // contains everything needed by all pages that don't require a login
     'js/materia.js':[
+      // polyfills
       "core-js/es6/array",
       "core-js/fn/array/includes",
       "core-js/es6/symbol",
@@ -30,6 +31,7 @@ module.exports = {
       "core-js/fn/string/includes",
       "core-js/web/dom-collections",
       "whatwg-fetch",
+      // end polyfills
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.coms.json.js',
       jsPath+'/materia/materia.flashcheck.js',
@@ -121,8 +123,8 @@ module.exports = {
     'js/materia.scorecore.js': [
       jsPath+'/materia-namespace.js',
       jsPath+'/materia/materia.scorecore.js',
-    ],
-  }),
+    ]
+  }},
   module: {
     rules: [
       {
@@ -136,11 +138,18 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: [
-              'es2015',
-              ['env', {
-                targets: { browsers: ["last 2 versions", "ie >= 11"]},
-                debug: true
-              }]
+              [
+                '@babel/preset-env',
+                {
+                  targets: {
+                    browsers: [
+                      ">0.25%",
+                      "not ie 10",
+                      "not op_mini all"
+                    ]
+                  },
+                }
+              ]
             ],
             plugins: [
               require('babel-plugin-angularjs-annotate'),]
@@ -164,6 +173,13 @@ module.exports = {
     filename: '[name]'
   },
   plugins: [
+    new CleanWebpackPlugin(), // clear the dist folder before build
     new ExtractTextPlugin('[name]'), // pull the css out of webpack
-  ]
+  ],
+  resolve: {
+      alias: {
+          // allow the code to require from node_modules
+          'node_modules': path.join(__dirname, 'node_modules')
+      }
+  }
 };

@@ -66,32 +66,30 @@ app.controller('MyWidgetsController', function(
 
 		populateDisplay()
 
-		$q
-			.all([
-				userServ.get(),
-				selectedWidgetSrv.getUserPermissions(),
-				selectedWidgetSrv.getDateRanges()
-			])
-			.then(data => {
-				// don't render an old display if they user has clicked another widget
-				if ($scope.selected.widget.id !== currentId) {
-					return
-				}
+		$q.all([
+			userServ.get(),
+			selectedWidgetSrv.getUserPermissions(),
+			selectedWidgetSrv.getDateRanges()
+		]).then(data => {
+			// don't render an old display if they user has clicked another widget
+			if ($scope.selected.widget.id !== currentId) {
+				return
+			}
 
-				$scope.user = data[0]
-				$scope.perms = data[1]
-				populateAccess()
+			$scope.user = data[0]
+			$scope.perms = data[1]
+			populateAccess()
 
-				$timeout.cancel(loadScoresTimout)
+			$timeout.cancel(loadScoresTimout)
 
-				// load the scores a little later
-				loadScoresTimout = $timeout(() => {
-					selectedWidgetSrv.getScoreSummaries().then(scores => {
-						$scope.selected.scores = scores
-						populateScores()
-					})
-				}, 300)
-			})
+			// load the scores a little later
+			loadScoresTimout = $timeout(() => {
+				selectedWidgetSrv.getScoreSummaries().then(scores => {
+					$scope.selected.scores = scores
+					populateScores()
+				})
+			}, 300)
+		})
 	}
 
 	const populateAttempts = attemptsAllowed => {
@@ -257,7 +255,9 @@ app.controller('MyWidgetsController', function(
 		guestAccess: false,
 		embeddedOnly: false
 	}
-	$scope.perms = { collaborators: [] }
+	$scope.perms = {
+		collaborators: []
+	}
 	$scope.show = {
 		collaborationModal: false,
 		availabilityModal: false,
@@ -266,7 +266,8 @@ app.controller('MyWidgetsController', function(
 		exportModal: false,
 		deleteDialog: false,
 		embedToggle: false,
-		editPublishedWarning: false
+		editPublishedWarning: false,
+		restrictedPublishWarning: false
 	}
 	$scope.SCORE_TAB_GRAPH = 0
 	$scope.SCORE_TAB_INDIVIDUAL = 1

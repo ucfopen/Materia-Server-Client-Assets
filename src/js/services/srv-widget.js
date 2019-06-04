@@ -53,6 +53,20 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		return Materia.Coms.Json.send('widgets_get', [[id]]).then(widgets => widgets[0])
 	}
 
+	const lockWidget = (id = null) => {
+		const deferred = $q.defer()
+		Materia.Coms.Json.send('widget_instance_lock', [id]).then(success => {
+			if (success) {
+				deferred.resolve(id)
+			} else {
+				deferred.reject(
+					'Someone else is editing this widget, you will be able to edit after they finish.'
+				)
+			}
+		})
+		return deferred.promise
+	}
+
 	const getWidgetsByType = (type = 'featured') => {
 		return Materia.Coms.Json.send('widgets_get_by_type', [type])
 	}
@@ -233,11 +247,21 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		}
 	}
 
+	const canBePublishedByCurrentUser = widget_id => {
+		const deferred = $q.defer()
+		Materia.Coms.Json.send('widget_publish_perms_verify', [widget_id]).then(response => {
+			deferred.resolve(response)
+		})
+
+		return deferred.promise
+	}
+
 	return {
 		getWidgets,
 		getWidgetsByType,
 		getWidget,
 		getWidgetInfo,
+		lockWidget,
 		sortWidgets,
 		saveWidget,
 		removeWidget,
@@ -245,6 +269,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		selectWidgetFromHashUrl,
 		convertAvailibilityDates,
 		copyWidget,
-		deleteWidget
+		deleteWidget,
+		canBePublishedByCurrentUser
 	}
 })
