@@ -68,6 +68,11 @@ Object {
     "isActive": false,
     "text": "feature3",
   },
+  "https://www.youtube.com/watch?v=dQw4w9WgXcQ": Object {
+    "clean": "https_www_youtube_com_watch_v_d_qw4w9wg_xc_q",
+    "isActive": false,
+    "text": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  },
   "supported1": Object {
     "clean": "supported1",
     "isActive": false,
@@ -131,6 +136,11 @@ Object {
     "isActive": false,
     "text": "feature3",
   },
+  "https://www.youtube.com/watch?v=dQw4w9WgXcQ": Object {
+    "clean": "https_www_youtube_com_watch_v_d_qw4w9wg_xc_q",
+    "isActive": false,
+    "text": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  },
   "supported1": Object {
     "clean": "supported1",
     "isActive": false,
@@ -156,6 +166,7 @@ Array [
   "supported1",
   "supported_three",
   "su_pp_or_te_d_fo_ur",
+  "https_www_youtube_com_watch_v_d_qw4w9wg_xc_q",
   "feature2",
   "supported2",
 ]
@@ -182,8 +193,8 @@ Array [
         "SuPpOrTeD FoUr!!",
       ],
       "benefits": Array [
-        "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-      ]
+        "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      ],
     },
     "name": "widget1",
   },

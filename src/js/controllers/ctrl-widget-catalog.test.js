@@ -33,8 +33,7 @@ describe('widgetCatalogController', () => {
 			demo: '2',
 			excerpt: 'more information about the widget',
 			features: ['feature2', 'feature3'],
-			supported_data: ['supported1', 'supported2'],
-			benefits: ['niceme.me', 'nicememe.website']
+			supported_data: ['supported1', 'supported2']
 		},
 		name: 'widget2'
 	}
@@ -47,8 +46,7 @@ describe('widgetCatalogController', () => {
 			demo: '3',
 			excerpt: 'more information about the widget',
 			features: [],
-			supported_data: [],
-			benefits: []
+			supported_data: []
 		},
 		name: 'widget3'
 	}
@@ -207,7 +205,6 @@ describe('widgetCatalogController', () => {
 		// only one widget matches the search and filter options
 		expect($scope.widgets).toHaveLength(1)
 		expect($scope.widgets).toContain(widget1)
-		expect($scope.widgets[0]).toContain(benefits)
 
 		expect($scope.filters).toMatchSnapshot()
 	})
