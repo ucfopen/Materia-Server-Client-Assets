@@ -19,7 +19,8 @@ describe('widgetCatalogController', () => {
 			demo: '1',
 			excerpt: 'more information about the widget',
 			features: ['feature1', 'feature3'],
-			supported_data: ['supported1', 'supported_three', 'SuPpOrTeD FoUr!!']
+			supported_data: ['supported1', 'supported_three', 'SuPpOrTeD FoUr!!'],
+			benefits: ['https://www.youtube.com/watch?v=dQw4w9WgXcQ']
 		},
 		name: 'widget1'
 	}
