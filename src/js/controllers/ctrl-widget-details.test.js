@@ -22,7 +22,6 @@ describe('widgetDetailsController', () => {
 			about: 'about',
 			supported_data: ['supported1', 'supported2'],
 			features: ['feature1', 'feature2'],
-			benefits: ['https://www.youtube.com/watch?v=dQw4w9WgXcQ'],
 			demo: 'abCD1'
 		},
 		width: '700',
