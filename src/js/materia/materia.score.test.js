@@ -29,8 +29,8 @@ describe('Materia.Score', () => {
 	})
 
 	it('submitUnscorableForParticipation calls addLog', () => {
-		Score.submitUnscorableForParticipation(01000101)
-		expect(mockAddLog).toHaveBeenLastCalledWith(1006, 01000101, 'Participation', 100)
+		Score.submitUnscorableForParticipation()
+		expect(mockAddLog).toHaveBeenLastCalledWith(1006, -1, 'Participation', 100)
 	})
 
 	it('submitQuestionForScoring calls addLog', () => {
