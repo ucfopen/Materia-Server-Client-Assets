@@ -60,13 +60,38 @@ header {
 		background: #fff url(../../../img/header_border_alt.png) 0% 100% repeat-x;
 	}
 
+	ul,
+	p {
+		margin: 0;
+		padding: 0;
+	}
+
 	.avatar {
 		font-family: 'Lucida Grande', arial, serif;
+		right: 20px;
+		line-height: 0;
 
 		img {
-			width: 24px;
-			height: 24px;
+			width: 28px;
+			height: 28px;
+		}
+
+		br {
 			display: block;
+			content: '';
+			margin-top: -10px;
+		}
+
+		span {
+			position: absolute;
+			right: 32px;
+		}
+
+		a {
+			span {
+				display: inline;
+				position: static;
+			}
 		}
 	}
 	.user {
@@ -76,13 +101,7 @@ header {
 		top: 36px;
 	}
 	.user.avatar {
-		top: 12px;
-	}
-
-	ul,
-	p {
-		margin: 0;
-		padding: 0;
+		top: 28px;
 	}
 }
 
@@ -177,9 +196,20 @@ nav {
 		}
 
 		.user.avatar {
-			position: static;
-			display: inline-block;
+			right: 62px;
+			top: 35px;
 			max-width: calc(100% - 185px);
+
+			span {
+				display: none;
+			}
+
+			img {
+				float: none;
+				margin: right;
+				height: 35px;
+				width: 35px;
+			}
 		}
 	}
 
