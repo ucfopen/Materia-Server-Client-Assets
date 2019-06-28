@@ -181,6 +181,9 @@ Array [
         "supported_three",
         "SuPpOrTeD FoUr!!",
       ],
+      "benefits": Array [
+        "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+      ]
     },
     "name": "widget1",
   },
