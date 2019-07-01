@@ -272,7 +272,6 @@ app.controller('CollaborationController', function(
 		{ value: ACCESS.VISIBLE, text: 'View Scores' },
 		{ value: ACCESS.FULL, text: 'Full' }
 	]
-	$scope.selectedAccessLevel = $scope.accessLevels[0]
 
 	$scope.alert = Alert
 	$scope.search = _search
