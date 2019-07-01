@@ -269,10 +269,9 @@ app.controller('CollaborationController', function(
 		FULL: ACCESS.FULL
 	}
 	$scope.accessLevels = [
-		{ value: ACCESS.VISIBLE, text: 'View Scores' },
-		{ value: ACCESS.FULL, text: 'Full' }
+		{ value: ACCESS.FULL, text: 'Full' },
+		{ value: ACCESS.VISIBLE, text: 'View Scores' }
 	]
-
 	$scope.alert = Alert
 	$scope.search = _search
 	$scope.updatePermissions = _updatePermissions
