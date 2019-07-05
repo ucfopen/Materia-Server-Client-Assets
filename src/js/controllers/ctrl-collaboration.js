@@ -164,7 +164,7 @@ app.controller('CollaborationController', function(
 			first: user.first,
 			last: user.last,
 			gravatar: user.gravatar,
-			access: ACCESS.VISIBLE
+			access: String(ACCESS.VISIBLE)
 		})
 
 		$timeout(() => {
@@ -268,10 +268,10 @@ app.controller('CollaborationController', function(
 		VISIBLE: ACCESS.VISIBLE,
 		FULL: ACCESS.FULL
 	}
-	$scope.accessLevels = [
-		{ value: ACCESS.FULL, text: 'Full' },
-		{ value: ACCESS.VISIBLE, text: 'View Scores' }
-	]
+	$scope.accessLevels = {}
+	$scope.accessLevels[ACCESS.VISIBLE] = { value: ACCESS.VISIBLE, text: 'View Scores' }
+	$scope.accessLevels[ACCESS.FULL] = { value: ACCESS.FULL, text: 'Full' }
+
 	$scope.alert = Alert
 	$scope.search = _search
 	$scope.updatePermissions = _updatePermissions
