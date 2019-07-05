@@ -306,7 +306,7 @@ nav {
 	margin-left: 20px;
 
 	ul {
-		display: none;
+		opacity: 0;
 		background-color: #ffffff;
 		padding: 0;
 		position: absolute;
@@ -322,8 +322,10 @@ nav {
 		height: 27px;
 	}
 
-	&:hover > ul {
+	&:hover > ul,
+	&:focus > ul {
 		display: flex;
+		opacity: 100;
 
 		li {
 			padding: 0 10px 5px;
