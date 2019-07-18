@@ -5,6 +5,8 @@
 		padding: 10px;
 		border-radius: 10px;
 		box-shadow: 1px 3px 10px #888;
+
+		font-family: 'Lato', arial, serif;
 	}
 
 	#top {
@@ -20,19 +22,19 @@
 
 			&.players-guide {
 				a:first-of-type {
-					background: #333;
+					background: #1778af;
 				}
 			}
 
 			&.creators-guide {
 				a:nth-of-type(2) {
-					background: #333;
+					background: #1778af;
 				}
 			}
 
 			a {
 				padding: 8px 15px;
-				background: lighten(#333, 20%);
+				background: #004268;
 				color: white;
 				border-radius: 10px 10px 0 0;
 				margin: 15px 0 0 10px;
@@ -46,7 +48,7 @@
 			width: 100%;
 			box-sizing: border-box;
 			border-radius: 3px 0 3px 3px;
-			border: 8px solid #333;
+			border: 8px solid #1778af;
 		}
 	}
 }
