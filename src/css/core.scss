@@ -74,12 +74,7 @@ header {
 		img {
 			width: 28px;
 			height: 28px;
-		}
-
-		br {
-			display: block;
-			content: '';
-			margin-top: -10px;
+			border-radius: 2px;
 		}
 
 		span {
@@ -89,9 +84,20 @@ header {
 
 		a {
 			span {
-				display: inline;
-				position: static;
+				text-align: right;
+				position: absolute;
+				top: 6px;
+				width: 500px;
 			}
+			span:hover {
+				text-decoration: underline;
+			}
+		}
+
+		.logout {
+			position: absolute;
+			top: 21px;
+			font-size: 10px;
 		}
 	}
 	.user {
@@ -101,7 +107,7 @@ header {
 		top: 36px;
 	}
 	.user.avatar {
-		top: 28px;
+		top: 24px;
 	}
 }
 
@@ -197,7 +203,7 @@ nav {
 
 		.user.avatar {
 			right: 62px;
-			top: 35px;
+			top: 25px;
 			max-width: calc(100% - 185px);
 
 			span {
@@ -209,6 +215,7 @@ nav {
 				margin: right;
 				height: 35px;
 				width: 35px;
+				border-radius: 3px;
 			}
 		}
 	}
