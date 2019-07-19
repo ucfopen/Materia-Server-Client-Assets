@@ -47,8 +47,11 @@ app.controller('ExportScoresController', function(Please, $scope, selectedWidget
 				})
 			}
 
-			// First semester is checked by default
-			$scope.semesters[0].checked = true
+			// First semester is checked by default unless there are no semesters
+			if ($scope.semesters.length !== 0) {
+				$scope.semesters[0].checked = true
+			}
+
 			$scope.onSelectedSemestersChange()
 			Please.$apply()
 		})
