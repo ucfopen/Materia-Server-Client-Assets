@@ -223,6 +223,10 @@ header > h1 {
 	bottom: 10px;
 }
 
+#list-container li .searchable {
+	word-break: break-all;
+}
+
 #list-container li .embed-button {
 	display: none;
 	position: absolute;
