@@ -320,11 +320,14 @@ nav {
 	&:hover > span {
 		display: inline-block;
 		height: 27px;
+		pointer-events: none;
 	}
 
 	&:hover > ul,
+	&:focus-within > ul,
 	&:focus > ul {
 		display: flex;
+		pointer-events: all;
 		opacity: 100;
 
 		li {
