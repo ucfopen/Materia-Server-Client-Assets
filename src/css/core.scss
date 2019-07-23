@@ -92,7 +92,9 @@ header {
 		top: 24px;
 
 		a {
-			font-size: 16px;
+			font-size: 17px;
+			font-weight: bold;
+			font-family: 'Lato', arial, serif;
 			position: absolute;
 			top: 36px;
 			right: 5px;
@@ -272,7 +274,7 @@ nav {
 
 				.logout a {
 					display: inline;
-					font-size: 14px;
+					font-size: 17px;
 					position: static;
 				}
 
