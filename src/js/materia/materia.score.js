@@ -39,8 +39,8 @@ Namespace('Materia').Score = (() => {
 	// A participation score submission
 	// This logs a participation grade for unscorable widgets.
 	// @param questionID the ID of the question being answered
-	const submitUnscorableForParticipation = () =>
-		Materia.Engine.addLog(UNSCORABLE, -1, 'Participation', 100)
+	const submitUnscorableForParticipation = (value = 100) =>
+		Materia.Engine.addLog(UNSCORABLE, -1, 'Participation', value)
 
 	// Adds a message/feedback to the overall score screen
 	const addGlobalScoreFeedback = msg => Materia.Engine.addLog(SCORE_FEEDBACK, '0', msg)
