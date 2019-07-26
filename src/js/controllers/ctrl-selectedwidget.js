@@ -12,6 +12,8 @@ app.controller('SelectedWidgetController', function(
 	Alert
 ) {
 	const _popup = () => {
+		$scope.focus = document.activeElement
+
 		if ($scope.selected.shareable && !$scope.selected.widget.is_draft) {
 			$scope.show.availabilityModal = true
 		}
@@ -20,9 +22,13 @@ app.controller('SelectedWidgetController', function(
 	// using 'function' here because this function is executed in another scope chain
 	const _hideModal = function() {
 		this.$parent.hideModal()
+
+		$scope.focus.focus()
 	}
 
 	const _exportPopup = () => {
+		$scope.focus = document.activeElement
+
 		// Do not show modal disabled
 		$scope.show.exportModal = true
 		Please.$apply()
@@ -74,6 +80,8 @@ app.controller('SelectedWidgetController', function(
 	}
 
 	const _editWidget = () => {
+		$scope.focus = document.activeElement
+
 		if ($scope.selected.editable) {
 			_editWidgetPromise()
 		}
@@ -110,18 +118,24 @@ app.controller('SelectedWidgetController', function(
 	}
 
 	const _showCopyDialog = () => {
+		$scope.focus = document.activeElement
+
 		if ($scope.selected.accessLevel != ACCESS.VISIBLE) {
 			$scope.show.copyModal = true
 		}
 	}
 
 	const _showDelete = () => {
+		$scope.focus = document.activeElement
+
 		if ($scope.selected.accessLevel != ACCESS.VISIBLE) {
 			$scope.show.deleteDialog = !$scope.show.deleteDialog
 		}
 	}
 
 	const _showCollaboration = () => {
+		$scope.focus = document.activeElement
+
 		const user_ids = []
 		for (var user in $scope.perms.widget) {
 			user_ids.push(user)
@@ -230,6 +244,7 @@ app.controller('SelectedWidgetController', function(
 	$scope.copyWidget = _copyWidget
 	$scope.deleteWidget = _deleteWidget
 	$scope.enableOlderScores = _enableOlderScores
+	$scope.focus = document.activeElement
 
 	$scope.alert = Alert
 
