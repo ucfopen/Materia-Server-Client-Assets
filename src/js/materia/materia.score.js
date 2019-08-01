@@ -3,6 +3,7 @@ Namespace('Materia').Score = (() => {
 	const WIDGET_INTERACTION_UNSCORED = 1001 // any (scorable) widget intraction beyond a basic answered question. Includes question adjustments, overall adjustments, etc
 	const FINAL_SCORE_FROM_CLIENT = 1002 // a final score from the widget
 	const QUESTION_ANSWERED_UNSCORED = 1004 // a basic answered question (e.g., 'what color is the sky?' 'blue')
+	const UNSCORABLE = 1006 // an unscorable widget
 	const SCORE_FEEDBACK = 1008 // attaches a feedback message to a question (or game if qid is 0)
 	const DATA = 2000
 
@@ -35,6 +36,12 @@ Namespace('Materia').Score = (() => {
 	const submitQuestionForScoring = (questionID, userAnswer, value) =>
 		Materia.Engine.addLog(QUESTION_ANSWERED_UNSCORED, questionID, userAnswer, value)
 
+	// A participation score submission
+	// This logs a participation grade for unscorable widgets.
+	// @param questionID the ID of the question being answered
+	const submitUnscorableForParticipation = (value = 100) =>
+		Materia.Engine.addLog(UNSCORABLE, -1, 'Participation', value)
+
 	// Adds a message/feedback to the overall score screen
 	const addGlobalScoreFeedback = msg => Materia.Engine.addLog(SCORE_FEEDBACK, '0', msg)
 
@@ -44,6 +51,7 @@ Namespace('Materia').Score = (() => {
 		submitInteractionForScoring,
 		submitFinalScoreFromClient,
 		submitQuestionForScoring,
+		submitUnscorableForParticipation,
 		addGlobalScoreFeedback,
 		addScoreData
 	}

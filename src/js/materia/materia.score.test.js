@@ -13,6 +13,7 @@ describe('Materia.Score', () => {
 		expect(Score.submitInteractionForScoring).toBeDefined()
 		expect(Score.submitFinalScoreFromClient).toBeDefined()
 		expect(Score.submitQuestionForScoring).toBeDefined()
+		expect(Score.submitUnscorableForParticipation).toBeDefined()
 		expect(Score.addGlobalScoreFeedback).toBeDefined()
 		expect(Score.addScoreData).toBeDefined()
 	})
@@ -25,6 +26,11 @@ describe('Materia.Score', () => {
 	it('addGlobalScoreFeedback calls addLog', () => {
 		Score.addGlobalScoreFeedback('my message')
 		expect(mockAddLog).toHaveBeenLastCalledWith(1008, '0', 'my message')
+	})
+
+	it('submitUnscorableForParticipation calls addLog', () => {
+		Score.submitUnscorableForParticipation()
+		expect(mockAddLog).toHaveBeenLastCalledWith(1006, -1, 'Participation', 100)
 	})
 
 	it('submitQuestionForScoring calls addLog', () => {
