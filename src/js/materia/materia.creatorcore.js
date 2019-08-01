@@ -6,6 +6,7 @@ Namespace('Materia').CreatorCore = (() => {
 	let _resizeInterval = null
 
 	const _onPostMessage = e => {
+		if (typeof e.data !== 'string') return
 		const msg = JSON.parse(e.data)
 		switch (msg.type) {
 			case 'initNewWidget':

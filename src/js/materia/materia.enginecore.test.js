@@ -101,6 +101,15 @@ describe('enginecore', () => {
 		expect(Engine.getMediaUrl('fR93X')).toBe('mediaUrl/fR93X')
 	})
 
+	it('reacts properly to post messages with non-string data', () => {
+		Engine.start({ start: jest.fn() })
+		let _onPostMessage = window.addEventListener.mock.calls[0][1]
+		_onPostMessage({
+			data: undefined
+		})
+		expect(parent.postMessage).toHaveLastReturnedWith(undefined)
+	})
+
 	it('end sends post message and defaults to show score screen', () => {
 		Engine.end()
 		let ex = JSON.stringify({
