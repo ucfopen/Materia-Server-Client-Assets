@@ -18,8 +18,7 @@ describe('ngEnter Directive', function() {
 
 		expect(compiled.html()).toBe('test')
 		expect($scope.enterHandler).not.toHaveBeenCalled()
-		compiled.triggerHandler({ type: 'keydown', which: 13 })
 		compiled.triggerHandler({ type: 'keypress', which: 13 })
-		expect($scope.enterHandler).toHaveBeenCalledTimes(2)
+		expect($scope.enterHandler).toHaveBeenCalledTimes(1)
 	})
 })
