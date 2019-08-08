@@ -656,7 +656,7 @@ h3 {
 }
 #notifications_link.selected {
 	position: absolute;
-	right: 80px;
+	right: 120px;
 	bottom: 5px;
 	z-index: 110;
 
@@ -676,8 +676,8 @@ h3 {
 	content: attr(data-notifications);
 	position: absolute;
 
-	top: -1.5em;
-	right: -1em;
+	top: 0.5em;
+	right: -1.25em;
 
 	min-width: 1.5em;
 	min-height: 1.5em;
