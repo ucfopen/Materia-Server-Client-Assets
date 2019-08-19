@@ -72,8 +72,8 @@ header {
 		line-height: 0;
 
 		img {
-			width: 28px;
-			height: 28px;
+			width: 34px;
+			height: 34px;
 			border-radius: 2px;
 		}
 
@@ -105,9 +105,9 @@ header {
 				text-align: right;
 				position: absolute;
 				top: -28px;
-				right: 38px;
+				right: 42px;
 				width: 500px;
-				font-size: 12px;
+				font-size: 14px;
 			}
 			span:hover {
 				text-decoration: underline;
@@ -120,9 +120,10 @@ header {
 			}
 		}
 		.logout a {
-			font-size: 10px;
-			top: 22px;
-			right: 12px;
+			font-size: 14px;
+			top: 26px;
+			right: 18px;
+			font-weight: 400;
 		}
 	}
 }
@@ -640,7 +641,7 @@ h3 {
 
 #notifications_link {
 	position: absolute;
-	right: 86px;
+	right: 120px;
 	bottom: 16px;
 
 	width: 30px;
@@ -656,7 +657,7 @@ h3 {
 }
 #notifications_link.selected {
 	position: absolute;
-	right: 120px;
+	right: 80px;
 	bottom: 5px;
 	z-index: 110;
 
