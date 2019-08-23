@@ -7,8 +7,7 @@ app.controller('ExportScoresController', function(Please, $scope, selectedWidget
 		$scope.selectedId = wgt.id
 
 		if ($scope.selected.scores.list.length === 0 || !$scope.selected.hasScores) {
-			$scope.exportOpts = ['Questions and Answers']
-			$scope.exportOpts.push('Referrer URLs')
+			$scope.exportOpts = ['Questions and Answers', 'Referrer URLs']
 		} else {
 			let scores_only
 			if (wgt.guest_access) {
