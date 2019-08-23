@@ -255,6 +255,7 @@
 		font-weight: 900;
 		font-size: 25px;
 		padding-right: 10px;
+		word-break: break-all;
 	}
 	.page .header h2 {
 		margin: 0;
@@ -1208,6 +1209,10 @@
 	margin: 9px 0px 0px 0px;
 	padding: 0px 10px;
 	text-align: center;
+
+	p:not(.download) {
+		text-align: left;
+	}
 }
 
 .ng-modal.csv_popup div.score_table p.download a {
@@ -1219,7 +1224,7 @@
 	text-align: left;
 	padding: 0px 15px 0px 15px;
 	line-height: 1.5em;
-	margin-top: 40px;
+	margin-top: 20px;
 }
 
 .ng-modal.csv_popup h4 {
@@ -1278,7 +1283,6 @@
 	text-decoration: underline;
 }
 .ng-modal.csv_popup select {
-	margin-top: 30px;
 	margin-bottom: -10px;
 }
 .ng-modal.csv_popup table tr td {

@@ -60,13 +60,26 @@ header {
 		background: #fff url(../../../img/header_border_alt.png) 0% 100% repeat-x;
 	}
 
+	ul,
+	p {
+		margin: 0;
+		padding: 0;
+	}
+
 	.avatar {
 		font-family: 'Lucida Grande', arial, serif;
+		right: 20px;
+		line-height: 0;
 
 		img {
-			width: 24px;
-			height: 24px;
-			display: block;
+			width: 35px;
+			height: 35px;
+			border-radius: 2px;
+		}
+
+		span {
+			position: absolute;
+			right: 32px;
 		}
 	}
 	.user {
@@ -76,13 +89,42 @@ header {
 		top: 36px;
 	}
 	.user.avatar {
-		top: 12px;
-	}
+		top: 24px;
 
-	ul,
-	p {
-		margin: 0;
-		padding: 0;
+		a {
+			font-size: 17px;
+			font-weight: bold;
+			font-family: 'Lato', arial, serif;
+			position: absolute;
+			top: 36px;
+			right: 5px;
+			width: 500px;
+			text-align: right;
+
+			span {
+				text-align: right;
+				position: absolute;
+				top: -28px;
+				right: 42px;
+				width: 500px;
+				font-size: 14px;
+			}
+			span:hover {
+				text-decoration: underline;
+			}
+
+			img {
+				position: absolute;
+				top: -35px;
+				right: 2px;
+			}
+		}
+		.logout a {
+			font-size: 14px;
+			top: 26px;
+			right: 18px;
+			font-weight: 400;
+		}
 	}
 }
 
@@ -144,7 +186,8 @@ nav {
 			display: inline;
 			padding: 0 10px 0 0;
 
-			&.logout a {
+			.logout a {
+				display: none;
 				position: absolute;
 				right: 20px;
 				bottom: 13px;
@@ -177,9 +220,25 @@ nav {
 		}
 
 		.user.avatar {
-			position: static;
-			display: inline-block;
+			right: 54px;
 			max-width: calc(100% - 185px);
+
+			span {
+				display: none;
+			}
+
+			a {
+				top: 18px;
+
+				img {
+					float: none;
+					margin: right;
+					height: 35px;
+					width: 35px;
+					border-radius: 3px;
+					top: -17px;
+				}
+			}
 		}
 	}
 
@@ -214,8 +273,9 @@ nav {
 					}
 				}
 
-				&.logout a {
-					font-size: 14px;
+				.logout a {
+					display: inline;
+					font-size: 17px;
 					position: static;
 				}
 
@@ -581,7 +641,7 @@ h3 {
 
 #notifications_link {
 	position: absolute;
-	right: 86px;
+	right: 120px;
 	bottom: 16px;
 
 	width: 30px;
@@ -617,8 +677,8 @@ h3 {
 	content: attr(data-notifications);
 	position: absolute;
 
-	top: -1.5em;
-	right: -1em;
+	top: 0.5em;
+	right: -1.25em;
 
 	min-width: 1.5em;
 	min-height: 1.5em;

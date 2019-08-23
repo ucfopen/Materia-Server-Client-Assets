@@ -223,15 +223,8 @@ header > h1 {
 	bottom: 10px;
 }
 
-#list-container li .view-at-materia {
-	display: none;
-	position: absolute;
-	right: 20px;
-	top: 10px;
-}
-#list-container li:hover .view-at-materia,
-#list-container li.selected .view-at-materia {
-	display: block;
+#list-container li .searchable {
+	word-break: break-all;
 }
 
 #list-container li .embed-button {
@@ -243,6 +236,13 @@ header > h1 {
 #list-container li:hover .embed-button,
 #list-container li.selected .embed-button {
 	display: inline-block;
+
+	div {
+		display: inline-block;
+		width: 12px;
+		height: 12px;
+		background: url(../../../img/external_link_arrow_brown.png) 0% 0% no-repeat;
+	}
 }
 
 #select-widget .widget-icon {

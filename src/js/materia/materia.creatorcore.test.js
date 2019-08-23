@@ -152,6 +152,12 @@ describe('creatorcore', () => {
 		expectOnlyCreatorMethodCalledToBe('onQuestionImportComplete')
 	})
 
+	it('reacts properly to post messages with non-string data', () => {
+		mockPostMessageFromWidget('', '', undefined)
+		console.log(window.addEventListener)
+		expect(window.addEventListener).toHaveLastReturnedWith(undefined)
+	})
+
 	it('reacts properly to unknown post messages', () => {
 		jest.spyOn(console, 'warn')
 		mockPostMessageFromWidget('undefinedMessageType', 'unknown-source', ['payload'])

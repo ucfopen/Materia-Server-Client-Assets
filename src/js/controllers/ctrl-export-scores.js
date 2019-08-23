@@ -7,7 +7,7 @@ app.controller('ExportScoresController', function(Please, $scope, selectedWidget
 		$scope.selectedId = wgt.id
 
 		if ($scope.selected.scores.list.length === 0 || !$scope.selected.hasScores) {
-			$scope.exportOpts = ['Questions and Answers']
+			$scope.exportOpts = ['Questions and Answers', 'Referrer URLs']
 		} else {
 			let scores_only
 			if (wgt.guest_access) {
@@ -15,7 +15,7 @@ app.controller('ExportScoresController', function(Please, $scope, selectedWidget
 			} else {
 				scores_only = 'High Scores'
 			}
-			$scope.exportOpts = [scores_only, 'Full Event Log', 'Questions and Answers']
+			$scope.exportOpts = [scores_only, 'Full Event Log', 'Questions and Answers', 'Referrer URLs']
 			if (
 				(wgt.widget.meta_data.playdata_exporters != null
 					? wgt.widget.meta_data.playdata_exporters.length
@@ -47,8 +47,11 @@ app.controller('ExportScoresController', function(Please, $scope, selectedWidget
 				})
 			}
 
-			// First semester is checked by default
-			$scope.semesters[0].checked = true
+			// First semester is checked by default unless there are no semesters
+			if ($scope.semesters.length !== 0) {
+				$scope.semesters[0].checked = true
+			}
+
 			$scope.onSelectedSemestersChange()
 			Please.$apply()
 		})
