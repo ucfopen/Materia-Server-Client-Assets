@@ -366,7 +366,7 @@ nav {
 	margin-left: 20px;
 
 	ul {
-		display: none;
+		opacity: 0;
 		background-color: #ffffff;
 		padding: 0;
 		position: absolute;
@@ -380,10 +380,15 @@ nav {
 	&:hover > span {
 		display: inline-block;
 		height: 27px;
+		pointer-events: none;
 	}
 
-	&:hover > ul {
+	&:hover > ul,
+	&:focus-within > ul,
+	&:focus > ul {
 		display: flex;
+		pointer-events: all;
+		opacity: 100;
 
 		li {
 			padding: 0 10px 5px;

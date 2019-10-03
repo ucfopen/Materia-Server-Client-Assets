@@ -95,6 +95,7 @@ module.exports = {
       jsPath+'/directives/dir-scoredata.js',
       jsPath+'/directives/dir-scoregraph.js',
       jsPath+'/directives/dir-scoretable.js',
+      jsPath+'/directives/dir-focus.js',
       jsPath+'/filters/filter-escape.js',
       jsPath+'/filters/filter-highlight.js',
       jsPath+'/filters/filter-multiword.js',
