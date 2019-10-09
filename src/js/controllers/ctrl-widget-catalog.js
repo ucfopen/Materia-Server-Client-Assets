@@ -84,6 +84,12 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 					if (!filterList.hasOwnProperty(data)) _registerFilter(data, ' Questions')
 				})
 			}
+
+			if (widget.meta_data.hasOwnProperty('benefits')) {
+				widget.meta_data.benefits.forEach(benefit => {
+					if (!filterList.hasOwnProperty(benefit)) _registerFilter(benefit)
+				})
+			}
 		})
 	}
 
@@ -91,6 +97,7 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 	const _isWidgetVisible = widget => {
 		const wFeatures = widget.meta_data.features
 		const wSupport = widget.meta_data.supported_data
+		const wBenefit = widget.meta_data.benefits
 
 		// check for filter matches
 		for (let filterName in filterList) {
@@ -99,7 +106,8 @@ app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location,
 				// widget has features/support and the feature isn't in either
 				if (
 					(!wFeatures || !wFeatures.includes(filterName)) &&
-					(!wSupport || !wSupport.includes(filterName))
+					(!wSupport || !wSupport.includes(filterName)) &&
+					(!wBenefit || !wBenefit.includes(filterName))
 				) {
 					return false
 				}

@@ -50,6 +50,7 @@ app.controller('widgetDetailsController', function(
 			features: widget.meta_data['features'].map(_tooltipObject),
 			creators_guide: document.location.pathname + '/creators-guide',
 			players_guide: document.location.pathname + '/players-guide',
+			benefits: widget.meta_data['benefits'],
 			created: date.toLocaleDateString(),
 			width: ~~widget.width,
 			height: ~~widget.height
@@ -57,6 +58,7 @@ app.controller('widgetDetailsController', function(
 
 		$scope.hasPlayerGuide = widget.player_guide != ''
 		$scope.hasCreatorGuide = widget.creator_guide != ''
+		$scope.hasBenefits = widget.benefits != []
 
 		// inst_id needs to be set for the embedded demo
 		$scope.inst_id = widget.meta_data.demo
