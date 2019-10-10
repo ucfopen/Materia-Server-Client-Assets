@@ -16,7 +16,7 @@ app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, wi
 
 		$timeout(
 			() =>
-				widgetSrv.getWidgets().then(widgets => {
+				widgetSrv.getWidgets(true).then(widgets => {
 					if (widgets != null ? widgets.halt : undefined) {
 						return
 					}
