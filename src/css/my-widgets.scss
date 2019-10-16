@@ -283,11 +283,13 @@
 		border-width: 1px;
 	}
 
-	.page .scores {
+	.page .scores,
+	.page .info {
 		position: relative;
 	}
 
-	.page .scores h2 {
+	.page .scores h2,
+	.page .info h2 {
 		border-bottom: #999 dotted 1px;
 		padding-bottom: 14px;
 		padding-top: 2px;
@@ -567,7 +569,8 @@
 		}
 	}
 
-	.page .scores {
+	.page .scores,
+	.page .info {
 		margin: 10px;
 		overflow-x: hidden;
 		overflow-y: auto;
