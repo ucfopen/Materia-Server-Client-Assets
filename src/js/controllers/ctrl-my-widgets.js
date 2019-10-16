@@ -219,7 +219,7 @@ app.controller('MyWidgetsController', function(
 				$scope.selected.accessLevelName = 'Share'
 				break
 			default:
-				$scope.selected.accessLevelName = String($scope.selected.accessLevel)
+				$scope.selected.accessLevelName = 'Omnipotent'
 		}
 	}
 
