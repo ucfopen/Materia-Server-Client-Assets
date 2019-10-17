@@ -255,7 +255,7 @@ app.controller('CollaborationController', function(
 	const _cancelDemote = user => {
 		user.warning = false
 		user.remove = false
-		return (user.access = ACCESS.FULL)
+		return (user.access = String(ACCESS.FULL))
 	}
 
 	$scope.inputs = { userSearchInput: '' }
