@@ -1379,6 +1379,10 @@ aside .widget {
 	width: 600px;
 	padding-top: 15px;
 	margin: 0 auto 100px auto;
+
+	.disabled {
+		display: none;
+	}
 }
 
 #user_access_button {

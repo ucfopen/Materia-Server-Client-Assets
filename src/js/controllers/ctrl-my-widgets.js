@@ -196,31 +196,16 @@ app.controller('MyWidgetsController', function(
 	const populateAccessInfo = () => {
 		switch ($scope.selected.accessLevel) {
 			case 1:
-				$scope.selected.accessLevelName = 'Visible'
-				break
-			case 5:
-				$scope.selected.accessLevelName = 'Play'
-				break
-			case 10:
-				$scope.selected.accessLevelName = 'Score'
-				break
-			case 15:
-				$scope.selected.accessLevelName = 'Data'
-				break
-			case 20:
-				$scope.selected.accessLevelName = 'Edit'
-				break
-			case 25:
-				$scope.selected.accessLevelName = 'Copy'
+				$scope.selected.accessLevelName = 'Limited'
 				break
 			case 30:
 				$scope.selected.accessLevelName = 'Full'
 				break
-			case 35:
-				$scope.selected.accessLevelName = 'Share'
+			case 90:
+				$scope.selected.accessLevelName = 'Administrator'
 				break
 			default:
-				$scope.selected.accessLevelName = 'Omnipotent'
+				$scope.selected.accessLevelName = 'Other'
 		}
 	}
 
