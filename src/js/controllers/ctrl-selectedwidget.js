@@ -28,6 +28,12 @@ app.controller('SelectedWidgetController', function(
 		Please.$apply()
 	}
 
+	const _accessInfoPopup = () => {
+		// Do not show modal disabled
+		$scope.show.accessInfoModal = true
+		Please.$apply()
+	}
+
 	const _copyWidget = () => {
 		widgetSrv
 			.copyWidget($scope.selected.widget.id, $scope.selected.copy_title)
@@ -227,6 +233,7 @@ app.controller('SelectedWidgetController', function(
 	$scope.popup = _popup
 	$scope.hideModal = _hideModal
 	$scope.exportPopup = _exportPopup
+	$scope.accessInfoPopup = _accessInfoPopup
 	$scope.copyWidget = _copyWidget
 	$scope.deleteWidget = _deleteWidget
 	$scope.enableOlderScores = _enableOlderScores

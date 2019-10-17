@@ -126,6 +126,7 @@ app.controller('MyWidgetsController', function(
 		$scope.show.embedToggle = false
 		$scope.show.autoplayToggle = true
 		$scope.show.exportModal = false
+		$scope.show.accessInfoModal = false
 		$scope.show.olderScores = false
 
 		$scope.selected.accessLevel = ACCESS.VISIBLE
@@ -298,6 +299,7 @@ app.controller('MyWidgetsController', function(
 		copyModal: false,
 		olderScores: false,
 		exportModal: false,
+		accessInfoModal: false,
 		deleteDialog: false,
 		embedToggle: false,
 		editPublishedWarning: false,
