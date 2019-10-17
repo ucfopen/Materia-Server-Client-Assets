@@ -126,9 +126,11 @@ app.controller('MyWidgetsController', function(
 		$scope.show.embedToggle = false
 		$scope.show.autoplayToggle = true
 		$scope.show.exportModal = false
+		$scope.show.accessInfoModal = false
 		$scope.show.olderScores = false
 
 		$scope.selected.accessLevel = ACCESS.VISIBLE
+		$scope.selected.accessLevelName = 'Visible'
 		$scope.selected.editable = true
 		$scope.selected.shareable = false
 		$scope.selected.hasScores = false
@@ -188,6 +190,23 @@ app.controller('MyWidgetsController', function(
 
 		populateAvailability($scope.selected.widget.open_at, $scope.selected.widget.close_at)
 		populateAttempts($scope.selected.widget.attempts)
+		populateAccessInfo()
+	}
+
+	const populateAccessInfo = () => {
+		switch ($scope.selected.accessLevel) {
+			case 1:
+				$scope.selected.accessLevelName = 'Limited'
+				break
+			case 30:
+				$scope.selected.accessLevelName = 'Full'
+				break
+			case 90:
+				$scope.selected.accessLevelName = 'Administrator'
+				break
+			default:
+				$scope.selected.accessLevelName = 'Other'
+		}
 	}
 
 	// count up the number of other users collaborating
@@ -248,6 +267,7 @@ app.controller('MyWidgetsController', function(
 		perms: {},
 		scores: {},
 		accessLevel: ACCESS.VISIBLE,
+		accessLevelName: 'Visible',
 		shareable: false,
 		editable: true,
 		hasScores: false,
@@ -264,6 +284,7 @@ app.controller('MyWidgetsController', function(
 		copyModal: false,
 		olderScores: false,
 		exportModal: false,
+		accessInfoModal: false,
 		deleteDialog: false,
 		embedToggle: false,
 		editPublishedWarning: false,

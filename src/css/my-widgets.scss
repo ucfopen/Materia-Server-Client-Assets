@@ -1371,3 +1371,23 @@ div.link {
 aside .widget {
 	position: relative;
 }
+
+.access-info .container {
+	position: absolute;
+	left: 20px;
+	top: 40px;
+	width: 600px;
+	padding-top: 15px;
+	margin: 0 auto 100px auto;
+
+	.disabled {
+		display: none;
+	}
+}
+
+#user_access_button {
+	position: relative;
+	margin: 10px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
