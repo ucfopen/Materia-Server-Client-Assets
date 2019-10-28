@@ -82,6 +82,8 @@ module.exports = {
       jsPath+'/controllers/ctrl-export-scores.js',
       jsPath+'/controllers/ctrl-lti.js',
       jsPath+'/controllers/ctrl-media-import.js',
+      jsPath+'/controllers/ctrl-qset-history.js',
+      jsPath+'/controllers/ctrl-qset-rollback-confirm.js',
       jsPath+'/controllers/ctrl-my-widgets.js',
       jsPath+'/controllers/ctrl-question-import.js',
       jsPath+'/controllers/ctrl-selectedwidget.js',

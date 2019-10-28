@@ -10,6 +10,7 @@ app.controller('createCtrl', function(
 	Alert
 ) {
 	$scope.alert = Alert
+	$scope.embedDialogType = 'embed_dialog'
 
 	const HEARTBEAT_INTERVAL = 30000
 	// How far from the top of the window that the creator frame starts
@@ -29,6 +30,7 @@ app.controller('createCtrl', function(
 	let widget_info = null
 	let widgetType = null
 	let mediaFile = null
+	let cachedQset = null
 
 	const _requestSave = mode => {
 		// hide dialogs
@@ -56,6 +58,19 @@ app.controller('createCtrl', function(
 		//?type=QA or ?type=MC or ?type=QA,MC
 		showEmbedDialog(`${BASE_URL}questions/import/?type=${encodeURIComponent(types.join())}`)
 		return null // else Safari will give the .swf data that it can't handle
+	}
+
+	const _showQsetHistoryImporter = () => {
+		showEmbedDialog(`${BASE_URL}qsets/import/?inst_id=${inst_id}`)
+		// $scope.embedDialogType = 'confirm_dialog'
+		// showEmbedDialog(`${BASE_URL}qsets/confirm/?inst_id=${inst_id}`)
+		return null
+	}
+
+	const _showQsetHistoryConfirmation = () => {
+		$scope.embedDialogType = 'confirm_dialog'
+		showEmbedDialog(`${BASE_URL}qsets/confirm/?inst_id=${inst_id}`)
+		return null
 	}
 
 	const _onPublishPressed = () => {
@@ -378,6 +393,7 @@ app.controller('createCtrl', function(
 	// move the embed dialog off to invisibility
 	const hideEmbedDialog = () => {
 		$scope.iframeUrl = ''
+		$scope.embedDialogType = 'embed_dialog'
 		$scope.modal = false
 		$timeout(() => {
 			Please.$apply()
@@ -413,6 +429,15 @@ app.controller('createCtrl', function(
 			qset: { version, data: qset },
 			is_draft: saveMode !== 'publish',
 			inst_id
+		}
+
+		if (saveMode) {
+			cachedQset = {
+				qset,
+				version
+			}
+			console.log('Cached qset received and saved')
+			return false
 		}
 
 		return widgetSrv.saveWidget(w).then(inst => {
@@ -546,6 +571,35 @@ ${msg.toLowerCase()}`,
 				}
 				return sendToCreator('onMediaImportComplete', [anArray])
 			}
+		},
+
+		onQsetHistorySelectionComplete(qset, version = 1) {
+			hideEmbedDialog()
+
+			console.log("received history selection, here's the qset")
+			console.log(qset)
+
+			_requestSave('history')
+
+			let args = [instance.name, instance.widget, JSON.parse(qset), version, BASE_URL]
+			sendToCreator('initExistingWidget', args)
+
+			$timeout(() => {
+				// display confirmation pop-up
+				_showQsetHistoryConfirmation()
+			})
+		},
+
+		onQsetRollbackConfirmation(confirm) {
+			hideEmbedDialog()
+
+			if (confirm) {
+				console.log('Choice is CONFIRMED')
+			} else {
+				console.log('Choice is DEFERRED')
+				let args = [instance.name, instance.widget, cachedQset.qset, cachedQset.version, BASE_URL]
+				sendToCreator('initExistingWidget', args)
+			}
 		}
 	}
 
@@ -560,6 +614,8 @@ ${msg.toLowerCase()}`,
 	$scope.modal = false
 	$scope.requestSave = _requestSave
 	$scope.showQuestionImporter = _showQuestionImporter
+	$scope.showQsetHistoryImporter = _showQsetHistoryImporter
+	$scope.showQsetHistoryConfirmation = _showQsetHistoryConfirmation
 	$scope.onPublishPressed = _onPublishPressed
 	$scope.cancelPublish = _cancelPublish
 	$scope.cancelPreview = _cancelPreview
