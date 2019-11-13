@@ -7,8 +7,6 @@ app.controller('qsetHistoryCtrl', function($scope, $sce) {
 		_getQsetHistory(id).then(result => {
 			if (!result) return false
 			result.forEach(qset => {
-				console.log(qset)
-
 				save = {
 					id: qset.id,
 					data: qset.data,
@@ -19,12 +17,10 @@ app.controller('qsetHistoryCtrl', function($scope, $sce) {
 				$scope.saves.push(save)
 			})
 			$scope.$apply()
-			console.log($scope.saves)
 		})
 	}
 
 	const _readQuestionCount = qset => {
-		console.log(qset)
 		let items = qset.items
 		if (items.items) items = items.items
 
@@ -42,14 +38,12 @@ app.controller('qsetHistoryCtrl', function($scope, $sce) {
 	}
 
 	$scope.loadSaveData = id => {
-		console.log('selected id: ' + id)
-
 		$scope.saves.forEach(save => {
 			if (id == save.id) {
-				console.log('found qset for that ID')
 				return window.parent.Materia.Creator.onQsetHistorySelectionComplete(
 					JSON.stringify(save.data),
-					save.version
+					save.version,
+					save.created_at
 				)
 			}
 		})

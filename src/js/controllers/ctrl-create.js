@@ -30,7 +30,10 @@ app.controller('createCtrl', function(
 	let widget_info = null
 	let widgetType = null
 	let mediaFile = null
-	let cachedQset = null
+
+	// qset storage for previous save feature
+	let qsetToBeCached = null // current working qset, temporarily cached to await confirm/cancel
+	let qsetToReload = null // qset selected to be loaded after requested reload
 
 	const _requestSave = mode => {
 		// hide dialogs
@@ -384,6 +387,16 @@ app.controller('createCtrl', function(
 		creator = document.querySelector('#container')
 		// resize swf now and when window resizes
 
+		// TODO improve this
+		if (qsetToReload != null) {
+			keepQSet = {
+				data: qsetToReload.data,
+				version: qsetToReload.version
+			}
+			initCreator()
+			qsetToReload = null
+		}
+
 		return embedDonePromise.resolve() // used to keep events synchronous
 	}
 
@@ -431,12 +444,13 @@ app.controller('createCtrl', function(
 			inst_id
 		}
 
-		if (saveMode) {
-			cachedQset = {
+		// 'history' is sent from onQsetHistorySelectionComplete to request the current qset trait from the creator
+		// since the qset is all we need, no need to save to the DB
+		if (saveMode == 'history') {
+			qsetToBeCached = {
 				qset,
 				version
 			}
-			console.log('Cached qset received and saved')
 			return false
 		}
 
@@ -573,32 +587,41 @@ ${msg.toLowerCase()}`,
 			}
 		},
 
+		// When a qset is selected from the prior saves list
 		onQsetHistorySelectionComplete(qset, version = 1) {
 			hideEmbedDialog()
 
-			console.log("received history selection, here's the qset")
-			console.log(qset)
-
+			// request a save from the widget to grab the current qset state
+			// passing 'history' as the save mode short-circuits the save functionality so a new save isn't actually made in the database
 			_requestSave('history')
 
-			let args = [instance.name, instance.widget, JSON.parse(qset), version, BASE_URL]
-			sendToCreator('initExistingWidget', args)
+			// use initExistingWidget to apply the selected qset
+			qsetToReload = {
+				data: JSON.parse(qset),
+				version: version
+			}
+			sendToCreator('reloadCreator')
 
+			// defer the confirmation dialog until after the current scope cycle
 			$timeout(() => {
 				// display confirmation pop-up
 				_showQsetHistoryConfirmation()
 			})
 		},
 
+		// User has selected either "cancel" or "confirm" in the qset selection confirmation dialog
 		onQsetRollbackConfirmation(confirm) {
 			hideEmbedDialog()
 
 			if (confirm) {
-				console.log('Choice is CONFIRMED')
+				return false
 			} else {
-				console.log('Choice is DEFERRED')
-				let args = [instance.name, instance.widget, cachedQset.qset, cachedQset.version, BASE_URL]
-				sendToCreator('initExistingWidget', args)
+				// re-apply cached qset saved via onQsetHistorySelectionComplete
+				qsetToReload = {
+					data: qsetToBeCached.qset,
+					version: qsetToBeCached.version
+				}
+				sendToCreator('reloadCreator')
 			}
 		}
 	}
