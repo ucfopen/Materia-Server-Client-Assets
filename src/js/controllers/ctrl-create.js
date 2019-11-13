@@ -549,6 +549,22 @@ ${msg.toLowerCase()}`,
 		Please.$apply()
 	}
 
+	const _qsetRollbackConfirmation = confirm => {
+		$scope.showActionBar = true
+		$scope.showRollbackConfirmBar = false
+
+		if (confirm) {
+			return false
+		} else {
+			// re-apply cached qset saved via onQsetHistorySelectionComplete
+			qsetToReload = {
+				data: qsetToBeCached.qset,
+				version: qsetToBeCached.version
+			}
+			sendToCreator('reloadCreator')
+		}
+	}
+
 	// Exposed to the window object so that popups and frames can use this public functions
 	Namespace('Materia').Creator = {
 		// Exposed to the question importer screen
@@ -602,27 +618,8 @@ ${msg.toLowerCase()}`,
 			}
 			sendToCreator('reloadCreator')
 
-			// defer the confirmation dialog until after the current scope cycle
-			$timeout(() => {
-				// display confirmation pop-up
-				_showQsetHistoryConfirmation()
-			})
-		},
-
-		// User has selected either "cancel" or "confirm" in the qset selection confirmation dialog
-		onQsetRollbackConfirmation(confirm) {
-			hideEmbedDialog()
-
-			if (confirm) {
-				return false
-			} else {
-				// re-apply cached qset saved via onQsetHistorySelectionComplete
-				qsetToReload = {
-					data: qsetToBeCached.qset,
-					version: qsetToBeCached.version
-				}
-				sendToCreator('reloadCreator')
-			}
+			$scope.showActionBar = false
+			$scope.showRollbackConfirmBar = true
 		}
 	}
 
@@ -642,6 +639,8 @@ ${msg.toLowerCase()}`,
 	$scope.onPublishPressed = _onPublishPressed
 	$scope.cancelPublish = _cancelPublish
 	$scope.cancelPreview = _cancelPreview
+
+	$scope.rollbackConfirmation = _qsetRollbackConfirmation
 
 	// initialize
 
