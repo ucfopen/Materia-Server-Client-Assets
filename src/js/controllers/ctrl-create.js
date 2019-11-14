@@ -607,6 +607,8 @@ ${msg.toLowerCase()}`,
 		onQsetHistorySelectionComplete(qset, version = 1) {
 			hideEmbedDialog()
 
+			if (!qset) return false
+
 			// request a save from the widget to grab the current qset state
 			// passing 'history' as the save mode short-circuits the save functionality so a new save isn't actually made in the database
 			_requestSave('history')
@@ -641,6 +643,7 @@ ${msg.toLowerCase()}`,
 	$scope.cancelPreview = _cancelPreview
 
 	$scope.rollbackConfirmation = _qsetRollbackConfirmation
+	$scope.showRollbackConfirmBar = false
 
 	// initialize
 
