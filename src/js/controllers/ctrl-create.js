@@ -11,6 +11,7 @@ app.controller('createCtrl', function(
 ) {
 	$scope.alert = Alert
 	$scope.embedDialogType = 'embed_dialog'
+	$scope.showActionBar = true
 
 	const HEARTBEAT_INTERVAL = 30000
 	// How far from the top of the window that the creator frame starts
