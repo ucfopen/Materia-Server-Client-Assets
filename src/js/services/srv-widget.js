@@ -7,10 +7,10 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 
 	const sortWidgets = () => _widgets.sort((a, b) => b.created_at - a.created_at)
 
-	const getWidgets = () => {
+	const getWidgets = (force = false) => {
 		const deferred = $q.defer()
 
-		if (_widgets.length === 0 || !gotAll) {
+		if (_widgets.length === 0 || !gotAll || force) {
 			gotAll = true
 			_getMultipleFromServer().then(widgets => {
 				_widgets = widgets.slice(0) // save a copy
@@ -185,12 +185,19 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 	const _getMultipleFromServer = () => {
 		const deferred = $q.defer()
 		Materia.Coms.Json.send('widget_instances_get', null).then(widgets => {
-			if (widgets && widgets.length > 0) {
+			if (widgets && widgets.length > 0 && widgets.length >= _widgets.length) {
+				let index = 0
+
 				widgets.forEach(w => {
-					_widgetIds[w.id] = w
 					_initSearchCache(w)
-					_widgets.push(w)
+					_widgetIds[w.id] = w
+					_widgets.splice(index, 1, w)
+					index++
 				})
+			}
+
+			if (widgets.length < _widgets.length) {
+				_widgets = widgets
 			}
 
 			deferred.resolve(_widgets)
