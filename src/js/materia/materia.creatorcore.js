@@ -8,8 +8,6 @@ Namespace('Materia').CreatorCore = (() => {
 	const _onPostMessage = e => {
 		if (typeof e.data !== 'string') return
 		const msg = JSON.parse(e.data)
-		console.log('postMessage received')
-		console.log(msg)
 		switch (msg.type) {
 			case 'initNewWidget':
 				_initNewWidget(
@@ -73,7 +71,6 @@ Namespace('Materia').CreatorCore = (() => {
 	}
 
 	const _forceCreatorReload = () => {
-		console.log('OK, reloading!!!!')
 		location.reload(true)
 	}
 
@@ -132,10 +129,6 @@ Namespace('Materia').CreatorCore = (() => {
 
 	const disableResizeInterval = () => {
 		clearInterval(_resizeInterval)
-	}
-
-	window.onload = () => {
-		console.log('I was loaded by request!')
 	}
 
 	// Public Methods

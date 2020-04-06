@@ -154,7 +154,6 @@ describe('creatorcore', () => {
 
 	it('reacts properly to post messages with non-string data', () => {
 		mockPostMessageFromWidget('', '', undefined)
-		console.log(window.addEventListener)
 		expect(window.addEventListener).toHaveLastReturnedWith(undefined)
 	})
 

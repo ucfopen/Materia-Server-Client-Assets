@@ -66,8 +66,6 @@ app.controller('createCtrl', function(
 
 	const _showQsetHistoryImporter = () => {
 		showEmbedDialog(`${BASE_URL}qsets/import/?inst_id=${inst_id}`)
-		// $scope.embedDialogType = 'confirm_dialog'
-		// showEmbedDialog(`${BASE_URL}qsets/confirm/?inst_id=${inst_id}`)
 		return null
 	}
 
