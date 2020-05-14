@@ -30,7 +30,11 @@ app.controller('SelectedWidgetController', function(
 
 	const _copyWidget = () => {
 		widgetSrv
-			.copyWidget($scope.selected.widget.id, $scope.selected.copy_title)
+			.copyWidget(
+				$scope.selected.widget.id,
+				$scope.selected.copy_title,
+				$scope.selected.copy_retain_access
+			)
 			.then(inst_id => {
 				$scope.show.copyModal = false
 				return widgetSrv.getWidget(inst_id)

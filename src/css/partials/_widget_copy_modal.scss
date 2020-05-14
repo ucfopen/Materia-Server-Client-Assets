@@ -4,7 +4,7 @@
 
 .ng-modal.copy .adding_shadow {
 	width: 640px;
-	height: 480px;
+	height: 540px;
 	background-color: #000000;
 	border-radius: 3px;
 	position: absolute;
@@ -21,6 +21,29 @@
 	top: 40px;
 	width: 600px;
 	padding-top: 15px;
+
+	div {
+		margin: 20px 0 0 0;
+		padding: 20px 0 20px 15px;
+
+		text-align: left;
+
+		border-top: solid 1px rgb(238, 238, 238);
+		border-bottom: solid 1px rgb(238, 238, 238);
+
+		font-size: 14px;
+
+		p {
+			padding: 10px;
+			margin-bottom: 0;
+			background: rgb(238, 238, 238);
+			border-radius: 5px;
+		}
+
+		input {
+			margin-right: 12px;
+		}
+	}
 }
 
 .ng-modal.copy .ng-modal-title {

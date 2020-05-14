@@ -71,8 +71,8 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		return Materia.Coms.Json.send('widgets_get_by_type', [type])
 	}
 
-	const copyWidget = (inst_id, newName) => {
-		return Materia.Coms.Json.send('widget_instance_copy', [inst_id, newName])
+	const copyWidget = (inst_id, newName, retainAccess = false) => {
+		return Materia.Coms.Json.send('widget_instance_copy', [inst_id, newName, retainAccess])
 	}
 
 	const deleteWidget = inst_id => {
