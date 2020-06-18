@@ -54,7 +54,7 @@
     }
   },
   "dependencies": {
-    "angular": "1.6.9",
+    "angular": "1.8.0",
     "js-snakecase": "^1.2.0",
     "ngmodal": "ucfcdl/ngModal#v1.2.2"
   },
