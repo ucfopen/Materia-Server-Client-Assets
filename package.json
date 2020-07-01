@@ -1,6 +1,6 @@
 {
   "name": "materia-server-client-assets",
-  "version": "2.1.1",
+  "version": "2.2.0-alpha1",
   "license": "AGPL-3.0",
   "description": "Materia Server Client Assets contains all the javascript and css for Materia Server and the Materia Widget Development Kit.",
   "author": "University of Central Florida, Center for Distributed Learning",
@@ -54,7 +54,7 @@
     }
   },
   "dependencies": {
-    "angular": "1.6.9",
+    "angular": "1.8.0",
     "js-snakecase": "^1.2.0",
     "ngmodal": "ucfcdl/ngModal#v1.2.2"
   },

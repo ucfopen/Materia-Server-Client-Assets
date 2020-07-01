@@ -4,6 +4,7 @@ Namespace('Materia').ScoreCore = (() => {
 	let _widgetClass = null
 
 	const _onPostMessage = e => {
+		if (typeof e.data !== 'string') return
 		const msg = JSON.parse(e.data)
 		switch (msg.type) {
 			case 'initWidget':

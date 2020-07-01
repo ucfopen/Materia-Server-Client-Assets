@@ -424,6 +424,10 @@
 
 .user.settings form .action_button {
 	margin-top: 3em;
+
+	&.no_top_margin {
+		margin-top: 0;
+	}
 }
 
 .user.settings form .action_button.disabled,

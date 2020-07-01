@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('settingsController', function($scope, Please, userServ, apiServ, $log) {
+app.controller('settingsController', function($scope, Please, userServ, apiServ, $log, $window) {
 	const _saveSettings = () => {
 		Materia.Set.Throbber.startSpin('.page')
 
@@ -39,4 +39,10 @@ app.controller('settingsController', function($scope, Please, userServ, apiServ,
 	$scope.avatar = userServ.getCurrentUserAvatar(100)
 	$scope.useGravatar = $scope.user.avatar.indexOf('gravatar') > -1
 	$scope.saveSettings = _saveSettings
+
+	if (($scope.beardMode = $window.localStorage.beardMode)) {
+		$scope.disableBeardMode = () => {
+			$scope.beardMode = $window.localStorage.beardMode = false
+		}
+	}
 })
