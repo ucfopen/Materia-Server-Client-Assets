@@ -13,6 +13,12 @@
 	left: 250px;
 }
 
+.ng-modal.share .search_container {
+	text-align: left;
+	position: relative;
+	margin-bottom: 20px;
+}
+
 .ng-modal.share .action_button.save_button {
 	position: absolute;
 	bottom: -35px;
@@ -67,15 +73,21 @@
 
 .ng-modal.share .container {
 	left: 0;
-	top: 50px;
 	width: 580px;
 	height: 390px;
-	padding-top: 15px;
+	padding-top: 0;
 }
 
 .ng-modal.share .ng-modal-title {
-	top: 15px;
-	left: 27px;
+	margin: 0;
+	padding: 0;
+	font-size: 1.3em;
+	color: #555;
+	border-bottom: #999 dotted 1px;
+	padding-bottom: 20px;
+	margin-bottom: 20px;
+	position: relative;
+	text-align: left;
 }
 
 .ng-modal.share a.close {
@@ -115,9 +127,7 @@
 
 .ng-modal.share .input_label {
 	font-size: 19px;
-	margin: 0 25px 0 0;
-
-	position: absolute;
+	margin: 5px 25px 0 0;
 }
 
 .ng-modal.share #adding .input_label {
@@ -129,13 +139,9 @@
 .ng-modal.share #access .placeholder {
 	width: 445px;
 	height: 30px;
-	padding-left: 10px;
 	z-index: 2;
 	border: solid 1px #c9c9c9;
 	font-size: 16px;
-
-	position: absolute;
-	right: 0;
 }
 
 .ng-modal.share #adding #input_holder {
@@ -265,7 +271,6 @@
 	height: 250px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
-	margin-top: 50px;
 	padding: 0 30px;
 	text-align: right;
 	overflow: auto;
@@ -577,4 +582,47 @@
 	color: #555;
 	text-decoration: underline;
 	font-size: 12pt;
+}
+
+.share {
+	.perm-text {
+		width: 100%;
+		display: inline-block;
+	}
+
+	.exp-date {
+		padding: 0;
+		text-decoration: underline;
+		color: #545454;
+		font-size: 8pt;
+		cursor: pointer;
+		background: transparent;
+		border: none;
+		width: 85px;
+
+		&:hover {
+			color: #969696;
+		}
+
+		&:disabled {
+			cursor: default;
+			color: #c5c5c5;
+			text-decoration: none;
+		}
+
+		&:focus {
+			outline: none;
+			background: #fff;
+			border: solid 1px #f7b64a;
+		}
+	}
+
+	.expires {
+		font-size: 8pt;
+	}
+
+	.remove-expiration {
+		font-size: 8pt;
+		cursor: pointer;
+	}
 }

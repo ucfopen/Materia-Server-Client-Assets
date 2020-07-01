@@ -35,7 +35,7 @@
 		}
 
 		&.inline {
-			margin: 50px auto 20px auto;
+			margin: 20px auto 20px auto;
 			padding: 0;
 			width: 255px;
 		}
@@ -148,17 +148,20 @@
 		}
 	}
 
-	.data_explanation {
-		margin-left: 125px;
-		width: 450px;
-		font-size: 14px;
+	.input_desc {
+		padding: 10px;
+		margin-bottom: 0;
+		background: #f2f2f2;
+		border-radius: 5px;
+		margin: 0.5em 1em 1em;
+
+		.desc_notice {
+			margin-top: 1em;
+		}
 	}
 
-	.access_explanation {
-		margin-left: 15px;
-		width: 450px;
-		font-size: 14px;
-		margin: 5px 20px;
+	.data_explanation {
+		margin-left: 125px;
 	}
 
 	.ui-slider-handle.ui-state-default.ui-corner-all {
