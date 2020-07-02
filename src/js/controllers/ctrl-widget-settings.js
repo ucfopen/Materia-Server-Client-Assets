@@ -50,22 +50,37 @@ app.controller('WidgetSettingsController', function(
 	}
 
 	const _toggleNormalAccess = () => {
-		if (($scope.guestAccess = true)) {
-			$scope.guestAccess = false
-		}
-		if (($scope.embeddedOnly = true)) {
+		// disallow student made widgets from being toggled out of guest mode
+		if ($scope.studentMade) return
+
+		$scope.guestAccess = !$scope.guestAccess
+
+		if ($scope.embeddedOnly == true) {
 			$scope.embeddedOnly = false
 		}
+
+		// warn user that students will be removed if guest mode is disabled
+		if ($scope.selected.widget.student_access == true && $scope.guestAccess == false) {
+			$scope.alert.msg =
+				'Warning: Disabling Guest Mode will automatically revoke access to this widget for any students it has been shared with!'
+			$scope.alert.title = 'Students with access will be removed'
+			$scope.alert.fatal = false
+		}
+
+		_updateSliderAfterChange()
 	}
 
 	const _toggleGuestAccess = () => {
+		// disallow student made widgets from being toggled out of guest mode
 		if ($scope.studentMade) return
 
 		$scope.guestAccess = !$scope.guestAccess
 		if ($scope.guestAccess) {
 			$scope.embeddedOnly = false
 		}
-		if ($scope.selected.widget.student_access === true && $scope.guestAccess === false) {
+
+		// warn user that students will be removed if guest mode is disabled
+		if ($scope.selected.widget.student_access == true && $scope.guestAccess == false) {
 			$scope.alert.msg =
 				'Warning: Disabling Guest Mode will automatically revoke access to this widget for any students it has been shared with!'
 			$scope.alert.title = 'Students with access will be removed'
@@ -73,12 +88,8 @@ app.controller('WidgetSettingsController', function(
 		}
 
 		$scope.attemptsSliderValue = $scope.UNLIMITED_SLIDER_VALUE
-		$timeout(() => {
-			$('.selector').slider({
-				value: $scope.attemptsSliderValue * 1000,
-				disabled: $scope.guestAccess
-			})
-		})
+
+		_updateSliderAfterChange()
 	}
 
 	const _toggleEmbeddedOnly = () => {
@@ -88,6 +99,20 @@ app.controller('WidgetSettingsController', function(
 		if ($scope.embeddedOnly) {
 			$scope.guestAccess = false
 		}
+
+		_updateSliderAfterChange()
+	}
+
+	// this probably shouldn't have to be used
+	// because the toggles above should be just one
+	// function lilke _setAccess()
+	const _updateSliderAfterChange = () => {
+		$timeout(() => {
+			$('.selector').slider({
+				value: $scope.attemptsSliderValue * 1000,
+				disabled: $scope.guestAccess
+			})
+		})
 	}
 
 	// Fills in the dates from the selected widget
