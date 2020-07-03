@@ -7,7 +7,7 @@ describe('Materia.ScoreCore', () => {
 	beforeEach(() => {
 		let app = angular.module('materia')
 		global.API_LINK = 'my_api_url'
-		require('../materia-namespace')
+		require('../common/materia-namespace')
 		require('./materia.scorecore')
 		ScoreCore = Namespace('Materia').ScoreCore
 		jest.spyOn(window, 'addEventListener')
@@ -27,7 +27,7 @@ describe('Materia.ScoreCore', () => {
 		_onPostMessage = window.addEventListener.mock.calls[0][1]
 	})
 	afterEach(() => {
-		jest.clearAllMocks()
+		jest.resetAllMocks()
 	})
 
 	it('defines expected public methods', () => {

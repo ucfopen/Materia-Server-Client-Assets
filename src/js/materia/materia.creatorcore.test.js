@@ -1,7 +1,6 @@
 describe('creatorcore', () => {
 	let creatorCore
 	let $q
-
 	let mockCreator
 	let _onPostMessage
 
@@ -45,12 +44,14 @@ describe('creatorcore', () => {
 		})
 
 	beforeEach(() => {
+		jest.spyOn(console, 'warn')
+		console.warn.mockReturnValue()
 		let app = angular.module('materia')
 		inject(function(_$q_) {
 			$q = _$q_
 		})
 		global.API_LINK = 'my_api_url'
-		require('../materia-namespace')
+		require('../common/materia-namespace')
 		require('./materia.creatorcore')
 		creatorCore = Namespace('Materia.CreatorCore')
 		global.fetch = jest.fn()
@@ -75,7 +76,7 @@ describe('creatorcore', () => {
 	})
 
 	afterEach(() => {
-		jest.clearAllMocks()
+		jest.resetAllMocks()
 	})
 
 	it('defines expected public methods', () => {
@@ -154,12 +155,10 @@ describe('creatorcore', () => {
 
 	it('reacts properly to post messages with non-string data', () => {
 		mockPostMessageFromWidget('', '', undefined)
-		console.log(window.addEventListener)
 		expect(window.addEventListener).toHaveLastReturnedWith(undefined)
 	})
 
 	it('reacts properly to unknown post messages', () => {
-		jest.spyOn(console, 'warn')
 		mockPostMessageFromWidget('undefinedMessageType', 'unknown-source', ['payload'])
 		expect(console.warn).toHaveBeenCalledWith(
 			'Error, unknown message sent to creator core: undefinedMessageType'

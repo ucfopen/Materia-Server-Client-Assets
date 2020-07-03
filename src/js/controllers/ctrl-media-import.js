@@ -107,7 +107,6 @@ app.controller('mediaImportCtrl', function($scope, $window, $timeout) {
 		const filtered = $scope.displayFiles.filter(file => {
 			//combine file name and type for simplified filtering
 			const simplified = file.name.replace(/\s/g, '').toLowerCase() + file.type + file.created
-			// @TODO: why is this returning?
 			return simplified.includes(search)
 		})
 

@@ -50,8 +50,8 @@ describe('widgetDetailsController', () => {
 			</div>
 		`
 
-		require('../materia-namespace')
-		require('../materia-constants')
+		require('../common/materia-namespace')
+		require('../common/materia-constants')
 		require('../materia/materia.coms.json')
 		require('../services/srv-selectedwidget')
 		require('../services/srv-datetime')

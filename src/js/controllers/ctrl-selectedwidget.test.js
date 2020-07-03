@@ -11,8 +11,8 @@ describe('adminWidgetController', () => {
 		let app = angular.module('materia')
 		app.factory('Please', () => mockPlease)
 
-		require('../materia-namespace')
-		require('../materia-constants')
+		require('../common/materia-namespace')
+		require('../common/materia-constants')
 		require('../services/srv-admin')
 		require('../services/srv-widget')
 		require('../services/srv-selectedwidget')

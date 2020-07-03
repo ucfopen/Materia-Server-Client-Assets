@@ -34,7 +34,7 @@ app.controller('adminUserController', function(Please, $scope, $window, adminSrv
 		return Object.keys(_pre).map(i => _pre[i])
 	}
 
-	const search = nameOrFragment => {
+	const _searchFor = nameOrFragment => {
 		if (nameOrFragment === lastSearch) {
 			return
 		}
@@ -130,9 +130,15 @@ app.controller('adminUserController', function(Please, $scope, $window, adminSrv
 	$scope.deselectUser = deselectUser
 	$scope.save = save
 	$scope.searchMatchClick = searchMatchClick
-	$scope.search = search
+
+	/* develblock:start */
+	// these method are exposed for testing
+	$scope.jestTest = {
+		_searchFor
+	}
+	/* develblock:end */
 
 	// initialize
 	deselectUser()
-	$scope.$watch('inputs.userSearchInput', input => $scope.search(input))
+	$scope.$watch('inputs.userSearchInput', input => _searchFor(input))
 })

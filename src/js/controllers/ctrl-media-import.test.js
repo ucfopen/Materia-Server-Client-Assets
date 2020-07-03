@@ -65,8 +65,8 @@ describe('mediaImportCtrl', function() {
 		}
 		app.factory('$window', () => $window)
 
-		require('../materia-namespace')
-		require('../materia-constants')
+		require('../common/materia-namespace')
+		require('../common/materia-constants')
 		require('./ctrl-media-import')
 
 		global.MEDIA_UPLOAD_URL = 'https://mediauploadurl.com'

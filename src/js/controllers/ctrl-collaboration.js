@@ -17,7 +17,7 @@ app.controller('CollaborationController', function(
 	const ESC = 27
 	let lastSearch = ''
 
-	const _search = nameOrFragment => {
+	const _searchFor = nameOrFragment => {
 		if (nameOrFragment === lastSearch) {
 			return
 		}
@@ -273,7 +273,6 @@ app.controller('CollaborationController', function(
 	$scope.accessLevels[ACCESS.FULL] = { value: ACCESS.FULL, text: 'Full' }
 
 	$scope.alert = Alert
-	$scope.search = _search
 	$scope.updatePermissions = _updatePermissions
 	$scope.checkForWarning = _checkForWarning
 	$scope.cancelDemote = _cancelDemote
@@ -283,5 +282,5 @@ app.controller('CollaborationController', function(
 
 	//  Initialize
 
-	$scope.$watch('inputs.userSearchInput', input => $scope.search(input))
+	$scope.$watch('inputs.userSearchInput', input => _searchFor(input))
 })

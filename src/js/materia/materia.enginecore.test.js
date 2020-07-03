@@ -16,7 +16,7 @@ describe('enginecore', () => {
 			$q = _$q_
 		})
 		global.API_LINK = 'my_api_url'
-		require('../materia-namespace')
+		require('../common/materia-namespace')
 		require('./materia.enginecore')
 		Engine = Namespace('Materia').Engine
 		global.fetch = jest.fn()

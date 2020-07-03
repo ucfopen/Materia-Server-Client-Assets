@@ -5,7 +5,7 @@ const app = angular.module('materia')
 // when the current url matches the widget catalog
 // then use html5Mode to allow the filters and search to update the url
 // and add ng-animate
-// ex: /widgets or /widgets/1-adventrue
+// ex: /widgets or /widgets/1-adventure
 if (window.location.href.match(/\/widgets($|\/\D|\?)/g)) {
 	app.config(function($locationProvider) {
 		$locationProvider.html5Mode({

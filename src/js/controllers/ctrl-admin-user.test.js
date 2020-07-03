@@ -36,8 +36,8 @@ describe('adminUserController', function() {
 		}
 		app.factory('$window', () => $window)
 
-		require('../materia-namespace')
-		require('../materia-constants')
+		require('../common/materia-namespace')
+		require('../common/materia-constants')
 		require('../services/srv-admin')
 		require('./ctrl-admin-user')
 
@@ -69,7 +69,6 @@ describe('adminUserController', function() {
 		expect($scope.selectedUser).toBeNull()
 		expect($scope.additionalData).toBeNull()
 		expect($scope.errorMessage).toMatchObject([])
-		expect(typeof $scope.search).toBe('function')
 		expect(typeof $scope.searchMatchClick).toBe('function')
 		expect(typeof $scope.save).toBe('function')
 		expect(typeof $scope.deselectUser).toBe('function')
@@ -184,12 +183,12 @@ describe('adminUserController', function() {
 
 		mockJsonPromiseOnce(getMock, { id: 1 })
 
-		$scope.search('one')
+		$scope.jestTest._searchFor('one')
 		expect(getMock).toHaveBeenCalledTimes(1)
 		expect(getMock).toHaveBeenLastCalledWith('/api/admin/user_search/one')
 
 		mockJsonPromiseOnce(getMock, { id: 1 })
-		$scope.search('one two three')
+		$scope.jestTest._searchFor('one two three')
 		expect(getMock).toHaveBeenCalledTimes(2)
 		expect(getMock).toHaveBeenLastCalledWith('/api/admin/user_search/one%20two%20three')
 	})
@@ -200,8 +199,8 @@ describe('adminUserController', function() {
 
 		mockJsonPromiseOnce(getMock, { id: 1 })
 		mockJsonPromiseOnce(getMock, { id: 1 })
-		$scope.search('one')
-		$scope.search('one')
+		$scope.jestTest._searchFor('one')
+		$scope.jestTest._searchFor('one')
 		expect(getMock).toHaveBeenCalledTimes(1)
 	})
 
@@ -211,7 +210,7 @@ describe('adminUserController', function() {
 		var controller = $controller('adminUserController', { $scope })
 
 		mockJsonPromiseOnce(getMock, { halt: true, msg: 'oh no' })
-		$scope.search('one')
+		$scope.jestTest._searchFor('one')
 		$rootScope.$digest() // processes promise
 		expect(alert).toHaveBeenCalledWith('oh no')
 		expect($window.location.reload).toHaveBeenCalledWith(true)
@@ -222,7 +221,7 @@ describe('adminUserController', function() {
 		var controller = $controller('adminUserController', { $scope })
 
 		mockJsonPromiseOnce(getMock, [])
-		$scope.search('one')
+		$scope.jestTest._searchFor('one')
 		$rootScope.$digest() // processes promise
 		expect($scope.searchResults.none).toBe(true)
 		expect($scope.searchResults.show).toBe(true)
@@ -234,8 +233,8 @@ describe('adminUserController', function() {
 		var controller = $controller('adminUserController', { $scope })
 
 		mockJsonPromiseOnce(getMock, [])
-		$scope.search('one')
-		$scope.search('')
+		$scope.jestTest._searchFor('one')
+		$scope.jestTest._searchFor('')
 		$rootScope.$digest() // processes promise
 		expect($scope.searchResults.none).toBe(true)
 		expect($scope.searchResults.show).toBe(false)
@@ -260,7 +259,7 @@ describe('adminUserController', function() {
 		]
 
 		mockJsonPromiseOnce(getMock, [{ first: 'z', last: 'z' }, { first: 'a', last: 'a' }])
-		$scope.search('one')
+		$scope.jestTest._searchFor('one')
 		$rootScope.$digest() // processes promise
 		expect($scope.searchResults.none).toBe(false)
 		expect($scope.searchResults.show).toBe(true)

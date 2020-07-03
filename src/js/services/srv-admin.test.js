@@ -18,7 +18,7 @@ describe('adminSrv', () => {
 		mockPlease = { $apply: jest.fn() }
 		let app = angular.module('materia')
 		app.factory('Please', () => mockPlease)
-		require('../materia-namespace')
+		require('../common/materia-namespace')
 		require('./srv-admin')
 
 		inject(function(adminSrv, _$q_, _$rootScope_) {

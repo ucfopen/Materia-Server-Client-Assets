@@ -11,6 +11,7 @@ describe('playerCtrl', () => {
 	let $interval
 	let $location
 	let mockPlease
+	const { location } = window
 
 	let buildPostMessage = (type, data) => {
 		let e = new Event('message')
@@ -118,14 +119,13 @@ describe('playerCtrl', () => {
 	}
 
 	beforeEach(() => {
+		delete window.location
+		window.location = { assign: jest.fn() }
 		mockPlease = { $apply: jest.fn() }
 		let app = angular.module('materia')
 		app.factory('Please', () => mockPlease)
-		jest.spyOn(window.location, 'assign').mockImplementation(() => {
-			true
-		})
-		require('../materia-namespace')
-		require('../materia-constants')
+		require('../common/materia-namespace')
+		require('../common/materia-constants')
 
 		_userServ = { getAvatar: jest.fn(() => 'avatar') }
 		_widgetSrv = {
@@ -155,13 +155,9 @@ describe('playerCtrl', () => {
 	})
 
 	afterEach(() => {
+		window.location = location
 		jest.clearAllMocks()
-		try {
-			window.location.assign.mockRestore()
-			document.getElementsByClassName.mockRestore()
-			document.getElementById.mockRestore()
-			document.createElement.mockRestore()
-		} catch (e) {}
+		jest.restoreAllMocks()
 	})
 
 	it('defines expected scope vars', () => {

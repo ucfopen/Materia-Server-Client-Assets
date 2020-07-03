@@ -44,8 +44,8 @@ describe('widgetSrv', () => {
 		})
 		app.factory('$window', () => mockWindow)
 
-		require('../materia-namespace')
-		require('../materia-constants')
+		require('../common/materia-namespace')
+		require('../common/materia-constants')
 		require('./srv-widget')
 
 		inject(function(_$rootScope_, widgetSrv, _$q_) {

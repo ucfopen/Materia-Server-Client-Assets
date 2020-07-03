@@ -5,7 +5,7 @@ describe('scoreData Directive', function() {
 	let $selectedWidgetSrv
 
 	beforeEach(() => {
-		require('../materia-constants')
+		require('../common/materia-constants')
 		require('../services/srv-selectedwidget')
 		require('./dir-scoredata.js')
 
