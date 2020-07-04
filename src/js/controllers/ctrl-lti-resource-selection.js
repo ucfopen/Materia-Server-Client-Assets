@@ -5,7 +5,7 @@ app.controller('LTIResourceSelectionCtrl', function(
 	$timeout,
 	$scope,
 	$sce,
-	widgetSrv
+	WidgetSrv
 ) {
 	const REFRESH_FAKE_DELAY_MS = 500
 	const CHANGE_SECTION_FADE_DELAY_MS = 250
@@ -23,7 +23,7 @@ app.controller('LTIResourceSelectionCtrl', function(
 
 		$timeout(
 			() =>
-				widgetSrv.getWidgets(true).then(widgets => {
+				WidgetSrv.getWidgets(true).then(widgets => {
 					if (widgets != null ? widgets.halt : undefined) {
 						return
 					}
@@ -146,7 +146,7 @@ app.controller('LTIResourceSelectionCtrl', function(
 	}
 
 	const getAvailabilityStr = (startDate, endDate) => {
-		const availability = widgetSrv.convertAvailibilityDates(startDate, endDate)
+		const availability = WidgetSrv.convertAvailibilityDates(startDate, endDate)
 
 		if (endDate < 0 && startDate < 0) {
 			return 'Anytime'

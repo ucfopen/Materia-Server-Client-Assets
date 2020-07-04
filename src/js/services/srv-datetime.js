@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.service('dateTimeServ', function() {
+app.service('DateTimeServ', function() {
 	const parseObjectToDateString = time => {
 		const timeObj = new Date(time * 1000)
 		const year = String(timeObj.getFullYear())

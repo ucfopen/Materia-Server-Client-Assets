@@ -10,10 +10,10 @@ app.controller('MyWidgetsController', function(
 	$q,
 	$window,
 	$timeout,
-	widgetSrv,
-	userServ,
-	selectedWidgetSrv,
-	beardServ,
+	WidgetSrv,
+	UserServ,
+	SelectedWidgetSrv,
+	BeardServ,
 	ACCESS,
 	Alert
 ) {
@@ -22,7 +22,7 @@ app.controller('MyWidgetsController', function(
 
 	const _prepareWidgetForDisplay = widget => {
 		widget.icon = Materia.Image.iconUrl(widget.widget.dir, 60)
-		widget.beard = beardServ.getRandomBeard()
+		widget.beard = BeardServ.getRandomBeard()
 	}
 
 	const updateWidgets = data => {
@@ -49,9 +49,9 @@ app.controller('MyWidgetsController', function(
 
 		// on the first load, select the widget from the url
 		if (firstRun) {
-			widgetSrv.selectWidgetFromHashUrl()
+			WidgetSrv.selectWidgetFromHashUrl()
 			firstRun = false
-			$window.addEventListener('hashchange', widgetSrv.selectWidgetFromHashUrl, false)
+			$window.addEventListener('hashchange', WidgetSrv.selectWidgetFromHashUrl, false)
 		}
 	}
 
@@ -67,9 +67,9 @@ app.controller('MyWidgetsController', function(
 		populateDisplay()
 
 		$q.all([
-			userServ.get(),
-			selectedWidgetSrv.getUserPermissions(),
-			selectedWidgetSrv.getDateRanges()
+			UserServ.get(),
+			SelectedWidgetSrv.getUserPermissions(),
+			SelectedWidgetSrv.getDateRanges()
 		]).then(data => {
 			// don't render an old display if they user has clicked another widget
 			if ($scope.selected.widget.id !== currentId) {
@@ -84,7 +84,7 @@ app.controller('MyWidgetsController', function(
 
 			// load the scores a little later
 			loadScoresTimout = $timeout(() => {
-				selectedWidgetSrv.getScoreSummaries().then(scores => {
+				SelectedWidgetSrv.getScoreSummaries().then(scores => {
 					$scope.selected.scores = scores
 					populateScores()
 				})
@@ -98,7 +98,7 @@ app.controller('MyWidgetsController', function(
 	}
 
 	const populateAvailability = (startDateInt, endDateInt) => {
-		$scope.availability = widgetSrv.convertAvailibilityDates(startDateInt, endDateInt)
+		$scope.availability = WidgetSrv.convertAvailibilityDates(startDateInt, endDateInt)
 		$scope.availabilityStart = startDateInt
 		$scope.availabilityEnd = endDateInt
 
@@ -216,7 +216,7 @@ app.controller('MyWidgetsController', function(
 	const _setScoreViewTab = (index, view) => {
 		// load storage data if needed
 		if (view === $scope.SCORE_TAB_STORAGE) {
-			selectedWidgetSrv.getStorageData().then(data => {
+			SelectedWidgetSrv.getStorageData().then(data => {
 				$rootScope.$broadcast('storageData.loaded')
 				Please.$apply()
 			})
@@ -226,8 +226,8 @@ app.controller('MyWidgetsController', function(
 	}
 
 	const _onSelectedWidgetUpdate = () => {
-		$scope.selected.widget = selectedWidgetSrv.get()
-		const sessionCheck = userServ.checkValidSession()
+		$scope.selected.widget = SelectedWidgetSrv.get()
+		const sessionCheck = UserServ.checkValidSession()
 		sessionCheck.then(check => {
 			if (check) {
 				setSelectedWidget()
@@ -275,7 +275,7 @@ app.controller('MyWidgetsController', function(
 	$scope.selectedScoreView = [] // array of above (i.e. 0 = graph)
 
 	$scope.setSelected = id => {
-		widgetSrv.updateHashUrl(id)
+		WidgetSrv.updateHashUrl(id)
 	}
 
 	// Initialize
@@ -283,11 +283,11 @@ app.controller('MyWidgetsController', function(
 	$scope.$on('selectedWidget.update', _onSelectedWidgetUpdate)
 	$scope.$on('collaborators.update', _countCollaborators)
 	$scope.$on('widgetList.update', evt => {
-		updateWidgets(widgetSrv.getWidgets())
+		updateWidgets(WidgetSrv.getWidgets())
 	})
 	$scope.$on('user.update', evt => {
-		$scope.user = userServ.get()
+		$scope.user = UserServ.get()
 	})
 
-	widgetSrv.getWidgets().then(updateWidgets)
+	WidgetSrv.getWidgets().then(updateWidgets)
 })

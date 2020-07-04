@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.service('userServ', function($q, $rootScope) {
+app.service('UserServ', function($q, $rootScope) {
 	let _me = null
 	let _user = null
 

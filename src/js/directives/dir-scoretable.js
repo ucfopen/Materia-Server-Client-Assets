@@ -1,11 +1,11 @@
 'use strict'
 
 const app = angular.module('materia')
-app.directive('scoreTable', function(selectedWidgetSrv, $window) {
+app.directive('scoreTable', function(SelectedWidgetSrv, $window) {
 	return {
 		restrict: 'A',
 		link($scope, $element, $attrs) {
-			const widgetId = selectedWidgetSrv.getSelectedId()
+			const widgetId = SelectedWidgetSrv.getSelectedId()
 			const tableSort = 'desc'
 			const userCount = []
 			const users = {}
@@ -15,7 +15,7 @@ app.directive('scoreTable', function(selectedWidgetSrv, $window) {
 			$scope.users = {}
 			$scope.selectedUser = null
 
-			selectedWidgetSrv.getPlayLogsForSemester(term, year).then(data => {
+			SelectedWidgetSrv.getPlayLogsForSemester(term, year).then(data => {
 				// process play logs into records for each user
 				angular.forEach(data, (log, index) => {
 					const uid = log.user_id

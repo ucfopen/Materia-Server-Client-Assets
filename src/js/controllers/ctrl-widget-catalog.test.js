@@ -77,9 +77,9 @@ describe('WidgetCatalogCtrl', () => {
 		mockWidgetSrv = { getWidgetsByType: getWidgetsByTypeImmediately }
 		let app = angular.module('materia')
 		app.factory('Please', () => ({ $apply: jest.fn() }))
-		app.factory('selectedWidgetSrv', () => ({}))
-		app.factory('dateTimeServ', () => ({}))
-		app.factory('widgetSrv', () => mockWidgetSrv)
+		app.factory('SelectedWidgetSrv', () => ({}))
+		app.factory('DateTimeServ', () => ({}))
+		app.factory('WidgetSrv', () => mockWidgetSrv)
 
 		// mock Materia.Image.iconUrl
 		mockIconUrl = jest.fn().mockReturnValue('widget.jpg')

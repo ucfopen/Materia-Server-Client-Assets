@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('UserProfileCtrl', function(Please, $scope, userServ, apiServ, dateTimeServ, $log) {
+app.controller('UserProfileCtrl', function(Please, $scope, UserServ, APIServ, DateTimeServ, $log) {
 	let loaded_offset = 0
 
 	// Shows selected game information on the mainscreen.
@@ -21,7 +21,7 @@ app.controller('UserProfileCtrl', function(Please, $scope, userServ, apiServ, da
 
 		Materia.Coms.Json.get(`/api/user/activity?range=10&start=${loaded_offset}`)
 			.then(result => {
-				apiServ.filterError(result)
+				APIServ.filterError(result)
 				_showPlayActivity(result)
 			})
 			.catch(error => {
@@ -51,9 +51,9 @@ app.controller('UserProfileCtrl', function(Please, $scope, userServ, apiServ, da
 	}
 
 	const _getDate = activity =>
-		dateTimeServ.parseObjectToDateString(activity.created_at) +
+		DateTimeServ.parseObjectToDateString(activity.created_at) +
 		' at ' +
-		dateTimeServ.fixTime(parseInt(activity.created_at, 10) * 1000, DATE)
+		DateTimeServ.fixTime(parseInt(activity.created_at, 10) * 1000, DATE)
 
 	// expose on scope
 
@@ -66,8 +66,8 @@ app.controller('UserProfileCtrl', function(Please, $scope, userServ, apiServ, da
 	$scope.loading = false
 	$scope.user = {}
 	$scope.avatar = ''
-	$scope.user = userServ.getCurrentUser()
-	$scope.avatar = userServ.getCurrentUserAvatar(100)
+	$scope.user = UserServ.getCurrentUser()
+	$scope.avatar = UserServ.getCurrentUserAvatar(100)
 
 	// initialize
 	$scope.getLogs()

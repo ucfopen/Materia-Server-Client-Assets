@@ -3,7 +3,7 @@ describe('scoreTable Directive', function() {
 	let $compile
 	let $window
 	let $q
-	let selectedWidgetSrv
+	let SelectedWidgetSrv
 	let data = [
 		{
 			id: 'one',
@@ -36,8 +36,8 @@ describe('scoreTable Directive', function() {
 		require('../services/srv-selectedwidget')
 		require('./dir-scoretable')
 
-		inject(function(_$compile_, _$rootScope_, _selectedWidgetSrv_, _$q_, _$window_) {
-			selectedWidgetSrv = _selectedWidgetSrv_
+		inject(function(_$compile_, _$rootScope_, _SelectedWidgetSrv_, _$q_, _$window_) {
+			SelectedWidgetSrv = _SelectedWidgetSrv_
 			$compile = _$compile_
 			$scope = _$rootScope_.$new()
 			$q = _$q_
@@ -45,9 +45,9 @@ describe('scoreTable Directive', function() {
 		})
 
 		let deferred = $q.defer()
-		jest.spyOn(selectedWidgetSrv, 'getSelectedId').mockImplementation(() => 6)
+		jest.spyOn(SelectedWidgetSrv, 'getSelectedId').mockImplementation(() => 6)
 		jest
-			.spyOn(selectedWidgetSrv, 'getPlayLogsForSemester')
+			.spyOn(SelectedWidgetSrv, 'getPlayLogsForSemester')
 			.mockImplementation(() => deferred.promise)
 
 		expect($scope.selectedUser).not.toBeDefined()

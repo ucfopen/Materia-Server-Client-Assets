@@ -7,8 +7,8 @@ app.controller('WidgetPlayerCtrl', function(
 	$interval,
 	$window,
 	$timeout,
-	widgetSrv,
-	userServ,
+	WidgetSrv,
+	UserServ,
 	PLAYER,
 	Alert
 ) {
@@ -36,7 +36,7 @@ app.controller('WidgetPlayerCtrl', function(
 	let scoreScreenPending = false
 	// Keep track of the timer id for the heartbeat so we can clear the timeout
 	let heartbeatInterval = -1
-	// Calculates which screen to show (preview, embed, or normal)
+	// Calculates which screen UserServ to show (preview, embed, or normal)
 	let scoreScreenURL = null
 	// Queue of requests
 	const pendingQueue = []
@@ -309,7 +309,7 @@ app.controller('WidgetPlayerCtrl', function(
 			deferred.reject('Flash Player required.')
 		}
 
-		widgetSrv.getWidget($scope.inst_id).then(inst => {
+		WidgetSrv.getWidget($scope.inst_id).then(inst => {
 			if (!inst.hasOwnProperty('id')) {
 				return deferred.reject('Unable to get widget info.')
 			}

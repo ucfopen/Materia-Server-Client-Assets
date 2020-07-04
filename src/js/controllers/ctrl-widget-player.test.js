@@ -1,6 +1,6 @@
 describe('WidgetPlayerCtrl', () => {
-	let _widgetSrv
-	let _userServ
+	let _WidgetSrv
+	let _UserServ
 	let _scope
 	let sendMock
 	let $q
@@ -80,7 +80,7 @@ describe('WidgetPlayerCtrl', () => {
 		let mockCreateElement = jest.spyOn(document, 'createElement').mockReturnValueOnce(mockHref)
 
 		// mock getting the instance from the api
-		_widgetSrv.getWidget.mockImplementationOnce(inst_id => ({
+		_WidgetSrv.getWidget.mockImplementationOnce(inst_id => ({
 			then: jest.fn(cb => {
 				cb(widgetInstance)
 			})
@@ -127,14 +127,14 @@ describe('WidgetPlayerCtrl', () => {
 		require('../common/materia-namespace')
 		require('../common/materia-constants')
 
-		_userServ = { getAvatar: jest.fn(() => 'avatar') }
-		_widgetSrv = {
+		_UserServ = { getAvatar: jest.fn(() => 'avatar') }
+		_WidgetSrv = {
 			getWidget: jest.fn()
 		}
 		_alert = {}
 
-		app.factory('widgetSrv', () => _widgetSrv)
-		app.factory('userServ', () => _userServ)
+		app.factory('WidgetSrv', () => _WidgetSrv)
+		app.factory('UserServ', () => _UserServ)
 		app.factory('Alert', () => _alert)
 
 		require('./ctrl-widget-player')
@@ -191,7 +191,7 @@ describe('WidgetPlayerCtrl', () => {
 
 		// check all the widget initialization
 		expect(mockPlease.$apply).toHaveBeenCalledTimes(3)
-		expect(_widgetSrv.getWidget).toHaveBeenLastCalledWith('bb8')
+		expect(_WidgetSrv.getWidget).toHaveBeenLastCalledWith('bb8')
 		expect($scope.allowFullScreen).toBe(false)
 		expect(centerStyle.width).toBe('800px')
 		expect(centerStyle.height).toBe('600px')
@@ -830,7 +830,7 @@ describe('WidgetPlayerCtrl', () => {
 
 		// check all the widget initialization
 		expect(mockPlease.$apply).toHaveBeenCalledTimes(2)
-		expect(_widgetSrv.getWidget).toHaveBeenLastCalledWith('bb8')
+		expect(_WidgetSrv.getWidget).toHaveBeenLastCalledWith('bb8')
 		expect($scope.allowFullScreen).toBe(false)
 		expect(centerStyle.width).toBe('800px')
 		expect(centerStyle.height).toBe('593px')

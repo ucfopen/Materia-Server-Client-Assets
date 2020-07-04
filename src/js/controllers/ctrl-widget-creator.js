@@ -6,7 +6,7 @@ app.controller('WidgetCreatorCtrl', function(
 	$sce,
 	$timeout,
 	$interval,
-	widgetSrv,
+	WidgetSrv,
 	Alert
 ) {
 	$scope.alert = Alert
@@ -166,7 +166,7 @@ app.controller('WidgetCreatorCtrl', function(
 
 	const checkUserPublishPerms = (widgetData, newInstance) => {
 		const deferred = $q.defer()
-		widgetSrv.canBePublishedByCurrentUser(widget_id).then(canPublish => {
+		WidgetSrv.canBePublishedByCurrentUser(widget_id).then(canPublish => {
 			$scope.canPublish = canPublish
 
 			// if the widget is published and the current user can not publish it, then they can not edit it
@@ -415,7 +415,7 @@ app.controller('WidgetCreatorCtrl', function(
 			inst_id
 		}
 
-		return widgetSrv.saveWidget(w).then(inst => {
+		return WidgetSrv.saveWidget(w).then(inst => {
 			// did we get back an error message?
 			if ((inst != null ? inst.msg : undefined) != null) {
 				onSaveCanceled(inst)
@@ -577,8 +577,8 @@ ${msg.toLowerCase()}`,
 		getQset().then(() => {
 			if (!$scope.invalid) {
 				$q(resolve => resolve(inst_id))
-					.then(widgetSrv.lockWidget)
-					.then(widgetSrv.getWidget)
+					.then(WidgetSrv.lockWidget)
+					.then(WidgetSrv.getWidget)
 					.then(checkUserPublishPerms)
 					.then(embed)
 					.then(initCreator)
@@ -590,7 +590,7 @@ ${msg.toLowerCase()}`,
 	} else {
 		// initialize a new creator
 		$q(resolve => resolve(widget_id))
-			.then(widgetSrv.getWidgetInfo)
+			.then(WidgetSrv.getWidgetInfo)
 			.then(prePublishPermsCheck)
 			.then(embed)
 			.then(initCreator)

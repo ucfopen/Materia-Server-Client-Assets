@@ -1,4 +1,4 @@
 const app = angular.module('materia')
-app.controller('UserCurrentCtrl', ($scope, $sce, userServ, $http, $rootScope) => {
-	$scope.currentUser = userServ.getCurrentUser()
+app.controller('UserCurrentCtrl', ($scope, $sce, UserServ, $http, $rootScope) => {
+	$scope.currentUser = UserServ.getCurrentUser()
 })

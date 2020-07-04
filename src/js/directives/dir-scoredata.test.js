@@ -2,15 +2,15 @@ describe('scoreData Directive', function() {
 	let $scope
 	let $compile
 	let $q
-	let $selectedWidgetSrv
+	let $SelectedWidgetSrv
 
 	beforeEach(() => {
 		require('../common/materia-constants')
 		require('../services/srv-selectedwidget')
 		require('./dir-scoredata.js')
 
-		inject(function(_$compile_, _$rootScope_, _selectedWidgetSrv_, _$q_) {
-			$selectedWidgetSrv = _selectedWidgetSrv_
+		inject(function(_$compile_, _$rootScope_, _SelectedWidgetSrv_, _$q_) {
+			$SelectedWidgetSrv = _SelectedWidgetSrv_
 			$compile = _$compile_
 			$scope = _$rootScope_.$new()
 			$q = _$q_
@@ -21,9 +21,9 @@ describe('scoreData Directive', function() {
 		let data = { '2050 Summer': { table1: null, table2: null } }
 
 		let deferred = $q.defer()
-		jest.spyOn($selectedWidgetSrv, 'getStorageData').mockImplementation(() => deferred.promise)
+		jest.spyOn($SelectedWidgetSrv, 'getStorageData').mockImplementation(() => deferred.promise)
 
-		jest.spyOn($selectedWidgetSrv, 'getMaxRows').mockImplementation(() => 777)
+		jest.spyOn($SelectedWidgetSrv, 'getMaxRows').mockImplementation(() => 777)
 
 		let html = '<div score-data id="data_66" data-semester="2050 Summer" data-has-storage="true" >'
 		let element = angular.element(html)

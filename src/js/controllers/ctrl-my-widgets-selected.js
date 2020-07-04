@@ -4,9 +4,9 @@ app.controller('MyWidgetsSelectedController', function(
 	$rootScope,
 	$scope,
 	$q,
-	widgetSrv,
-	selectedWidgetSrv,
-	userServ,
+	WidgetSrv,
+	SelectedWidgetSrv,
+	UserServ,
 	$anchorScroll,
 	ACCESS,
 	Alert
@@ -29,19 +29,18 @@ app.controller('MyWidgetsSelectedController', function(
 	}
 
 	const _copyWidget = () => {
-		widgetSrv
-			.copyWidget(
-				$scope.selected.widget.id,
-				$scope.selected.copy_title,
-				$scope.selected.copy_retain_access
-			)
+		WidgetSrv.copyWidget(
+			$scope.selected.widget.id,
+			$scope.selected.copy_title,
+			$scope.selected.copy_retain_access
+		)
 			.then(inst_id => {
 				$scope.show.copyModal = false
-				return widgetSrv.getWidget(inst_id)
+				return WidgetSrv.getWidget(inst_id)
 			})
 			.then(widget => {
 				$rootScope.$broadcast('widgetList.update')
-				widgetSrv.updateHashUrl(widget.id)
+				WidgetSrv.updateHashUrl(widget.id)
 			})
 			.catch(() => {
 				// @TODO show an alert?
@@ -49,10 +48,10 @@ app.controller('MyWidgetsSelectedController', function(
 	}
 
 	const _deleteWidget = () => {
-		widgetSrv.deleteWidget($scope.selected.widget.id).then(results => {
+		WidgetSrv.deleteWidget($scope.selected.widget.id).then(results => {
 			if (results) {
 				$scope.show.deleteDialog = false
-				widgetSrv.removeWidget($scope.selected.widget.id)
+				WidgetSrv.removeWidget($scope.selected.widget.id)
 				Please.$apply()
 			}
 		})
@@ -171,7 +170,7 @@ app.controller('MyWidgetsSelectedController', function(
 					const timestamp = parseInt($scope.perms.widget[user.id][1], 10)
 					user.expires = timestamp
 					user.expiresText = getExpiresText(timestamp)
-					user.gravatar = userServ.getAvatar(user, 50)
+					user.gravatar = UserServ.getAvatar(user, 50)
 				}
 
 				$scope.perms.collaborators = users

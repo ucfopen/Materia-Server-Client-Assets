@@ -1,6 +1,6 @@
 describe('AdminUserController', function() {
-	var adminSrv
-	var _userServ
+	var AdminSrv
+	var _UserServ
 	var sendMock
 	var postMock
 	var getMock
@@ -19,13 +19,13 @@ describe('AdminUserController', function() {
 	}
 
 	beforeEach(() => {
-		_userServ = {
+		_UserServ = {
 			getAvatar: jest.fn(() => 'avatar')
 		}
 		mockPlease = { $apply: jest.fn() }
 		let app = angular.module('materia')
 		app.factory('Please', () => mockPlease)
-		app.factory('userServ', () => _userServ)
+		app.factory('UserServ', () => _UserServ)
 
 		// MOCK $window
 		$window = {
@@ -41,10 +41,10 @@ describe('AdminUserController', function() {
 		require('../services/srv-admin')
 		require('./ctrl-admin-user')
 
-		inject((_$controller_, _$q_, _adminSrv_, _$rootScope_) => {
+		inject((_$controller_, _$q_, _AdminSrv_, _$rootScope_) => {
 			$controller = _$controller_
 			$q = _$q_
-			adminSrv = _adminSrv_
+			AdminSrv = _AdminSrv_
 			$rootScope = _$rootScope_
 		})
 

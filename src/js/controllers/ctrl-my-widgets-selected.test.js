@@ -1,5 +1,5 @@
 describe('MyWidgetSelectedController', () => {
-	var adminSrv
+	var AdminSrv
 	var $controller
 	var mockPlease
 	var $q
@@ -22,10 +22,10 @@ describe('MyWidgetSelectedController', () => {
 		require('ngmodal/dist/ng-modal')
 		require('./ctrl-my-widgets-selected')
 
-		inject((_$controller_, _$q_, _adminSrv_, _$rootScope_) => {
+		inject((_$controller_, _$q_, _AdminSrv_, _$rootScope_) => {
 			$controller = _$controller_
 			$q = _$q_
-			adminSrv = _adminSrv_
+			AdminSrv = _AdminSrv_
 			$rootScope = _$rootScope_
 		})
 

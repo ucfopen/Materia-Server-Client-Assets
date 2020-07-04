@@ -9,7 +9,7 @@ describe('scoreGraph Directive', function() {
 	let mock3 = jest.fn()
 
 	beforeEach(() => {
-		angular.module('materia').service('selectedWidgetSrv', function() {
+		angular.module('materia').service('SelectedWidgetSrv', function() {
 			return { getScoreSummaries: mock2 }
 		})
 

@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('ScorePageController', function(Please, $scope, $q, $timeout, widgetSrv, scoreSrv) {
+app.controller('ScorePageController', function(Please, $scope, $q, $timeout, WidgetSrv, ScoreSrv) {
 	const COMPARE_TEXT_CLOSE = 'Close Graph'
 	const COMPARE_TEXT_OPEN = 'Compare With Class'
 	// attempts is an array of attempts, [0] is the newest
@@ -40,8 +40,7 @@ app.controller('ScorePageController', function(Please, $scope, $q, $timeout, wid
 
 	const _displayScoreData = (inst_id, play_id) => {
 		const deferred = $q.defer()
-		widgetSrv
-			.getWidget(inst_id)
+		WidgetSrv.getWidget(inst_id)
 			.then(instance => {
 				widgetInstance = instance
 				$scope.guestAccess = widgetInstance.guest_access
@@ -142,14 +141,14 @@ app.controller('ScorePageController', function(Please, $scope, $q, $timeout, wid
 			// support guests.
 			const send_token =
 				typeof LAUNCH_TOKEN !== 'undefined' && LAUNCH_TOKEN !== null ? LAUNCH_TOKEN : play_id
-			scoreSrv.getWidgetInstanceScores(inst_id, send_token, result => {
+			ScoreSrv.getWidgetInstanceScores(inst_id, send_token, result => {
 				_populateScores(result.scores)
 				attemptsLeft = result.attempts_left
 				dfd.resolve()
 			})
 		} else {
 			// Only want score corresponding to play_id if guest widget
-			scoreSrv.getGuestWidgetInstanceScores(inst_id, play_id, scores => {
+			ScoreSrv.getGuestWidgetInstanceScores(inst_id, play_id, scores => {
 				_populateScores(scores)
 				dfd.resolve()
 			})
@@ -183,9 +182,9 @@ app.controller('ScorePageController', function(Please, $scope, $q, $timeout, wid
 		scoresLoadPromise = $q.defer()
 		if (isPreview) {
 			currentAttempt = 1
-			scoreSrv.getWidgetInstancePlayScores(null, widgetInstance.id, _displayDetails)
+			ScoreSrv.getWidgetInstancePlayScores(null, widgetInstance.id, _displayDetails)
 		} else if (single_id) {
-			scoreSrv.getWidgetInstancePlayScores(single_id, null, _displayDetails)
+			ScoreSrv.getWidgetInstancePlayScores(single_id, null, _displayDetails)
 		} else {
 			// get the current attempt from the url
 			const hash = getAttemptNumberFromHash()
@@ -199,7 +198,7 @@ app.controller('ScorePageController', function(Please, $scope, $q, $timeout, wid
 				if (details[$scope.attempts.length - currentAttempt] != null) {
 					_displayDetails(details[$scope.attempts.length - currentAttempt])
 				} else {
-					scoreSrv.getWidgetInstancePlayScores(play_id, null, _displayDetails)
+					ScoreSrv.getWidgetInstancePlayScores(play_id, null, _displayDetails)
 				}
 			}
 		}
@@ -356,7 +355,7 @@ app.controller('ScorePageController', function(Please, $scope, $q, $timeout, wid
 			.script(`${cdnBase}jqPlot/1.0.9/plugins/jqplot.highlighter.min.js`)
 			.wait(() =>
 				// ========== BUILD THE GRAPH =============
-				scoreSrv.getWidgetInstanceScoreSummary(widgetInstance.id, data => {
+				ScoreSrv.getWidgetInstanceScoreSummary(widgetInstance.id, data => {
 					// add up all semesters data into one dataset
 					_graphData = [
 						['0-9%', 0],
@@ -499,7 +498,7 @@ app.controller('ScorePageController', function(Please, $scope, $q, $timeout, wid
 		scoreTable = deets.details[0].table
 		if ($scope.customScoreScreen) {
 			const created_at = ~~deets.overview.created_at
-			scoreSrv.getWidgetInstanceQSet(play_id, widget_id, created_at, data => {
+			ScoreSrv.getWidgetInstanceQSet(play_id, widget_id, created_at, data => {
 				if (
 					(data != null ? data.title : undefined) === 'Permission Denied' ||
 					data.title === 'error'
@@ -572,7 +571,7 @@ app.controller('ScorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const _getScoreDistribution = () => {
-		scoreSrv.getScoreDistribution(widgetInstance.id, data => {
+		ScoreSrv.getScoreDistribution(widgetInstance.id, data => {
 			_sendToWidget('scoreDistribution', [data])
 		})
 	}

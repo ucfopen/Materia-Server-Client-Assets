@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('AdminWidgetController', function($scope, Please, adminSrv) {
+app.controller('AdminWidgetController', function($scope, Please, AdminSrv) {
 	const _save = widget => {
 		const update = {
 			id: widget.id,
@@ -14,7 +14,7 @@ app.controller('AdminWidgetController', function($scope, Please, adminSrv) {
 			demo: widget.meta_data.demo
 		}
 
-		adminSrv.saveWidget(update).then(response => {
+		AdminSrv.saveWidget(update).then(response => {
 			widget.errorMessage = []
 			for (let prop in response) {
 				const stat = response[prop]
@@ -30,7 +30,7 @@ app.controller('AdminWidgetController', function($scope, Please, adminSrv) {
 	}
 
 	const _displayWidgets = () =>
-		adminSrv.getWidgets().then(widgets => {
+		AdminSrv.getWidgets().then(widgets => {
 			widgets.forEach(w => {
 				w.icon = Materia.Image.iconUrl(w.dir, 60)
 			})

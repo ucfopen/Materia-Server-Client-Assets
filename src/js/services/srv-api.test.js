@@ -1,4 +1,4 @@
-describe('apiServ', () => {
+describe('APIServ', () => {
 	var _service
 	var mockWindow
 	var mockLocationSet
@@ -19,8 +19,8 @@ describe('apiServ', () => {
 
 		require('../common/materia-namespace')
 		require('./srv-api')
-		inject(function(apiServ) {
-			_service = apiServ
+		inject(function(APIServ) {
+			_service = APIServ
 		})
 	})
 

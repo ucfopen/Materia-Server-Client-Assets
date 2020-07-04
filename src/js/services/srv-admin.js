@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.service('adminSrv', function() {
+app.service('AdminSrv', function() {
 	const getWidgets = () => Materia.Coms.Json.get('/api/admin/widgets')
 	const saveWidget = widget =>
 		Materia.Coms.Json.post(`/api/admin/widget/${encodeURIComponent(widget.id)}`, widget)

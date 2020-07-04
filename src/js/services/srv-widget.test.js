@@ -1,8 +1,8 @@
-describe('widgetSrv', () => {
+describe('WidgetSrv', () => {
 	var _service
 	var $scope
 	var sendMock
-	var _selectedWidgetSrv
+	var _SelectedWidgetSrv
 	var _dateTimeServ
 	var mockWindow
 	var mockHashGet
@@ -19,7 +19,7 @@ describe('widgetSrv', () => {
 
 	beforeEach(() => {
 		// MOCK some services
-		_selectedWidgetSrv = {
+		_SelectedWidgetSrv = {
 			set: jest.fn(),
 			notifyAccessDenied: jest.fn()
 		}
@@ -28,8 +28,8 @@ describe('widgetSrv', () => {
 			parseTime: jest.fn(() => 'timeString')
 		}
 		let app = angular.module('materia')
-		app.factory('selectedWidgetSrv', () => _selectedWidgetSrv)
-		app.factory('dateTimeServ', () => _dateTimeServ)
+		app.factory('SelectedWidgetSrv', () => _SelectedWidgetSrv)
+		app.factory('DateTimeServ', () => _dateTimeServ)
 
 		// MOCK $window
 		mockWindow = {
@@ -48,9 +48,9 @@ describe('widgetSrv', () => {
 		require('../common/materia-constants')
 		require('./srv-widget')
 
-		inject(function(_$rootScope_, widgetSrv, _$q_) {
+		inject(function(_$rootScope_, WidgetSrv, _$q_) {
 			$scope = _$rootScope_
-			_service = widgetSrv
+			_service = WidgetSrv
 			$q = _$q_
 		})
 
@@ -387,8 +387,8 @@ describe('widgetSrv', () => {
 		_service.selectWidgetFromHashUrl()
 		$scope.$digest() // processes promise
 
-		expect(_selectedWidgetSrv.set).toHaveBeenCalled()
-		expect(_selectedWidgetSrv.set.mock.calls[0][0].id).toBe('0UNM0')
+		expect(_SelectedWidgetSrv.set).toHaveBeenCalled()
+		expect(_SelectedWidgetSrv.set.mock.calls[0][0].id).toBe('0UNM0')
 	})
 
 	it('selectWidgetFromHashUrl warns about not having access', () => {
@@ -400,7 +400,7 @@ describe('widgetSrv', () => {
 		mockSendPromiseOnce()
 		_service.selectWidgetFromHashUrl()
 		$scope.$digest() // processes promise
-		expect(_selectedWidgetSrv.notifyAccessDenied).toHaveBeenCalled()
+		expect(_SelectedWidgetSrv.notifyAccessDenied).toHaveBeenCalled()
 	})
 
 	it('rejects with a message when a widget is already locked', () => {

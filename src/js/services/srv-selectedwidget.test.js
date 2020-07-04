@@ -1,4 +1,4 @@
-describe('selectedWidgetSrv', () => {
+describe('SelectedWidgetSrv', () => {
 	var _service
 	var _compile
 	var $scope
@@ -18,9 +18,9 @@ describe('selectedWidgetSrv', () => {
 		require('../common/materia-constants')
 		require('./srv-selectedwidget')
 
-		inject(function(_$rootScope_, selectedWidgetSrv, _$q_) {
+		inject(function(_$rootScope_, SelectedWidgetSrv, _$q_) {
 			$scope = _$rootScope_
-			_service = selectedWidgetSrv
+			_service = SelectedWidgetSrv
 			$q = _$q_
 		})
 

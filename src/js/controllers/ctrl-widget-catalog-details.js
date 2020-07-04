@@ -5,7 +5,7 @@ app.controller('WidgetCatalogDetailsController', function(
 	$window,
 	$document,
 	$timeout,
-	widgetSrv
+	WidgetSrv
 ) {
 	let _pics
 	let _offset
@@ -193,7 +193,7 @@ app.controller('WidgetCatalogDetailsController', function(
 	// initialize
 
 	initHammer()
-	widgetSrv.getWidgetInfo(widgetID).then(widget => {
+	WidgetSrv.getWidgetInfo(widgetID).then(widget => {
 		_populateDefaults(widget)
 	})
 })

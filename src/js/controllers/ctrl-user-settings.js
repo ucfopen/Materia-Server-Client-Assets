@@ -2,8 +2,8 @@ const app = angular.module('materia')
 app.controller('UserSettingsController', function(
 	$scope,
 	Please,
-	userServ,
-	apiServ,
+	UserServ,
+	APIServ,
 	$log,
 	$window
 ) {
@@ -17,19 +17,19 @@ app.controller('UserSettingsController', function(
 
 		Materia.Coms.Json.post('/api/user/settings', newSettings)
 			.then(result => {
-				apiServ.filterError(result)
+				APIServ.filterError(result)
 				Materia.Set.Throbber.stopSpin('.page')
 				$scope.settingsForm.$setPristine()
 				if (result.success) {
 					// update my scope object
 					for (let k in result.meta) {
-						userServ.updateSettings(k, result.meta[k])
+						UserServ.updateSettings(k, result.meta[k])
 					}
 
 					// update the user avatar
 					if ((result.avatar != null ? result.avatar.length : undefined) > 0) {
-						userServ.updateSettings('avatar', result.avatar)
-						$scope.avatar = userServ.getCurrentUserAvatar(100)
+						UserServ.updateSettings('avatar', result.avatar)
+						$scope.avatar = UserServ.getCurrentUserAvatar(100)
 					}
 				}
 
@@ -42,8 +42,8 @@ app.controller('UserSettingsController', function(
 			})
 	}
 
-	$scope.user = userServ.getCurrentUser()
-	$scope.avatar = userServ.getCurrentUserAvatar(100)
+	$scope.user = UserServ.getCurrentUser()
+	$scope.avatar = UserServ.getCurrentUserAvatar(100)
 	$scope.useGravatar = $scope.user.avatar.indexOf('gravatar') > -1
 	$scope.saveSettings = _saveSettings
 

@@ -1,4 +1,4 @@
-describe('scoreSrv', () => {
+describe('ScoreSrv', () => {
 	var _service
 	var postMock
 	var sendMock
@@ -18,8 +18,8 @@ describe('scoreSrv', () => {
 		require('../common/materia-namespace')
 		require('./srv-scores')
 
-		inject(function(scoreSrv, _$q_, _$rootScope_) {
-			_service = scoreSrv
+		inject(function(ScoreSrv, _$q_, _$rootScope_) {
+			_service = ScoreSrv
 			$q = _$q_
 			$rootScope = _$rootScope_
 		})

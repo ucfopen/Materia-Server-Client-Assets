@@ -1,6 +1,6 @@
 const app = angular.module('materia')
 // The modal that exports score CSVs on My Widgets
-app.controller('MyWidgetsExportController', function(Please, $scope, selectedWidgetSrv) {
+app.controller('MyWidgetsExportController', function(Please, $scope, SelectedWidgetSrv) {
 	// Builds the initial version of the popup window
 	const _buildPopup = () => {
 		const wgt = $scope.selected.widget

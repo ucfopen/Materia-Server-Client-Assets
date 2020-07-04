@@ -1,4 +1,4 @@
-describe('userServ', () => {
+describe('UserServ', () => {
 	var _service
 	var $scope
 	var sendMock
@@ -18,9 +18,9 @@ describe('userServ', () => {
 		require('../common/materia-constants')
 		require('./srv-user')
 
-		inject(function(_$rootScope_, userServ, _$q_) {
+		inject(function(_$rootScope_, UserServ, _$q_) {
 			$scope = _$rootScope_
-			_service = userServ
+			_service = UserServ
 			$q = _$q_
 		})
 

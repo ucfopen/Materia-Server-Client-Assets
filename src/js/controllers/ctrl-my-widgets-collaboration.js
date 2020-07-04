@@ -3,9 +3,9 @@ app.controller('MyWidgetsCollaborationController', function(
 	Please,
 	$scope,
 	$timeout,
-	selectedWidgetSrv,
-	widgetSrv,
-	userServ,
+	SelectedWidgetSrv,
+	WidgetSrv,
+	UserServ,
 	ACCESS,
 	OBJECT_TYPES,
 	Alert
@@ -54,7 +54,7 @@ app.controller('MyWidgetsCollaborationController', function(
 			$scope.searchResults.none = matches.length < 1
 
 			for (let user of Array.from(matches)) {
-				user.gravatar = userServ.getAvatar(user, 50)
+				user.gravatar = UserServ.getAvatar(user, 50)
 			}
 
 			matches = matches.sort(sortNames)
@@ -227,7 +227,7 @@ app.controller('MyWidgetsCollaborationController', function(
 				$scope.$emit('collaborators.update', '')
 				$scope.show.collaborationModal = false
 				if (remove_widget) {
-					widgetSrv.removeWidget(widget_id)
+					WidgetSrv.removeWidget(widget_id)
 				}
 				if (students.length > 0) {
 					$scope.selected.widget.student_access = true

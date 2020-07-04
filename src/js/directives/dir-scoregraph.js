@@ -1,13 +1,13 @@
 'use strict'
 
 const app = angular.module('materia')
-app.directive('scoreGraph', function($timeout, selectedWidgetSrv) {
+app.directive('scoreGraph', function($timeout, SelectedWidgetSrv) {
 	return {
 		restrict: 'A',
 		link($scope, $element, $attrs) {
 			const id = $attrs.id.split('_')[1]
 
-			const scores = selectedWidgetSrv.getScoreSummaries()
+			const scores = SelectedWidgetSrv.getScoreSummaries()
 			scores.then(function(data) {
 				const brackets = data.map[id].distribution
 

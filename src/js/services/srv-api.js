@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.service('apiServ', function($window) {
+app.service('APIServ', function($window) {
 	const gatewayURL = API_LINK
 
 	const filterError = data => {

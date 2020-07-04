@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('AdminUserController', function(Please, $scope, $window, adminSrv, userServ) {
+app.controller('AdminUserController', function(Please, $scope, $window, AdminSrv, UserServ) {
 	let lastSearch = ''
 
 	const _sortNames = (userA, userB) => {
@@ -54,7 +54,7 @@ app.controller('AdminUserController', function(Please, $scope, $window, adminSrv
 		const inputArray = nameOrFragment.split(',')
 		nameOrFragment = inputArray[inputArray.length - 1]
 
-		adminSrv.searchUsers(nameOrFragment).then(result => {
+		AdminSrv.searchUsers(nameOrFragment).then(result => {
 			$scope.searchResults.searching = false
 			if (result && result.halt) {
 				alert(result.msg)
@@ -68,7 +68,7 @@ app.controller('AdminUserController', function(Please, $scope, $window, adminSrv
 			}
 
 			matches.forEach(user => {
-				user.gravatar = userServ.getAvatar(user, 50)
+				user.gravatar = UserServ.getAvatar(user, 50)
 			})
 
 			matches = matches.sort(_sortNames)
@@ -80,7 +80,7 @@ app.controller('AdminUserController', function(Please, $scope, $window, adminSrv
 	}
 
 	const searchMatchClick = user => {
-		adminSrv.lookupUser(user.id).then(data => {
+		AdminSrv.lookupUser(user.id).then(data => {
 			$scope.inputs.userSearchInput = ''
 			$scope.selectedUser = user
 			$scope.additionalData = data
@@ -100,7 +100,7 @@ app.controller('AdminUserController', function(Please, $scope, $window, adminSrv
 			useGravatar: u.profile_fields.useGravatar === 'true' || u.profile_fields.useGravatar === true
 		}
 
-		adminSrv.saveUser(update).then(response => {
+		AdminSrv.saveUser(update).then(response => {
 			let errors = []
 			for (let prop in response) {
 				const stat = response[prop]

@@ -7,8 +7,8 @@ app.controller('MyWidgetsSettingsController', function(
 	$timeout,
 	$filter,
 	$window,
-	selectedWidgetSrv,
-	widgetSrv,
+	SelectedWidgetSrv,
+	WidgetSrv,
 	Alert
 ) {
 	let currentlySubmitting = false
@@ -305,17 +305,16 @@ app.controller('MyWidgetsSettingsController', function(
 			$scope.attemptsSliderValue < $scope.UNLIMITED_SLIDER_VALUE ? $scope.attemptsSliderValue : -1
 
 		// Update the widget instance.
-		widgetSrv
-			.saveWidget({
-				inst_id: $scope.selected.widget.id,
-				open_at: $scope.times[0],
-				close_at: $scope.times[1],
-				attempts,
-				guest_access: $scope.guestAccess,
-				embedded_only: $scope.embeddedOnly
-			})
+		WidgetSrv.saveWidget({
+			inst_id: $scope.selected.widget.id,
+			open_at: $scope.times[0],
+			close_at: $scope.times[1],
+			attempts,
+			guest_access: $scope.guestAccess,
+			embedded_only: $scope.embeddedOnly
+		})
 			.then(widget => {
-				selectedWidgetSrv.set(widget)
+				SelectedWidgetSrv.set(widget)
 				$rootScope.$broadcast('widgetList.update')
 				currentlySubmitting = false
 			})

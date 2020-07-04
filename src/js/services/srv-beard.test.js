@@ -1,11 +1,11 @@
-describe('beardServ', () => {
+describe('BeardServ', () => {
 	var _service
 
 	beforeEach(() => {
 		require('../common/materia-namespace')
 		require('./srv-beard')
-		inject(function(beardServ) {
-			_service = beardServ
+		inject(function(BeardServ) {
+			_service = BeardServ
 		})
 	})
 

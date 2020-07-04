@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.service('selectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
+app.service('SelectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 	const STORAGE_TABLE_MAX_ROWS_SHOWN = 100
 
 	const selectedData = null

@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScope, $window) {
+app.service('WidgetSrv', function(SelectedWidgetSrv, DateTimeServ, $q, $rootScope, $window) {
 	const deferred = $q.defer()
 	let _widgets = []
 	let _widgetIds = {}
@@ -216,13 +216,13 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		open_at = startTime = 0
 
 		if (endDateInt > 0) {
-			endDate = dateTimeServ.parseObjectToDateString(endDateInt)
-			endTime = dateTimeServ.parseTime(endDateInt)
+			endDate = DateTimeServ.parseObjectToDateString(endDateInt)
+			endTime = DateTimeServ.parseTime(endDateInt)
 		}
 
 		if (startDateInt > 0) {
-			open_at = dateTimeServ.parseObjectToDateString(startDateInt)
-			startTime = dateTimeServ.parseTime(startDateInt)
+			open_at = DateTimeServ.parseObjectToDateString(startDateInt)
+			startTime = DateTimeServ.parseTime(startDateInt)
 		}
 
 		return {
@@ -246,10 +246,10 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 			}
 			getWidget(selID)
 				.then(widget => {
-					selectedWidgetSrv.set(widget)
+					SelectedWidgetSrv.set(widget)
 				})
 				.catch(() => {
-					selectedWidgetSrv.notifyAccessDenied()
+					SelectedWidgetSrv.notifyAccessDenied()
 				})
 		}
 	}

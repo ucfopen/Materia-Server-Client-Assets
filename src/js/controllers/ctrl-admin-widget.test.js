@@ -1,5 +1,5 @@
 describe('AdminWidgetController', () => {
-	var adminSrv
+	var AdminSrv
 	var $controller
 	var mockPlease
 	var $q
@@ -25,10 +25,10 @@ describe('AdminWidgetController', () => {
 		require('../services/srv-admin')
 		require('./ctrl-admin-widget')
 
-		inject((_$controller_, _$q_, _adminSrv_, _$rootScope_) => {
+		inject((_$controller_, _$q_, _AdminSrv_, _$rootScope_) => {
 			$controller = _$controller_
 			$q = _$q_
-			adminSrv = _adminSrv_
+			AdminSrv = _AdminSrv_
 			$rootScope = _$rootScope_
 		})
 
@@ -40,8 +40,8 @@ describe('AdminWidgetController', () => {
 		getElementById.mockReturnValueOnce({
 			addEventListener: widgetUploaderChangeListener
 		})
-		jest.spyOn(adminSrv, 'getWidgets')
-		mockPromiseOnce(adminSrv.getWidgets, ['sampleval'])
+		jest.spyOn(AdminSrv, 'getWidgets')
+		mockPromiseOnce(AdminSrv.getWidgets, ['sampleval'])
 		$scope = { $watch: jest.fn() }
 		var controller = $controller('AdminWidgetController', { $scope })
 	})
@@ -78,7 +78,7 @@ describe('AdminWidgetController', () => {
 			}
 		}
 		// tests
-		let saveWidget = jest.spyOn(adminSrv, 'saveWidget')
+		let saveWidget = jest.spyOn(AdminSrv, 'saveWidget')
 		mockPromiseOnce(saveWidget, { success: true })
 		$scope.save(w)
 		$rootScope.$digest()
