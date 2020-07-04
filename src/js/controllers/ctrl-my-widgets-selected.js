@@ -112,22 +112,14 @@ app.controller('MyWidgetsSelectedController', function (
 		$scope.show.olderScores = true
 	}
 
-	const _canCopy = () =>
-		[ACCESS.COPY, ACCESS.FULL, ACCESS.SHARE, ACCESS.SU].includes($scope.selected.accessLevel)
-	const _canDelete = () => [ACCESS.FULL, ACCESS.SU].includes($scope.selected.accessLevel)
-	const _canShare = () =>
-		[ACCESS.SHARE, ACCESS.FULL, ACCESS.SU].includes($scope.selected.accessLevel)
-	const _canView = () =>
-		[ACCESS.VISIBLE, ACCESS.SHARE, ACCESS.FULL, ACCESS.SU].includes($scope.selected.accessLevel)
-
 	const _showCopyDialog = () => {
-		if (_canCopy()) {
+		if ($scope.selected.can.copy) {
 			$scope.show.copyModal = true
 		}
 	}
 
 	const _showDelete = () => {
-		if (_canDelete()) {
+		if ($scope.selected.can.delete) {
 			$scope.show.deleteDialog = !$scope.show.deleteDialog
 		}
 	}

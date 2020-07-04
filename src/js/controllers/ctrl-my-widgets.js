@@ -159,31 +159,36 @@ app.controller('MyWidgetsController', function (
 	// Second half of populateDisplay
 	// This allows us to update the display before the callback of scores finishes, which speeds up UI
 	const populateAccess = () => {
-		// accessLevel == ACCESS.VISIBLE is effectively read-only
-		if (
-			($scope.perms.user[$scope.user.id] != null
-				? $scope.perms.user[$scope.user.id][0]
-				: undefined) != null
-		) {
-			$scope.selected.accessLevel = Number($scope.perms.user[$scope.user.id][0])
+		const sel = $scope.selected
+		const perms = $scope.perms
+		const userId = $scope.user.id
+		const perm = (perms.user[userId] && perms.user[userId][0]) || ACCESS.VISIBLE
+		sel.accessLevel = parseInt(perm, 10)
+		sel.can = {
+			view: [ACCESS.VISIBLE, ACCESS.COPY, ACCESS.SHARE, ACCESS.FULL, ACCESS.SU].includes(
+				sel.accessLevel
+			),
+			copy: [ACCESS.COPY, ACCESS.SHARE, ACCESS.FULL, ACCESS.SU].includes(sel.accessLevel),
+			edit: [ACCESS.FULL, ACCESS.SU].includes(sel.accessLevel),
+			delete: [ACCESS.FULL, ACCESS.SU].includes(sel.accessLevel),
+			share: [ACCESS.SHARE, ACCESS.FULL, ACCESS.SU].includes(sel.accessLevel),
 		}
 
-		$scope.selected.editable =
-			$scope.selected.accessLevel > ACCESS.VISIBLE &&
-			parseInt($scope.selected.widget.widget.is_editable) === 1
+		sel.editable =
+			$scope.selected.accessLevel > ACCESS.VISIBLE && parseInt(sel.widget.widget.is_editable) === 1
 
-		if ($scope.selected.editable) {
-			$scope.selected.edit = `/widgets/${$scope.selected.widget.widget.dir}create\#${$scope.selected.widget.id}`
+		if (sel.editable) {
+			sel.edit = `/widgets/${sel.widget.widget.dir}create\#${sel.widget.id}`
 		} else {
-			$scope.selected.edit = '#'
+			sel.edit = '#'
 		}
 
 		_countCollaborators()
 
-		$scope.selected.shareable = $scope.selected.accessLevel !== ACCESS.VISIBLE
+		sel.shareable = sel.accessLevel !== ACCESS.VISIBLE // old, but difficult to replace with sel.can.share :/
 
-		populateAvailability($scope.selected.widget.open_at, $scope.selected.widget.close_at)
-		populateAttempts($scope.selected.widget.attempts)
+		populateAvailability(sel.widget.open_at, sel.widget.close_at)
+		populateAttempts(sel.widget.attempts)
 	}
 
 	// count up the number of other users collaborating

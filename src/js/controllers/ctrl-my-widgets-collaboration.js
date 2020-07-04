@@ -132,9 +132,8 @@ app.controller('MyWidgetsCollaborationController', function (
 		$scope.inputs.userSearchInput = ''
 
 		if ($scope.selected.widget.guest_access === false && user.is_student) {
-			$scope.alert.msg =
-				'Students can not be given access to this widget unless Guest Mode is enabled!'
-			$scope.alert.title = 'Unable to share with student'
+			$scope.alert.msg = 'Access must be set to "Guest Mode" to collaborate with students.'
+			$scope.alert.title = 'Share Not Allowed'
 			$scope.alert.fatal = false
 			return
 		}
