@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('notificationCtrl', function(Please, $scope, $sce) {
+app.controller('UserNotificationCtrl', function(Please, $scope, $sce) {
 	let $notices = document.querySelector('#notices')
 	const _toggleOpen = () => {
 		$scope.isOpen = !$scope.isOpen

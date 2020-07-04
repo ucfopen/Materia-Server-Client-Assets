@@ -17,7 +17,7 @@ if (window.location.href.match(/\/widgets($|\/\D|\?)/g)) {
 	app.requires.push('ngAnimate')
 }
 
-app.controller('widgetCatalogCtrl', function(Please, $scope, $window, $location, widgetSrv) {
+app.controller('WidgetCatalogCtrl', function(Please, $scope, $window, $location, widgetSrv) {
 	const filterList = {} // key is raw filter name, value is filter object
 	const mapCleanToFilter = {} // key is clean name, value is filter object
 	const displayedWidgets = []

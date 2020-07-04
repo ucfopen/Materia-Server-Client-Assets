@@ -1,6 +1,6 @@
 const app = angular.module('materia')
 
-app.controller('mediaImportCtrl', function($scope, $window, $timeout) {
+app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 	const SORTING_NONE = false
 	const SORTING_ASC = 'asc'
 	const SORTING_DESC = 'desc'

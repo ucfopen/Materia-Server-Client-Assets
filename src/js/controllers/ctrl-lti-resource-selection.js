@@ -1,5 +1,12 @@
 const app = angular.module('materia')
-app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, widgetSrv) {
+app.controller('LTIResourceSelectionCtrl', function(
+	Please,
+	$interval,
+	$timeout,
+	$scope,
+	$sce,
+	widgetSrv
+) {
 	const REFRESH_FAKE_DELAY_MS = 500
 	const CHANGE_SECTION_FADE_DELAY_MS = 250
 	let selectedWidget = null

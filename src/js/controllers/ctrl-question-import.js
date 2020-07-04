@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('questionImporterCtrl', function($scope, $sce) {
+app.controller('QuestionImporterCtrl', function($scope, $sce) {
 	let $selectedAssets = []
 	let $table = null
 

@@ -1,4 +1,4 @@
-describe('adminWidgetController', () => {
+describe('AdminWidgetController', () => {
 	var adminSrv
 	var $controller
 	var mockPlease
@@ -43,7 +43,7 @@ describe('adminWidgetController', () => {
 		jest.spyOn(adminSrv, 'getWidgets')
 		mockPromiseOnce(adminSrv.getWidgets, ['sampleval'])
 		$scope = { $watch: jest.fn() }
-		var controller = $controller('adminWidgetController', { $scope })
+		var controller = $controller('AdminWidgetController', { $scope })
 	})
 
 	it('defines expected scope vars', () => {

@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('widgetDetailsController', function(
+app.controller('WidgetCatalogDetailsController', function(
 	Please,
 	$scope,
 	$window,

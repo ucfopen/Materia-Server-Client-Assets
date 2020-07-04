@@ -1,4 +1,4 @@
-describe('playerCtrl', () => {
+describe('WidgetPlayerCtrl', () => {
 	let _widgetSrv
 	let _userServ
 	let _scope
@@ -95,7 +95,7 @@ describe('playerCtrl', () => {
 		let mockWindowAddEventListener = jest.spyOn(window, 'addEventListener')
 		// start the controller
 		var $scope = { $watch: jest.fn(), inst_id: 'bb8', $apply: jest.fn() }
-		var controller = $controller('playerCtrl', { $scope })
+		var controller = $controller('WidgetPlayerCtrl', { $scope })
 
 		let mockPostMessage = $scope.jestTest.getLocalVar('_onPostMessage')
 
@@ -137,7 +137,7 @@ describe('playerCtrl', () => {
 		app.factory('userServ', () => _userServ)
 		app.factory('Alert', () => _alert)
 
-		require('./ctrl-player')
+		require('./ctrl-widget-player')
 
 		inject((_$window_, $rootScope, _$q_, _$controller_, _$timeout_, _$interval_, _$location_) => {
 			_scope = $rootScope.$new()
@@ -162,7 +162,7 @@ describe('playerCtrl', () => {
 
 	it('defines expected scope vars', () => {
 		var $scope = { $watch: jest.fn() }
-		var controller = $controller('playerCtrl', { $scope })
+		var controller = $controller('WidgetPlayerCtrl', { $scope })
 
 		expect($scope.isPreview).toBe(false)
 		expect($scope.allowFullScreen).toBe(false)

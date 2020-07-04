@@ -1,5 +1,12 @@
 const app = angular.module('materia')
-app.controller('settingsController', function($scope, Please, userServ, apiServ, $log, $window) {
+app.controller('UserSettingsController', function(
+	$scope,
+	Please,
+	userServ,
+	apiServ,
+	$log,
+	$window
+) {
 	const _saveSettings = () => {
 		Materia.Set.Throbber.startSpin('.page')
 

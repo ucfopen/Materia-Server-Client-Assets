@@ -1,6 +1,6 @@
 const app = angular.module('materia')
 // The widget settings/availability modal on My Widgets
-app.controller('WidgetSettingsController', function(
+app.controller('MyWidgetsSettingsController', function(
 	Please,
 	$rootScope,
 	$scope,

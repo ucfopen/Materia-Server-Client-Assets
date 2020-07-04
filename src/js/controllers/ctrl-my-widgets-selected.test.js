@@ -1,4 +1,4 @@
-describe('adminWidgetController', () => {
+describe('MyWidgetSelectedController', () => {
 	var adminSrv
 	var $controller
 	var mockPlease
@@ -20,7 +20,7 @@ describe('adminWidgetController', () => {
 		require('../services/srv-user')
 		require('./ctrl-alert')
 		require('ngmodal/dist/ng-modal')
-		require('./ctrl-selectedwidget')
+		require('./ctrl-my-widgets-selected')
 
 		inject((_$controller_, _$q_, _adminSrv_, _$rootScope_) => {
 			$controller = _$controller_
@@ -36,7 +36,7 @@ describe('adminWidgetController', () => {
 
 		Namespace('Materia.Coms.Json').send = jest.fn()
 
-		var controller = $controller('SelectedWidgetController', { $scope })
+		var controller = $controller('MyWidgetsSelectedController', { $scope })
 	})
 
 	it('defines expected scope vars', () => {

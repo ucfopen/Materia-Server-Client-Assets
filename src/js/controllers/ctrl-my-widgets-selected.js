@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('SelectedWidgetController', function(
+app.controller('MyWidgetsSelectedController', function(
 	Please,
 	$rootScope,
 	$scope,
@@ -113,14 +113,22 @@ app.controller('SelectedWidgetController', function(
 		$scope.show.olderScores = true
 	}
 
+	const _canCopy = () =>
+		[ACCESS.COPY, ACCESS.FULL, ACCESS.SHARE, ACCESS.SU].includes($scope.selected.accessLevel)
+	const _canDelete = () => [ACCESS.FULL, ACCESS.SU].includes($scope.selected.accessLevel)
+	const _canShare = () =>
+		[ACCESS.SHARE, ACCESS.FULL, ACCESS.SU].includes($scope.selected.accessLevel)
+	const _canView = () =>
+		[ACCESS.VISIBLE, ACCESS.SHARE, ACCESS.FULL, ACCESS.SU].includes($scope.selected.accessLevel)
+
 	const _showCopyDialog = () => {
-		if ($scope.selected.accessLevel != ACCESS.VISIBLE) {
+		if (_canCopy()) {
 			$scope.show.copyModal = true
 		}
 	}
 
 	const _showDelete = () => {
-		if ($scope.selected.accessLevel != ACCESS.VISIBLE) {
+		if (_canDelete()) {
 			$scope.show.deleteDialog = !$scope.show.deleteDialog
 		}
 	}

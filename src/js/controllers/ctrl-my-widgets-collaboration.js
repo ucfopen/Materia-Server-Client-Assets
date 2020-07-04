@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('CollaborationController', function(
+app.controller('MyWidgetsCollaborationController', function(
 	Please,
 	$scope,
 	$timeout,

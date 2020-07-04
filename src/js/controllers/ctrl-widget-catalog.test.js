@@ -1,4 +1,4 @@
-describe('widgetCatalogController', () => {
+describe('WidgetCatalogCtrl', () => {
 	let $controller
 	let $q
 	let $scope
@@ -127,18 +127,18 @@ describe('widgetCatalogController', () => {
 	})
 
 	it('defines expected scope vars', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		expect(Object.keys($scope)).toMatchSnapshot()
 	})
 
 	it('loads widgets from the widget service', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		expect(mockWidgetSrv.getWidgetsByType).toHaveBeenCalledTimes(1)
 		expect(mockWidgetSrv.getWidgetsByType).toHaveBeenCalledWith('all')
 	})
 
 	it('uses Materia.Image.iconUrl to get each widget icon', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		expect(mockIconUrl).toHaveBeenCalledTimes(4)
 		expect(mockIconUrl).toHaveBeenCalledWith('mockDir1', 275)
 		expect(mockIconUrl).toHaveBeenCalledWith('mockDir2', 275)
@@ -148,7 +148,7 @@ describe('widgetCatalogController', () => {
 
 	it('handles no widgets', () => {
 		widgetsToReturn = []
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 
 		expect($scope.widgets).toHaveLength(0)
 		expect($scope.featuredWidgets).toHaveLength(0)
@@ -159,7 +159,7 @@ describe('widgetCatalogController', () => {
 	})
 
 	it('initializes with no filters and search on initial load', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 
 		expect(Object.keys($scope)).toMatchSnapshot()
 		expect($scope.search).toBe('')
@@ -187,7 +187,7 @@ describe('widgetCatalogController', () => {
 			invalid_feature: true,
 			supported_three: true
 		}
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 
 		expect(Object.keys($scope)).toMatchSnapshot()
 		expect($scope.search).toBe('widget')
@@ -209,13 +209,13 @@ describe('widgetCatalogController', () => {
 	})
 
 	it('properly generates clean filter names', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		const mapCleanToFilter = $scope.jestTest.getLocalVar('mapCleanToFilter')
 		expect(Object.keys(mapCleanToFilter)).toMatchSnapshot()
 	})
 
 	it('toggling on a filter updates scope', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		expect($scope.isFiltered).toBe(false)
 		expect($scope.activeFilters).toHaveLength(0)
 		expect($scope.filters['feature1'].isActive).toBe(false)
@@ -233,7 +233,7 @@ describe('widgetCatalogController', () => {
 	})
 
 	it('will filter widgets based on a search query', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		const _onSearch = $scope.jestTest.getLocalVar('_onSearch')
 
 		expect($scope.count).toBe(4)
@@ -256,7 +256,7 @@ describe('widgetCatalogController', () => {
 	})
 
 	it('can toggle whether the filters are showing', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		$scope.showFilters()
 		expect($scope.isShowingFilters).toBe(true)
 		$scope.clearFilters()
@@ -264,7 +264,7 @@ describe('widgetCatalogController', () => {
 	})
 
 	it('can clear filters and search', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		const _onSearch = $scope.jestTest.getLocalVar('_onSearch')
 		$scope.search = 'widget1'
 		_onSearch() // enable search
@@ -285,14 +285,14 @@ describe('widgetCatalogController', () => {
 
 	it('handles no widgets having features', () => {
 		widgetsToReturn = [widgetWithoutFeatures]
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		// $scope.toggleFilter('feature1') // toggle on
 		expect($scope.count).toEqual(1)
 	})
 
 	it('omits widgets with null features when a feature filter is enabled', () => {
 		widgetsToReturn = [widget1, widgetWithoutFeatures]
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		expect($scope.count).toEqual(2)
 		$scope.toggleFilter('feature1') // toggle on
 		expect($scope.count).toEqual(1)

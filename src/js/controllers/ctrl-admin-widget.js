@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('adminWidgetController', function($scope, Please, adminSrv) {
+app.controller('AdminWidgetController', function($scope, Please, adminSrv) {
 	const _save = widget => {
 		const update = {
 			id: widget.id,

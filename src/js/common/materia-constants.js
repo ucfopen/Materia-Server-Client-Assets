@@ -23,5 +23,6 @@ app.constant('ACCESS', {
 	EDIT: 20,
 	COPY: 25,
 	FULL: 30,
-	SHARE: 35
+	SHARE: 35,
+	SU: 90
 })

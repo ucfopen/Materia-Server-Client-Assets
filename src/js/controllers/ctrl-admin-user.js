@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('adminUserController', function(Please, $scope, $window, adminSrv, userServ) {
+app.controller('AdminUserController', function(Please, $scope, $window, adminSrv, userServ) {
 	let lastSearch = ''
 
 	const _sortNames = (userA, userB) => {

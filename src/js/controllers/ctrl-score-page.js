@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('scorePageController', function(Please, $scope, $q, $timeout, widgetSrv, scoreSrv) {
+app.controller('ScorePageController', function(Please, $scope, $q, $timeout, widgetSrv, scoreSrv) {
 	const COMPARE_TEXT_CLOSE = 'Close Graph'
 	const COMPARE_TEXT_OPEN = 'Compare With Class'
 	// attempts is an array of attempts, [0] is the newest

@@ -1,4 +1,4 @@
-describe('widgetDetailsController', () => {
+describe('WidgetCatalogDetailsController', () => {
 	var $controller
 	var mockPlease
 	var $q
@@ -58,7 +58,7 @@ describe('widgetDetailsController', () => {
 		require('../services/srv-widget')
 		require('ngmodal/dist/ng-modal')
 		require('hammerjs')
-		require('./ctrl-widget-details')
+		require('./ctrl-widget-catalog-details')
 
 		inject((_$controller_, _$document_, _$window_, _$timeout_, _$q_, _$rootScope_) => {
 			$controller = _$controller_
@@ -98,7 +98,7 @@ describe('widgetDetailsController', () => {
 			$on: jest.fn()
 		}
 
-		var controller = $controller('widgetDetailsController', { $scope })
+		var controller = $controller('WidgetCatalogDetailsController', { $scope })
 	})
 
 	const setup = (customWidget = false, pageWidth = 1000) => {

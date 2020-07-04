@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('createCtrl', function(
+app.controller('WidgetCreatorCtrl', function(
 	Please,
 	$scope,
 	$q,

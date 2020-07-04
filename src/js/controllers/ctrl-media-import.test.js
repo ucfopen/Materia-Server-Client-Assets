@@ -1,4 +1,4 @@
-describe('mediaImportCtrl', function() {
+describe('MediaImportCtrl', function() {
 	var setGatewayMock
 	var sendMock
 	var postMock
@@ -108,7 +108,7 @@ describe('mediaImportCtrl', function() {
 			$apply: jest.fn()
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 
 		expect($scope.displayFiles).toHaveLength(0)
 	})
@@ -122,7 +122,7 @@ describe('mediaImportCtrl', function() {
 			$apply: jest.fn()
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		$timeout.flush()
 		expect($scope.displayFiles).toHaveLength(5)
 		expect($scope.displayFiles).toMatchSnapshot()
@@ -137,7 +137,7 @@ describe('mediaImportCtrl', function() {
 			$apply: jest.fn()
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		$timeout.flush()
 		expect($scope.displayFiles).toHaveLength(1)
 	})
@@ -154,7 +154,7 @@ describe('mediaImportCtrl', function() {
 			$apply: jest.fn()
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		$timeout.flush()
 		expect($scope.displayFiles).toHaveLength(1)
 	})
@@ -167,7 +167,7 @@ describe('mediaImportCtrl', function() {
 			$apply: jest.fn()
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		$timeout.flush()
 		//case one - images should be MEDIA_URL/assetid/thumbnail
 		expect($scope.displayFiles[0].thumb).toEqual('https://mediaurl.com/00001/thumbnail')
@@ -187,7 +187,7 @@ describe('mediaImportCtrl', function() {
 			$apply: jest.fn()
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		expect($window.parent.postMessage).toHaveBeenCalledTimes(1)
 		expect($window.parent.postMessage.mock.calls[0]).toMatchSnapshot()
 	})
@@ -199,7 +199,7 @@ describe('mediaImportCtrl', function() {
 			$apply: jest.fn()
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		expect($window.addEventListener).toHaveBeenCalledWith('message', expect.any(Function), false)
 	})
 
@@ -215,7 +215,7 @@ describe('mediaImportCtrl', function() {
 			.spyOn(document, 'getElementsByClassName')
 			.mockReturnValueOnce([{ setAttribute: jest.fn() }])
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		var _onPostMessage = $window.addEventListener.mock.calls[0][1]
 
 		// send a postmessage
@@ -252,7 +252,7 @@ describe('mediaImportCtrl', function() {
 			.spyOn(document, 'getElementsByClassName')
 			.mockReturnValueOnce([{ setAttribute: jest.fn() }])
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		var _onPostMessage = $window.addEventListener.mock.calls[0][1]
 
 		// send a postmessage
@@ -277,7 +277,7 @@ describe('mediaImportCtrl', function() {
 			$apply: jest.fn()
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 
 		//create an approximation of a file for testing
 		let uploadFile = new File([''], 'audio1.mp3', {

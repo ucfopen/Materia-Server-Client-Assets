@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('playerCtrl', function(
+app.controller('WidgetPlayerCtrl', function(
 	Please,
 	$scope,
 	$location,

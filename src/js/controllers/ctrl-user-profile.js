@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('profileCtrl', function(Please, $scope, userServ, apiServ, dateTimeServ, $log) {
+app.controller('UserProfileCtrl', function(Please, $scope, userServ, apiServ, dateTimeServ, $log) {
 	let loaded_offset = 0
 
 	// Shows selected game information on the mainscreen.
