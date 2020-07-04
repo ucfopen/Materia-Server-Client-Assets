@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('UserSettingsController', function(
+app.controller('UserSettingsController', function (
 	$scope,
 	Please,
 	UserServ,
@@ -12,11 +12,11 @@ app.controller('UserSettingsController', function(
 
 		const newSettings = {
 			notify: $scope.user.notify,
-			useGravatar: $scope.useGravatar
+			useGravatar: $scope.useGravatar,
 		}
 
 		Materia.Coms.Json.post('/api/user/settings', newSettings)
-			.then(result => {
+			.then((result) => {
 				APIServ.filterError(result)
 				Materia.Set.Throbber.stopSpin('.page')
 				$scope.settingsForm.$setPristine()

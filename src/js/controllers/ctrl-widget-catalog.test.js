@@ -19,9 +19,9 @@ describe('WidgetCatalogCtrl', () => {
 			demo: '1',
 			excerpt: 'more information about the widget',
 			features: ['feature1', 'feature3'],
-			supported_data: ['supported1', 'supported_three', 'SuPpOrTeD FoUr!!']
+			supported_data: ['supported1', 'supported_three', 'SuPpOrTeD FoUr!!'],
 		},
-		name: 'widget1'
+		name: 'widget1',
 	}
 	const widget2 = {
 		id: 2,
@@ -32,9 +32,9 @@ describe('WidgetCatalogCtrl', () => {
 			demo: '2',
 			excerpt: 'more information about the widget',
 			features: ['feature2', 'feature3'],
-			supported_data: ['supported1', 'supported2']
+			supported_data: ['supported1', 'supported2'],
 		},
-		name: 'widget2'
+		name: 'widget2',
 	}
 	const widget3 = {
 		id: 3,
@@ -45,9 +45,9 @@ describe('WidgetCatalogCtrl', () => {
 			demo: '3',
 			excerpt: 'more information about the widget',
 			features: [],
-			supported_data: []
+			supported_data: [],
 		},
-		name: 'widget3'
+		name: 'widget3',
 	}
 
 	const widgetWithoutFeatures = {
@@ -57,10 +57,10 @@ describe('WidgetCatalogCtrl', () => {
 		meta_data: {
 			about: 'information about the widget',
 			demo: '4',
-			excerpt: 'more information about the widget'
+			excerpt: 'more information about the widget',
 			// features and supported_data are null!!
 		},
-		name: 'widgetWithoutFeatures'
+		name: 'widgetWithoutFeatures',
 	}
 
 	beforeEach(() => {
@@ -69,9 +69,9 @@ describe('WidgetCatalogCtrl', () => {
 		// why? because it's an internal private method and getting a handle
 		// to wait for it to finish is difficult
 		let getWidgetsByTypeImmediately = jest.fn().mockReturnValue({
-			then: cb => {
+			then: (cb) => {
 				cb(widgetsToReturn)
-			}
+			},
 		})
 		// mock all the required services
 		mockWidgetSrv = { getWidgetsByType: getWidgetsByTypeImmediately }
@@ -87,11 +87,11 @@ describe('WidgetCatalogCtrl', () => {
 
 		// mock window.location
 		let mockWindow = {}
-		let mockLocationSet = jest.fn(l => (location = l))
+		let mockLocationSet = jest.fn((l) => (location = l))
 		let mockLocationGet = jest.fn(() => location)
 		Object.defineProperty(mockWindow, 'location', {
 			get: mockLocationGet,
-			set: mockLocationSet
+			set: mockLocationSet,
 		})
 		app.factory('$window', () => mockWindow)
 
@@ -101,7 +101,7 @@ describe('WidgetCatalogCtrl', () => {
 		// build a mock $scope
 		$scope = {
 			$watch: jest.fn(),
-			$on: jest.fn()
+			$on: jest.fn(),
 		}
 
 		mockLocationSearch = { search: '' }
@@ -120,7 +120,7 @@ describe('WidgetCatalogCtrl', () => {
 					return mockLocationSearch
 				}
 				return {
-					replace: jest.fn()
+					replace: jest.fn(),
 				}
 			})
 		})
@@ -185,7 +185,7 @@ describe('WidgetCatalogCtrl', () => {
 			feature1: true,
 			search: 'widget',
 			invalid_feature: true,
-			supported_three: true
+			supported_three: true,
 		}
 		$controller('WidgetCatalogCtrl', { $scope })
 

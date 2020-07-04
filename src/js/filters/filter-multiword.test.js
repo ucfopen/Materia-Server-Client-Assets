@@ -1,4 +1,4 @@
-describe('multiword filter', function() {
+describe('multiword filter', function () {
 	var filter
 	let widgetList = [{ searchCache: 'text to search' }, { searchCache: 'other stuff to search' }]
 

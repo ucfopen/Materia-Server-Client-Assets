@@ -1,7 +1,7 @@
 'use strict'
 
 const app = angular.module('materia')
-app.directive('scoreData', function(SelectedWidgetSrv, $window) {
+app.directive('scoreData', function (SelectedWidgetSrv, $window) {
 	return {
 		restrict: 'A',
 		link($scope, $element, $attrs) {
@@ -13,7 +13,7 @@ app.directive('scoreData', function(SelectedWidgetSrv, $window) {
 
 			const updateDisplay = () => {
 				// load the storageData from cache (if we have it)
-				SelectedWidgetSrv.getStorageData(false).then(data => {
+				SelectedWidgetSrv.getStorageData(false).then((data) => {
 					if (!data) return
 					$scope.tables = data[semester]
 					$scope.MAX_ROWS = SelectedWidgetSrv.getMaxRows()
@@ -29,6 +29,6 @@ app.directive('scoreData', function(SelectedWidgetSrv, $window) {
 
 			// try to load it now
 			updateDisplay()
-		}
+		},
 	}
 })

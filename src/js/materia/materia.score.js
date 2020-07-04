@@ -43,9 +43,9 @@ Namespace('Materia').Score = (() => {
 		Materia.Engine.addLog(SCORE_PARTICIPATION, -1, 'Participation', value)
 
 	// Adds a message/feedback to the overall score screen
-	const addGlobalScoreFeedback = msg => Materia.Engine.addLog(SCORE_FEEDBACK, '0', msg)
+	const addGlobalScoreFeedback = (msg) => Materia.Engine.addLog(SCORE_FEEDBACK, '0', msg)
 
-	const addScoreData = data => Materia.Engine.addLog(DATA, null, JSON.stringify(data), null)
+	const addScoreData = (data) => Materia.Engine.addLog(DATA, null, JSON.stringify(data), null)
 
 	return {
 		submitInteractionForScoring,
@@ -53,6 +53,6 @@ Namespace('Materia').Score = (() => {
 		submitQuestionForScoring,
 		submitScoreForParticipation,
 		addGlobalScoreFeedback,
-		addScoreData
+		addScoreData,
 	}
 })()

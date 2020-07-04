@@ -1,22 +1,22 @@
-describe('scoreGraph Directive', function() {
+describe('scoreGraph Directive', function () {
 	let $rootScope
 	let $compile
 	let $timeout
-	let mock1 = jest.fn(cb => {
+	let mock1 = jest.fn((cb) => {
 		cb({ map: { '6': { distribution: true } } })
 	})
 	let mock2 = jest.fn(() => ({ then: mock1 }))
 	let mock3 = jest.fn()
 
 	beforeEach(() => {
-		angular.module('materia').service('SelectedWidgetSrv', function() {
+		angular.module('materia').service('SelectedWidgetSrv', function () {
 			return { getScoreSummaries: mock2 }
 		})
 
 		require('../common/materia-namespace')
 		require('./dir-scoregraph.js')
 
-		inject(function(_$compile_, _$rootScope_, _$timeout_) {
+		inject(function (_$compile_, _$rootScope_, _$timeout_) {
 			$compile = _$compile_
 			$rootScope = _$rootScope_
 			$timeout = _$timeout_
@@ -25,7 +25,7 @@ describe('scoreGraph Directive', function() {
 		Namespace('Materia.MyWidgets.Statistics').createGraph = mock3
 	})
 
-	it('is initialized on the element', function() {
+	it('is initialized on the element', function () {
 		let html = '<div score-graph id="chart_6">text</div>'
 		let compiled = $compile('<div score-graph id="chart_6">text</div>')($rootScope)
 		$rootScope.$digest()

@@ -7,17 +7,17 @@ const app = angular.module('materia')
 // and add ng-animate
 // ex: /widgets or /widgets/1-adventure
 if (window.location.href.match(/\/widgets($|\/\D|\?)/g)) {
-	app.config(function($locationProvider) {
+	app.config(function ($locationProvider) {
 		$locationProvider.html5Mode({
 			enabled: true,
-			requireBase: false
+			requireBase: false,
 		})
 	})
 
 	app.requires.push('ngAnimate')
 }
 
-app.controller('WidgetCatalogCtrl', function(Please, $scope, $window, $location, WidgetSrv) {
+app.controller('WidgetCatalogCtrl', function (Please, $scope, $window, $location, WidgetSrv) {
 	const filterList = {} // key is raw filter name, value is filter object
 	const mapCleanToFilter = {} // key is clean name, value is filter object
 	const displayedWidgets = []
@@ -47,7 +47,7 @@ app.controller('WidgetCatalogCtrl', function(Please, $scope, $window, $location,
 		clearFilters(hideFilters)
 	}
 
-	const toggleFilter = filterName => {
+	const toggleFilter = (filterName) => {
 		const filter = filterList[filterName]
 		setFilter(filter, !filter.isActive)
 		_updateWidgetDisplay()
@@ -65,22 +65,22 @@ app.controller('WidgetCatalogCtrl', function(Please, $scope, $window, $location,
 		const filter = {
 			isActive: false,
 			text: `${name}${appendLabel}`,
-			clean
+			clean,
 		}
 		filterList[name] = filter
 		mapCleanToFilter[clean] = filter
 	}
 
-	const _getFiltersFromWidgets = widgets => {
-		widgets.forEach(widget => {
+	const _getFiltersFromWidgets = (widgets) => {
+		widgets.forEach((widget) => {
 			if (widget.meta_data.hasOwnProperty('features')) {
-				widget.meta_data.features.forEach(feature => {
+				widget.meta_data.features.forEach((feature) => {
 					if (!filterList.hasOwnProperty(feature)) _registerFilter(feature)
 				})
 			}
 
 			if (widget.meta_data.hasOwnProperty('supported_data')) {
-				widget.meta_data.supported_data.forEach(data => {
+				widget.meta_data.supported_data.forEach((data) => {
 					if (!filterList.hasOwnProperty(data)) _registerFilter(data, ' Questions')
 				})
 			}
@@ -88,7 +88,7 @@ app.controller('WidgetCatalogCtrl', function(Please, $scope, $window, $location,
 	}
 
 	// checks filters and returns true if the widget should be shown, false if filtered out
-	const _isWidgetVisible = widget => {
+	const _isWidgetVisible = (widget) => {
 		const wFeatures = widget.meta_data.features
 		const wSupport = widget.meta_data.supported_data
 
@@ -116,9 +116,9 @@ app.controller('WidgetCatalogCtrl', function(Please, $scope, $window, $location,
 	}
 
 	const _updateWidgetDisplay = () => {
-		const widgets = allWidgets.filter(w => _isWidgetVisible(w))
+		const widgets = allWidgets.filter((w) => _isWidgetVisible(w))
 		$scope.count = widgets.length
-		$scope.activeFilters = Object.keys(filterList).filter(key => filterList[key].isActive)
+		$scope.activeFilters = Object.keys(filterList).filter((key) => filterList[key].isActive)
 		$scope.isFiltered = widgets.length != allWidgets.length
 
 		if ($scope.isFiltered) {
@@ -126,7 +126,7 @@ app.controller('WidgetCatalogCtrl', function(Please, $scope, $window, $location,
 			$scope.widgets = widgets
 		} else {
 			// no filters active - show the featured list
-			$scope.widgets = widgets.filter(w => w.in_catalog != '1')
+			$scope.widgets = widgets.filter((w) => w.in_catalog != '1')
 		}
 
 		Please.$apply()
@@ -140,7 +140,7 @@ app.controller('WidgetCatalogCtrl', function(Please, $scope, $window, $location,
 
 	const _loadWidgets = () => {
 		// load list of widgets
-		WidgetSrv.getWidgetsByType('all').then(loaded => {
+		WidgetSrv.getWidgetsByType('all').then((loaded) => {
 			if (!loaded || !loaded.length || !loaded.length > 0) {
 				resetFilters()
 				loaded = []
@@ -152,12 +152,12 @@ app.controller('WidgetCatalogCtrl', function(Please, $scope, $window, $location,
 			_getFiltersFromWidgets(allWidgets)
 
 			// memoize icon paths
-			allWidgets.forEach(widget => {
+			allWidgets.forEach((widget) => {
 				widget.icon = Materia.Image.iconUrl(widget.dir, 275)
 			})
 
 			$scope.totalWidgets = allWidgets.length
-			$scope.featuredWidgets = allWidgets.filter(w => w.in_catalog == '1')
+			$scope.featuredWidgets = allWidgets.filter((w) => w.in_catalog == '1')
 
 			// start watching search input
 			$scope.$watch('search', _onSearch)
@@ -219,7 +219,7 @@ app.controller('WidgetCatalogCtrl', function(Please, $scope, $window, $location,
 	/* develblock:start */
 	// these method are exposed for testing
 	$scope.jestTest = {
-		getLocalVar: name => eval(name)
+		getLocalVar: (name) => eval(name),
 	}
 	/* develblock:end */
 })

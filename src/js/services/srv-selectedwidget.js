@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.service('SelectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
+app.service('SelectedWidgetSrv', function ($rootScope, $q, OBJECT_TYPES) {
 	const STORAGE_TABLE_MAX_ROWS_SHOWN = 100
 
 	const selectedData = null
@@ -13,7 +13,7 @@ app.service('SelectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 	let _storageData = null
 
 	// get and set _widget
-	const set = widget => {
+	const set = (widget) => {
 		_scoreData = null
 		_storageData = null
 		_widget = widget
@@ -31,7 +31,7 @@ app.service('SelectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 			deferred.resolve(_scoreData)
 		} else {
 			let loadingId = _widget.id
-			Materia.Coms.Json.send('score_summary_get', [loadingId, true]).then(data => {
+			Materia.Coms.Json.send('score_summary_get', [loadingId, true]).then((data) => {
 				if (loadingId !== _widget.id) {
 					return deferred.reject()
 				}
@@ -39,19 +39,19 @@ app.service('SelectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 				_scoreData = {
 					list: [],
 					map: {},
-					last: undefined
+					last: undefined,
 				}
 
 				if (data !== null && data.length > 0) {
 					const map = {}
-					data.forEach(d => {
+					data.forEach((d) => {
 						map[d.id] = d
 					})
 
 					_scoreData = {
 						list: data,
 						map,
-						last: data[0]
+						last: data[0],
 					}
 				}
 
@@ -65,11 +65,11 @@ app.service('SelectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 	const getUserPermissions = () => {
 		return Materia.Coms.Json.send('permissions_get', [
 			OBJECT_TYPES.WIDGET_INSTANCE,
-			_widget.id
-		]).then(perms => {
+			_widget.id,
+		]).then((perms) => {
 			const permsObject = {
 				user: perms.user_perms,
-				widget: perms.widget_user_perms
+				widget: perms.widget_user_perms,
 			}
 
 			return permsObject
@@ -79,7 +79,7 @@ app.service('SelectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 	const getPlayLogsForSemester = (term, year) => {
 		const deferred = $q.defer()
 
-		Materia.Coms.Json.send('play_logs_get', [_widget.id, term, year]).then(logs => {
+		Materia.Coms.Json.send('play_logs_get', [_widget.id, term, year]).then((logs) => {
 			const semesterKey = `${year}${term.toLowerCase()}`
 			const logsForSemester = []
 			angular.forEach(logs, (log, key) => {
@@ -101,7 +101,7 @@ app.service('SelectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 	const getDateRanges = () => {
 		const deferred = $q.defer()
 		if (_dateRanges == null) {
-			Materia.Coms.Json.send('semester_date_ranges_get', []).then(data => {
+			Materia.Coms.Json.send('semester_date_ranges_get', []).then((data) => {
 				_dateRanges = data
 				deferred.resolve(data)
 			})
@@ -111,9 +111,9 @@ app.service('SelectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		return deferred.promise
 	}
 
-	const getSemesterFromTimestamp = timestamp => {
+	const getSemesterFromTimestamp = (timestamp) => {
 		return _dateRanges.find(
-			r => timestamp >= parseInt(r.start, 10) && timestamp <= parseInt(r.end, 10)
+			(r) => timestamp >= parseInt(r.start, 10) && timestamp <= parseInt(r.end, 10)
 		)
 	}
 
@@ -123,7 +123,7 @@ app.service('SelectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		if (_storageData != null) {
 			deferred.resolve(_storageData)
 		} else if (loadIfNotCached) {
-			Materia.Coms.Json.send('play_storage_get', [_widget.id]).then(data => {
+			Materia.Coms.Json.send('play_storage_get', [_widget.id]).then((data) => {
 				_storageData = {}
 
 				const temp = {}
@@ -146,7 +146,7 @@ app.service('SelectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 							_storageData[semesterId][tableName] = {
 								truncated: true,
 								total: semesterData.length,
-								data: semesterData.slice(0, STORAGE_TABLE_MAX_ROWS_SHOWN)
+								data: semesterData.slice(0, STORAGE_TABLE_MAX_ROWS_SHOWN),
 							}
 						} else {
 							_storageData[semesterId][tableName] = { truncated: false, data: semesterData }
@@ -166,7 +166,7 @@ app.service('SelectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		return deferred.promise
 	}
 
-	const _processDataIntoSemesters = logs => {
+	const _processDataIntoSemesters = (logs) => {
 		const semesters = {}
 		let timestamp = null
 
@@ -187,7 +187,7 @@ app.service('SelectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 	//  storage data doesn't really enforce a schema.
 	//  this function determines every field used throughout the
 	//  storage data and then applies that schema to each item.
-	const _normalizeStorageDataColumns = rows => {
+	const _normalizeStorageDataColumns = (rows) => {
 		//  go through all the rows and collect the fields used:
 		const fields = {}
 		for (var r of rows) {
@@ -223,6 +223,6 @@ app.service('SelectedWidgetSrv', function($rootScope, $q, OBJECT_TYPES) {
 		getSemesterFromTimestamp,
 		getStorageData,
 		getMaxRows,
-		notifyAccessDenied
+		notifyAccessDenied,
 	}
 })

@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('LTIResourceSelectionCtrl', function(
+app.controller('LTIResourceSelectionCtrl', function (
 	Please,
 	$interval,
 	$timeout,
@@ -16,14 +16,14 @@ app.controller('LTIResourceSelectionCtrl', function(
 		$scope.showRefreshArrow = true
 	}
 
-	const loadWidgets = fakeDelay => {
+	const loadWidgets = (fakeDelay) => {
 		if (fakeDelay == null) {
 			fakeDelay = 1
 		}
 
 		$timeout(
 			() =>
-				WidgetSrv.getWidgets(true).then(widgets => {
+				WidgetSrv.getWidgets(true).then((widgets) => {
 					if (widgets != null ? widgets.halt : undefined) {
 						return
 					}
@@ -50,14 +50,14 @@ app.controller('LTIResourceSelectionCtrl', function(
 		)
 	}
 
-	const _highlight = widget => {
+	const _highlight = (widget) => {
 		for (let w of Array.from($scope.widgets)) {
 			w.selected = false
 		}
 		widget.selected = true
 	}
 
-	const _embedWidget = widget => {
+	const _embedWidget = (widget) => {
 		if (selectedWidget && selectedWidget.state && selectedWidget.state === 'pending') {
 			return
 		}
@@ -87,7 +87,7 @@ app.controller('LTIResourceSelectionCtrl', function(
 		}, 1000)
 	}
 
-	const setDisplayState = newSection => {
+	const setDisplayState = (newSection) => {
 		$scope.section = newSection
 		$timeout(() => {
 			let body = document.querySelector('body')
@@ -137,7 +137,7 @@ app.controller('LTIResourceSelectionCtrl', function(
 			}
 		}, 200)
 
-		document.addEventListener('keyup', event => {
+		document.addEventListener('keyup', (event) => {
 			if (event.keyCode === 16) {
 				$scope.easterMode = true
 				Please.$apply()
@@ -155,9 +155,7 @@ app.controller('LTIResourceSelectionCtrl', function(
 		} else if (startDate > 0 && endDate < 0) {
 			return `Anytime after ${availability.start.date} at ${availability.start.time}`
 		} else {
-			return `From ${availability.start.date} at ${availability.start.time} until ${
-				availability.end.date
-			} at  ${availability.end.time}`
+			return `From ${availability.start.date} at ${availability.start.time} until ${availability.end.date} at  ${availability.end.time}`
 		}
 	}
 

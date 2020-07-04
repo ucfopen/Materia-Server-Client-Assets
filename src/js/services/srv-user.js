@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.service('UserServ', function($q, $rootScope) {
+app.service('UserServ', function ($q, $rootScope) {
 	let _me = null
 	let _user = null
 
@@ -29,7 +29,7 @@ app.service('UserServ', function($q, $rootScope) {
 			avatar,
 			loggedIn,
 			role,
-			notify
+			notify,
 		}
 	}
 
@@ -40,7 +40,7 @@ app.service('UserServ', function($q, $rootScope) {
 			avatar: user.getAttribute('data-avatar'),
 			loggedIn: user.getAttribute('data-logged-in'),
 			role: user.getAttribute('data-role'),
-			notify: user.getAttribute('data-notify')
+			notify: user.getAttribute('data-notify'),
 		}
 		return buildUser(
 			userData.name,
@@ -73,7 +73,7 @@ app.service('UserServ', function($q, $rootScope) {
 		return _me
 	}
 
-	const getCurrentUserAvatar = size => {
+	const getCurrentUserAvatar = (size) => {
 		if (size == null) {
 			size = 24
 		}
@@ -92,7 +92,7 @@ app.service('UserServ', function($q, $rootScope) {
 		return deferred.promise
 	}
 
-	const set = userToSet => {
+	const set = (userToSet) => {
 		_user = userToSet
 		return $rootScope.$broadcast('user.update')
 	}
@@ -101,7 +101,7 @@ app.service('UserServ', function($q, $rootScope) {
 	var _getCurrentUserFromAPI = () => {
 		const deferred = $q.defer()
 
-		Materia.User.getCurrentUser(user => {
+		Materia.User.getCurrentUser((user) => {
 			set(user)
 			deferred.resolve(_user)
 		})
@@ -109,14 +109,14 @@ app.service('UserServ', function($q, $rootScope) {
 		return deferred.promise
 	}
 
-	const checkValidSession = role => {
+	const checkValidSession = (role) => {
 		const deferred = $q.defer()
 
 		let now = new Date().getTime()
 		if (validLastValue && now - validLastCheck < threshold) {
 			deferred.resolve(validLastValue)
 		} else {
-			Materia.Coms.Json.send('session_author_verify', [role]).then(data => {
+			Materia.Coms.Json.send('session_author_verify', [role]).then((data) => {
 				validLastCheck = now
 				validLastValue = data
 				deferred.resolve(data)
@@ -134,6 +134,6 @@ app.service('UserServ', function($q, $rootScope) {
 		updateSettings,
 		get,
 		set,
-		checkValidSession
+		checkValidSession,
 	}
 })

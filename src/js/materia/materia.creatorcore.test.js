@@ -10,8 +10,8 @@ describe('creatorcore', () => {
 	}
 
 	//iterates all mocked creator methods to ensure only the target method is called
-	const expectOnlyCreatorMethodCalledToBe = targetMethod => {
-		Object.keys(mockCreator).forEach(method => {
+	const expectOnlyCreatorMethodCalledToBe = (targetMethod) => {
+		Object.keys(mockCreator).forEach((method) => {
 			if (method == targetMethod) {
 				expect(mockCreator[method]).toHaveBeenCalledTimes(1)
 			} else {
@@ -24,30 +24,30 @@ describe('creatorcore', () => {
 		let payload = JSON.stringify({
 			type: type,
 			source: source,
-			data: data
+			data: data,
 		})
 		_onPostMessage({
-			data: payload
+			data: payload,
 		})
 		return payload
 	}
 
-	const mockCreatorCoreAlert = message =>
+	const mockCreatorCoreAlert = (message) =>
 		JSON.stringify({
 			type: 'alert',
 			source: 'creator-core',
 			data: {
 				msg: message,
 				title: null,
-				fatal: false
-			}
+				fatal: false,
+			},
 		})
 
 	beforeEach(() => {
 		jest.spyOn(console, 'warn')
 		console.warn.mockReturnValue()
 		let app = angular.module('materia')
-		inject(function(_$q_) {
+		inject(function (_$q_) {
 			$q = _$q_
 		})
 		global.API_LINK = 'my_api_url'
@@ -64,7 +64,7 @@ describe('creatorcore', () => {
 			onMediaImportComplete: jest.fn(),
 			onQuestionImportComplete: jest.fn(),
 			initNewWidget: jest.fn(),
-			initExistingWidget: jest.fn()
+			initExistingWidget: jest.fn(),
 		}
 
 		//prior to each test, run creatorCore.start to prime the _onPostMessage event listener
@@ -113,7 +113,7 @@ describe('creatorcore', () => {
 			'qsetObj',
 			'qsetVersion',
 			'baseUrl',
-			'mediaUrl'
+			'mediaUrl',
 		])
 		expect(mockCreator.initExistingWidget).toHaveBeenCalledWith(
 			'widgetObj',
@@ -172,8 +172,8 @@ describe('creatorcore', () => {
 		_onPostMessage({
 			data: JSON.stringify({
 				type: 'initNewWidget',
-				data: ['widgetObj', 'baseUrl', 'mediaUrl']
-			})
+				data: ['widgetObj', 'baseUrl', 'mediaUrl'],
+			}),
 		})
 		expect(parent.postMessage).toHaveBeenCalledWith(
 			mockCreatorCoreAlert('Error, missing creator initNewWidget called.'),
@@ -199,7 +199,7 @@ describe('creatorcore', () => {
 		let ex = JSON.stringify({
 			type: 'showMediaImporter',
 			source: 'creator-core',
-			data: ['image']
+			data: ['image'],
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})
@@ -209,7 +209,7 @@ describe('creatorcore', () => {
 		let ex = JSON.stringify({
 			type: 'showMediaImporter',
 			source: 'creator-core',
-			data: ['mp3']
+			data: ['mp3'],
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})
@@ -219,7 +219,7 @@ describe('creatorcore', () => {
 		let ex = JSON.stringify({
 			type: 'cancelSave',
 			source: 'creator-core',
-			data: ['message']
+			data: ['message'],
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})
@@ -229,7 +229,7 @@ describe('creatorcore', () => {
 		let ex = JSON.stringify({
 			type: 'save',
 			source: 'creator-core',
-			data: ['title', { one: 1, two: 2 }, 1]
+			data: ['title', { one: 1, two: 2 }, 1],
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})
@@ -239,7 +239,7 @@ describe('creatorcore', () => {
 		let ex = JSON.stringify({
 			type: 'save',
 			source: 'creator-core',
-			data: ['title', { one: 1, two: 2 }, '1']
+			data: ['title', { one: 1, two: 2 }, '1'],
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})
@@ -249,7 +249,7 @@ describe('creatorcore', () => {
 		let ex = JSON.stringify({
 			type: 'save',
 			source: 'creator-core',
-			data: ['title &lt;script&gt;&lt;/script&gt;', {}, '1']
+			data: ['title &lt;script&gt;&lt;/script&gt;', {}, '1'],
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})
@@ -259,7 +259,7 @@ describe('creatorcore', () => {
 		let ex = JSON.stringify({
 			type: 'setHeight',
 			source: 'creator-core',
-			data: [200]
+			data: [200],
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})

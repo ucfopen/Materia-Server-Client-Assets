@@ -11,7 +11,7 @@ Namespace('Materia.Storage').Table = () => {
 		_id = Materia.Storage.Manager.clean(id)
 		_columns = []
 		_rows = []
-		columns.forEach(c => {
+		columns.forEach((c) => {
 			_columns.push(Materia.Storage.Manager.clean(c))
 		})
 	}
@@ -19,7 +19,7 @@ Namespace('Materia.Storage').Table = () => {
 	// Inserts a new row into this table.
 	// @param values The values to insert into the table. Make sure the number
 	// of arguments passed match the number of columns pertaining to this table.
-	const insert = values => {
+	const insert = (values) => {
 		// Make sure arguments match number of columns
 		if (values.length !== _columns.length) {
 			throw new Error(
@@ -40,7 +40,7 @@ Namespace('Materia.Storage').Table = () => {
 		// Send this row to the server
 		return {
 			name: _id,
-			data: result
+			data: result,
 		}
 	}
 
@@ -54,6 +54,6 @@ Namespace('Materia.Storage').Table = () => {
 		getId,
 		init,
 		insert,
-		getValues
+		getValues,
 	}
 }

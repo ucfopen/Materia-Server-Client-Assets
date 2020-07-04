@@ -38,7 +38,7 @@ describe('AdminWidgetController', () => {
 		let getElementById = jest.spyOn(document, 'getElementById')
 		widgetUploaderChangeListener = jest.fn()
 		getElementById.mockReturnValueOnce({
-			addEventListener: widgetUploaderChangeListener
+			addEventListener: widgetUploaderChangeListener,
 		})
 		jest.spyOn(AdminSrv, 'getWidgets')
 		mockPromiseOnce(AdminSrv.getWidgets, ['sampleval'])
@@ -74,8 +74,8 @@ describe('AdminWidgetController', () => {
 			meta_data: {
 				about: 'f',
 				excerpt: 'f',
-				demo: 'f'
-			}
+				demo: 'f',
+			},
 		}
 		// tests
 		let saveWidget = jest.spyOn(AdminSrv, 'saveWidget')

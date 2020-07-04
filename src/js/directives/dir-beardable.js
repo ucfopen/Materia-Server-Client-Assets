@@ -1,7 +1,7 @@
 'use strict'
 
 const app = angular.module('materia')
-app.directive('beardable', function() {
+app.directive('beardable', function () {
 	return {
 		restrict: 'A',
 		controller($window) {
@@ -24,7 +24,7 @@ app.directive('beardable', function() {
 				}
 			}
 
-			const konamiListener = event => {
+			const konamiListener = (event) => {
 				switch (event.which || event.keyCode) {
 					case 38:
 						if (konami !== 'u') {
@@ -62,6 +62,6 @@ app.directive('beardable', function() {
 			$window.addEventListener('keydown', konamiListener)
 
 			updateBeardCss()
-		}
+		},
 	}
 })

@@ -22,10 +22,10 @@ describe('WidgetCatalogDetailsController', () => {
 			about: 'about',
 			supported_data: ['supported1', 'supported2'],
 			features: ['feature1', 'feature2'],
-			demo: 'abCD1'
+			demo: 'abCD1',
 		},
 		width: '700',
-		height: '700'
+		height: '700',
 	}
 
 	beforeEach(() => {
@@ -35,11 +35,11 @@ describe('WidgetCatalogDetailsController', () => {
 
 		// mock window.location
 		mockWindow = {}
-		mockLocationSet = jest.fn(l => (location = l))
+		mockLocationSet = jest.fn((l) => (location = l))
 		mockLocationGet = jest.fn(() => location)
 		Object.defineProperty(mockWindow, 'location', {
 			get: mockLocationGet,
-			set: mockLocationSet
+			set: mockLocationSet,
 		})
 		app.factory('$window', () => mockWindow)
 
@@ -95,7 +95,7 @@ describe('WidgetCatalogDetailsController', () => {
 
 		$scope = {
 			$watch: jest.fn(),
-			$on: jest.fn()
+			$on: jest.fn(),
 		}
 
 		var controller = $controller('WidgetCatalogDetailsController', { $scope })
@@ -113,7 +113,7 @@ describe('WidgetCatalogDetailsController', () => {
 	const mockSessionCreate = () => {
 		return (Namespace('Materia.Coms.Json').send = jest.fn(() => {
 			return {
-				then: cb => cb('play-id')
+				then: (cb) => cb('play-id'),
 			}
 		}))
 	}

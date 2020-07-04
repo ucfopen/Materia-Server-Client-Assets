@@ -9,7 +9,7 @@ describe('WidgetSrv', () => {
 	var mockHashSet
 	var $q
 
-	let mockSendPromiseOnce = result => {
+	let mockSendPromiseOnce = (result) => {
 		sendMock.mockImplementationOnce((n, arg, cb) => {
 			const deferred = $q.defer()
 			deferred.resolve(result)
@@ -21,11 +21,11 @@ describe('WidgetSrv', () => {
 		// MOCK some services
 		_SelectedWidgetSrv = {
 			set: jest.fn(),
-			notifyAccessDenied: jest.fn()
+			notifyAccessDenied: jest.fn(),
 		}
 		_dateTimeServ = {
 			parseObjectToDateString: jest.fn(() => 'dateString'),
-			parseTime: jest.fn(() => 'timeString')
+			parseTime: jest.fn(() => 'timeString'),
 		}
 		let app = angular.module('materia')
 		app.factory('SelectedWidgetSrv', () => _SelectedWidgetSrv)
@@ -34,13 +34,13 @@ describe('WidgetSrv', () => {
 		// MOCK $window
 		mockWindow = {
 			addEventListener: jest.fn(),
-			location: {}
+			location: {},
 		}
 		mockHashGet = jest.fn()
 		mockHashSet = jest.fn()
 		Object.defineProperty(mockWindow.location, 'hash', {
 			get: mockHashGet,
-			set: mockHashSet
+			set: mockHashSet,
 		})
 		app.factory('$window', () => mockWindow)
 
@@ -48,7 +48,7 @@ describe('WidgetSrv', () => {
 		require('../common/materia-constants')
 		require('./srv-widget')
 
-		inject(function(_$rootScope_, WidgetSrv, _$q_) {
+		inject(function (_$rootScope_, WidgetSrv, _$q_) {
 			$scope = _$rootScope_
 			_service = WidgetSrv
 			$q = _$q_
@@ -127,10 +127,7 @@ describe('WidgetSrv', () => {
 
 		let promiseSpy = jest.fn()
 		let promiseCatch = jest.fn()
-		_service
-			.getWidget()
-			.then(promiseSpy)
-			.catch(promiseCatch)
+		_service.getWidget().then(promiseSpy).catch(promiseCatch)
 		$scope.$digest() // processes promise
 
 		expect(promiseSpy).not.toHaveBeenCalled()
@@ -205,7 +202,7 @@ describe('WidgetSrv', () => {
 		expect(
 			_service
 				.sortWidgets()
-				.map(i => i.id)
+				.map((i) => i.id)
 				.join('')
 		).toBe(finalOrder)
 	})
@@ -225,7 +222,7 @@ describe('WidgetSrv', () => {
 		mockSendPromiseOnce('mock_result')
 
 		let result
-		_service.getWidgetsByType('type').then(d => {
+		_service.getWidgetsByType('type').then((d) => {
 			result = d
 		})
 		$scope.$digest() // processes promise
@@ -248,7 +245,7 @@ describe('WidgetSrv', () => {
 			attempts: 5,
 			guest_access: 6,
 			embedded_only: 7,
-			widget_id: 8
+			widget_id: 8,
 		}
 		mockSendPromiseOnce()
 		_service.saveWidget(params)
@@ -287,7 +284,7 @@ describe('WidgetSrv', () => {
 			attempts: 5,
 			guest_access: 6,
 			embedded_only: 7,
-			inst_id: 8
+			inst_id: 8,
 		}
 		mockSendPromiseOnce()
 		_service.saveWidget(params)
@@ -298,7 +295,7 @@ describe('WidgetSrv', () => {
 		mockSendPromiseOnce(getMockApiData('widget_instances_get')[4])
 
 		let result
-		_service.saveWidget('type').then(d => {
+		_service.saveWidget('type').then((d) => {
 			result = d
 		})
 		$scope.$digest() // processes promise
@@ -356,7 +353,7 @@ describe('WidgetSrv', () => {
 		let res = _service.convertAvailibilityDates(1519232808, 1519405200)
 		expect(res).toMatchObject({
 			end: { date: 'dateString', time: 'timeString' },
-			start: { date: 'dateString', time: 'timeString' }
+			start: { date: 'dateString', time: 'timeString' },
 		})
 	})
 
@@ -364,7 +361,7 @@ describe('WidgetSrv', () => {
 		let res = _service.convertAvailibilityDates(1519232808)
 		expect(res).toMatchObject({
 			end: { date: 0, time: 0 },
-			start: { date: 'dateString', time: 'timeString' }
+			start: { date: 'dateString', time: 'timeString' },
 		})
 	})
 
@@ -372,7 +369,7 @@ describe('WidgetSrv', () => {
 		let res = _service.convertAvailibilityDates(null, 1519232808)
 		expect(res).toMatchObject({
 			end: { date: 'dateString', time: 'timeString' },
-			start: { date: 0, time: 0 }
+			start: { date: 0, time: 0 },
 		})
 	})
 
@@ -408,10 +405,7 @@ describe('WidgetSrv', () => {
 
 		let promiseSpy = jest.fn()
 		let promiseCatch = jest.fn()
-		_service
-			.lockWidget(1)
-			.then(promiseSpy)
-			.catch(promiseCatch)
+		_service.lockWidget(1).then(promiseSpy).catch(promiseCatch)
 		$scope.$digest() // processes promise
 
 		expect(Materia.Coms.Json.send).toHaveBeenCalledWith('widget_instance_lock', [1])
@@ -426,10 +420,7 @@ describe('WidgetSrv', () => {
 
 		let promiseSpy = jest.fn()
 		let promiseCatch = jest.fn()
-		_service
-			.lockWidget(1)
-			.then(promiseSpy)
-			.catch(promiseCatch)
+		_service.lockWidget(1).then(promiseSpy).catch(promiseCatch)
 		$scope.$digest() // processes promise
 
 		expect(Materia.Coms.Json.send).toHaveBeenCalledWith('widget_instance_lock', [1])

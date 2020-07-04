@@ -1,4 +1,4 @@
-describe('datatable Directive', function() {
+describe('datatable Directive', function () {
 	let $scope
 	let $compile
 	let $timeout

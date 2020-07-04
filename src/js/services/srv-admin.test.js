@@ -21,7 +21,7 @@ describe('AdminSrv', () => {
 		require('../common/materia-namespace')
 		require('./srv-admin')
 
-		inject(function(AdminSrv, _$q_, _$rootScope_) {
+		inject(function (AdminSrv, _$q_, _$rootScope_) {
 			_service = AdminSrv
 			$q = _$q_
 			$rootScope = _$rootScope_

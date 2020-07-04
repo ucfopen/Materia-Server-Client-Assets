@@ -31,7 +31,7 @@ describe('MyWidgetSelectedController', () => {
 
 		$scope = {
 			$watch: jest.fn(),
-			$on: jest.fn()
+			$on: jest.fn(),
 		}
 
 		Namespace('Materia.Coms.Json').send = jest.fn()
@@ -61,7 +61,7 @@ describe('MyWidgetSelectedController', () => {
 		expect($scope.hideModal).toBeDefined()
 
 		this.$parent = {
-			hideModal: jest.fn()
+			hideModal: jest.fn(),
 		}
 
 		// calling hideModal should call the hideModal we provide in this scope
@@ -72,7 +72,7 @@ describe('MyWidgetSelectedController', () => {
 
 	it('does nothing if a widget is not editable', () => {
 		$scope.selected = {
-			editable: false
+			editable: false,
 		}
 
 		$scope.editWidget()
@@ -84,13 +84,13 @@ describe('MyWidgetSelectedController', () => {
 		$scope.selected = {
 			editable: true,
 			widget: {
-				id: 1
-			}
+				id: 1,
+			},
 		}
 
 		Namespace('Materia.Coms.Json').send = jest.fn().mockResolvedValueOnce({
 			is_locked: true,
-			can_publish: true
+			can_publish: true,
 		})
 
 		return $scope.jestTest._editWidgetPromise().then(() => {

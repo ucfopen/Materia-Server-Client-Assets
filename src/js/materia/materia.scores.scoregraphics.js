@@ -122,6 +122,6 @@ Namespace('Materia.Scores').Scoregraphics = (() => {
 	return {
 		drawScoreCircle,
 		drawModifierCircle,
-		drawFinalScoreCircle
+		drawFinalScoreCircle,
 	}
 })()

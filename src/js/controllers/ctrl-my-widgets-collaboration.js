@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('MyWidgetsCollaborationController', function(
+app.controller('MyWidgetsCollaborationController', function (
 	Please,
 	$scope,
 	$timeout,
@@ -17,7 +17,7 @@ app.controller('MyWidgetsCollaborationController', function(
 	const ESC = 27
 	let lastSearch = ''
 
-	const _searchFor = nameOrFragment => {
+	const _searchFor = (nameOrFragment) => {
 		if (nameOrFragment === lastSearch) {
 			return
 		}
@@ -37,7 +37,7 @@ app.controller('MyWidgetsCollaborationController', function(
 		const inputArray = nameOrFragment.split(',')
 		nameOrFragment = inputArray[inputArray.length - 1]
 
-		Materia.Coms.Json.send('users_search', [nameOrFragment]).then(matches => {
+		Materia.Coms.Json.send('users_search', [nameOrFragment]).then((matches) => {
 			if (matches != null ? matches.halt : undefined) {
 				$scope.alert.msg = matches.msg
 				$scope.alert.fatal = true
@@ -72,7 +72,7 @@ app.controller('MyWidgetsCollaborationController', function(
 		return nameA.localeCompare(nameB)
 	}
 
-	const _searchKeyDown = event => {
+	const _searchKeyDown = (event) => {
 		switch (event.which) {
 			case RIGHT:
 				$scope.selectedIndex++
@@ -122,7 +122,7 @@ app.controller('MyWidgetsCollaborationController', function(
 		})
 	}
 
-	const _searchMatchClick = user => {
+	const _searchMatchClick = (user) => {
 		if (!user) {
 			return
 		}
@@ -164,7 +164,7 @@ app.controller('MyWidgetsCollaborationController', function(
 			first: user.first,
 			last: user.last,
 			gravatar: user.gravatar,
-			access: String(ACCESS.VISIBLE)
+			access: String(ACCESS.VISIBLE),
 		})
 
 		$timeout(() => {
@@ -172,7 +172,7 @@ app.controller('MyWidgetsCollaborationController', function(
 		}, 1)
 	}
 
-	const _removeAccess = user => {
+	const _removeAccess = (user) => {
 		user.remove = true
 		$scope.checkForWarning(user)
 	}
@@ -213,7 +213,7 @@ app.controller('MyWidgetsCollaborationController', function(
 			permObj.push({
 				user_id: user.id,
 				expiration: user.expires,
-				perms: access
+				perms: access,
 			})
 		}
 
@@ -221,8 +221,8 @@ app.controller('MyWidgetsCollaborationController', function(
 		Materia.Coms.Json.send('permissions_set', [
 			OBJECT_TYPES.WIDGET_INSTANCE,
 			widget_id,
-			permObj
-		]).then(returnData => {
+			permObj,
+		]).then((returnData) => {
 			if (returnData === true) {
 				$scope.$emit('collaborators.update', '')
 				$scope.show.collaborationModal = false
@@ -246,13 +246,13 @@ app.controller('MyWidgetsCollaborationController', function(
 		})
 	}
 
-	const _checkForWarning = user => {
+	const _checkForWarning = (user) => {
 		if (user.isCurrentUser && user.access <= ACCESS.FULL) {
 			return (user.warning = true)
 		}
 	}
 
-	const _cancelDemote = user => {
+	const _cancelDemote = (user) => {
 		user.warning = false
 		user.remove = false
 		return (user.access = ACCESS.FULL)
@@ -262,11 +262,11 @@ app.controller('MyWidgetsCollaborationController', function(
 	$scope.searchResults = {
 		show: false,
 		searching: false,
-		matches: []
+		matches: [],
 	}
 	$scope.ACCESS = {
 		VISIBLE: ACCESS.VISIBLE,
-		FULL: ACCESS.FULL
+		FULL: ACCESS.FULL,
 	}
 	$scope.accessLevels = {}
 	$scope.accessLevels[ACCESS.VISIBLE] = { value: ACCESS.VISIBLE, text: 'View Scores' }
@@ -282,5 +282,5 @@ app.controller('MyWidgetsCollaborationController', function(
 
 	//  Initialize
 
-	$scope.$watch('inputs.userSearchInput', input => _searchFor(input))
+	$scope.$watch('inputs.userSearchInput', (input) => _searchFor(input))
 })

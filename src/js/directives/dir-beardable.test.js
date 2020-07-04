@@ -1,4 +1,4 @@
-describe('beardable Directive', function() {
+describe('beardable Directive', function () {
 	let $scope
 	let $compile
 	let createElementSpy

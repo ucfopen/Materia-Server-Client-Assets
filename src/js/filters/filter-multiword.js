@@ -21,5 +21,5 @@ app.filter('multiword', () => (items, searchText = '') => {
 	const regexp_and = `(?=.*${splitted.join(')(?=.*')})`
 	const re = new RegExp(regexp_and, 'i')
 
-	return items.filter(item => re.test(item.searchCache))
+	return items.filter((item) => re.test(item.searchCache))
 })

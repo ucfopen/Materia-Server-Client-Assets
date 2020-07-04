@@ -1,6 +1,6 @@
 const app = angular.module('materia')
 // The modal that exports score CSVs on My Widgets
-app.controller('MyWidgetsExportController', function(Please, $scope, SelectedWidgetSrv) {
+app.controller('MyWidgetsExportController', function (Please, $scope, SelectedWidgetSrv) {
 	// Builds the initial version of the popup window
 	const _buildPopup = () => {
 		const wgt = $scope.selected.widget
@@ -31,7 +31,7 @@ app.controller('MyWidgetsExportController', function(Please, $scope, SelectedWid
 
 	// Finds all the scores with a given game instance id
 	const _getScores = () => {
-		Materia.Coms.Json.send('score_summary_get', [$scope.selectedId]).then(summary => {
+		Materia.Coms.Json.send('score_summary_get', [$scope.selectedId]).then((summary) => {
 			// Show export modal in callback because otherwise the text changes once the
 			// callback is done
 			$scope.show.exportModal = true
@@ -43,7 +43,7 @@ app.controller('MyWidgetsExportController', function(Please, $scope, SelectedWid
 				$scope.semesters.push({
 					label,
 					id,
-					checked: false
+					checked: false,
 				})
 			}
 
@@ -58,9 +58,9 @@ app.controller('MyWidgetsExportController', function(Please, $scope, SelectedWid
 	}
 
 	// Updates the header of the popup and the ids for the download button
-	const _updateDownloadInfo = checkedSemesters => {
+	const _updateDownloadInfo = (checkedSemesters) => {
 		// Get the labels from the checked Semesters
-		const labels = checkedSemesters.map(e => e.label)
+		const labels = checkedSemesters.map((e) => e.label)
 		$scope.header = labels.join(', ')
 		$scope.selectedSemesters = labels.join(',').replace(/\s/g, '-')
 		if (checkedSemesters.length >= 3) {
@@ -69,7 +69,7 @@ app.controller('MyWidgetsExportController', function(Please, $scope, SelectedWid
 	}
 
 	// Updates the checkAll option depending on how many semesters are checked
-	const _updateCheckAll = checkedSemesters => {
+	const _updateCheckAll = (checkedSemesters) => {
 		$scope.checkedAll = checkedSemesters.length === $scope.semesters.length
 	}
 
@@ -77,7 +77,7 @@ app.controller('MyWidgetsExportController', function(Please, $scope, SelectedWid
 	// Gets the checked semesters for the download information and checkAll
 	const _onSelectedSemestersChange = () => {
 		// Get the objects that have checked: true
-		const checked = $scope.semesters.filter(e => e.checked)
+		const checked = $scope.semesters.filter((e) => e.checked)
 		_updateDownloadInfo(checked)
 		_updateCheckAll(checked)
 	}
@@ -85,10 +85,10 @@ app.controller('MyWidgetsExportController', function(Please, $scope, SelectedWid
 	// Check or uncheck all semesters
 	const _checkAll = () => {
 		// Grab all of the checked semesters
-		const checked = $scope.semesters.filter(e => e.checked)
+		const checked = $scope.semesters.filter((e) => e.checked)
 		angular.forEach(
 			$scope.semesters,
-			semester =>
+			(semester) =>
 				// If all of the semesters are checked, uncheck them all
 				(semester.checked = checked.length !== $scope.semesters.length)
 		)

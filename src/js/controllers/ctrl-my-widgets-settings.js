@@ -1,6 +1,6 @@
 const app = angular.module('materia')
 // The widget settings/availability modal on My Widgets
-app.controller('MyWidgetsSettingsController', function(
+app.controller('MyWidgetsSettingsController', function (
 	Please,
 	$rootScope,
 	$scope,
@@ -31,7 +31,7 @@ app.controller('MyWidgetsSettingsController', function(
 			},
 			stop(event, ui) {
 				$scope.updateSlider(ui.value)
-			}
+			},
 		})
 
 	// Sets up the date pickers for the availability times
@@ -39,13 +39,13 @@ app.controller('MyWidgetsSettingsController', function(
 		$('.date.from').datepicker({
 			onSelect(dateText) {
 				$scope.availability[0].date = dateText
-			}
+			},
 		})
 
 		$('.date.to').datepicker({
 			onSelect(dateText) {
 				$scope.availability[1].date = dateText
-			}
+			},
 		})
 	}
 
@@ -110,7 +110,7 @@ app.controller('MyWidgetsSettingsController', function(
 		$timeout(() => {
 			$('.selector').slider({
 				value: $scope.attemptsSliderValue * 1000,
-				disabled: $scope.guestAccess
+				disabled: $scope.guestAccess,
 			})
 		})
 	}
@@ -121,7 +121,7 @@ app.controller('MyWidgetsSettingsController', function(
 		const close = $scope.selected.widget.close_at
 		const dates = [
 			open > -1 ? new Date(open * 1000) : null,
-			close > -1 ? new Date(close * 1000) : null
+			close > -1 ? new Date(close * 1000) : null,
 		]
 
 		dates.forEach((date, i) => {
@@ -140,7 +140,7 @@ app.controller('MyWidgetsSettingsController', function(
 	}
 
 	// If the time is blurred without minutes set, add :00 (so 2 becomes 2:00)
-	const _checkTime = index => {
+	const _checkTime = (index) => {
 		if (
 			$scope.availability[index].time.indexOf(':') === -1 &&
 			$scope.availability[index].time !== ''
@@ -154,7 +154,7 @@ app.controller('MyWidgetsSettingsController', function(
 
 	// Moves the slider to the specified value and updates the attempts.
 	// From ng-click on the attempt numbers below the slider.
-	const _changeSlider = number => {
+	const _changeSlider = (number) => {
 		let val
 		if ($scope.guestAccess) {
 			// always should be set to unlimited (-1)
@@ -172,7 +172,7 @@ app.controller('MyWidgetsSettingsController', function(
 
 	// Updates the slider based on which value the slider is close to.
 	// It will "click" into place when in between the steps.
-	const _updateSlider = value => {
+	const _updateSlider = (value) => {
 		let smaller = Math.round(value / 1000)
 		if (smaller > 5) {
 			smaller = 5 * Math.round(smaller / 5)
@@ -196,7 +196,7 @@ app.controller('MyWidgetsSettingsController', function(
 			date: 0,
 			time: 0,
 			missing: 0,
-			invalid: 0
+			invalid: 0,
 		}
 		$scope.error = ''
 		$scope.times = []
@@ -311,9 +311,9 @@ app.controller('MyWidgetsSettingsController', function(
 			close_at: $scope.times[1],
 			attempts,
 			guest_access: $scope.guestAccess,
-			embedded_only: $scope.embeddedOnly
+			embedded_only: $scope.embeddedOnly,
 		})
-			.then(widget => {
+			.then((widget) => {
 				SelectedWidgetSrv.set(widget)
 				$rootScope.$broadcast('widgetList.update')
 				currentlySubmitting = false
@@ -343,13 +343,13 @@ app.controller('MyWidgetsSettingsController', function(
 	$scope.availability.push({
 		header: 'Available',
 		anytimeLabel: 'Now',
-		anytime: true
+		anytime: true,
 	})
 	// To
 	$scope.availability.push({
 		header: 'Closes',
 		anytimeLabel: 'Never',
-		anytime: true
+		anytime: true,
 	})
 
 	$scope.error = ''

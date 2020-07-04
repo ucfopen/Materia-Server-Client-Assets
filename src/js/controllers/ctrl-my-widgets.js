@@ -1,9 +1,9 @@
 const app = angular.module('materia')
 app.requires.push('ngModal')
-app.config(function($locationProvider) {
+app.config(function ($locationProvider) {
 	$locationProvider.hashPrefix('')
 })
-app.controller('MyWidgetsController', function(
+app.controller('MyWidgetsController', function (
 	Please,
 	$rootScope,
 	$scope,
@@ -20,12 +20,12 @@ app.controller('MyWidgetsController', function(
 	let firstRun = true
 	let loadScoresTimout = null
 
-	const _prepareWidgetForDisplay = widget => {
+	const _prepareWidgetForDisplay = (widget) => {
 		widget.icon = Materia.Image.iconUrl(widget.widget.dir, 60)
 		widget.beard = BeardServ.getRandomBeard()
 	}
 
-	const updateWidgets = data => {
+	const updateWidgets = (data) => {
 		Materia.Set.Throbber.stopSpin('.courses')
 
 		// data is empty
@@ -38,7 +38,7 @@ app.controller('MyWidgetsController', function(
 		} else {
 			// we've got data
 			// build attribues for each widget
-			angular.forEach(data, widget => {
+			angular.forEach(data, (widget) => {
 				_prepareWidgetForDisplay(widget)
 			})
 
@@ -69,8 +69,8 @@ app.controller('MyWidgetsController', function(
 		$q.all([
 			UserServ.get(),
 			SelectedWidgetSrv.getUserPermissions(),
-			SelectedWidgetSrv.getDateRanges()
-		]).then(data => {
+			SelectedWidgetSrv.getDateRanges(),
+		]).then((data) => {
 			// don't render an old display if they user has clicked another widget
 			if ($scope.selected.widget.id !== currentId) {
 				return
@@ -84,7 +84,7 @@ app.controller('MyWidgetsController', function(
 
 			// load the scores a little later
 			loadScoresTimout = $timeout(() => {
-				SelectedWidgetSrv.getScoreSummaries().then(scores => {
+				SelectedWidgetSrv.getScoreSummaries().then((scores) => {
 					$scope.selected.scores = scores
 					populateScores()
 				})
@@ -92,7 +92,7 @@ app.controller('MyWidgetsController', function(
 		})
 	}
 
-	const populateAttempts = attemptsAllowed => {
+	const populateAttempts = (attemptsAllowed) => {
 		attemptsAllowed = parseInt(attemptsAllowed, 10)
 		$scope.attemptText = attemptsAllowed > 0 ? attemptsAllowed : 'Unlimited'
 	}
@@ -137,9 +137,7 @@ app.controller('MyWidgetsController', function(
 		// TODO
 		$scope.perms.error = false
 
-		$scope.selected.preview = `preview/${$scope.selected.widget.id}/${
-			$scope.selected.widget.clean_name
-		}`
+		$scope.selected.preview = `preview/${$scope.selected.widget.id}/${$scope.selected.widget.clean_name}`
 		$scope.selected.copy_title = `${$scope.selected.widget.name} copy`
 		$scope.selected.widget.iconbig = Materia.Image.iconUrl($scope.selected.widget.widget.dir, 275)
 	}
@@ -175,9 +173,7 @@ app.controller('MyWidgetsController', function(
 			parseInt($scope.selected.widget.widget.is_editable) === 1
 
 		if ($scope.selected.editable) {
-			$scope.selected.edit = `/widgets/${$scope.selected.widget.widget.dir}create\#${
-				$scope.selected.widget.id
-			}`
+			$scope.selected.edit = `/widgets/${$scope.selected.widget.widget.dir}create\#${$scope.selected.widget.id}`
 		} else {
 			$scope.selected.edit = '#'
 		}
@@ -216,7 +212,7 @@ app.controller('MyWidgetsController', function(
 	const _setScoreViewTab = (index, view) => {
 		// load storage data if needed
 		if (view === $scope.SCORE_TAB_STORAGE) {
-			SelectedWidgetSrv.getStorageData().then(data => {
+			SelectedWidgetSrv.getStorageData().then((data) => {
 				$rootScope.$broadcast('storageData.loaded')
 				Please.$apply()
 			})
@@ -228,7 +224,7 @@ app.controller('MyWidgetsController', function(
 	const _onSelectedWidgetUpdate = () => {
 		$scope.selected.widget = SelectedWidgetSrv.get()
 		const sessionCheck = UserServ.checkValidSession()
-		sessionCheck.then(check => {
+		sessionCheck.then((check) => {
 			if (check) {
 				setSelectedWidget()
 			} else {
@@ -253,10 +249,10 @@ app.controller('MyWidgetsController', function(
 		hasScores: false,
 		preview: '',
 		guestAccess: false,
-		embeddedOnly: false
+		embeddedOnly: false,
 	}
 	$scope.perms = {
-		collaborators: []
+		collaborators: [],
 	}
 	$scope.show = {
 		collaborationModal: false,
@@ -267,14 +263,14 @@ app.controller('MyWidgetsController', function(
 		deleteDialog: false,
 		embedToggle: false,
 		editPublishedWarning: false,
-		restrictedPublishWarning: false
+		restrictedPublishWarning: false,
 	}
 	$scope.SCORE_TAB_GRAPH = 0
 	$scope.SCORE_TAB_INDIVIDUAL = 1
 	$scope.SCORE_TAB_STORAGE = 2
 	$scope.selectedScoreView = [] // array of above (i.e. 0 = graph)
 
-	$scope.setSelected = id => {
+	$scope.setSelected = (id) => {
 		WidgetSrv.updateHashUrl(id)
 	}
 
@@ -282,10 +278,10 @@ app.controller('MyWidgetsController', function(
 
 	$scope.$on('selectedWidget.update', _onSelectedWidgetUpdate)
 	$scope.$on('collaborators.update', _countCollaborators)
-	$scope.$on('widgetList.update', evt => {
+	$scope.$on('widgetList.update', (evt) => {
 		updateWidgets(WidgetSrv.getWidgets())
 	})
-	$scope.$on('user.update', evt => {
+	$scope.$on('user.update', (evt) => {
 		$scope.user = UserServ.get()
 	})
 

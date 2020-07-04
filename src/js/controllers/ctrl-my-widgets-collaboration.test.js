@@ -20,13 +20,13 @@ describe('MyWidgetsCollaborationController', () => {
 		require('./ctrl-alert')
 		require('./ctrl-my-widgets-collaboration')
 
-		inject(_$controller_ => {
+		inject((_$controller_) => {
 			$controller = _$controller_
 		})
 
 		$scope = {
 			$watch: jest.fn(),
-			$on: jest.fn()
+			$on: jest.fn(),
 		}
 	})
 

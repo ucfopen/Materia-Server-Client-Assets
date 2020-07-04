@@ -5,7 +5,7 @@ Namespace('Materia.Set').Throbber = (() => {
 		}
 	}
 
-	const stopSpin = element => {
+	const stopSpin = (element) => {
 		if (typeof $ !== 'undefined' && $ !== null && $(element).spin != null) {
 			$(element).spin(false)
 		}
@@ -13,6 +13,6 @@ Namespace('Materia.Set').Throbber = (() => {
 
 	return {
 		startSpin,
-		stopSpin
+		stopSpin,
 	}
 })()

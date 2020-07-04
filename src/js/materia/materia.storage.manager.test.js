@@ -53,7 +53,7 @@ describe('Materia.Storage.Manager', () => {
 		let table = {
 			init: jest.fn(),
 			getId: () => 'table_name',
-			insert: jest.fn().mockReturnValue('res')
+			insert: jest.fn().mockReturnValue('res'),
 		}
 		mockTable.mockReturnValueOnce(table)
 		Storage.addTable('table_name', 'col1', 'col2')

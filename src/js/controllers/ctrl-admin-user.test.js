@@ -1,4 +1,4 @@
-describe('AdminUserController', function() {
+describe('AdminUserController', function () {
 	var AdminSrv
 	var _UserServ
 	var sendMock
@@ -20,7 +20,7 @@ describe('AdminUserController', function() {
 
 	beforeEach(() => {
 		_UserServ = {
-			getAvatar: jest.fn(() => 'avatar')
+			getAvatar: jest.fn(() => 'avatar'),
 		}
 		mockPlease = { $apply: jest.fn() }
 		let app = angular.module('materia')
@@ -31,8 +31,8 @@ describe('AdminUserController', function() {
 		$window = {
 			addEventListener: jest.fn(),
 			location: {
-				reload: jest.fn()
-			}
+				reload: jest.fn(),
+			},
 		}
 		app.factory('$window', () => $window)
 
@@ -64,7 +64,7 @@ describe('AdminUserController', function() {
 			none: true,
 			show: false,
 			searching: false,
-			matches: []
+			matches: [],
 		})
 		expect($scope.selectedUser).toBeNull()
 		expect($scope.additionalData).toBeNull()
@@ -97,7 +97,7 @@ describe('AdminUserController', function() {
 	it('searchMatchClick looks up a user and updates the scope', () => {
 		let lookupUser = {
 			instances_available: [{ icon: 3, widget: { dir: '999' } }],
-			instances_played: [{ id: 9, name: 'test', widget: { dir: 'somedir' } }]
+			instances_played: [{ id: 9, name: 'test', widget: { dir: 'somedir' } }],
 		}
 		let instances_played = [
 			{
@@ -109,12 +109,12 @@ describe('AdminUserController', function() {
 						id: 9,
 						name: 'test',
 						widget: {
-							dir: 'somedir'
-						}
-					}
+							dir: 'somedir',
+						},
+					},
 				],
-				widget: { dir: 'somedir' }
-			}
+				widget: { dir: 'somedir' },
+			},
 		]
 
 		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
@@ -138,8 +138,8 @@ describe('AdminUserController', function() {
 			is_student: 'false',
 			profile_fields: {
 				notify: 'notify',
-				useGravatar: 'true'
-			}
+				useGravatar: 'true',
+			},
 		}
 
 		mockJsonPromiseOnce(postMock, { id: 1 })
@@ -150,7 +150,7 @@ describe('AdminUserController', function() {
 			id: 1,
 			is_student: false,
 			notify: 'notify',
-			useGravatar: true
+			useGravatar: true,
 		})
 		expect($scope.errorMessage).toMatchObject([1])
 		expect(mockPlease.$apply).toHaveBeenCalledTimes(1)
@@ -166,8 +166,8 @@ describe('AdminUserController', function() {
 			is_student: false,
 			profile_fields: {
 				notify: 'notify',
-				useGravatar: 'true'
-			}
+				useGravatar: 'true',
+			},
 		}
 
 		mockJsonPromiseOnce(postMock, { id: 'this was an error' })
@@ -249,16 +249,19 @@ describe('AdminUserController', function() {
 			{
 				first: 'a',
 				gravatar: 'avatar',
-				last: 'a'
+				last: 'a',
 			},
 			{
 				first: 'z',
 				gravatar: 'avatar',
-				last: 'z'
-			}
+				last: 'z',
+			},
 		]
 
-		mockJsonPromiseOnce(getMock, [{ first: 'z', last: 'z' }, { first: 'a', last: 'a' }])
+		mockJsonPromiseOnce(getMock, [
+			{ first: 'z', last: 'z' },
+			{ first: 'a', last: 'a' },
+		])
 		$scope.jestTest._searchFor('one')
 		$rootScope.$digest() // processes promise
 		expect($scope.searchResults.none).toBe(false)

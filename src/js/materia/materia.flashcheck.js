@@ -2,7 +2,7 @@
 Namespace('Materia').Flashcheck = (() => {
 	let _flashVersionObj = null
 	// Returns the flash version, false if not installed.
-	const getFlashVersion = callback => {
+	const getFlashVersion = (callback) => {
 		let return_val
 		_flashVersionObj = swfobject.getFlashPlayerVersion()
 

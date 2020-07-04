@@ -5,7 +5,7 @@ describe('UserServ', () => {
 	var getCurrentUserMock
 	var $q
 
-	let mockSendPromiseOnce = result => {
+	let mockSendPromiseOnce = (result) => {
 		sendMock.mockImplementationOnce((n, arg, cb) => {
 			const deferred = $q.defer()
 			deferred.resolve(result)
@@ -18,7 +18,7 @@ describe('UserServ', () => {
 		require('../common/materia-constants')
 		require('./srv-user')
 
-		inject(function(_$rootScope_, UserServ, _$q_) {
+		inject(function (_$rootScope_, UserServ, _$q_) {
 			$scope = _$rootScope_
 			_service = UserServ
 			$q = _$q_
@@ -44,12 +44,12 @@ describe('UserServ', () => {
 			loggedIn: false,
 			name: '',
 			notify: false,
-			role: 'Student'
+			role: 'Student',
 		})
 	})
 
 	it('getCurrentUser returns a user from the dom', () => {
-		jest.spyOn(global.document, 'getElementById').mockImplementationOnce(arg => {
+		jest.spyOn(global.document, 'getElementById').mockImplementationOnce((arg) => {
 			return {
 				getAttribute: jest
 					.fn()
@@ -57,7 +57,7 @@ describe('UserServ', () => {
 					.mockImplementationOnce(() => 'avatar')
 					.mockImplementationOnce(() => 'true')
 					.mockImplementationOnce(() => 'role')
-					.mockImplementationOnce(() => 'notify')
+					.mockImplementationOnce(() => 'notify'),
 			}
 		})
 		expect(_service.getCurrentUser('dom')).toMatchObject({
@@ -65,13 +65,13 @@ describe('UserServ', () => {
 			loggedIn: true,
 			name: 'name',
 			notify: false,
-			role: 'role'
+			role: 'role',
 		})
 		global.document.getElementById.mockRestore()
 	})
 
 	it('getCurrentUser returns a user from the dom with no argument', () => {
-		jest.spyOn(global.document, 'getElementById').mockImplementationOnce(arg => {
+		jest.spyOn(global.document, 'getElementById').mockImplementationOnce((arg) => {
 			return { getAttribute: jest.fn(() => '') }
 		})
 		expect(_service.getCurrentUser()).toMatchObject({
@@ -79,13 +79,13 @@ describe('UserServ', () => {
 			loggedIn: false,
 			name: '',
 			notify: false,
-			role: ''
+			role: '',
 		})
 		global.document.getElementById.mockRestore()
 	})
 
 	it('getCurrentUser caches the current user', () => {
-		jest.spyOn(global.document, 'getElementById').mockImplementationOnce(arg => {
+		jest.spyOn(global.document, 'getElementById').mockImplementationOnce((arg) => {
 			return { getAttribute: jest.fn(() => '') }
 		})
 		expect(_service.getCurrentUser()).toMatchObject({
@@ -93,7 +93,7 @@ describe('UserServ', () => {
 			loggedIn: false,
 			name: '',
 			notify: false,
-			role: ''
+			role: '',
 		})
 		expect(global.document.getElementById).toHaveBeenCalledTimes(1)
 
@@ -102,7 +102,7 @@ describe('UserServ', () => {
 			loggedIn: false,
 			name: '',
 			notify: false,
-			role: ''
+			role: '',
 		})
 		expect(global.document.getElementById).toHaveBeenCalledTimes(1)
 
@@ -140,7 +140,7 @@ describe('UserServ', () => {
 			loggedIn: true,
 			name: 'name',
 			notify: false,
-			role: 'role'
+			role: 'role',
 		})
 		expect(_service.updateSettings('name', 'newname')).toBe('newname')
 		expect(_service.getCurrentUser()).toMatchObject({
@@ -148,7 +148,7 @@ describe('UserServ', () => {
 			loggedIn: true,
 			name: 'newname',
 			notify: false,
-			role: 'role'
+			role: 'role',
 		})
 		expect(_service.updateSettings('avatar', 'newavatar')).toBe('newavatar')
 		expect(_service.getCurrentUser()).toMatchObject({
@@ -156,7 +156,7 @@ describe('UserServ', () => {
 			loggedIn: true,
 			name: 'newname',
 			notify: false,
-			role: 'role'
+			role: 'role',
 		})
 		expect(_service.updateSettings('loggedIn', 'weirdvalue')).toBe('weirdvalue')
 		expect(_service.getCurrentUser()).toMatchObject({
@@ -164,12 +164,12 @@ describe('UserServ', () => {
 			loggedIn: 'weirdvalue',
 			name: 'newname',
 			notify: false,
-			role: 'role'
+			role: 'role',
 		})
 	})
 
 	it('get returns a promise', () => {
-		getCurrentUserMock.mockImplementationOnce(cb => {
+		getCurrentUserMock.mockImplementationOnce((cb) => {
 			cb({ avatar: '', loggedIn: false, name: '', notify: false, role: '' })
 		})
 		// when there's no cache
@@ -180,7 +180,7 @@ describe('UserServ', () => {
 
 	it('get resolves after getting the current user', () => {
 		let user = { avatar: '', loggedIn: false, name: '', notify: false, role: '' }
-		getCurrentUserMock.mockImplementationOnce(cb => {
+		getCurrentUserMock.mockImplementationOnce((cb) => {
 			cb(user)
 		})
 

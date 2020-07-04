@@ -5,12 +5,12 @@ Namespace('Materia.Coms').Json = (() => {
 	// need to use the annotated angular method because webpack doesn't protect it for us
 	angular.injector(['ng']).invoke([
 		'$q',
-		function($q) {
+		function ($q) {
 			_$q = $q
-		}
+		},
 	])
 
-	const _showError = data => {
+	const _showError = (data) => {
 		if (data.title === 'Invalid Login') {
 			// redirect to login page
 			window.location = BASE_URL + 'login'
@@ -40,17 +40,17 @@ Namespace('Materia.Coms').Json = (() => {
 			cache: 'no-cache',
 			headers: {
 				accept: 'application/json;',
-				'content-type': 'application/json; charset=utf-8'
-			}
+				'content-type': 'application/json; charset=utf-8',
+			},
 		}
 
 		fetch(url, options)
-			.then(res => res.json())
-			.then(json => {
+			.then((res) => res.json())
+			.then((json) => {
 				_resposeErrorChecker(json, false)
 				deferred.resolve(json)
 			})
-			.catch(error => {
+			.catch((error) => {
 				deferred.reject()
 				_showError('Error Sending request to ' + url)
 			})
@@ -58,7 +58,7 @@ Namespace('Materia.Coms').Json = (() => {
 		return deferred.promise
 	}
 
-	const setGateway = newGateway => {
+	const setGateway = (newGateway) => {
 		_gatewayURL = newGateway
 	}
 
@@ -80,18 +80,18 @@ Namespace('Materia.Coms').Json = (() => {
 			body: `data=${encodeURIComponent(JSON.stringify(args))}`,
 			headers: {
 				accept: 'application/json, text/javascript, */*; q=0.01',
-				'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
-			}
+				'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+			},
 		}
 		// returns deferred
 		fetch(_gatewayURL + method + '/', options)
-			.then(res => res.text())
-			.then(body => {
+			.then((res) => res.text())
+			.then((body) => {
 				if (body) body = JSON.parse(body)
 				_resposeErrorChecker(body, false)
 				deferred.resolve(body)
 			})
-			.catch(error => {
+			.catch((error) => {
 				deferred.reject(error)
 			})
 
@@ -99,12 +99,12 @@ Namespace('Materia.Coms').Json = (() => {
 	}
 
 	// newer XMLHttpRequest json api
-	const get = url => {
+	const get = (url) => {
 		return _sendRequest('GET', url)
 	}
 
 	// newer XMLHttpRequest json api
-	const post = function(url, dataObject) {
+	const post = function (url, dataObject) {
 		if (dataObject == null) {
 			dataObject = {}
 		}
@@ -112,7 +112,7 @@ Namespace('Materia.Coms').Json = (() => {
 	}
 
 	// return true if jsonResult is an error object
-	const isError = jsonResult => jsonResult != null && typeof jsonResult.errorID !== 'undefined'
+	const isError = (jsonResult) => jsonResult != null && typeof jsonResult.errorID !== 'undefined'
 
 	// public methods
 	return {
@@ -120,6 +120,6 @@ Namespace('Materia.Coms').Json = (() => {
 		isError,
 		post,
 		get,
-		setGateway
+		setGateway,
 	}
 })()

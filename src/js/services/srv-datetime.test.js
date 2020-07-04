@@ -7,7 +7,7 @@ describe('DateTimeServ', () => {
 	beforeEach(() => {
 		require('../common/materia-namespace')
 		require('./srv-datetime')
-		inject(function(DateTimeServ) {
+		inject(function (DateTimeServ) {
 			_service = DateTimeServ
 		})
 	})

@@ -1,6 +1,6 @@
 const app = angular.module('materia')
 
-app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
+app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 	const SORTING_NONE = false
 	const SORTING_ASC = 'asc'
 	const SORTING_DESC = 'desc'
@@ -13,20 +13,20 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 			sortMethod: sortString.bind(null, 'name'), // bind the field name to the sort method
 			name: 'Title',
 			field: 'name',
-			status: SORTING_ASC
+			status: SORTING_ASC,
 		},
 		{
 			sortMethod: sortString.bind(null, 'type'), // bind the field name to the sort method
 			name: 'Type',
 			field: 'type',
-			status: SORTING_NONE
+			status: SORTING_NONE,
 		},
 		{
 			sortMethod: sortNumber.bind(null, 'timestamp'), // bind the field name to the sort method
 			name: 'Date',
 			field: 'timestamp',
-			status: SORTING_NONE
-		}
+			status: SORTING_NONE,
+		},
 	]
 
 	// generic media type definitions and substitutions for compatibility
@@ -40,7 +40,7 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 		jpeg: ['image/jpeg'],
 		gif: ['image/gif'],
 		png: ['image/png'],
-		mp3: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3']
+		mp3: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
 	}
 
 	const REQUESTED_FILE_TYPES = $window.location.hash.substring(1).split(',')
@@ -51,7 +51,7 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 	// all files before filtering
 	let _allFiles = []
 
-	const onMediaSelect = media => {
+	const onMediaSelect = (media) => {
 		$window.parent.Materia.Creator.onMediaImportComplete([media])
 	}
 
@@ -59,13 +59,13 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 		$window.parent.Materia.Creator.onMediaImportComplete(null)
 	}
 
-	const toggleSortOrder = sortOption => {
+	const toggleSortOrder = (sortOption) => {
 		if (!sortOption) return
 
 		const currentStatus = sortOption.status
 
 		// reset all other sorting statusus
-		$scope.sortOptions.forEach(option => {
+		$scope.sortOptions.forEach((option) => {
 			option.status = SORTING_NONE
 		})
 
@@ -104,7 +104,7 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 		const search = $scope.filter.toLowerCase().trim()
 		if (!search) return
 
-		const filtered = $scope.displayFiles.filter(file => {
+		const filtered = $scope.displayFiles.filter((file) => {
 			//combine file name and type for simplified filtering
 			const simplified = file.name.replace(/\s/g, '').toLowerCase() + file.type + file.created
 			return simplified.includes(search)
@@ -114,24 +114,24 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 	}
 
 	// just picks the first selected image
-	const uploadFile = e => {
+	const uploadFile = (e) => {
 		const file =
 			(e.target.files && e.target.files[0]) || (e.dataTransfer.files && e.dataTransfer.files[0])
 		if (file) _getFileData(file, _upload)
 	}
 
-	const _loadAllMedia = file_id => {
+	const _loadAllMedia = (file_id) => {
 		// load and/or select file for labelling
-		COMS.send('assets_get', []).then(result => {
+		COMS.send('assets_get', []).then((result) => {
 			if (!result || result.msg || result.length == 0) return
 
 			// convert REQUESTED_FILE_TYPES into Allowed Mime Types
 			let allowedFileExtensions = []
-			REQUESTED_FILE_TYPES.forEach(type => {
+			REQUESTED_FILE_TYPES.forEach((type) => {
 				if (MIME_MAP[type]) {
 					//split the file type out of the full mime type for each allowed mime type
 					let extractedTypes = []
-					MIME_MAP[type].forEach(subtype => {
+					MIME_MAP[type].forEach((subtype) => {
 						extractedTypes = [...extractedTypes, subtype.split('/')[1]]
 					})
 
@@ -140,7 +140,7 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 			})
 
 			const allowedResult = []
-			result.forEach(res => {
+			result.forEach((res) => {
 				if (
 					res.remote_url != null &&
 					res.status !== 'upload_success' &&
@@ -164,7 +164,7 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 					const dateString = [
 						creationDate.getMonth(),
 						creationDate.getDate(),
-						creationDate.getFullYear()
+						creationDate.getFullYear(),
 					].join('/')
 
 					allowedResult.push({
@@ -173,7 +173,7 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 						name: fileName,
 						created: dateString,
 						timestamp: res.created_at,
-						thumb: _thumbnailUrl(res.id, res.type)
+						thumb: _thumbnailUrl(res.id, res.type),
 					})
 				}
 			})
@@ -209,7 +209,7 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 			return
 		}
 
-		dataReader.onload = event => {
+		dataReader.onload = (event) => {
 			const src = event.target.result
 			const mime = _getMimeType(src)
 			if (mime == null) return
@@ -219,17 +219,17 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 				mime,
 				ext: file.name.split('.').pop(),
 				size: file.size,
-				src
+				src,
 			})
 		}
 
 		dataReader.readAsDataURL(file)
 	}
 
-	const _getMimeType = dataUrl => {
+	const _getMimeType = (dataUrl) => {
 		let allowedFileExtensions = []
 
-		REQUESTED_FILE_TYPES.forEach(type => {
+		REQUESTED_FILE_TYPES.forEach((type) => {
 			if (MIME_MAP[type]) {
 				allowedFileExtensions = [...allowedFileExtensions, ...MIME_MAP[type]]
 			}
@@ -266,7 +266,7 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 	}
 
 	// upload to either local server or s3
-	const _upload = fileData => {
+	const _upload = (fileData) => {
 		const fd = new FormData()
 		fd.append('name', fileData.name)
 		fd.append('Content-Type', fileData.mime)
@@ -274,7 +274,7 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 
 		const request = new XMLHttpRequest()
 
-		request.onload = oEvent => {
+		request.onload = (oEvent) => {
 			const res = JSON.parse(request.response) //parse response string
 			if (res.error) {
 				alert(`Error code ${res.error.code}: ${res.error.message}`)
@@ -291,7 +291,7 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 	}
 
 	// creator can send a message with file data
-	const _onPostMessage = event => {
+	const _onPostMessage = (event) => {
 		// does the event look like an image message?
 		let json = JSON.parse(event.data)
 		if (!json.name || !json.ext || !json.src) return
@@ -312,7 +312,7 @@ app.controller('MediaImportCtrl', function($scope, $window, $timeout) {
 		let msg = {
 			type: 'readyForDirectUpload',
 			source: 'media-importer',
-			data: ''
+			data: '',
 		}
 		$window.parent.postMessage(JSON.stringify(msg), '*')
 	}

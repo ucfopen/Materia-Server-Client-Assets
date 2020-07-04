@@ -5,14 +5,14 @@ app.constant('PLAYER', {
 	RETRY_LIMIT: 15, // When the logs fail to send, retry how many times before switching to slow mode?
 	RETRY_FAST: 1000,
 	RETRY_SLOW: 10000,
-	EMBED_TARGET: 'container'
+	EMBED_TARGET: 'container',
 })
 
 app.constant('OBJECT_TYPES', {
 	QUESTION: 1,
 	ASSET: 2,
 	WIDGET: 3,
-	WIDGET_INSTANCE: 4
+	WIDGET_INSTANCE: 4,
 })
 
 app.constant('ACCESS', {
@@ -24,5 +24,5 @@ app.constant('ACCESS', {
 	COPY: 25,
 	FULL: 30,
 	SHARE: 35,
-	SU: 90
+	SU: 90,
 })
