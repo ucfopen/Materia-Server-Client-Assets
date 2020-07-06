@@ -107,7 +107,10 @@ app.controller('WidgetPlayerCtrl', function (
 			default:
 				endState = 'pending'
 				// kill the heartbeat
-				$interval.cancel(heartbeatInterval)
+				if (heartbeatInterval !== -1) {
+					$interval.cancel(heartbeatInterval)
+					heartbeatInterval = -1
+				}
 				// required to end a play
 				_addLog({ type: 2, item_id: 0, text: '', value: null })
 				// send anything remaining
