@@ -3,16 +3,15 @@
 		[
 			"@babel/preset-env",
 			{
-				debug: true,
-				targets: {
-					browsers: [
-						">0.25%",
-						"not ie 10",
-						"not op_mini all"
-					]
-				}
+				useBuiltIns: "usage",
+				corejs: 3,
+				// debug: true, // outputs polyfills and browserlist
+				// targets: 'defaults' // allows .browserslistrc to work
 			}
 		],
 		"jest"
+	],
+	"plugins": [
+		'babel-plugin-angularjs-annotate'
 	]
 }

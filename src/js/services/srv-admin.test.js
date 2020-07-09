@@ -1,4 +1,4 @@
-describe('adminSrv', () => {
+describe('AdminSrv', () => {
 	var $rootScope
 	var _service
 	var postMock
@@ -18,11 +18,11 @@ describe('adminSrv', () => {
 		mockPlease = { $apply: jest.fn() }
 		let app = angular.module('materia')
 		app.factory('Please', () => mockPlease)
-		require('../materia-namespace')
+		require('../common/materia-namespace')
 		require('./srv-admin')
 
-		inject(function(adminSrv, _$q_, _$rootScope_) {
-			_service = adminSrv
+		inject(function (AdminSrv, _$q_, _$rootScope_) {
+			_service = AdminSrv
 			$q = _$q_
 			$rootScope = _$rootScope_
 		})

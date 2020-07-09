@@ -1,4 +1,4 @@
-describe('widgetCatalogController', () => {
+describe('WidgetCatalogCtrl', () => {
 	let $controller
 	let $q
 	let $scope
@@ -19,9 +19,9 @@ describe('widgetCatalogController', () => {
 			demo: '1',
 			excerpt: 'more information about the widget',
 			features: ['feature1', 'feature3'],
-			supported_data: ['supported1', 'supported_three', 'SuPpOrTeD FoUr!!']
+			supported_data: ['supported1', 'supported_three', 'SuPpOrTeD FoUr!!'],
 		},
-		name: 'widget1'
+		name: 'widget1',
 	}
 	const widget2 = {
 		id: 2,
@@ -32,9 +32,9 @@ describe('widgetCatalogController', () => {
 			demo: '2',
 			excerpt: 'more information about the widget',
 			features: ['feature2', 'feature3'],
-			supported_data: ['supported1', 'supported2']
+			supported_data: ['supported1', 'supported2'],
 		},
-		name: 'widget2'
+		name: 'widget2',
 	}
 	const widget3 = {
 		id: 3,
@@ -45,9 +45,9 @@ describe('widgetCatalogController', () => {
 			demo: '3',
 			excerpt: 'more information about the widget',
 			features: [],
-			supported_data: []
+			supported_data: [],
 		},
-		name: 'widget3'
+		name: 'widget3',
 	}
 
 	const widgetWithoutFeatures = {
@@ -57,10 +57,10 @@ describe('widgetCatalogController', () => {
 		meta_data: {
 			about: 'information about the widget',
 			demo: '4',
-			excerpt: 'more information about the widget'
+			excerpt: 'more information about the widget',
 			// features and supported_data are null!!
 		},
-		name: 'widgetWithoutFeatures'
+		name: 'widgetWithoutFeatures',
 	}
 
 	beforeEach(() => {
@@ -69,17 +69,17 @@ describe('widgetCatalogController', () => {
 		// why? because it's an internal private method and getting a handle
 		// to wait for it to finish is difficult
 		let getWidgetsByTypeImmediately = jest.fn().mockReturnValue({
-			then: cb => {
+			then: (cb) => {
 				cb(widgetsToReturn)
-			}
+			},
 		})
 		// mock all the required services
 		mockWidgetSrv = { getWidgetsByType: getWidgetsByTypeImmediately }
 		let app = angular.module('materia')
 		app.factory('Please', () => ({ $apply: jest.fn() }))
-		app.factory('selectedWidgetSrv', () => ({}))
-		app.factory('dateTimeServ', () => ({}))
-		app.factory('widgetSrv', () => mockWidgetSrv)
+		app.factory('SelectedWidgetSrv', () => ({}))
+		app.factory('DateTimeServ', () => ({}))
+		app.factory('WidgetSrv', () => mockWidgetSrv)
 
 		// mock Materia.Image.iconUrl
 		mockIconUrl = jest.fn().mockReturnValue('widget.jpg')
@@ -87,11 +87,11 @@ describe('widgetCatalogController', () => {
 
 		// mock window.location
 		let mockWindow = {}
-		let mockLocationSet = jest.fn(l => (location = l))
+		let mockLocationSet = jest.fn((l) => (location = l))
 		let mockLocationGet = jest.fn(() => location)
 		Object.defineProperty(mockWindow, 'location', {
 			get: mockLocationGet,
-			set: mockLocationSet
+			set: mockLocationSet,
 		})
 		app.factory('$window', () => mockWindow)
 
@@ -101,7 +101,7 @@ describe('widgetCatalogController', () => {
 		// build a mock $scope
 		$scope = {
 			$watch: jest.fn(),
-			$on: jest.fn()
+			$on: jest.fn(),
 		}
 
 		mockLocationSearch = { search: '' }
@@ -120,25 +120,25 @@ describe('widgetCatalogController', () => {
 					return mockLocationSearch
 				}
 				return {
-					replace: jest.fn()
+					replace: jest.fn(),
 				}
 			})
 		})
 	})
 
 	it('defines expected scope vars', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		expect(Object.keys($scope)).toMatchSnapshot()
 	})
 
 	it('loads widgets from the widget service', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		expect(mockWidgetSrv.getWidgetsByType).toHaveBeenCalledTimes(1)
 		expect(mockWidgetSrv.getWidgetsByType).toHaveBeenCalledWith('all')
 	})
 
 	it('uses Materia.Image.iconUrl to get each widget icon', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		expect(mockIconUrl).toHaveBeenCalledTimes(4)
 		expect(mockIconUrl).toHaveBeenCalledWith('mockDir1', 275)
 		expect(mockIconUrl).toHaveBeenCalledWith('mockDir2', 275)
@@ -148,7 +148,7 @@ describe('widgetCatalogController', () => {
 
 	it('handles no widgets', () => {
 		widgetsToReturn = []
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 
 		expect($scope.widgets).toHaveLength(0)
 		expect($scope.featuredWidgets).toHaveLength(0)
@@ -159,7 +159,7 @@ describe('widgetCatalogController', () => {
 	})
 
 	it('initializes with no filters and search on initial load', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 
 		expect(Object.keys($scope)).toMatchSnapshot()
 		expect($scope.search).toBe('')
@@ -185,9 +185,9 @@ describe('widgetCatalogController', () => {
 			feature1: true,
 			search: 'widget',
 			invalid_feature: true,
-			supported_three: true
+			supported_three: true,
 		}
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 
 		expect(Object.keys($scope)).toMatchSnapshot()
 		expect($scope.search).toBe('widget')
@@ -209,13 +209,13 @@ describe('widgetCatalogController', () => {
 	})
 
 	it('properly generates clean filter names', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		const mapCleanToFilter = $scope.jestTest.getLocalVar('mapCleanToFilter')
 		expect(Object.keys(mapCleanToFilter)).toMatchSnapshot()
 	})
 
 	it('toggling on a filter updates scope', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		expect($scope.isFiltered).toBe(false)
 		expect($scope.activeFilters).toHaveLength(0)
 		expect($scope.filters['feature1'].isActive).toBe(false)
@@ -233,7 +233,7 @@ describe('widgetCatalogController', () => {
 	})
 
 	it('will filter widgets based on a search query', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		const _onSearch = $scope.jestTest.getLocalVar('_onSearch')
 
 		expect($scope.count).toBe(4)
@@ -256,7 +256,7 @@ describe('widgetCatalogController', () => {
 	})
 
 	it('can toggle whether the filters are showing', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		$scope.showFilters()
 		expect($scope.isShowingFilters).toBe(true)
 		$scope.clearFilters()
@@ -264,7 +264,7 @@ describe('widgetCatalogController', () => {
 	})
 
 	it('can clear filters and search', () => {
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		const _onSearch = $scope.jestTest.getLocalVar('_onSearch')
 		$scope.search = 'widget1'
 		_onSearch() // enable search
@@ -285,14 +285,14 @@ describe('widgetCatalogController', () => {
 
 	it('handles no widgets having features', () => {
 		widgetsToReturn = [widgetWithoutFeatures]
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		// $scope.toggleFilter('feature1') // toggle on
 		expect($scope.count).toEqual(1)
 	})
 
 	it('omits widgets with null features when a feature filter is enabled', () => {
 		widgetsToReturn = [widget1, widgetWithoutFeatures]
-		$controller('widgetCatalogCtrl', { $scope })
+		$controller('WidgetCatalogCtrl', { $scope })
 		expect($scope.count).toEqual(2)
 		$scope.toggleFilter('feature1') // toggle on
 		expect($scope.count).toEqual(1)

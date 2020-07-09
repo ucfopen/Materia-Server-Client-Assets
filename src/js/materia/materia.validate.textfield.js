@@ -25,12 +25,12 @@ Namespace('Materia.Validate').Textfield = (() => {
 		return false
 	}
 
-	const numericOnly = event => resctrict('numeric', event)
+	const numericOnly = (event) => resctrict('numeric', event)
 
-	const timeOnly = event => resctrict('time', event)
+	const timeOnly = (event) => resctrict('time', event)
 
 	return {
 		numericOnly,
-		timeOnly
+		timeOnly,
 	}
 })()

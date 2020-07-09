@@ -1,9 +1,9 @@
-describe('scoreTable Directive', function() {
+describe('scoreTable Directive', function () {
 	let $scope
 	let $compile
 	let $window
 	let $q
-	let selectedWidgetSrv
+	let SelectedWidgetSrv
 	let data = [
 		{
 			id: 'one',
@@ -15,7 +15,7 @@ describe('scoreTable Directive', function() {
 			user_id: '2',
 			first: 'Ian',
 			last: 'Turgeon',
-			username: '~author'
+			username: '~author',
 		},
 		{
 			id: 'two',
@@ -27,17 +27,17 @@ describe('scoreTable Directive', function() {
 			user_id: '5',
 			first: 'Corey',
 			last: 'Peterson',
-			username: '~author2'
-		}
+			username: '~author2',
+		},
 	]
 
 	beforeEach(() => {
-		require('../materia-constants')
+		require('../common/materia-constants')
 		require('../services/srv-selectedwidget')
 		require('./dir-scoretable')
 
-		inject(function(_$compile_, _$rootScope_, _selectedWidgetSrv_, _$q_, _$window_) {
-			selectedWidgetSrv = _selectedWidgetSrv_
+		inject(function (_$compile_, _$rootScope_, _SelectedWidgetSrv_, _$q_, _$window_) {
+			SelectedWidgetSrv = _SelectedWidgetSrv_
 			$compile = _$compile_
 			$scope = _$rootScope_.$new()
 			$q = _$q_
@@ -45,9 +45,9 @@ describe('scoreTable Directive', function() {
 		})
 
 		let deferred = $q.defer()
-		jest.spyOn(selectedWidgetSrv, 'getSelectedId').mockImplementation(() => 6)
+		jest.spyOn(SelectedWidgetSrv, 'getSelectedId').mockImplementation(() => 6)
 		jest
-			.spyOn(selectedWidgetSrv, 'getPlayLogsForSemester')
+			.spyOn(SelectedWidgetSrv, 'getPlayLogsForSemester')
 			.mockImplementation(() => deferred.promise)
 
 		expect($scope.selectedUser).not.toBeDefined()
@@ -63,7 +63,7 @@ describe('scoreTable Directive', function() {
 		$scope.$apply()
 	})
 
-	it('is initialized on the element', function() {
+	it('is initialized on the element', function () {
 		expect($scope.selectedUser).toBeNull()
 		expect($scope.users).toMatchSnapshot()
 		expect($scope.setSelectedUser).toBeDefined()
@@ -71,20 +71,20 @@ describe('scoreTable Directive', function() {
 		expect($scope.searchStudentActivity).toBeDefined()
 	})
 
-	it('setSelectedUser sets selectedUser object as expected', function() {
+	it('setSelectedUser sets selectedUser object as expected', function () {
 		expect($scope.selectedUser).toBeNull()
 		$scope.setSelectedUser(5)
 		expect($scope.selectedUser).toMatchSnapshot()
 	})
 
-	it('showScorePage opens the expected url', function() {
+	it('showScorePage opens the expected url', function () {
 		$window.open = jest.fn()
 		global.BASE_URL = 'some_url'
 		$scope.showScorePage('two')
 		expect($window.open).toHaveBeenLastCalledWith('some_urlscores/6/#single-two')
 	})
 
-	it('searchStudentActivity locates users', function() {
+	it('searchStudentActivity locates users', function () {
 		$scope.searchStudentActivity('Ian')
 		expect($scope.users).toMatchSnapshot()
 
@@ -100,7 +100,7 @@ describe('scoreTable Directive', function() {
 		expect($scope.users).toMatchSnapshot()
 	})
 
-	it('searchStudentActivity resets selecteUser', function() {
+	it('searchStudentActivity resets selecteUser', function () {
 		$scope.setSelectedUser(5)
 		expect($scope.selectedUser).toMatchSnapshot()
 		$scope.searchStudentActivity('Ian')

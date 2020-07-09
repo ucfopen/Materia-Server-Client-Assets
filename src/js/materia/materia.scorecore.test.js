@@ -7,7 +7,7 @@ describe('Materia.ScoreCore', () => {
 	beforeEach(() => {
 		let app = angular.module('materia')
 		global.API_LINK = 'my_api_url'
-		require('../materia-namespace')
+		require('../common/materia-namespace')
 		require('./materia.scorecore')
 		ScoreCore = Namespace('Materia').ScoreCore
 		jest.spyOn(window, 'addEventListener')
@@ -17,7 +17,7 @@ describe('Materia.ScoreCore', () => {
 		mockWidget = {
 			start: jest.fn(),
 			update: jest.fn(),
-			handleScoreDistribution: jest.fn()
+			handleScoreDistribution: jest.fn(),
 		}
 		//prior to each test, run ScoreCore.start to prime the _onPostMessage event listener
 		ScoreCore.start(mockWidget)
@@ -27,7 +27,7 @@ describe('Materia.ScoreCore', () => {
 		_onPostMessage = window.addEventListener.mock.calls[0][1]
 	})
 	afterEach(() => {
-		jest.clearAllMocks()
+		jest.resetAllMocks()
 	})
 
 	it('defines expected public methods', () => {
@@ -92,8 +92,8 @@ describe('Materia.ScoreCore', () => {
 		_onPostMessage({
 			data: JSON.stringify({
 				type: 'initWidget',
-				data: ['qset', 'scoreTable', 'widgetInstance', 'isPreview', 'mediaUrl']
-			})
+				data: ['qset', 'scoreTable', 'widgetInstance', 'isPreview', 'mediaUrl'],
+			}),
 		})
 
 		expect(ScoreCore.getMediaUrl('fR93X')).toBe('mediaUrl/fR93X')
@@ -114,18 +114,18 @@ describe('Materia.ScoreCore', () => {
 		let initData = [
 			{
 				data: [{ qset: 'data' }],
-				version: 0
+				version: 0,
 			},
 			{ score: 'table' },
 			{ widget: 'instance' },
-			false
+			false,
 		]
 		_onPostMessage({
 			data: JSON.stringify({
 				type: 'initWidget',
 				source: 'score-core',
-				data: initData
-			})
+				data: initData,
+			}),
 		})
 		expect(mockWidget.start).toHaveBeenCalledWith(
 			{ widget: 'instance' }, //instance
@@ -142,15 +142,15 @@ describe('Materia.ScoreCore', () => {
 		let updateData = [
 			{
 				data: [{ qset: 'updated_data' }],
-				version: 0
+				version: 0,
 			},
-			{ score: 'updated_table' }
+			{ score: 'updated_table' },
 		]
 		_onPostMessage({
 			data: JSON.stringify({
 				type: 'updateWidget',
-				data: updateData
-			})
+				data: updateData,
+			}),
 		})
 		expect(mockWidget.update).toHaveBeenCalledWith(
 			[{ qset: 'updated_data' }], //qset.data
@@ -164,8 +164,8 @@ describe('Materia.ScoreCore', () => {
 		_onPostMessage({
 			data: JSON.stringify({
 				type: 'scoreDistribution',
-				data: [{ score: 'distribution' }]
-			})
+				data: [{ score: 'distribution' }],
+			}),
 		})
 		expect(mockWidget.handleScoreDistribution).toHaveBeenCalledWith({ score: 'distribution' })
 	})
@@ -174,8 +174,8 @@ describe('Materia.ScoreCore', () => {
 		_onPostMessage({
 			data: JSON.stringify({
 				type: 'unknownMessageType',
-				data: [null]
-			})
+				data: [null],
+			}),
 		})
 
 		expect(console.warn).toHaveBeenCalledWith(

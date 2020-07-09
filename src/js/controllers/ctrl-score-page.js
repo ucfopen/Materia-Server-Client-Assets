@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('scorePageController', function(Please, $scope, $q, $timeout, widgetSrv, scoreSrv) {
+app.controller('ScorePageController', function (Please, $scope, $q, $timeout, WidgetSrv, ScoreSrv) {
 	const COMPARE_TEXT_CLOSE = 'Close Graph'
 	const COMPARE_TEXT_OPEN = 'Compare With Class'
 	// attempts is an array of attempts, [0] is the newest
@@ -40,9 +40,8 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 	const _displayScoreData = (inst_id, play_id) => {
 		const deferred = $q.defer()
-		widgetSrv
-			.getWidget(inst_id)
-			.then(instance => {
+		WidgetSrv.getWidget(inst_id)
+			.then((instance) => {
 				widgetInstance = instance
 				$scope.guestAccess = widgetInstance.guest_access
 				if (_checkCustomScoreScreen()) _embed()
@@ -92,7 +91,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		Please.$apply()
 	}
 
-	const _onPostMessage = e => {
+	const _onPostMessage = (e) => {
 		const origin = `${e.origin}/`
 		if (origin === STATIC_CROSSDOMAIN || origin === BASE_URL) {
 			const msg = JSON.parse(e.data)
@@ -132,7 +131,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		}
 	}
 
-	const _getInstanceScores = inst_id => {
+	const _getInstanceScores = (inst_id) => {
 		const dfd = $q.defer()
 		if (isPreview || single_id) {
 			$scope.attempts = [{ id: -1, created_at: 0, percent: 0 }]
@@ -142,14 +141,14 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			// support guests.
 			const send_token =
 				typeof LAUNCH_TOKEN !== 'undefined' && LAUNCH_TOKEN !== null ? LAUNCH_TOKEN : play_id
-			scoreSrv.getWidgetInstanceScores(inst_id, send_token, result => {
+			ScoreSrv.getWidgetInstanceScores(inst_id, send_token, (result) => {
 				_populateScores(result.scores)
 				attemptsLeft = result.attempts_left
 				dfd.resolve()
 			})
 		} else {
 			// Only want score corresponding to play_id if guest widget
-			scoreSrv.getGuestWidgetInstanceScores(inst_id, play_id, scores => {
+			ScoreSrv.getGuestWidgetInstanceScores(inst_id, play_id, (scores) => {
 				_populateScores(scores)
 				dfd.resolve()
 			})
@@ -157,7 +156,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		return dfd.promise
 	}
 
-	const _populateScores = scores => {
+	const _populateScores = (scores) => {
 		if (scores === null || scores.length < 1) {
 			if (single_id) {
 				single_id = null
@@ -183,9 +182,9 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		scoresLoadPromise = $q.defer()
 		if (isPreview) {
 			currentAttempt = 1
-			scoreSrv.getWidgetInstancePlayScores(null, widgetInstance.id, _displayDetails)
+			ScoreSrv.getWidgetInstancePlayScores(null, widgetInstance.id, _displayDetails)
 		} else if (single_id) {
-			scoreSrv.getWidgetInstancePlayScores(single_id, null, _displayDetails)
+			ScoreSrv.getWidgetInstancePlayScores(single_id, null, _displayDetails)
 		} else {
 			// get the current attempt from the url
 			const hash = getAttemptNumberFromHash()
@@ -199,7 +198,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 				if (details[$scope.attempts.length - currentAttempt] != null) {
 					_displayDetails(details[$scope.attempts.length - currentAttempt])
 				} else {
-					scoreSrv.getWidgetInstancePlayScores(play_id, null, _displayDetails)
+					ScoreSrv.getWidgetInstancePlayScores(play_id, null, _displayDetails)
 				}
 			}
 		}
@@ -212,7 +211,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		// Build the data for the overview section, prep for display through Underscore
 		const widget = {
 			title: widgetInstance.name,
-			dates: attempt_dates
+			dates: attempt_dates,
 		}
 
 		// show play again button?
@@ -263,7 +262,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 		$scope.headerStyle = {
 			'font-size': textSize,
-			'padding-top': paddingSize
+			'padding-top': paddingSize,
 		}
 
 		$scope.hidePlayAgain = hidePlayAgain
@@ -356,7 +355,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			.script(`${cdnBase}jqPlot/1.0.9/plugins/jqplot.highlighter.min.js`)
 			.wait(() =>
 				// ========== BUILD THE GRAPH =============
-				scoreSrv.getWidgetInstanceScoreSummary(widgetInstance.id, data => {
+				ScoreSrv.getWidgetInstanceScoreSummary(widgetInstance.id, (data) => {
 					// add up all semesters data into one dataset
 					_graphData = [
 						['0-9%', 0],
@@ -368,7 +367,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 						['60-69%', 0],
 						['70-79%', 0],
 						['80-89%', 0],
-						['90-100%', 0]
+						['90-100%', 0],
 					]
 
 					for (let d of Array.from(data)) {
@@ -389,45 +388,45 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 								color: '#1e91e1',
 								rendererOptions: {
 									animation: {
-										speed: 500
-									}
-								}
-							}
+										speed: 500,
+									},
+								},
+							},
 						],
 						seriesDefaults: {
 							showMarker: false,
 							pointLabels: {
 								show: true,
 								formatString: '%.0f',
-								color: '#000'
-							}
+								color: '#000',
+							},
 						},
 						title: {
 							text: "Compare Your Score With Everyone Else's",
-							fontFamily: 'Lato, Lucida Grande, Arial, sans'
+							fontFamily: 'Lato, Lucida Grande, Arial, sans',
 						},
 						axesDefaults: {
 							tickRenderer: $.jqplot.CanvasAxisTickRenderer,
 							tickOptions: {
 								angle: 0,
 								fontSize: '8pt',
-								color: '#000'
-							}
+								color: '#000',
+							},
 						},
 						axes: {
 							xaxis: {
 								renderer: $.jqplot.CategoryAxisRenderer,
-								label: 'Score Percent'
+								label: 'Score Percent',
 							},
 							yaxis: {
 								tickOptions: { formatString: '%.1f', angle: 45 },
 								label: 'Number of Scores',
 								labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-								color: '#000'
-							}
+								color: '#000',
+							},
 						},
 						cursor: { show: false },
-						grid: { shadow: false }
+						grid: { shadow: false },
 					}
 
 					// light the fuse
@@ -436,7 +435,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 			)
 	}
 
-	const _displayDetails = results => {
+	const _displayDetails = (results) => {
 		let score
 
 		if (!$scope.customScoreScreen) {
@@ -499,7 +498,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		scoreTable = deets.details[0].table
 		if ($scope.customScoreScreen) {
 			const created_at = ~~deets.overview.created_at
-			scoreSrv.getWidgetInstanceQSet(play_id, widget_id, created_at, data => {
+			ScoreSrv.getWidgetInstanceQSet(play_id, widget_id, created_at, (data) => {
 				if (
 					(data != null ? data.title : undefined) === 'Permission Denied' ||
 					data.title === 'error'
@@ -517,7 +516,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		}
 	}
 
-	const _addCircleToDetailTable = detail => {
+	const _addCircleToDetailTable = (detail) => {
 		detail.forEach((item, i) => {
 			if (item.table && item.table.length) {
 				item.table.forEach((table, j) => {
@@ -545,14 +544,14 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 
 	// broadcasts a postMessage to inform Obojobo, or other platforms, about a score event
 	// Bypasses the LTI interface and provides an alternative for platforms that use embedded Materia to listen for a score
-	const sendPostMessage = score => {
+	const sendPostMessage = (score) => {
 		if (parent.postMessage && JSON.stringify) {
 			parent.postMessage(
 				JSON.stringify({
 					type: 'materiaScoreRecorded',
 					source: 'score-controller',
 					widget: widgetInstance,
-					score
+					score,
 				}),
 				'*'
 			)
@@ -572,7 +571,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 	}
 
 	const _getScoreDistribution = () => {
-		scoreSrv.getScoreDistribution(widgetInstance.id, data => {
+		ScoreSrv.getScoreDistribution(widgetInstance.id, (data) => {
 			_sendToWidget('scoreDistribution', [data])
 		})
 	}
@@ -597,7 +596,7 @@ app.controller('scorePageController', function(Please, $scope, $q, $timeout, wid
 		_sendToWidget('updateWidget', [qset, scoreTable])
 	}
 
-	const _setHeight = h => {
+	const _setHeight = (h) => {
 		const min_h = widgetInstance.widget.height
 		let desiredHeight = Math.max(h, min_h)
 		scoreWidget.style.height = `${desiredHeight}px`

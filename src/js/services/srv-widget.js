@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScope, $window) {
+app.service('WidgetSrv', function (SelectedWidgetSrv, DateTimeServ, $q, $rootScope, $window) {
 	const deferred = $q.defer()
 	let _widgets = []
 	let _widgetIds = {}
@@ -7,12 +7,12 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 
 	const sortWidgets = () => _widgets.sort((a, b) => b.created_at - a.created_at)
 
-	const getWidgets = () => {
+	const getWidgets = (force = false) => {
 		const deferred = $q.defer()
 
-		if (_widgets.length === 0 || !gotAll) {
+		if (_widgets.length === 0 || !gotAll || force) {
 			gotAll = true
-			_getMultipleFromServer().then(widgets => {
+			_getMultipleFromServer().then((widgets) => {
 				_widgets = widgets.slice(0) // save a copy
 				sortWidgets()
 				deferred.resolve(_widgets)
@@ -35,7 +35,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		} else {
 			// we dont have any widgets or the requested one, get it/them
 			_getSingleWidgetFromServer(id)
-				.then(widget => {
+				.then((widget) => {
 					_widgets.push(widget)
 					_widgetIds[widget.id] = widget
 					sortWidgets()
@@ -50,12 +50,12 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 	}
 
 	const getWidgetInfo = (id = null) => {
-		return Materia.Coms.Json.send('widgets_get', [[id]]).then(widgets => widgets[0])
+		return Materia.Coms.Json.send('widgets_get', [[id]]).then((widgets) => widgets[0])
 	}
 
 	const lockWidget = (id = null) => {
 		const deferred = $q.defer()
-		Materia.Coms.Json.send('widget_instance_lock', [id]).then(success => {
+		Materia.Coms.Json.send('widget_instance_lock', [id]).then((success) => {
 			if (success) {
 				deferred.resolve(id)
 			} else {
@@ -71,15 +71,15 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		return Materia.Coms.Json.send('widgets_get_by_type', [type])
 	}
 
-	const copyWidget = (inst_id, newName) => {
-		return Materia.Coms.Json.send('widget_instance_copy', [inst_id, newName])
+	const copyWidget = (inst_id, newName, retainAccess = false) => {
+		return Materia.Coms.Json.send('widget_instance_copy', [inst_id, newName, retainAccess])
 	}
 
-	const deleteWidget = inst_id => {
+	const deleteWidget = (inst_id) => {
 		return Materia.Coms.Json.send('widget_instance_delete', [inst_id])
 	}
 
-	const saveWidget = _params => {
+	const saveWidget = (_params) => {
 		const deferred = $q.defer()
 		const defaults = {
 			qset: null,
@@ -88,7 +88,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 			close_at: null,
 			attempts: null,
 			guest_access: null,
-			embedded_only: null
+			embedded_only: null,
 		}
 
 		let params = Object.assign({}, defaults, _params)
@@ -104,13 +104,13 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 				params.close_at,
 				params.attempts,
 				params.guest_access,
-				params.embedded_only
+				params.embedded_only,
 			]
-			Materia.Coms.Json.send('widget_instance_update', args).then(widget => {
+			Materia.Coms.Json.send('widget_instance_update', args).then((widget) => {
 				if (widget != null) {
 					_initSearchCache(widget)
 					// replace our widget in place
-					let match = _widgets.findIndex(w => w.id === widget.id)
+					let match = _widgets.findIndex((w) => w.id === widget.id)
 					if (match !== -1) {
 						_widgets[match] = widget
 						_widgetIds[widget.id] = widget
@@ -120,7 +120,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 			})
 		} else {
 			let args = [params.widget_id, params.name, params.qset, params.is_draft]
-			Materia.Coms.Json.send('widget_instance_new', args).then(widget => {
+			Materia.Coms.Json.send('widget_instance_new', args).then((widget) => {
 				if (widget != null) {
 					// add to widgets
 					_initSearchCache(widget)
@@ -134,7 +134,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		return deferred.promise
 	}
 
-	const removeWidget = inst_id => {
+	const removeWidget = (inst_id) => {
 		let selectedIndex
 		let index = -1
 		_widgets = _widgets.filter((widget, i) => {
@@ -165,12 +165,12 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		$rootScope.$broadcast('widgetList.update')
 	}
 
-	const _initSearchCache = widget => {
+	const _initSearchCache = (widget) => {
 		widget.searchCache = `${widget.id} ${widget.widget.name} ${widget.name}`.toLowerCase()
 	}
 
-	const _getSingleWidgetFromServer = id => {
-		return Materia.Coms.Json.send('widget_instances_get', [[id]]).then(widgets => {
+	const _getSingleWidgetFromServer = (id) => {
+		return Materia.Coms.Json.send('widget_instances_get', [[id]]).then((widgets) => {
 			if (!widgets || !widgets.length) {
 				let d = $q.defer()
 				d.reject()
@@ -184,13 +184,20 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 
 	const _getMultipleFromServer = () => {
 		const deferred = $q.defer()
-		Materia.Coms.Json.send('widget_instances_get', null).then(widgets => {
-			if (widgets && widgets.length > 0) {
-				widgets.forEach(w => {
-					_widgetIds[w.id] = w
+		Materia.Coms.Json.send('widget_instances_get', null).then((widgets) => {
+			if (widgets && widgets.length > 0 && widgets.length >= _widgets.length) {
+				let index = 0
+
+				widgets.forEach((w) => {
 					_initSearchCache(w)
-					_widgets.push(w)
+					_widgetIds[w.id] = w
+					_widgets.splice(index, 1, w)
+					index++
 				})
+			}
+
+			if (widgets.length < _widgets.length) {
+				_widgets = widgets
 			}
 
 			deferred.resolve(_widgets)
@@ -199,7 +206,7 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		return deferred.promise
 	}
 
-	const updateHashUrl = widgetId => ($window.location.hash = `/${widgetId}`)
+	const updateHashUrl = (widgetId) => ($window.location.hash = `/${widgetId}`)
 
 	const convertAvailibilityDates = (startDateInt, endDateInt) => {
 		let endDate, endTime, open_at, startTime
@@ -209,24 +216,24 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		open_at = startTime = 0
 
 		if (endDateInt > 0) {
-			endDate = dateTimeServ.parseObjectToDateString(endDateInt)
-			endTime = dateTimeServ.parseTime(endDateInt)
+			endDate = DateTimeServ.parseObjectToDateString(endDateInt)
+			endTime = DateTimeServ.parseTime(endDateInt)
 		}
 
 		if (startDateInt > 0) {
-			open_at = dateTimeServ.parseObjectToDateString(startDateInt)
-			startTime = dateTimeServ.parseTime(startDateInt)
+			open_at = DateTimeServ.parseObjectToDateString(startDateInt)
+			startTime = DateTimeServ.parseTime(startDateInt)
 		}
 
 		return {
 			start: {
 				date: open_at,
-				time: startTime
+				time: startTime,
 			},
 			end: {
 				date: endDate,
-				time: endTime
-			}
+				time: endTime,
+			},
 		}
 	}
 
@@ -238,18 +245,18 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 				selID = selID.substr(1)
 			}
 			getWidget(selID)
-				.then(widget => {
-					selectedWidgetSrv.set(widget)
+				.then((widget) => {
+					SelectedWidgetSrv.set(widget)
 				})
 				.catch(() => {
-					selectedWidgetSrv.notifyAccessDenied()
+					SelectedWidgetSrv.notifyAccessDenied()
 				})
 		}
 	}
 
-	const canBePublishedByCurrentUser = widget_id => {
+	const canBePublishedByCurrentUser = (widget_id) => {
 		const deferred = $q.defer()
-		Materia.Coms.Json.send('widget_publish_perms_verify', [widget_id]).then(response => {
+		Materia.Coms.Json.send('widget_publish_perms_verify', [widget_id]).then((response) => {
 			deferred.resolve(response)
 		})
 
@@ -270,6 +277,6 @@ app.service('widgetSrv', function(selectedWidgetSrv, dateTimeServ, $q, $rootScop
 		convertAvailibilityDates,
 		copyWidget,
 		deleteWidget,
-		canBePublishedByCurrentUser
+		canBePublishedByCurrentUser,
 	}
 })

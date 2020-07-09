@@ -1,15 +1,13 @@
 const app = angular.module('materia')
-app.controller('questionImporterCtrl', function($scope, $sce) {
+app.controller('QuestionImporterCtrl', function ($scope, $sce) {
 	let $selectedAssets = []
 	let $table = null
 
 	const _setupTable = () => {
 		// listener for selecting a question row
-		$(document).on('click', '#question-table tbody tr', e => {
+		$(document).on('click', '#question-table tbody tr', (e) => {
 			const $checkbox = $(e.currentTarget).find(':checkbox')
-			const $selected = $(e.currentTarget)
-				.toggleClass('row_selected')
-				.hasClass('row_selected')
+			const $selected = $(e.currentTarget).toggleClass('row_selected').hasClass('row_selected')
 			$checkbox.prop('checked', $selected) // update checkbox
 
 			// stop the bubbling to prevent the row's click event
@@ -25,13 +23,13 @@ app.controller('questionImporterCtrl', function($scope, $sce) {
 			}
 		})
 
-		$('#submit-button').click(e => {
+		$('#submit-button').click((e) => {
 			e.stopPropagation()
 			_loadSelectedQuestions($selectedAssets)
 			return false
 		})
 
-		$('#cancel-button').click(e => {
+		$('#cancel-button').click((e) => {
 			e.stopPropagation()
 			return window.parent.Materia.Creator.onQuestionImportComplete(null)
 		})
@@ -55,7 +53,7 @@ app.controller('questionImporterCtrl', function($scope, $sce) {
 			language: {
 				search: '',
 				infoFiltered: ' / _MAX_',
-				info: 'showing: _TOTAL_'
+				info: 'showing: _TOTAL_',
 			},
 			// columsn to display
 			columns: [{ data: 'text' }, { data: 'type' }, { data: 'created_at' }, { data: 'uses' }],
@@ -69,18 +67,16 @@ app.controller('questionImporterCtrl', function($scope, $sce) {
 						const d = new Date(data * 1000)
 						return d.getMonth() + 1 + '/' + d.getDate() + '/' + d.getFullYear()
 					},
-					targets: 2
+					targets: 2,
 				},
 				{
 					// select box
 					render(data, type, full, meta) {
-						return `<input type="checkbox" name="id" value="${
-							full.id
-						}" > <span class="q">${data}</span>`
+						return `<input type="checkbox" name="id" value="${full.id}" > <span class="q">${data}</span>`
 					},
-					targets: 0
-				}
-			]
+					targets: 0,
+				},
+			],
 		})
 
 		// re-fit the table now
@@ -89,21 +85,15 @@ app.controller('questionImporterCtrl', function($scope, $sce) {
 
 	const _loadAllQuestions = () => {
 		$selectedAssets = []
-		$('#question-table')
-			.dataTable()
-			.fnClearTable() // clear the table
+		$('#question-table').dataTable().fnClearTable() // clear the table
 		// determine the types from the url hash string
 		const questionTypes = _getType()
 		// load
-		_getQuestions(null, questionTypes).then(result => {
+		_getQuestions(null, questionTypes).then((result) => {
 			// to prevent error messages when result is null
 			if (result && result.length && result.length > 0) {
-				$('#question-table')
-					.dataTable()
-					.fnClearTable()
-				$('#question-table')
-					.dataTable()
-					.fnAddData(result)
+				$('#question-table').dataTable().fnClearTable()
+				$('#question-table').dataTable().fnAddData(result)
 			}
 		})
 	}
@@ -112,8 +102,8 @@ app.controller('questionImporterCtrl', function($scope, $sce) {
 		return Materia.Coms.Json.send('questions_get', [questionIds, questionTypes])
 	}
 
-	const _loadSelectedQuestions = questionIds =>
-		_getQuestions(questionIds).then(result => {
+	const _loadSelectedQuestions = (questionIds) =>
+		_getQuestions(questionIds).then((result) => {
 			if (result != null && !('msg' in result) && result.length > 0) {
 				window.parent.Materia.Creator.onQuestionImportComplete(JSON.stringify(result))
 			}

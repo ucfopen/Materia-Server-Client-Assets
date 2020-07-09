@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('notificationCtrl', function(Please, $scope, $sce) {
+app.controller('UserNotificationCtrl', function (Please, $scope, $sce) {
 	let $notices = document.querySelector('#notices')
 	const _toggleOpen = () => {
 		$scope.isOpen = !$scope.isOpen
@@ -9,7 +9,7 @@ app.controller('notificationCtrl', function(Please, $scope, $sce) {
 		let note = $scope.notifications[index]
 		note.deleted = true
 		Please.$apply()
-		Materia.Coms.Json.send('notification_delete', [id]).then(success => {
+		Materia.Coms.Json.send('notification_delete', [id]).then((success) => {
 			if (success) {
 				$scope.notifications.splice(index, 1)
 			} else {
@@ -22,10 +22,10 @@ app.controller('notificationCtrl', function(Please, $scope, $sce) {
 	$scope.notifications = []
 	$scope.isOpen = false
 	$scope.removeNotification = _removeNotification
-	$scope.trust = notification => $sce.trustAsHtml(notification)
+	$scope.trust = (notification) => $sce.trustAsHtml(notification)
 	$scope.toggleOpen = _toggleOpen
 
-	Materia.Coms.Json.send('notifications_get').then(notifications => {
+	Materia.Coms.Json.send('notifications_get').then((notifications) => {
 		$scope.notifications = notifications
 		Please.$apply()
 	})

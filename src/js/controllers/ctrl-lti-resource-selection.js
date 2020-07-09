@@ -1,5 +1,12 @@
 const app = angular.module('materia')
-app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, widgetSrv) {
+app.controller('LTIResourceSelectionCtrl', function (
+	Please,
+	$interval,
+	$timeout,
+	$scope,
+	$sce,
+	WidgetSrv
+) {
 	const REFRESH_FAKE_DELAY_MS = 500
 	const CHANGE_SECTION_FADE_DELAY_MS = 250
 	let selectedWidget = null
@@ -9,14 +16,14 @@ app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, wi
 		$scope.showRefreshArrow = true
 	}
 
-	const loadWidgets = fakeDelay => {
+	const loadWidgets = (fakeDelay) => {
 		if (fakeDelay == null) {
 			fakeDelay = 1
 		}
 
 		$timeout(
 			() =>
-				widgetSrv.getWidgets().then(widgets => {
+				WidgetSrv.getWidgets(true).then((widgets) => {
 					if (widgets != null ? widgets.halt : undefined) {
 						return
 					}
@@ -43,14 +50,14 @@ app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, wi
 		)
 	}
 
-	const _highlight = widget => {
+	const _highlight = (widget) => {
 		for (let w of Array.from($scope.widgets)) {
 			w.selected = false
 		}
 		widget.selected = true
 	}
 
-	const _embedWidget = widget => {
+	const _embedWidget = (widget) => {
 		if (selectedWidget && selectedWidget.state && selectedWidget.state === 'pending') {
 			return
 		}
@@ -80,7 +87,7 @@ app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, wi
 		}, 1000)
 	}
 
-	const setDisplayState = newSection => {
+	const setDisplayState = (newSection) => {
 		$scope.section = newSection
 		$timeout(() => {
 			let body = document.querySelector('body')
@@ -130,7 +137,7 @@ app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, wi
 			}
 		}, 200)
 
-		document.addEventListener('keyup', event => {
+		document.addEventListener('keyup', (event) => {
 			if (event.keyCode === 16) {
 				$scope.easterMode = true
 				Please.$apply()
@@ -139,7 +146,7 @@ app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, wi
 	}
 
 	const getAvailabilityStr = (startDate, endDate) => {
-		const availability = widgetSrv.convertAvailibilityDates(startDate, endDate)
+		const availability = WidgetSrv.convertAvailibilityDates(startDate, endDate)
 
 		if (endDate < 0 && startDate < 0) {
 			return 'Anytime'
@@ -148,9 +155,7 @@ app.controller('ltiCtrl', function(Please, $interval, $timeout, $scope, $sce, wi
 		} else if (startDate > 0 && endDate < 0) {
 			return `Anytime after ${availability.start.date} at ${availability.start.time}`
 		} else {
-			return `From ${availability.start.date} at ${availability.start.time} until ${
-				availability.end.date
-			} at  ${availability.end.time}`
+			return `From ${availability.start.date} at ${availability.start.time} until ${availability.end.date} at  ${availability.end.time}`
 		}
 	}
 

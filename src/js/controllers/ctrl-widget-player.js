@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('playerCtrl', function(
+app.controller('WidgetPlayerCtrl', function (
 	Please,
 	$scope,
 	$location,
@@ -7,8 +7,8 @@ app.controller('playerCtrl', function(
 	$interval,
 	$window,
 	$timeout,
-	widgetSrv,
-	userServ,
+	WidgetSrv,
+	UserServ,
 	PLAYER,
 	Alert
 ) {
@@ -36,7 +36,7 @@ app.controller('playerCtrl', function(
 	let scoreScreenPending = false
 	// Keep track of the timer id for the heartbeat so we can clear the timeout
 	let heartbeatInterval = -1
-	// Calculates which screen to show (preview, embed, or normal)
+	// Calculates which screen UserServ to show (preview, embed, or normal)
 	let scoreScreenURL = null
 	// Queue of requests
 	const pendingQueue = []
@@ -54,12 +54,12 @@ app.controller('playerCtrl', function(
 		Please.$apply()
 	}
 
-	const _sendAllPendingLogs = callback => {
+	const _sendAllPendingLogs = (callback) => {
 		if (callback == null) {
 			callback = () => {}
 		}
 
-		$q(resolve => resolve())
+		$q((resolve) => resolve())
 			.then(_sendPendingStorageLogs())
 			.then(_sendPendingPlayLogs)
 			.then(callback)
@@ -80,13 +80,13 @@ app.controller('playerCtrl', function(
 		}
 	}
 
-	const _addLog = log => {
+	const _addLog = (log) => {
 		// add to pending logs
 		log['game_time'] = (new Date().getTime() - startTime) / 1000 // log time in seconds
 		pendingLogs.play.push(log)
 	}
 
-	const _sendStorage = log => {
+	const _sendStorage = (log) => {
 		if (!$scope.isPreview) {
 			pendingLogs.storage.push(log)
 		}
@@ -107,7 +107,10 @@ app.controller('playerCtrl', function(
 			default:
 				endState = 'pending'
 				// kill the heartbeat
-				$interval.cancel(heartbeatInterval)
+				if (heartbeatInterval !== -1) {
+					$interval.cancel(heartbeatInterval)
+					heartbeatInterval = -1
+				}
 				// required to end a play
 				_addLog({ type: 2, item_id: 0, text: '', value: null })
 				// send anything remaining
@@ -125,7 +128,7 @@ app.controller('playerCtrl', function(
 	const _startHeartBeat = () => {
 		const deferred = $q.defer()
 		$interval(() => {
-			Materia.Coms.Json.send('session_play_verify', [play_id]).then(result => {
+			Materia.Coms.Json.send('session_play_verify', [play_id]).then((result) => {
 				if (result !== true && instance.guest_access === false) {
 					_alert(
 						"Your play session is no longer valid.  You'll need to reload the page and start over.",
@@ -170,7 +173,7 @@ app.controller('playerCtrl', function(
 		}
 	}
 
-	const _onLoadFail = msg => _alert(`Failure: ${msg}`, null, true)
+	const _onLoadFail = (msg) => _alert(`Failure: ${msg}`, null, true)
 
 	const _embed = () => {
 		embedDonePromise = $q.defer()
@@ -219,15 +222,15 @@ app.controller('playerCtrl', function(
 			inst_id: $scope.inst_id,
 			GIID: $scope.inst_id,
 			URL_WEB: BASE_URL,
-			URL_GET_ASSET: 'media/'
+			URL_GET_ASSET: 'media/',
 		}
 		const params = {
 			menu: 'false',
 			allowFullScreen: 'true',
-			AllowScriptAccess: 'always'
+			AllowScriptAccess: 'always',
 		}
 		const attributes = {
-			id: PLAYER.EMBED_TARGET
+			id: PLAYER.EMBED_TARGET,
 		}
 
 		$scope.type = 'flash'
@@ -247,7 +250,7 @@ app.controller('playerCtrl', function(
 		embedTargetEl = document.getElementById(PLAYER.EMBED_TARGET)
 	}
 
-	const _onPostMessage = e => {
+	const _onPostMessage = (e) => {
 		if (e.origin === expectedOrigin) {
 			const msg = JSON.parse(e.data)
 			switch (msg.type) {
@@ -279,7 +282,7 @@ app.controller('playerCtrl', function(
 		}
 	}
 
-	const _embedHTML = enginePath => {
+	const _embedHTML = (enginePath) => {
 		$scope.type = 'html'
 		$scope.htmlPath = enginePath + '?' + instance.widget.created_at
 		Please.$apply()
@@ -309,7 +312,7 @@ app.controller('playerCtrl', function(
 			deferred.reject('Flash Player required.')
 		}
 
-		widgetSrv.getWidget($scope.inst_id).then(inst => {
+		WidgetSrv.getWidget($scope.inst_id).then((inst) => {
 			if (!inst.hasOwnProperty('id')) {
 				return deferred.reject('Unable to get widget info.')
 			}
@@ -319,7 +322,7 @@ app.controller('playerCtrl', function(
 
 			// Fullscreen flag set as an optional parameter in widget install.yaml; have to dig into instance widget's meta_data object to find it
 			// can't use array.includes() since it's necessary to ensure comparison is case insensitive
-			let fullscreen = inst.widget.meta_data.features.find(f => f.toLowerCase() === 'fullscreen')
+			let fullscreen = inst.widget.meta_data.features.find((f) => f.toLowerCase() === 'fullscreen')
 			$scope.allowFullScreen = fullscreen != undefined
 
 			if (type === 'swf' && swfobject.hasFlashPlayerVersion(String(version)) === false) {
@@ -369,7 +372,7 @@ app.controller('playerCtrl', function(
 
 	const _getQuestionSet = () => {
 		// TODO: if bad qSet : deferred.reject('Unable to load questions.')
-		return Materia.Coms.Json.send('question_set_get', [$scope.inst_id, play_id]).then(result => {
+		return Materia.Coms.Json.send('question_set_get', [$scope.inst_id, play_id]).then((result) => {
 			qset = result
 		})
 	}
@@ -387,7 +390,7 @@ app.controller('playerCtrl', function(
 		}
 
 		return Materia.Coms.Json.send('play_logs_save', pendingQueue[0].request)
-			.then(result => {
+			.then((result) => {
 				retryCount = 0 // reset on success
 				if ($scope.alert.fatal) {
 					$scope.alert.fatal = false
@@ -473,7 +476,7 @@ app.controller('playerCtrl', function(
 	}
 
 	// converts current widget/instance structure to the one expected by the player
-	const _translateForApiVersion = inst => {
+	const _translateForApiVersion = (inst) => {
 		// switch based on version expected by the widget
 		let output
 		switch (parseInt(inst.widget.api_version)) {
@@ -508,7 +511,7 @@ app.controller('playerCtrl', function(
 					editable: inst.widget.is_editable,
 					previewUrl: inst.preview_url,
 					userID: inst.user_id,
-					scoreModule: inst.widget.score_module
+					scoreModule: inst.widget.score_module,
 				}
 				break
 			case 2:
@@ -520,14 +523,14 @@ app.controller('playerCtrl', function(
 		return output
 	}
 
-	const _setHeight = h => {
+	const _setHeight = (h) => {
 		const min_h = instance.widget.height
 		let el = document.getElementsByClassName('center')[0]
 		let desiredHeight = Math.max(h, min_h)
 		el.style.height = `${desiredHeight}px`
 	}
 
-	const _setVerticalScroll = location => {
+	const _setVerticalScroll = (location) => {
 		const containerElement = document.getElementById('container')
 		const calculatedLocation =
 			window.scrollY + containerElement.getBoundingClientRect().y + location
@@ -551,7 +554,7 @@ app.controller('playerCtrl', function(
 		}
 	}
 
-	const _beforeUnload = e => {
+	const _beforeUnload = (e) => {
 		if (instance.widget.is_scorable === '1' && !$scope.isPreview && endState !== 'sent') {
 			return 'Wait! Leaving now will forfeit this attempt. To save your score you must complete the widget.'
 		} else {
@@ -609,7 +612,7 @@ app.controller('playerCtrl', function(
 		_translateForApiVersion,
 		_setHeight,
 		_showScoreScreen,
-		getLocalVar: name => eval(name),
+		getLocalVar: (name) => eval(name),
 		/* istanbul ignore next */
 		setLocalVar: (name, value) => {
 			/* istanbul ignore next */
@@ -617,16 +620,16 @@ app.controller('playerCtrl', function(
 			/* istanbul ignore next */
 			x = value
 		},
-		setEmbedTargetEl: el => {
+		setEmbedTargetEl: (el) => {
 			embedTargetEl = el
 		},
-		setQset: obj => {
+		setQset: (obj) => {
 			qset = obj
 		},
 		getEmbedDonePromise: () => embedDonePromise,
-		setEndState: state => {
+		setEndState: (state) => {
 			endState = state
-		}
+		},
 	}
 	/* develblock:end */
 })

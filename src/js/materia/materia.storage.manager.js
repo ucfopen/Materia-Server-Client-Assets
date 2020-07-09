@@ -40,7 +40,7 @@ Namespace('Materia.Storage').Manager = (() => {
 		Materia.Engine.sendStorage(result)
 	}
 
-	var getTable = tableId => {
+	var getTable = (tableId) => {
 		tableId = clean(tableId)
 		// Search for the Table
 		// can't use array.find here due to IE11
@@ -55,7 +55,7 @@ Namespace('Materia.Storage').Manager = (() => {
 		return null
 	}
 
-	var clean = name => {
+	var clean = (name) => {
 		name = String(name)
 		let cleanName = name
 			.replace(/^([ ]+)/, '')
@@ -74,6 +74,6 @@ Namespace('Materia.Storage').Manager = (() => {
 		addTable,
 		clean,
 		insert,
-		getTable
+		getTable,
 	}
 })()

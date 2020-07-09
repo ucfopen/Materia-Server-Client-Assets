@@ -1,4 +1,4 @@
-describe('apiServ', () => {
+describe('APIServ', () => {
 	var _service
 	var mockWindow
 	var mockLocationSet
@@ -12,15 +12,15 @@ describe('apiServ', () => {
 		mockLocationGet = jest.fn(() => 'mock')
 		Object.defineProperty(mockWindow, 'location', {
 			get: mockLocationGet,
-			set: mockLocationSet
+			set: mockLocationSet,
 		})
 		let app = angular.module('materia')
 		app.factory('$window', () => mockWindow)
 
-		require('../materia-namespace')
+		require('../common/materia-namespace')
 		require('./srv-api')
-		inject(function(apiServ) {
-			_service = apiServ
+		inject(function (APIServ) {
+			_service = APIServ
 		})
 	})
 

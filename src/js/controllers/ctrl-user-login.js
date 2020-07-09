@@ -1,7 +1,7 @@
 const app = angular.module('materia')
 app.controller(
-	'loginCtrl',
-	($scope, dateTimeServ) =>
+	'UserLoginCtrl',
+	($scope, DateTimeServ) =>
 		// Widget login partial has this on widgets with expiration
-		($scope.time = date => dateTimeServ.fixTime(date, $scope.date))
+		($scope.time = (date) => DateTimeServ.fixTime(date, $scope.date))
 )

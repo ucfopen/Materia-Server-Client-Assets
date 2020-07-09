@@ -1,5 +1,5 @@
 const app = angular.module('materia', [])
-app.config($sceDelegateProvider =>
+app.config(($sceDelegateProvider) =>
 	$sceDelegateProvider.resourceUrlWhitelist(['self', STATIC_CROSSDOMAIN + '**', BASE_URL + '**'])
 )
 
@@ -29,7 +29,7 @@ window.isMobile = {
 			isMobile.Opera() ||
 			isMobile.Windows()
 		)
-	}
+	},
 }
 
 // this code ensures that Opera runs onload/ready js events when navigating foward/back.
