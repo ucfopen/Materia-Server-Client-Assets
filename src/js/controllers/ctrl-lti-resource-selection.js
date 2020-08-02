@@ -81,8 +81,12 @@ app.controller('LTIResourceSelectionCtrl', function (
 			announceChoice()
 
 			if (typeof RETURN_URL !== 'undefined' && RETURN_URL !== null) {
-				window.location =
-					RETURN_URL + '?embed_type=basic_lti&url=' + encodeURI(selectedWidget.embed_url)
+				// add a ? or & depending on RETURN_URL already containing query params
+				const seperator = RETURN_URL.includes('?') ? '&' : '?'
+				// endode the url
+				const url = encodeURI(selectedWidget.embed_url)
+				// redirect the client to the return url with our new variables
+				window.location = `${RETURN_URL}${seperator}embed_type=basic_lti&url=${url}`
 			}
 		}, 1000)
 	}
