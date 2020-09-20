@@ -10,6 +10,13 @@ app.controller('ScorePageController', function (Please, $scope, $q, $timeout, Wi
 	let widgetInstance = null
 	let attemptsLeft = 0
 	let single_id = window.location.hash.split('single-')[1]
+
+	// get the play_id from the url if using /scores/single/:play_id/:inst_id url
+	if (!single_id) {
+		const res = window.location.pathname.match(/\/scores\/single\/([a-z0-9\-_]+)/i)
+		single_id = (res && res[1]) || null
+	}
+
 	// @TODO @IE8 This method of checking for isEmbedded is hacky, but
 	// IE8 didn't like "window.self == window.top" (which also might be
 	// problematic with weird plugins that put the page in an iframe).
