@@ -2,7 +2,7 @@ describe('Materia.Coms.Json', () => {
 	let coms
 	let $q
 
-	let mockFetchOnce = result => {
+	let mockFetchOnce = (result) => {
 		fetch.mockImplementationOnce((n, arg, cb) => {
 			const deferred = $q.defer()
 			deferred.resolve(result)
@@ -12,11 +12,11 @@ describe('Materia.Coms.Json', () => {
 
 	beforeEach(() => {
 		let app = angular.module('materia')
-		inject(function(_$q_) {
+		inject(function (_$q_) {
 			$q = _$q_
 		})
 		global.API_LINK = 'my_api_url'
-		require('../materia-namespace')
+		require('../common/materia-namespace')
 		require('./materia.coms.json.js')
 		coms = Namespace('Materia.Coms').Json
 		global.fetch = jest.fn()
@@ -40,11 +40,11 @@ describe('Materia.Coms.Json', () => {
 			cache: 'no-cache',
 			headers: {
 				accept: 'application/json, text/javascript, */*; q=0.01',
-				'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
+				'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
 			},
 			//this corresponds to the arguments we're sending above
 			//we'll verify later that they're encoded properly
-			body: 'data=%5B1%2C%22two%22%5D'
+			body: 'data=%5B1%2C%22two%22%5D',
 		}
 
 		expect(global.fetch).toHaveBeenCalledWith('my_api_url/what/is/this/', a)
@@ -99,9 +99,9 @@ describe('Materia.Coms.Json', () => {
 			cache: 'no-cache',
 			headers: {
 				accept: 'application/json;',
-				'content-type': 'application/json; charset=utf-8'
+				'content-type': 'application/json; charset=utf-8',
 			},
-			body: undefined
+			body: undefined,
 		}
 		expect(global.fetch).toHaveBeenCalledWith('test', a)
 	})
@@ -121,9 +121,9 @@ describe('Materia.Coms.Json', () => {
 			cache: 'no-cache',
 			headers: {
 				accept: 'application/json;',
-				'content-type': 'application/json; charset=utf-8'
+				'content-type': 'application/json; charset=utf-8',
 			},
-			body: '{"data":true}'
+			body: '{"data":true}',
 		}
 		expect(global.fetch).toHaveBeenCalledWith('test', a)
 	})

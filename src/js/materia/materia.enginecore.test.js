@@ -2,7 +2,7 @@ describe('enginecore', () => {
 	let Engine
 	let $q
 
-	let mockFetchOnce = result => {
+	let mockFetchOnce = (result) => {
 		fetch.mockImplementationOnce((n, arg, cb) => {
 			const deferred = $q.defer()
 			deferred.resolve(result)
@@ -12,11 +12,11 @@ describe('enginecore', () => {
 
 	beforeEach(() => {
 		let app = angular.module('materia')
-		inject(function(_$q_) {
+		inject(function (_$q_) {
 			$q = _$q_
 		})
 		global.API_LINK = 'my_api_url'
-		require('../materia-namespace')
+		require('../common/materia-namespace')
 		require('./materia.enginecore')
 		Engine = Namespace('Materia').Engine
 		global.fetch = jest.fn()
@@ -81,8 +81,8 @@ describe('enginecore', () => {
 		_onPostMessage({
 			data: JSON.stringify({
 				type: 'initWidget',
-				data: ['qset', 'instance', 'baseUrl', 'mediaUrl']
-			})
+				data: ['qset', 'instance', 'baseUrl', 'mediaUrl'],
+			}),
 		})
 
 		expect(Engine.getImageAssetUrl('fR93X')).toBe('mediaUrl/fR93X')
@@ -94,8 +94,8 @@ describe('enginecore', () => {
 		_onPostMessage({
 			data: JSON.stringify({
 				type: 'initWidget',
-				data: ['qset', 'instance', 'baseUrl', 'mediaUrl']
-			})
+				data: ['qset', 'instance', 'baseUrl', 'mediaUrl'],
+			}),
 		})
 
 		expect(Engine.getMediaUrl('fR93X')).toBe('mediaUrl/fR93X')
@@ -105,7 +105,7 @@ describe('enginecore', () => {
 		Engine.start({ start: jest.fn() })
 		let _onPostMessage = window.addEventListener.mock.calls[0][1]
 		_onPostMessage({
-			data: undefined
+			data: undefined,
 		})
 		expect(parent.postMessage).toHaveLastReturnedWith(undefined)
 	})
@@ -114,7 +114,7 @@ describe('enginecore', () => {
 		Engine.end()
 		let ex = JSON.stringify({
 			type: 'end',
-			data: true
+			data: true,
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})
@@ -123,7 +123,7 @@ describe('enginecore', () => {
 		Engine.end(false)
 		let ex = JSON.stringify({
 			type: 'end',
-			data: false
+			data: false,
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})
@@ -132,7 +132,7 @@ describe('enginecore', () => {
 		Engine.sendPendingLogs()
 		let ex = JSON.stringify({
 			type: 'sendPendingLogs',
-			data: {}
+			data: {},
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})
@@ -141,7 +141,7 @@ describe('enginecore', () => {
 		Engine.sendStorage('message')
 		let ex = JSON.stringify({
 			type: 'sendStorage',
-			data: 'message'
+			data: 'message',
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})
@@ -150,7 +150,7 @@ describe('enginecore', () => {
 		Engine.setHeight(200)
 		let ex = JSON.stringify({
 			type: 'setHeight',
-			data: [200]
+			data: [200],
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})
@@ -159,7 +159,7 @@ describe('enginecore', () => {
 		Engine.setVerticalScroll(0)
 		let ex = JSON.stringify({
 			type: 'setVerticalScroll',
-			data: [0]
+			data: [0],
 		})
 		expect(parent.postMessage).toHaveBeenLastCalledWith(ex, '*')
 	})

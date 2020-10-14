@@ -8,15 +8,15 @@ describe('materia constants', () => {
 			QUESTION: 1,
 			ASSET: 2,
 			WIDGET: 3,
-			WIDGET_INSTANCE: 4
+			WIDGET_INSTANCE: 4,
 		}
 
 		var _OBJECT_TYPES
 		inject([
 			'OBJECT_TYPES',
-			OBJECT_TYPES => {
+			(OBJECT_TYPES) => {
 				_OBJECT_TYPES = OBJECT_TYPES
-			}
+			},
 		])
 		expect(_OBJECT_TYPES).toMatchObject(ex)
 	})
@@ -30,15 +30,15 @@ describe('materia constants', () => {
 			EDIT: 20,
 			COPY: 25,
 			FULL: 30,
-			SHARE: 35
+			SHARE: 35,
 		}
 
 		var _ACCESS
 		inject([
 			'ACCESS',
-			ACCESS => {
+			(ACCESS) => {
 				_ACCESS = ACCESS
-			}
+			},
 		])
 		expect(_ACCESS).toMatchObject(ex)
 	})
@@ -49,15 +49,15 @@ describe('materia constants', () => {
 			RETRY_LIMIT: 15,
 			RETRY_FAST: 1000,
 			RETRY_SLOW: 10000,
-			EMBED_TARGET: 'container'
+			EMBED_TARGET: 'container',
 		}
 
 		var _PLAYER
 		inject([
 			'PLAYER',
-			PLAYER => {
+			(PLAYER) => {
 				_PLAYER = PLAYER
-			}
+			},
 		])
 		expect(_PLAYER).toMatchObject(ex)
 	})
@@ -69,9 +69,9 @@ describe('materia constants', () => {
 		expect(() => {
 			inject([
 				'FAKE',
-				FAKE => {
+				(FAKE) => {
 					_FAKE = FAKE
-				}
+				},
 			])
 		}).toThrowError(/\$injector:unpr/)
 	})

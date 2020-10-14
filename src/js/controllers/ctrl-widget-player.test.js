@@ -1,6 +1,6 @@
-describe('playerCtrl', () => {
-	let _widgetSrv
-	let _userServ
+describe('WidgetPlayerCtrl', () => {
+	let _WidgetSrv
+	let _UserServ
 	let _scope
 	let sendMock
 	let $q
@@ -11,6 +11,7 @@ describe('playerCtrl', () => {
 	let $interval
 	let $location
 	let mockPlease
+	const { location } = window
 
 	let buildPostMessage = (type, data) => {
 		let e = new Event('message')
@@ -18,12 +19,12 @@ describe('playerCtrl', () => {
 			(e.currentTarget = 'whaaaat'),
 			(e.data = JSON.stringify({
 				type: type,
-				data: data
+				data: data,
 			}))
 		return e
 	}
 
-	let mockSendPromiseOnce = result => {
+	let mockSendPromiseOnce = (result) => {
 		sendMock.mockImplementationOnce((n, arg, cb) => {
 			const deferred = $q.defer()
 			deferred.resolve(result)
@@ -36,24 +37,24 @@ describe('playerCtrl', () => {
 		// mock dom elements
 		let centerStyle = {
 			width: -1,
-			height: -1
+			height: -1,
 		}
 
 		let widgetStyle = {
-			display: 'none'
+			display: 'none',
 		}
 
 		let previewStyle = {
-			width: -1
+			width: -1,
 		}
 
 		let embedStyle = {
 			width: -1,
-			height: -1
+			height: -1,
 		}
 
 		let mockHref = {
-			href: null
+			href: null,
 		}
 
 		let mockGetEl = jest
@@ -66,8 +67,8 @@ describe('playerCtrl', () => {
 		let mockEmbedTargetEl = {
 			style: embedStyle,
 			contentWindow: {
-				postMessage: mockPostMessageFromWidget
-			}
+				postMessage: mockPostMessageFromWidget,
+			},
 		}
 
 		// mock the getElementsById needed for the widget
@@ -79,10 +80,10 @@ describe('playerCtrl', () => {
 		let mockCreateElement = jest.spyOn(document, 'createElement').mockReturnValueOnce(mockHref)
 
 		// mock getting the instance from the api
-		_widgetSrv.getWidget.mockImplementationOnce(inst_id => ({
-			then: jest.fn(cb => {
+		_WidgetSrv.getWidget.mockImplementationOnce((inst_id) => ({
+			then: jest.fn((cb) => {
 				cb(widgetInstance)
-			})
+			}),
 		}))
 
 		global.PLAY_ID = 'ff88gg'
@@ -94,7 +95,7 @@ describe('playerCtrl', () => {
 		let mockWindowAddEventListener = jest.spyOn(window, 'addEventListener')
 		// start the controller
 		var $scope = { $watch: jest.fn(), inst_id: 'bb8', $apply: jest.fn() }
-		var controller = $controller('playerCtrl', { $scope })
+		var controller = $controller('WidgetPlayerCtrl', { $scope })
 
 		let mockPostMessage = $scope.jestTest.getLocalVar('_onPostMessage')
 
@@ -113,31 +114,30 @@ describe('playerCtrl', () => {
 			widgetInstance,
 			mockGetEl,
 			mockGetElByID,
-			mockPostMessage
+			mockPostMessage,
 		}
 	}
 
 	beforeEach(() => {
+		delete window.location
+		window.location = { assign: jest.fn() }
 		mockPlease = { $apply: jest.fn() }
 		let app = angular.module('materia')
 		app.factory('Please', () => mockPlease)
-		jest.spyOn(window.location, 'assign').mockImplementation(() => {
-			true
-		})
-		require('../materia-namespace')
-		require('../materia-constants')
+		require('../common/materia-namespace')
+		require('../common/materia-constants')
 
-		_userServ = { getAvatar: jest.fn(() => 'avatar') }
-		_widgetSrv = {
-			getWidget: jest.fn()
+		_UserServ = { getAvatar: jest.fn(() => 'avatar') }
+		_WidgetSrv = {
+			getWidget: jest.fn(),
 		}
 		_alert = {}
 
-		app.factory('widgetSrv', () => _widgetSrv)
-		app.factory('userServ', () => _userServ)
+		app.factory('WidgetSrv', () => _WidgetSrv)
+		app.factory('UserServ', () => _UserServ)
 		app.factory('Alert', () => _alert)
 
-		require('./ctrl-player')
+		require('./ctrl-widget-player')
 
 		inject((_$window_, $rootScope, _$q_, _$controller_, _$timeout_, _$interval_, _$location_) => {
 			_scope = $rootScope.$new()
@@ -155,18 +155,14 @@ describe('playerCtrl', () => {
 	})
 
 	afterEach(() => {
+		window.location = location
 		jest.clearAllMocks()
-		try {
-			window.location.assign.mockRestore()
-			document.getElementsByClassName.mockRestore()
-			document.getElementById.mockRestore()
-			document.createElement.mockRestore()
-		} catch (e) {}
+		jest.restoreAllMocks()
 	})
 
 	it('defines expected scope vars', () => {
 		var $scope = { $watch: jest.fn() }
-		var controller = $controller('playerCtrl', { $scope })
+		var controller = $controller('WidgetPlayerCtrl', { $scope })
 
 		expect($scope.isPreview).toBe(false)
 		expect($scope.allowFullScreen).toBe(false)
@@ -190,12 +186,12 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		// check all the widget initialization
 		expect(mockPlease.$apply).toHaveBeenCalledTimes(3)
-		expect(_widgetSrv.getWidget).toHaveBeenLastCalledWith('bb8')
+		expect(_WidgetSrv.getWidget).toHaveBeenLastCalledWith('bb8')
 		expect($scope.allowFullScreen).toBe(false)
 		expect(centerStyle.width).toBe('800px')
 		expect(centerStyle.height).toBe('600px')
@@ -218,7 +214,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		// varify the heartbeat request is sent after 30 seconds of initialization
@@ -240,7 +236,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		// mock widget start
@@ -270,7 +266,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		// mock widget start
@@ -299,9 +295,9 @@ describe('playerCtrl', () => {
 				{
 					testStorage: true,
 					value: 10,
-					whatever: 'yep'
-				}
-			]
+					whatever: 'yep',
+				},
+			],
 		])
 
 		let expectedLogs = expect.objectContaining([
@@ -311,9 +307,9 @@ describe('playerCtrl', () => {
 					game_time: expect.any(Number),
 					testLog: true,
 					value: 10,
-					whatever: 'yep'
-				}
-			]
+					whatever: 'yep',
+				},
+			],
 		])
 
 		expect(sendMock).toHaveBeenCalledWith('play_storage_data_save', expectedStorage)
@@ -333,7 +329,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		// mock widget start
@@ -365,7 +361,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		// mock widget start
@@ -375,8 +371,8 @@ describe('playerCtrl', () => {
 		//
 		let mockEmbedTargetEl = {
 			getBoundingClientRect: jest.fn().mockReturnValueOnce({
-				y: 0
-			})
+				y: 0,
+			}),
 		}
 
 		jest.spyOn(document, 'getElementById').mockReturnValueOnce(mockEmbedTargetEl)
@@ -405,7 +401,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		// mock widget start
@@ -434,7 +430,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		// mock widget start
@@ -463,7 +459,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		// test alert
@@ -494,7 +490,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		// test initialize post message
@@ -516,7 +512,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		mockSendPromiseOnce()
@@ -545,12 +541,12 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		mockSendPromiseOnce({
 			score_url: 'http:/localhost/score/screen/url',
-			type: 'success'
+			type: 'success',
 		})
 
 		mockPostMessage(buildPostMessage('start', ''))
@@ -574,7 +570,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		mockSendPromiseOnce()
@@ -603,7 +599,39 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
+		} = setupDomStuff()
+
+		$scope.isPreview = false
+		$scope.isEmbedded = true // make sure preview prevails over isEmbedded
+
+		mockSendPromiseOnce()
+		jest.spyOn($location, 'replace')
+
+		mockPostMessage(buildPostMessage('start', ''))
+		mockPostMessage(buildPostMessage('end'))
+
+		_scope.$digest() // make sure defer from post message completes
+
+		expect(window.location.assign).toHaveBeenCalledWith(
+			'https://test_base_url.com/scores/embed/bb8#play-ff88gg'
+		)
+	})
+
+	it('end redirects to preview embed url', () => {
+		let {
+			$scope,
+			controller,
+			mockCreateElement,
+			mockPostMessageFromWidget,
+			mockPostMessage,
+			mockHref,
+			embedStyle,
+			previewStyle,
+			widgetStyle,
+			centerStyle,
+			widgetInstance,
+			mockGetEl,
 		} = setupDomStuff()
 
 		$scope.isPreview = true
@@ -618,7 +646,7 @@ describe('playerCtrl', () => {
 		_scope.$digest() // make sure defer from post message completes
 
 		expect(window.location.assign).toHaveBeenCalledWith(
-			'https://test_base_url.com/scores/preview/bb8'
+			'https://test_base_url.com/scores/preview-embed/bb8'
 		)
 	})
 
@@ -635,7 +663,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		$scope.isEmbedded = true
@@ -665,7 +693,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		expect(() => {
@@ -673,8 +701,8 @@ describe('playerCtrl', () => {
 				origin: 'this-doesnt-match',
 				data: JSON.stringify({
 					type: 'start',
-					data: ''
-				})
+					data: '',
+				}),
 			})
 		}).toThrow()
 	})
@@ -691,7 +719,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		$scope.jestTest._sendAllPendingLogs(() => {
@@ -719,7 +747,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		$scope.jestTest.setQset(null)
@@ -742,7 +770,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		$scope.jestTest.setEmbedTargetEl(null)
@@ -765,7 +793,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		jest.spyOn($location, 'replace')
@@ -794,7 +822,7 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff()
 
 		jest.spyOn($location, 'replace')
@@ -815,7 +843,7 @@ describe('playerCtrl', () => {
 	it('embeds flash correctly', () => {
 		global.swfobject = {
 			hasFlashPlayerVersion: jest.fn(),
-			embedSWF: jest.fn()
+			embedSWF: jest.fn(),
 		}
 
 		let {
@@ -829,12 +857,12 @@ describe('playerCtrl', () => {
 			widgetStyle,
 			centerStyle,
 			widgetInstance,
-			mockGetEl
+			mockGetEl,
 		} = setupDomStuff(true, getMockApiData('widget_instances_get')[4])
 
 		// check all the widget initialization
 		expect(mockPlease.$apply).toHaveBeenCalledTimes(2)
-		expect(_widgetSrv.getWidget).toHaveBeenLastCalledWith('bb8')
+		expect(_WidgetSrv.getWidget).toHaveBeenLastCalledWith('bb8')
 		expect($scope.allowFullScreen).toBe(false)
 		expect(centerStyle.width).toBe('800px')
 		expect(centerStyle.height).toBe('593px')
@@ -857,7 +885,7 @@ describe('playerCtrl', () => {
 				GIID: 'bb8',
 				URL_GET_ASSET: 'media/',
 				URL_WEB: 'https://test_base_url.com/',
-				inst_id: 'bb8'
+				inst_id: 'bb8',
 			},
 			{ AllowScriptAccess: 'always', allowFullScreen: 'true', menu: 'false' },
 			{ id: 'container' }

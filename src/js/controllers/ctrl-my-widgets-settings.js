@@ -1,14 +1,14 @@
 const app = angular.module('materia')
 // The widget settings/availability modal on My Widgets
-app.controller('WidgetSettingsController', function(
+app.controller('MyWidgetsSettingsController', function (
 	Please,
 	$rootScope,
 	$scope,
 	$timeout,
 	$filter,
 	$window,
-	selectedWidgetSrv,
-	widgetSrv,
+	SelectedWidgetSrv,
+	WidgetSrv,
 	Alert
 ) {
 	let currentlySubmitting = false
@@ -31,7 +31,7 @@ app.controller('WidgetSettingsController', function(
 			},
 			stop(event, ui) {
 				$scope.updateSlider(ui.value)
-			}
+			},
 		})
 
 	// Sets up the date pickers for the availability times
@@ -39,33 +39,48 @@ app.controller('WidgetSettingsController', function(
 		$('.date.from').datepicker({
 			onSelect(dateText) {
 				$scope.availability[0].date = dateText
-			}
+			},
 		})
 
 		$('.date.to').datepicker({
 			onSelect(dateText) {
 				$scope.availability[1].date = dateText
-			}
+			},
 		})
 	}
 
 	const _toggleNormalAccess = () => {
-		if (($scope.guestAccess = true)) {
-			$scope.guestAccess = false
-		}
-		if (($scope.embeddedOnly = true)) {
+		// disallow student made widgets from being toggled out of guest mode
+		if ($scope.studentMade) return
+
+		$scope.guestAccess = !$scope.guestAccess
+
+		if ($scope.embeddedOnly == true) {
 			$scope.embeddedOnly = false
 		}
+
+		// warn user that students will be removed if guest mode is disabled
+		if ($scope.selected.widget.student_access == true && $scope.guestAccess == false) {
+			$scope.alert.msg =
+				'Warning: Disabling Guest Mode will automatically revoke access to this widget for any students it has been shared with!'
+			$scope.alert.title = 'Students with access will be removed'
+			$scope.alert.fatal = false
+		}
+
+		_updateSliderAfterChange()
 	}
 
 	const _toggleGuestAccess = () => {
+		// disallow student made widgets from being toggled out of guest mode
 		if ($scope.studentMade) return
 
 		$scope.guestAccess = !$scope.guestAccess
 		if ($scope.guestAccess) {
 			$scope.embeddedOnly = false
 		}
-		if ($scope.selected.widget.student_access === true && $scope.guestAccess === false) {
+
+		// warn user that students will be removed if guest mode is disabled
+		if ($scope.selected.widget.student_access == true && $scope.guestAccess == false) {
 			$scope.alert.msg =
 				'Warning: Disabling Guest Mode will automatically revoke access to this widget for any students it has been shared with!'
 			$scope.alert.title = 'Students with access will be removed'
@@ -73,12 +88,8 @@ app.controller('WidgetSettingsController', function(
 		}
 
 		$scope.attemptsSliderValue = $scope.UNLIMITED_SLIDER_VALUE
-		$timeout(() => {
-			$('.selector').slider({
-				value: $scope.attemptsSliderValue * 1000,
-				disabled: $scope.guestAccess
-			})
-		})
+
+		_updateSliderAfterChange()
 	}
 
 	const _toggleEmbeddedOnly = () => {
@@ -88,6 +99,20 @@ app.controller('WidgetSettingsController', function(
 		if ($scope.embeddedOnly) {
 			$scope.guestAccess = false
 		}
+
+		_updateSliderAfterChange()
+	}
+
+	// this probably shouldn't have to be used
+	// because the toggles above should be just one
+	// function lilke _setAccess()
+	const _updateSliderAfterChange = () => {
+		$timeout(() => {
+			$('.selector').slider({
+				value: $scope.attemptsSliderValue * 1000,
+				disabled: $scope.guestAccess,
+			})
+		})
 	}
 
 	// Fills in the dates from the selected widget
@@ -96,7 +121,7 @@ app.controller('WidgetSettingsController', function(
 		const close = $scope.selected.widget.close_at
 		const dates = [
 			open > -1 ? new Date(open * 1000) : null,
-			close > -1 ? new Date(close * 1000) : null
+			close > -1 ? new Date(close * 1000) : null,
 		]
 
 		dates.forEach((date, i) => {
@@ -115,7 +140,7 @@ app.controller('WidgetSettingsController', function(
 	}
 
 	// If the time is blurred without minutes set, add :00 (so 2 becomes 2:00)
-	const _checkTime = index => {
+	const _checkTime = (index) => {
 		if (
 			$scope.availability[index].time.indexOf(':') === -1 &&
 			$scope.availability[index].time !== ''
@@ -129,7 +154,7 @@ app.controller('WidgetSettingsController', function(
 
 	// Moves the slider to the specified value and updates the attempts.
 	// From ng-click on the attempt numbers below the slider.
-	const _changeSlider = number => {
+	const _changeSlider = (number) => {
 		let val
 		if ($scope.guestAccess) {
 			// always should be set to unlimited (-1)
@@ -147,7 +172,7 @@ app.controller('WidgetSettingsController', function(
 
 	// Updates the slider based on which value the slider is close to.
 	// It will "click" into place when in between the steps.
-	const _updateSlider = value => {
+	const _updateSlider = (value) => {
 		let smaller = Math.round(value / 1000)
 		if (smaller > 5) {
 			smaller = 5 * Math.round(smaller / 5)
@@ -171,7 +196,7 @@ app.controller('WidgetSettingsController', function(
 			date: 0,
 			time: 0,
 			missing: 0,
-			invalid: 0
+			invalid: 0,
 		}
 		$scope.error = ''
 		$scope.times = []
@@ -280,17 +305,16 @@ app.controller('WidgetSettingsController', function(
 			$scope.attemptsSliderValue < $scope.UNLIMITED_SLIDER_VALUE ? $scope.attemptsSliderValue : -1
 
 		// Update the widget instance.
-		widgetSrv
-			.saveWidget({
-				inst_id: $scope.selected.widget.id,
-				open_at: $scope.times[0],
-				close_at: $scope.times[1],
-				attempts,
-				guest_access: $scope.guestAccess,
-				embedded_only: $scope.embeddedOnly
-			})
-			.then(widget => {
-				selectedWidgetSrv.set(widget)
+		WidgetSrv.saveWidget({
+			inst_id: $scope.selected.widget.id,
+			open_at: $scope.times[0],
+			close_at: $scope.times[1],
+			attempts,
+			guest_access: $scope.guestAccess,
+			embedded_only: $scope.embeddedOnly,
+		})
+			.then((widget) => {
+				SelectedWidgetSrv.set(widget)
 				$rootScope.$broadcast('widgetList.update')
 				currentlySubmitting = false
 			})
@@ -319,13 +343,13 @@ app.controller('WidgetSettingsController', function(
 	$scope.availability.push({
 		header: 'Available',
 		anytimeLabel: 'Now',
-		anytime: true
+		anytime: true,
 	})
 	// To
 	$scope.availability.push({
 		header: 'Closes',
 		anytimeLabel: 'Never',
-		anytime: true
+		anytime: true,
 	})
 
 	$scope.error = ''

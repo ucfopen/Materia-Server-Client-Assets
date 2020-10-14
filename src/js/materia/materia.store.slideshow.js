@@ -4,7 +4,7 @@ Namespace('Materia.Store').SlideShow = (() => {
 	let cycler
 	let intervalID
 
-	const formatCycler = spotlights => {
+	const formatCycler = (spotlights) => {
 		cycler = document.querySelector('.cycler')
 
 		spotlightCount = spotlights.length
@@ -34,7 +34,7 @@ Namespace('Materia.Store').SlideShow = (() => {
 			span.classList.add('span_next')
 			span.dataset.index = i
 			if (i === 0) span.classList.add('spotlight_selected')
-			span.onclick = e => {
+			span.onclick = (e) => {
 				if (e.target.classList.contains('spotlight_selected')) {
 					return false
 				}
@@ -51,7 +51,7 @@ Namespace('Materia.Store').SlideShow = (() => {
 		}, 12000)
 	}
 
-	const goToSlide = slideNo => {
+	const goToSlide = (slideNo) => {
 		slideNo = parseInt(slideNo, 10)
 		if (slideNo >= spotlightCount) {
 			slideNo = 0
@@ -70,10 +70,10 @@ Namespace('Materia.Store').SlideShow = (() => {
 	}
 
 	// Cycles thorough the buttons to remove all selected clases, then adds the selected class to the button specified and checks that buttons input.
-	const spotlightSelected = index => {
+	const spotlightSelected = (index) => {
 		// clear previously selected
 		let spans = Array.from(document.querySelectorAll('.spotlight_selected'))
-		spans.forEach(s => {
+		spans.forEach((s) => {
 			s.classList.remove('spotlight_selected')
 		})
 

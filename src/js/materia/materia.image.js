@@ -16,6 +16,6 @@ Namespace('Materia').Image = (() => {
 	return {
 		iconUrl,
 		screenshotUrl,
-		screenshotThumbUrl
+		screenshotThumbUrl,
 	}
 })()

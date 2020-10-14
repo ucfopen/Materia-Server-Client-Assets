@@ -1,5 +1,5 @@
-describe('adminWidgetController', () => {
-	var adminSrv
+describe('MyWidgetSelectedController', () => {
+	var AdminSrv
 	var $controller
 	var mockPlease
 	var $q
@@ -11,8 +11,8 @@ describe('adminWidgetController', () => {
 		let app = angular.module('materia')
 		app.factory('Please', () => mockPlease)
 
-		require('../materia-namespace')
-		require('../materia-constants')
+		require('../common/materia-namespace')
+		require('../common/materia-constants')
 		require('../services/srv-admin')
 		require('../services/srv-widget')
 		require('../services/srv-selectedwidget')
@@ -20,23 +20,23 @@ describe('adminWidgetController', () => {
 		require('../services/srv-user')
 		require('./ctrl-alert')
 		require('ngmodal/dist/ng-modal')
-		require('./ctrl-selectedwidget')
+		require('./ctrl-my-widgets-selected')
 
-		inject((_$controller_, _$q_, _adminSrv_, _$rootScope_) => {
+		inject((_$controller_, _$q_, _AdminSrv_, _$rootScope_) => {
 			$controller = _$controller_
 			$q = _$q_
-			adminSrv = _adminSrv_
+			AdminSrv = _AdminSrv_
 			$rootScope = _$rootScope_
 		})
 
 		$scope = {
 			$watch: jest.fn(),
-			$on: jest.fn()
+			$on: jest.fn(),
 		}
 
 		Namespace('Materia.Coms.Json').send = jest.fn()
 
-		var controller = $controller('SelectedWidgetController', { $scope })
+		var controller = $controller('MyWidgetsSelectedController', { $scope })
 	})
 
 	it('defines expected scope vars', () => {
@@ -61,7 +61,7 @@ describe('adminWidgetController', () => {
 		expect($scope.hideModal).toBeDefined()
 
 		this.$parent = {
-			hideModal: jest.fn()
+			hideModal: jest.fn(),
 		}
 
 		// calling hideModal should call the hideModal we provide in this scope
@@ -72,7 +72,7 @@ describe('adminWidgetController', () => {
 
 	it('does nothing if a widget is not editable', () => {
 		$scope.selected = {
-			editable: false
+			editable: false,
 		}
 
 		$scope.editWidget()
@@ -84,13 +84,13 @@ describe('adminWidgetController', () => {
 		$scope.selected = {
 			editable: true,
 			widget: {
-				id: 1
-			}
+				id: 1,
+			},
 		}
 
 		Namespace('Materia.Coms.Json').send = jest.fn().mockResolvedValueOnce({
 			is_locked: true,
-			can_publish: true
+			can_publish: true,
 		})
 
 		return $scope.jestTest._editWidgetPromise().then(() => {

@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.service('scoreSrv', function() {
+app.service('ScoreSrv', function () {
 	return {
 		getWidgetInstanceScores(inst_id, token, callback) {
 			Materia.Coms.Json.send('widget_instance_scores_get', [inst_id, token]).then(callback)
@@ -25,6 +25,6 @@ app.service('scoreSrv', function() {
 
 		getScoreDistribution(inst_id, callback) {
 			Materia.Coms.Json.send('score_raw_distribution_get', [inst_id]).then(callback)
-		}
+		},
 	}
 })

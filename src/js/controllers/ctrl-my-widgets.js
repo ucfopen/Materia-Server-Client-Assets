@@ -1,31 +1,31 @@
 const app = angular.module('materia')
 app.requires.push('ngModal')
-app.config(function($locationProvider) {
+app.config(function ($locationProvider) {
 	$locationProvider.hashPrefix('')
 })
-app.controller('MyWidgetsController', function(
+app.controller('MyWidgetsController', function (
 	Please,
 	$rootScope,
 	$scope,
 	$q,
 	$window,
 	$timeout,
-	widgetSrv,
-	userServ,
-	selectedWidgetSrv,
-	beardServ,
+	WidgetSrv,
+	UserServ,
+	SelectedWidgetSrv,
+	BeardServ,
 	ACCESS,
 	Alert
 ) {
 	let firstRun = true
 	let loadScoresTimout = null
 
-	const _prepareWidgetForDisplay = widget => {
+	const _prepareWidgetForDisplay = (widget) => {
 		widget.icon = Materia.Image.iconUrl(widget.widget.dir, 60)
-		widget.beard = beardServ.getRandomBeard()
+		widget.beard = BeardServ.getRandomBeard()
 	}
 
-	const updateWidgets = data => {
+	const updateWidgets = (data) => {
 		Materia.Set.Throbber.stopSpin('.courses')
 
 		// data is empty
@@ -38,7 +38,7 @@ app.controller('MyWidgetsController', function(
 		} else {
 			// we've got data
 			// build attribues for each widget
-			angular.forEach(data, widget => {
+			angular.forEach(data, (widget) => {
 				_prepareWidgetForDisplay(widget)
 			})
 
@@ -49,9 +49,9 @@ app.controller('MyWidgetsController', function(
 
 		// on the first load, select the widget from the url
 		if (firstRun) {
-			widgetSrv.selectWidgetFromHashUrl()
+			WidgetSrv.selectWidgetFromHashUrl()
 			firstRun = false
-			$window.addEventListener('hashchange', widgetSrv.selectWidgetFromHashUrl, false)
+			$window.addEventListener('hashchange', WidgetSrv.selectWidgetFromHashUrl, false)
 		}
 	}
 
@@ -67,10 +67,10 @@ app.controller('MyWidgetsController', function(
 		populateDisplay()
 
 		$q.all([
-			userServ.get(),
-			selectedWidgetSrv.getUserPermissions(),
-			selectedWidgetSrv.getDateRanges()
-		]).then(data => {
+			UserServ.get(),
+			SelectedWidgetSrv.getUserPermissions(),
+			SelectedWidgetSrv.getDateRanges(),
+		]).then((data) => {
 			// don't render an old display if they user has clicked another widget
 			if ($scope.selected.widget.id !== currentId) {
 				return
@@ -84,7 +84,7 @@ app.controller('MyWidgetsController', function(
 
 			// load the scores a little later
 			loadScoresTimout = $timeout(() => {
-				selectedWidgetSrv.getScoreSummaries().then(scores => {
+				SelectedWidgetSrv.getScoreSummaries().then((scores) => {
 					$scope.selected.scores = scores
 					populateScores()
 				})
@@ -92,13 +92,13 @@ app.controller('MyWidgetsController', function(
 		})
 	}
 
-	const populateAttempts = attemptsAllowed => {
+	const populateAttempts = (attemptsAllowed) => {
 		attemptsAllowed = parseInt(attemptsAllowed, 10)
 		$scope.attemptText = attemptsAllowed > 0 ? attemptsAllowed : 'Unlimited'
 	}
 
 	const populateAvailability = (startDateInt, endDateInt) => {
-		$scope.availability = widgetSrv.convertAvailibilityDates(startDateInt, endDateInt)
+		$scope.availability = WidgetSrv.convertAvailibilityDates(startDateInt, endDateInt)
 		$scope.availabilityStart = startDateInt
 		$scope.availabilityEnd = endDateInt
 
@@ -137,9 +137,7 @@ app.controller('MyWidgetsController', function(
 		// TODO
 		$scope.perms.error = false
 
-		$scope.selected.preview = `preview/${$scope.selected.widget.id}/${
-			$scope.selected.widget.clean_name
-		}`
+		$scope.selected.preview = `preview/${$scope.selected.widget.id}/${$scope.selected.widget.clean_name}`
 		$scope.selected.copy_title = `${$scope.selected.widget.name} copy`
 		$scope.selected.widget.iconbig = Materia.Image.iconUrl($scope.selected.widget.widget.dir, 275)
 	}
@@ -161,33 +159,36 @@ app.controller('MyWidgetsController', function(
 	// Second half of populateDisplay
 	// This allows us to update the display before the callback of scores finishes, which speeds up UI
 	const populateAccess = () => {
-		// accessLevel == ACCESS.VISIBLE is effectively read-only
-		if (
-			($scope.perms.user[$scope.user.id] != null
-				? $scope.perms.user[$scope.user.id][0]
-				: undefined) != null
-		) {
-			$scope.selected.accessLevel = Number($scope.perms.user[$scope.user.id][0])
+		const sel = $scope.selected
+		const perms = $scope.perms
+		const userId = $scope.user.id
+		const perm = (perms.user[userId] && perms.user[userId][0]) || ACCESS.VISIBLE
+		sel.accessLevel = parseInt(perm, 10)
+		sel.can = {
+			view: [ACCESS.VISIBLE, ACCESS.COPY, ACCESS.SHARE, ACCESS.FULL, ACCESS.SU].includes(
+				sel.accessLevel
+			),
+			copy: [ACCESS.COPY, ACCESS.SHARE, ACCESS.FULL, ACCESS.SU].includes(sel.accessLevel),
+			edit: [ACCESS.FULL, ACCESS.SU].includes(sel.accessLevel),
+			delete: [ACCESS.FULL, ACCESS.SU].includes(sel.accessLevel),
+			share: [ACCESS.SHARE, ACCESS.FULL, ACCESS.SU].includes(sel.accessLevel),
 		}
 
-		$scope.selected.editable =
-			$scope.selected.accessLevel > ACCESS.VISIBLE &&
-			parseInt($scope.selected.widget.widget.is_editable) === 1
+		sel.editable =
+			$scope.selected.accessLevel > ACCESS.VISIBLE && parseInt(sel.widget.widget.is_editable) === 1
 
-		if ($scope.selected.editable) {
-			$scope.selected.edit = `/widgets/${$scope.selected.widget.widget.dir}create\#${
-				$scope.selected.widget.id
-			}`
+		if (sel.editable) {
+			sel.edit = `/widgets/${sel.widget.widget.dir}create\#${sel.widget.id}`
 		} else {
-			$scope.selected.edit = '#'
+			sel.edit = '#'
 		}
 
 		_countCollaborators()
 
-		$scope.selected.shareable = $scope.selected.accessLevel !== ACCESS.VISIBLE
+		sel.shareable = sel.accessLevel !== ACCESS.VISIBLE // old, but difficult to replace with sel.can.share :/
 
-		populateAvailability($scope.selected.widget.open_at, $scope.selected.widget.close_at)
-		populateAttempts($scope.selected.widget.attempts)
+		populateAvailability(sel.widget.open_at, sel.widget.close_at)
+		populateAttempts(sel.widget.attempts)
 	}
 
 	// count up the number of other users collaborating
@@ -216,7 +217,7 @@ app.controller('MyWidgetsController', function(
 	const _setScoreViewTab = (index, view) => {
 		// load storage data if needed
 		if (view === $scope.SCORE_TAB_STORAGE) {
-			selectedWidgetSrv.getStorageData().then(data => {
+			SelectedWidgetSrv.getStorageData().then((data) => {
 				$rootScope.$broadcast('storageData.loaded')
 				Please.$apply()
 			})
@@ -226,9 +227,9 @@ app.controller('MyWidgetsController', function(
 	}
 
 	const _onSelectedWidgetUpdate = () => {
-		$scope.selected.widget = selectedWidgetSrv.get()
-		const sessionCheck = userServ.checkValidSession()
-		sessionCheck.then(check => {
+		$scope.selected.widget = SelectedWidgetSrv.get()
+		const sessionCheck = UserServ.checkValidSession()
+		sessionCheck.then((check) => {
 			if (check) {
 				setSelectedWidget()
 			} else {
@@ -253,10 +254,10 @@ app.controller('MyWidgetsController', function(
 		hasScores: false,
 		preview: '',
 		guestAccess: false,
-		embeddedOnly: false
+		embeddedOnly: false,
 	}
 	$scope.perms = {
-		collaborators: []
+		collaborators: [],
 	}
 	$scope.show = {
 		collaborationModal: false,
@@ -267,27 +268,27 @@ app.controller('MyWidgetsController', function(
 		deleteDialog: false,
 		embedToggle: false,
 		editPublishedWarning: false,
-		restrictedPublishWarning: false
+		restrictedPublishWarning: false,
 	}
 	$scope.SCORE_TAB_GRAPH = 0
 	$scope.SCORE_TAB_INDIVIDUAL = 1
 	$scope.SCORE_TAB_STORAGE = 2
 	$scope.selectedScoreView = [] // array of above (i.e. 0 = graph)
 
-	$scope.setSelected = id => {
-		widgetSrv.updateHashUrl(id)
+	$scope.setSelected = (id) => {
+		WidgetSrv.updateHashUrl(id)
 	}
 
 	// Initialize
 
 	$scope.$on('selectedWidget.update', _onSelectedWidgetUpdate)
 	$scope.$on('collaborators.update', _countCollaborators)
-	$scope.$on('widgetList.update', evt => {
-		updateWidgets(widgetSrv.getWidgets())
+	$scope.$on('widgetList.update', (evt) => {
+		updateWidgets(WidgetSrv.getWidgets())
 	})
-	$scope.$on('user.update', evt => {
-		$scope.user = userServ.get()
+	$scope.$on('user.update', (evt) => {
+		$scope.user = UserServ.get()
 	})
 
-	widgetSrv.getWidgets().then(updateWidgets)
+	WidgetSrv.getWidgets().then(updateWidgets)
 })

@@ -1,6 +1,6 @@
 const app = angular.module('materia')
-app.controller('adminWidgetController', function($scope, Please, adminSrv) {
-	const _save = widget => {
+app.controller('AdminWidgetController', function ($scope, Please, AdminSrv) {
+	const _save = (widget) => {
 		const update = {
 			id: widget.id,
 			clean_name: widget.clean_name,
@@ -11,10 +11,10 @@ app.controller('adminWidgetController', function($scope, Please, adminSrv) {
 			restrict_publish: widget.restrict_publish,
 			about: widget.meta_data.about,
 			excerpt: widget.meta_data.excerpt,
-			demo: widget.meta_data.demo
+			demo: widget.meta_data.demo,
 		}
 
-		adminSrv.saveWidget(update).then(response => {
+		AdminSrv.saveWidget(update).then((response) => {
 			widget.errorMessage = []
 			for (let prop in response) {
 				const stat = response[prop]
@@ -30,8 +30,8 @@ app.controller('adminWidgetController', function($scope, Please, adminSrv) {
 	}
 
 	const _displayWidgets = () =>
-		adminSrv.getWidgets().then(widgets => {
-			widgets.forEach(w => {
+		AdminSrv.getWidgets().then((widgets) => {
+			widgets.forEach((w) => {
 				w.icon = Materia.Image.iconUrl(w.dir, 60)
 			})
 
@@ -39,7 +39,7 @@ app.controller('adminWidgetController', function($scope, Please, adminSrv) {
 			Please.$apply()
 		})
 
-	const _onUploaderChange = e => {
+	const _onUploaderChange = (e) => {
 		$scope.selectedFileName = 'No File Selected'
 		if (e.target.files && e.target.files.length > 0) {
 			$scope.selectedFileName = e.target.files[0].name

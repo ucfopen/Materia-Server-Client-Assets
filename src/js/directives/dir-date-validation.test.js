@@ -1,4 +1,4 @@
-describe('dateValidation Directive', function() {
+describe('dateValidation Directive', function () {
 	let $scope
 	let $compile
 

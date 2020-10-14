@@ -389,28 +389,55 @@
 		opacity: 0.5;
 	}
 
-	.page .controls div.delete_dialogue {
-		background: url(../../../img/delete-dialogue-bg.png) no-repeat center;
-		padding: 20px 0;
-		margin-bottom: 5px;
+	.page .controls .delete_dialogue {
 		text-align: center;
-	}
+		width: 345px;
+		margin: 0;
+		position: absolute;
+		padding: 21px 10px 17px;
+		box-sizing: border-box;
+		background: white;
+		border-radius: 10px;
+		box-shadow: 3px 1px 6px rgba(0, 0, 0, 0.3);
 
-	.page .controls div.delete_dialogue .action_button {
-		margin-top: 5px;
-	}
+		// css triangle arrow to point at delete link
+		&:before {
+			content: ' ';
+			height: 0;
+			position: absolute;
+			width: 0;
+			top: -35px;
+			right: 20px;
+			border: 20px solid transparent;
+			border-bottom-color: white;
+		}
 
-	.page .controls div.delete_dialogue .red {
-		background: #ca0000;
-		background-image: linear-gradient(#e10000, #ca0000);
-		border-color: #747474;
-		color: #ffffff;
-	}
+		.bottom_buttons {
+			margin-top: 18px;
+		}
 
-	.page .controls div.delete_dialogue .red:hover {
-		background: #ca0000;
-		background-image: linear-gradient(#ca0000, #e10000);
-		text-decoration: none;
+		.action_button {
+			margin-top: 5px;
+		}
+
+		.red {
+			background: #ca0000;
+			background-image: linear-gradient(#e10000, #ca0000);
+			border-color: #747474;
+			color: #ffffff;
+		}
+
+		.red:hover {
+			background: #ca0000;
+			background-image: linear-gradient(#ca0000, #e10000);
+			text-decoration: none;
+		}
+
+		.gray:hover {
+			background: #a2c129;
+			background-image: linear-gradient(#b8b8b8, #e4e4e4);
+			text-decoration: none;
+		}
 	}
 
 	.page .controls a.disabled,
@@ -423,12 +450,6 @@
 		color: #545454;
 		cursor: default;
 		opacity: 0.5;
-	}
-
-	.page .controls div.delete_dialogue .gray:hover {
-		background: #a2c129;
-		background-image: linear-gradient(#b8b8b8, #e4e4e4);
-		text-decoration: none;
 	}
 
 	.page .controls div.additional_options {
@@ -491,6 +512,15 @@
 			}
 		}
 
+		.external {
+			padding-right: 16px;
+			background-size: 11px;
+		}
+
+		p {
+			line-height: 0.6;
+		}
+
 		.share-help {
 			position: absolute;
 			top: 10px;
@@ -509,7 +539,7 @@
 
 		#play_link {
 			width: 100%;
-			margin: 0;
+			margin: 0 0 5px 0;
 			height: 1.5em;
 			font-size: 1.1em;
 			padding-left: 3px;

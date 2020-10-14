@@ -6,19 +6,19 @@ const entityMap = {
 	'>': '&gt;',
 	'"': '&quot;',
 	"'": '&#39;',
-	'/': '&#x2F;'
+	'/': '&#x2F;',
 }
 
-const escapeHtml = string => String(string).replace(/[&<>"'\/]/g, s => entityMap[s])
+const escapeHtml = (string) => String(string).replace(/[&<>"'\/]/g, (s) => entityMap[s])
 
 // Highlights search matches, used on My Widgets sidebar
-app.filter('highlight', function($sce) {
+app.filter('highlight', function ($sce) {
 	return (text, search) => {
 		// escape special characters from the source text
 		text = escapeHtml(text)
 		if (search) {
 			const searchTerms = search.split(' ')
-			searchTerms.forEach(term => {
+			searchTerms.forEach((term) => {
 				// find term in text and wrap it with a span
 				text = text.replace(new RegExp(`${term}`, 'gi'), (match, offset) => {
 					// @TODO: no comments left for this by previous dev

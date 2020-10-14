@@ -1,6 +1,6 @@
-describe('adminUserController', function() {
-	var adminSrv
-	var _userServ
+describe('AdminUserController', function () {
+	var AdminSrv
+	var _UserServ
 	var sendMock
 	var postMock
 	var getMock
@@ -19,32 +19,32 @@ describe('adminUserController', function() {
 	}
 
 	beforeEach(() => {
-		_userServ = {
-			getAvatar: jest.fn(() => 'avatar')
+		_UserServ = {
+			getAvatar: jest.fn(() => 'avatar'),
 		}
 		mockPlease = { $apply: jest.fn() }
 		let app = angular.module('materia')
 		app.factory('Please', () => mockPlease)
-		app.factory('userServ', () => _userServ)
+		app.factory('UserServ', () => _UserServ)
 
 		// MOCK $window
 		$window = {
 			addEventListener: jest.fn(),
 			location: {
-				reload: jest.fn()
-			}
+				reload: jest.fn(),
+			},
 		}
 		app.factory('$window', () => $window)
 
-		require('../materia-namespace')
-		require('../materia-constants')
+		require('../common/materia-namespace')
+		require('../common/materia-constants')
 		require('../services/srv-admin')
 		require('./ctrl-admin-user')
 
-		inject((_$controller_, _$q_, _adminSrv_, _$rootScope_) => {
+		inject((_$controller_, _$q_, _AdminSrv_, _$rootScope_) => {
 			$controller = _$controller_
 			$q = _$q_
-			adminSrv = _adminSrv_
+			AdminSrv = _AdminSrv_
 			$rootScope = _$rootScope_
 		})
 
@@ -57,19 +57,18 @@ describe('adminUserController', function() {
 
 	it('defines expected scope vars', () => {
 		var $scope = { $watch: jest.fn() }
-		var controller = $controller('adminUserController', { $scope })
+		var controller = $controller('AdminUserController', { $scope })
 
 		expect($scope.inputs).toMatchObject({ userSearchInput: '' })
 		expect($scope.searchResults).toMatchObject({
 			none: true,
 			show: false,
 			searching: false,
-			matches: []
+			matches: [],
 		})
 		expect($scope.selectedUser).toBeNull()
 		expect($scope.additionalData).toBeNull()
 		expect($scope.errorMessage).toMatchObject([])
-		expect(typeof $scope.search).toBe('function')
 		expect(typeof $scope.searchMatchClick).toBe('function')
 		expect(typeof $scope.save).toBe('function')
 		expect(typeof $scope.deselectUser).toBe('function')
@@ -77,14 +76,14 @@ describe('adminUserController', function() {
 
 	it('defines watches search input changes', () => {
 		var $scope = { $watch: jest.fn() }
-		var controller = $controller('adminUserController', { $scope })
+		var controller = $controller('AdminUserController', { $scope })
 
 		expect($scope.$watch).toHaveBeenCalledWith('inputs.userSearchInput', expect.anything())
 	})
 
 	it('deselectUser resets scope vars', () => {
 		var $scope = { $watch: jest.fn() }
-		var controller = $controller('adminUserController', { $scope })
+		var controller = $controller('AdminUserController', { $scope })
 		$scope.errorMessage = 'test'
 		$scope.selectedUser = 'test'
 		$scope.additionalData = 'test'
@@ -98,7 +97,7 @@ describe('adminUserController', function() {
 	it('searchMatchClick looks up a user and updates the scope', () => {
 		let lookupUser = {
 			instances_available: [{ icon: 3, widget: { dir: '999' } }],
-			instances_played: [{ id: 9, name: 'test', widget: { dir: 'somedir' } }]
+			instances_played: [{ id: 9, name: 'test', widget: { dir: 'somedir' } }],
 		}
 		let instances_played = [
 			{
@@ -110,16 +109,16 @@ describe('adminUserController', function() {
 						id: 9,
 						name: 'test',
 						widget: {
-							dir: 'somedir'
-						}
-					}
+							dir: 'somedir',
+						},
+					},
 				],
-				widget: { dir: 'somedir' }
-			}
+				widget: { dir: 'somedir' },
+			},
 		]
 
 		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
-		var controller = $controller('adminUserController', { $scope })
+		var controller = $controller('AdminUserController', { $scope })
 
 		mockJsonPromiseOnce(getMock, lookupUser)
 		$scope.searchMatchClick({ id: 5 })
@@ -131,7 +130,7 @@ describe('adminUserController', function() {
 
 	it('save sends args to service and updates scope', () => {
 		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
-		var controller = $controller('adminUserController', { $scope })
+		var controller = $controller('AdminUserController', { $scope })
 
 		$scope.selectedUser = {
 			id: 1,
@@ -139,8 +138,8 @@ describe('adminUserController', function() {
 			is_student: 'false',
 			profile_fields: {
 				notify: 'notify',
-				useGravatar: 'true'
-			}
+				useGravatar: 'true',
+			},
 		}
 
 		mockJsonPromiseOnce(postMock, { id: 1 })
@@ -151,7 +150,7 @@ describe('adminUserController', function() {
 			id: 1,
 			is_student: false,
 			notify: 'notify',
-			useGravatar: true
+			useGravatar: true,
 		})
 		expect($scope.errorMessage).toMatchObject([1])
 		expect(mockPlease.$apply).toHaveBeenCalledTimes(1)
@@ -159,7 +158,7 @@ describe('adminUserController', function() {
 
 	it('save sets errors', () => {
 		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
-		var controller = $controller('adminUserController', { $scope })
+		var controller = $controller('AdminUserController', { $scope })
 
 		$scope.selectedUser = {
 			id: 1,
@@ -167,8 +166,8 @@ describe('adminUserController', function() {
 			is_student: false,
 			profile_fields: {
 				notify: 'notify',
-				useGravatar: 'true'
-			}
+				useGravatar: 'true',
+			},
 		}
 
 		mockJsonPromiseOnce(postMock, { id: 'this was an error' })
@@ -180,38 +179,38 @@ describe('adminUserController', function() {
 
 	it('search sends args to service and updates scope', () => {
 		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
-		var controller = $controller('adminUserController', { $scope })
+		var controller = $controller('AdminUserController', { $scope })
 
 		mockJsonPromiseOnce(getMock, { id: 1 })
 
-		$scope.search('one')
+		$scope.jestTest._searchFor('one')
 		expect(getMock).toHaveBeenCalledTimes(1)
 		expect(getMock).toHaveBeenLastCalledWith('/api/admin/user_search/one')
 
 		mockJsonPromiseOnce(getMock, { id: 1 })
-		$scope.search('one two three')
+		$scope.jestTest._searchFor('one two three')
 		expect(getMock).toHaveBeenCalledTimes(2)
 		expect(getMock).toHaveBeenLastCalledWith('/api/admin/user_search/one%20two%20three')
 	})
 
 	it('search sends doesnt search twice with the same input', () => {
 		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
-		var controller = $controller('adminUserController', { $scope })
+		var controller = $controller('AdminUserController', { $scope })
 
 		mockJsonPromiseOnce(getMock, { id: 1 })
 		mockJsonPromiseOnce(getMock, { id: 1 })
-		$scope.search('one')
-		$scope.search('one')
+		$scope.jestTest._searchFor('one')
+		$scope.jestTest._searchFor('one')
 		expect(getMock).toHaveBeenCalledTimes(1)
 	})
 
 	it('search responds to api errors with an alert and a location change', () => {
 		global.alert = jest.fn()
 		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
-		var controller = $controller('adminUserController', { $scope })
+		var controller = $controller('AdminUserController', { $scope })
 
 		mockJsonPromiseOnce(getMock, { halt: true, msg: 'oh no' })
-		$scope.search('one')
+		$scope.jestTest._searchFor('one')
 		$rootScope.$digest() // processes promise
 		expect(alert).toHaveBeenCalledWith('oh no')
 		expect($window.location.reload).toHaveBeenCalledWith(true)
@@ -219,10 +218,10 @@ describe('adminUserController', function() {
 
 	it('search handles no matches', () => {
 		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
-		var controller = $controller('adminUserController', { $scope })
+		var controller = $controller('AdminUserController', { $scope })
 
 		mockJsonPromiseOnce(getMock, [])
-		$scope.search('one')
+		$scope.jestTest._searchFor('one')
 		$rootScope.$digest() // processes promise
 		expect($scope.searchResults.none).toBe(true)
 		expect($scope.searchResults.show).toBe(true)
@@ -231,11 +230,11 @@ describe('adminUserController', function() {
 
 	it('search short cuts empty string', () => {
 		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
-		var controller = $controller('adminUserController', { $scope })
+		var controller = $controller('AdminUserController', { $scope })
 
 		mockJsonPromiseOnce(getMock, [])
-		$scope.search('one')
-		$scope.search('')
+		$scope.jestTest._searchFor('one')
+		$scope.jestTest._searchFor('')
 		$rootScope.$digest() // processes promise
 		expect($scope.searchResults.none).toBe(true)
 		expect($scope.searchResults.show).toBe(false)
@@ -244,23 +243,26 @@ describe('adminUserController', function() {
 
 	it('search shows sorted matches', () => {
 		var $scope = { $watch: jest.fn(), $apply: jest.fn() }
-		var controller = $controller('adminUserController', { $scope })
+		var controller = $controller('AdminUserController', { $scope })
 
 		let expected = [
 			{
 				first: 'a',
 				gravatar: 'avatar',
-				last: 'a'
+				last: 'a',
 			},
 			{
 				first: 'z',
 				gravatar: 'avatar',
-				last: 'z'
-			}
+				last: 'z',
+			},
 		]
 
-		mockJsonPromiseOnce(getMock, [{ first: 'z', last: 'z' }, { first: 'a', last: 'a' }])
-		$scope.search('one')
+		mockJsonPromiseOnce(getMock, [
+			{ first: 'z', last: 'z' },
+			{ first: 'a', last: 'a' },
+		])
+		$scope.jestTest._searchFor('one')
 		$rootScope.$digest() // processes promise
 		expect($scope.searchResults.none).toBe(false)
 		expect($scope.searchResults.show).toBe(true)

@@ -1,4 +1,4 @@
-describe('ngEnter Directive', function() {
+describe('ngEnter Directive', function () {
 	let $scope
 	let $compile
 

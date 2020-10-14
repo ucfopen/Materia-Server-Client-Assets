@@ -1,103 +1,76 @@
 .ng-modal.copy {
-	text-align: center;
-}
+	// START MODAL PARTS
 
-.ng-modal.copy .adding_shadow {
-	width: 640px;
-	height: 480px;
-	background-color: #000000;
-	border-radius: 3px;
-	position: absolute;
-	top: -65px;
-	left: -20px;
-	z-index: 1;
-	opacity: 0;
-	filter: alpha(opacity=0);
-}
+	.ng-modal-dialog {
+		padding: 20px 20px 5px 20px;
+		min-width: 500px;
+	}
 
-.ng-modal.copy .container {
-	position: absolute;
-	left: 20px;
-	top: 40px;
-	width: 600px;
-	padding-top: 15px;
-}
+	.ng-modal-title {
+		margin: 0;
+		padding: 0;
+		font-size: 1.3em;
+		color: #555;
+		border-bottom: #999 dotted 1px;
+		padding-bottom: 20px;
+		margin-bottom: 20px;
+		position: relative;
+		text-align: left;
+	}
 
-.ng-modal.copy .ng-modal-title {
-	top: 3px;
-	left: 12px;
-}
+	a.close {
+		display: block;
+		position: absolute;
+		right: 5px;
+		top: 4px;
+		margin: 4px;
+		background: url('../../../img/close.png') no-repeat;
+		text-indent: -10000px;
+		width: 19px;
+		height: 19px;
+	}
 
-.ng-modal.copy a.close {
-	display: block;
-	position: absolute;
-	right: 5px;
-	top: 4px;
-	margin: 4px;
-	background: url('../../../img/close.png') no-repeat;
-	text-indent: -10000px;
-	width: 19px;
-	height: 19px;
-}
+	.container {
+		width: 100%;
+	}
 
-.ng-modal.copy .input_label {
-	font-size: 16px;
-	margin: 0 25px 0 0;
-}
+	// END MODAL PARTS
 
-.ng-modal.copy input.newtitle {
-	width: 450px;
-	height: 30px;
-	padding-left: 10px;
-	position: relative;
-	z-index: 2;
-}
+	.input_desc {
+		padding: 10px;
+		margin-bottom: 0;
+		background: #f2f2f2;
+		border-radius: 5px;
+		margin: 0.5em 1em 1em;
+	}
 
-.ng-modal.copy .copy_button {
-	margin-top: 20px;
-}
+	.title_container {
+		label {
+			margin: 0 25px 0 0;
+		}
 
-.ng-modal.copy .copy_error {
-	display: none;
-	color: #ee0000;
-	margin-top: 5px;
-}
+		#copy_input_title {
+			width: 450px;
+			height: 30px;
+			padding-left: 10px;
+			position: relative;
+			z-index: 2;
+		}
+	}
 
-.share .perm-text {
-	width: 100%;
-	display: inline-block;
-}
+	.options_container {
+		margin: 20px 0 0 0;
+		padding: 20px 0 0 0;
+		text-align: left;
 
-.share .exp-date {
-	padding: 0;
-	text-decoration: underline;
-	color: #545454;
-	font-size: 8pt;
-	cursor: pointer;
-	background: transparent;
-	border: none;
-	width: 85px;
-}
-.share .exp-date:hover {
-	color: #969696;
-}
-.share .exp-date:disabled {
-	cursor: default;
-	color: #c5c5c5;
-	text-decoration: none;
-}
+		input {
+			margin-right: 5px;
+		}
+	}
 
-.share .exp-date:focus {
-	outline: none;
-	background: #fff;
-	border: solid 1px #f7b64a;
-}
-
-.share .expires {
-	font-size: 8pt;
-}
-
-.share .remove-expiration {
-	font-size: 8pt;
-	cursor: pointer;
+	.bottom_buttons {
+		margin-top: 20px;
+		text-align: center;
+		width: 100%;
+	}
 }

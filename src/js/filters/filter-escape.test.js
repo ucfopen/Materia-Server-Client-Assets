@@ -1,4 +1,4 @@
-describe('escape filter', function() {
+describe('escape filter', function () {
 	var filter
 
 	beforeEach(() => {

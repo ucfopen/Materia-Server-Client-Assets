@@ -1,11 +1,11 @@
-describe('selectedWidgetSrv', () => {
+describe('SelectedWidgetSrv', () => {
 	var _service
 	var _compile
 	var $scope
 	var sendMock
 	var $q
 
-	let mockSendPromiseOnce = result => {
+	let mockSendPromiseOnce = (result) => {
 		sendMock.mockImplementationOnce((n, arg, cb) => {
 			const deferred = $q.defer()
 			deferred.resolve(result)
@@ -14,13 +14,13 @@ describe('selectedWidgetSrv', () => {
 	}
 
 	beforeEach(() => {
-		require('../materia-namespace')
-		require('../materia-constants')
+		require('../common/materia-namespace')
+		require('../common/materia-constants')
 		require('./srv-selectedwidget')
 
-		inject(function(_$rootScope_, selectedWidgetSrv, _$q_) {
+		inject(function (_$rootScope_, SelectedWidgetSrv, _$q_) {
 			$scope = _$rootScope_
-			_service = selectedWidgetSrv
+			_service = SelectedWidgetSrv
 			$q = _$q_
 		})
 
@@ -87,7 +87,7 @@ describe('selectedWidgetSrv', () => {
 		expect(promiseSpy).toHaveBeenCalledWith({
 			last: { id: 5 },
 			list: [{ id: 5 }, { id: 9 }],
-			map: { '5': { id: 5 }, '9': { id: 9 } }
+			map: { '5': { id: 5 }, '9': { id: 9 } },
 		})
 
 		let promiseSpy2 = jest.fn()
@@ -98,7 +98,7 @@ describe('selectedWidgetSrv', () => {
 		expect(promiseSpy2).toHaveBeenCalledWith({
 			last: { id: 5 },
 			list: [{ id: 5 }, { id: 9 }],
-			map: { '5': { id: 5 }, '9': { id: 9 } }
+			map: { '5': { id: 5 }, '9': { id: 9 } },
 		})
 	})
 
@@ -232,14 +232,14 @@ describe('selectedWidgetSrv', () => {
 			year: '2016',
 			semester: 'Summer',
 			start: '1462233601',
-			end: '1470528000'
+			end: '1470528000',
 		}
 
 		let expectedSemseterB = {
 			year: '2028',
 			semester: 'Summer',
 			start: '1840939201',
-			end: '1849233600'
+			end: '1849233600',
 		}
 
 		let semsterA = _service.getSemesterFromTimestamp(1462233601)
