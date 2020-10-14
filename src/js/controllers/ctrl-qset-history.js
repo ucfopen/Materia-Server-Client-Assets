@@ -1,18 +1,18 @@
 const app = angular.module('materia')
-app.controller('qsetHistoryCtrl', function($scope, $sce) {
+app.controller('qsetHistoryCtrl', function ($scope, $sce) {
 	$scope.saves = []
 
 	const _setup = () => {
 		let id = _getInstId()
-		_getQsetHistory(id).then(result => {
+		_getQsetHistory(id).then((result) => {
 			if (!result) return false
-			result.forEach(qset => {
+			result.forEach((qset) => {
 				save = {
 					id: qset.id,
 					data: qset.data,
 					version: qset.version,
 					count: _readQuestionCount(qset.data),
-					created_at: new Date(parseInt(qset.created_at) * 1000).toLocaleString()
+					created_at: new Date(parseInt(qset.created_at) * 1000).toLocaleString(),
 				}
 				$scope.saves.push(save)
 			})
@@ -20,14 +20,14 @@ app.controller('qsetHistoryCtrl', function($scope, $sce) {
 		})
 	}
 
-	const _readQuestionCount = qset => {
+	const _readQuestionCount = (qset) => {
 		let items = qset.items
 		if (items.items) items = items.items
 
 		return items.length
 	}
 
-	const _getQsetHistory = inst_id => {
+	const _getQsetHistory = (inst_id) => {
 		return Materia.Coms.Json.send('question_history_get', [inst_id])
 	}
 
@@ -37,8 +37,8 @@ app.controller('qsetHistoryCtrl', function($scope, $sce) {
 		return id
 	}
 
-	$scope.loadSaveData = id => {
-		$scope.saves.forEach(save => {
+	$scope.loadSaveData = (id) => {
+		$scope.saves.forEach((save) => {
 			if (id == save.id) {
 				return window.parent.Materia.Creator.onQsetHistorySelectionComplete(
 					JSON.stringify(save.data),
@@ -49,7 +49,7 @@ app.controller('qsetHistoryCtrl', function($scope, $sce) {
 		})
 	}
 
-	$scope.closeDialog = e => {
+	$scope.closeDialog = (e) => {
 		e.stopPropagation()
 		return window.parent.Materia.Creator.onQsetHistorySelectionComplete(null)
 	}
