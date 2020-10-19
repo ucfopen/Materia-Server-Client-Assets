@@ -84,7 +84,6 @@ app.controller('LTIResourceSelectionCtrl', function (
 			// provided by launch_presentation_return_url or content_item_return_url
 			// if RETURN_URL is set, we'll use it to inform the LTI Tool consumer of our choice
 			if (typeof RETURN_URL !== 'undefined' && RETURN_URL !== null) {
-
 				// add a ? or & depending on RETURN_URL already containing query params
 				const seperator = RETURN_URL.includes('?') ? '&' : '?'
 				// endode the url
