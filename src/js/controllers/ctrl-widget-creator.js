@@ -385,8 +385,6 @@ app.controller('WidgetCreatorCtrl', function (
 	const onCreatorReady = () => {
 		creator = document.querySelector('#container')
 		// resize swf now and when window resizes
-
-		// TODO improve this
 		if (qsetToReload != null) {
 			keepQSet = {
 				data: qsetToReload.data,
