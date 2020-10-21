@@ -28,7 +28,7 @@ app.controller('qsetHistoryCtrl', function ($scope, $sce) {
 	}
 
 	const _getQsetHistory = (inst_id) => {
-		return Materia.Coms.Json.send('question_history_get', [inst_id])
+		return Materia.Coms.Json.get(`/api/instance/history?inst_id=${inst_id}`)
 	}
 
 	const _getInstId = () => {
