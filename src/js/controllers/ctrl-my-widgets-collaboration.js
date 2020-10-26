@@ -1,11 +1,11 @@
 const app = angular.module('materia')
-app.controller('CollaborationController', function(
+app.controller('MyWidgetsCollaborationController', function (
 	Please,
 	$scope,
 	$timeout,
-	selectedWidgetSrv,
-	widgetSrv,
-	userServ,
+	SelectedWidgetSrv,
+	WidgetSrv,
+	UserServ,
 	ACCESS,
 	OBJECT_TYPES,
 	Alert
@@ -17,7 +17,7 @@ app.controller('CollaborationController', function(
 	const ESC = 27
 	let lastSearch = ''
 
-	const _search = nameOrFragment => {
+	const _searchFor = (nameOrFragment) => {
 		if (nameOrFragment === lastSearch) {
 			return
 		}
@@ -37,7 +37,7 @@ app.controller('CollaborationController', function(
 		const inputArray = nameOrFragment.split(',')
 		nameOrFragment = inputArray[inputArray.length - 1]
 
-		Materia.Coms.Json.send('users_search', [nameOrFragment]).then(matches => {
+		Materia.Coms.Json.send('users_search', [nameOrFragment]).then((matches) => {
 			if (matches != null ? matches.halt : undefined) {
 				$scope.alert.msg = matches.msg
 				$scope.alert.fatal = true
@@ -54,7 +54,7 @@ app.controller('CollaborationController', function(
 			$scope.searchResults.none = matches.length < 1
 
 			for (let user of Array.from(matches)) {
-				user.gravatar = userServ.getAvatar(user, 50)
+				user.gravatar = UserServ.getAvatar(user, 50)
 			}
 
 			matches = matches.sort(sortNames)
@@ -72,7 +72,7 @@ app.controller('CollaborationController', function(
 		return nameA.localeCompare(nameB)
 	}
 
-	const _searchKeyDown = event => {
+	const _searchKeyDown = (event) => {
 		switch (event.which) {
 			case RIGHT:
 				$scope.selectedIndex++
@@ -122,7 +122,7 @@ app.controller('CollaborationController', function(
 		})
 	}
 
-	const _searchMatchClick = user => {
+	const _searchMatchClick = (user) => {
 		if (!user) {
 			return
 		}
@@ -132,9 +132,8 @@ app.controller('CollaborationController', function(
 		$scope.inputs.userSearchInput = ''
 
 		if ($scope.selected.widget.guest_access === false && user.is_student) {
-			$scope.alert.msg =
-				'Students can not be given access to this widget unless Guest Mode is enabled!'
-			$scope.alert.title = 'Unable to share with student'
+			$scope.alert.msg = 'Access must be set to "Guest Mode" to collaborate with students.'
+			$scope.alert.title = 'Share Not Allowed'
 			$scope.alert.fatal = false
 			return
 		}
@@ -164,7 +163,7 @@ app.controller('CollaborationController', function(
 			first: user.first,
 			last: user.last,
 			gravatar: user.gravatar,
-			access: String(ACCESS.VISIBLE)
+			access: String(ACCESS.VISIBLE),
 		})
 
 		$timeout(() => {
@@ -172,7 +171,7 @@ app.controller('CollaborationController', function(
 		}, 1)
 	}
 
-	const _removeAccess = user => {
+	const _removeAccess = (user) => {
 		user.remove = true
 		$scope.checkForWarning(user)
 	}
@@ -213,7 +212,7 @@ app.controller('CollaborationController', function(
 			permObj.push({
 				user_id: user.id,
 				expiration: user.expires,
-				perms: access
+				perms: access,
 			})
 		}
 
@@ -221,13 +220,13 @@ app.controller('CollaborationController', function(
 		Materia.Coms.Json.send('permissions_set', [
 			OBJECT_TYPES.WIDGET_INSTANCE,
 			widget_id,
-			permObj
-		]).then(returnData => {
+			permObj,
+		]).then((returnData) => {
 			if (returnData === true) {
 				$scope.$emit('collaborators.update', '')
 				$scope.show.collaborationModal = false
 				if (remove_widget) {
-					widgetSrv.removeWidget(widget_id)
+					WidgetSrv.removeWidget(widget_id)
 				}
 				if (students.length > 0) {
 					$scope.selected.widget.student_access = true
@@ -246,13 +245,13 @@ app.controller('CollaborationController', function(
 		})
 	}
 
-	const _checkForWarning = user => {
+	const _checkForWarning = (user) => {
 		if (user.isCurrentUser && user.access <= ACCESS.FULL) {
 			return (user.warning = true)
 		}
 	}
 
-	const _cancelDemote = user => {
+	const _cancelDemote = (user) => {
 		const accessLevel = String($scope.selected.accessLevel)
 		user.warning = false
 		user.remove = false
@@ -263,18 +262,17 @@ app.controller('CollaborationController', function(
 	$scope.searchResults = {
 		show: false,
 		searching: false,
-		matches: []
+		matches: [],
 	}
 	$scope.ACCESS = {
 		VISIBLE: ACCESS.VISIBLE,
-		FULL: ACCESS.FULL
+		FULL: ACCESS.FULL,
 	}
 	$scope.accessLevels = {}
 	$scope.accessLevels[ACCESS.VISIBLE] = { value: ACCESS.VISIBLE, text: 'View Scores' }
 	$scope.accessLevels[ACCESS.FULL] = { value: ACCESS.FULL, text: 'Full' }
 
 	$scope.alert = Alert
-	$scope.search = _search
 	$scope.updatePermissions = _updatePermissions
 	$scope.checkForWarning = _checkForWarning
 	$scope.cancelDemote = _cancelDemote
@@ -284,5 +282,5 @@ app.controller('CollaborationController', function(
 
 	//  Initialize
 
-	$scope.$watch('inputs.userSearchInput', input => $scope.search(input))
+	$scope.$watch('inputs.userSearchInput', (input) => _searchFor(input))
 })

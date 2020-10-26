@@ -1,4 +1,4 @@
-describe('widgetDetailsController', () => {
+describe('WidgetCatalogDetailsController', () => {
 	var $controller
 	var mockPlease
 	var $q
@@ -22,10 +22,10 @@ describe('widgetDetailsController', () => {
 			about: 'about',
 			supported_data: ['supported1', 'supported2'],
 			features: ['feature1', 'feature2'],
-			demo: 'abCD1'
+			demo: 'abCD1',
 		},
 		width: '700',
-		height: '700'
+		height: '700',
 	}
 
 	beforeEach(() => {
@@ -35,11 +35,11 @@ describe('widgetDetailsController', () => {
 
 		// mock window.location
 		mockWindow = {}
-		mockLocationSet = jest.fn(l => (location = l))
+		mockLocationSet = jest.fn((l) => (location = l))
 		mockLocationGet = jest.fn(() => location)
 		Object.defineProperty(mockWindow, 'location', {
 			get: mockLocationGet,
-			set: mockLocationSet
+			set: mockLocationSet,
 		})
 		app.factory('$window', () => mockWindow)
 
@@ -50,15 +50,15 @@ describe('widgetDetailsController', () => {
 			</div>
 		`
 
-		require('../materia-namespace')
-		require('../materia-constants')
+		require('../common/materia-namespace')
+		require('../common/materia-constants')
 		require('../materia/materia.coms.json')
 		require('../services/srv-selectedwidget')
 		require('../services/srv-datetime')
 		require('../services/srv-widget')
 		require('ngmodal/dist/ng-modal')
 		require('hammerjs')
-		require('./ctrl-widget-details')
+		require('./ctrl-widget-catalog-details')
 
 		inject((_$controller_, _$document_, _$window_, _$timeout_, _$q_, _$rootScope_) => {
 			$controller = _$controller_
@@ -95,10 +95,10 @@ describe('widgetDetailsController', () => {
 
 		$scope = {
 			$watch: jest.fn(),
-			$on: jest.fn()
+			$on: jest.fn(),
 		}
 
-		var controller = $controller('widgetDetailsController', { $scope })
+		var controller = $controller('WidgetCatalogDetailsController', { $scope })
 	})
 
 	const setup = (customWidget = false, pageWidth = 1000) => {
@@ -113,7 +113,7 @@ describe('widgetDetailsController', () => {
 	const mockSessionCreate = () => {
 		return (Namespace('Materia.Coms.Json').send = jest.fn(() => {
 			return {
-				then: cb => cb('play-id')
+				then: (cb) => cb('play-id'),
 			}
 		}))
 	}

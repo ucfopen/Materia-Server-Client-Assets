@@ -3,7 +3,7 @@ describe('Materia.Score', () => {
 	let mockAddLog
 
 	beforeEach(() => {
-		require('../materia-namespace')
+		require('../common/materia-namespace')
 		require('./materia.score')
 		Score = Materia.Score
 		Namespace('Materia.Engine').addLog = mockAddLog = jest.fn()

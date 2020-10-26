@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`mediaImportCtrl announces readyForDirectUpload via postmessage before loading media 1`] = `
+exports[`MediaImportCtrl announces readyForDirectUpload via postmessage before loading media 1`] = `
 Array [
   "{\\"type\\":\\"readyForDirectUpload\\",\\"source\\":\\"media-importer\\",\\"data\\":\\"\\"}",
   "*",
 ]
 `;
 
-exports[`mediaImportCtrl grabs a list of valid image assets 1`] = `
+exports[`MediaImportCtrl grabs a list of valid image assets 1`] = `
 Array [
   Object {
     "created": "6/14/2017",

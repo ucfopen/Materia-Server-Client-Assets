@@ -4,10 +4,10 @@ const app = angular.module('materia')
 app.directive('dateValidation', () => ({
 	require: 'ngModel',
 	scope: {
-		validate: '&'
+		validate: '&',
 	},
 	link(scope, element, attrs, modelCtrl) {
-		modelCtrl.$parsers.push(inputValue => {
+		modelCtrl.$parsers.push((inputValue) => {
 			// Dates can do 0-9 and '/'
 			let transformed
 			if (attrs.validate === 'date') {
@@ -23,5 +23,5 @@ app.directive('dateValidation', () => ({
 			}
 			return transformed
 		})
-	}
+	},
 }))

@@ -5,7 +5,7 @@ Namespace('Materia').CreatorCore = (() => {
 	let _mediaUrl = null
 	let _resizeInterval = null
 
-	const _onPostMessage = e => {
+	const _onPostMessage = (e) => {
 		if (typeof e.data !== 'string') return
 		const msg = JSON.parse(e.data)
 		switch (msg.type) {
@@ -38,6 +38,9 @@ Namespace('Materia').CreatorCore = (() => {
 			case 'onQuestionImportComplete':
 				_tellCreator('onQuestionImportComplete', [msg.data[0]])
 				break
+			case 'reloadCreator':
+				_forceCreatorReload()
+				break
 			default:
 				console.warn(`Error, unknown message sent to creator core: ${msg.type}`)
 				break
@@ -67,7 +70,11 @@ Namespace('Materia').CreatorCore = (() => {
 		_tellCreator('initExistingWidget', [widget, title, qset, qsetVersion])
 	}
 
-	const start = creatorClass => {
+	const _forceCreatorReload = () => {
+		location.reload(true)
+	}
+
+	const start = (creatorClass) => {
 		// setup the postmessage listener
 		window.addEventListener('message', _onPostMessage, false)
 
@@ -85,16 +92,16 @@ Namespace('Materia').CreatorCore = (() => {
 		_sendPostMessage('alert', { msg, title, fatal })
 	}
 
-	const getMediaUrl = mediaId => `${_mediaUrl}/${mediaId}`
+	const getMediaUrl = (mediaId) => `${_mediaUrl}/${mediaId}`
 
-	const showMediaImporter = types => {
+	const showMediaImporter = (types) => {
 		if (types == null) {
 			types = ['image']
 		}
 		_sendPostMessage('showMediaImporter', types)
 	}
 
-	const directUploadMedia = mediaData => {
+	const directUploadMedia = (mediaData) => {
 		_sendPostMessage('directUploadMedia', mediaData)
 	}
 
@@ -106,9 +113,9 @@ Namespace('Materia').CreatorCore = (() => {
 		_sendPostMessage('save', [sanitizedTitle, qset, version])
 	}
 
-	const cancelSave = msg => _sendPostMessage('cancelSave', [msg])
+	const cancelSave = (msg) => _sendPostMessage('cancelSave', [msg])
 
-	const setHeight = h => {
+	const setHeight = (h) => {
 		if (!h) {
 			h = document.getElementsByTagName('html')[0].height()
 		}
@@ -118,7 +125,7 @@ Namespace('Materia').CreatorCore = (() => {
 		}
 	}
 
-	const escapeScriptTags = text => text.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+	const escapeScriptTags = (text) => text.replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
 	const disableResizeInterval = () => {
 		clearInterval(_resizeInterval)
@@ -135,6 +142,6 @@ Namespace('Materia').CreatorCore = (() => {
 		save,
 		disableResizeInterval,
 		setHeight, // allows the creator to resize its iframe container to fit the height of its contents
-		escapeScriptTags
+		escapeScriptTags,
 	}
 })()

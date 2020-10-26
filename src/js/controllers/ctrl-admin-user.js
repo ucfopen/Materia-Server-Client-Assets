@@ -1,5 +1,5 @@
 const app = angular.module('materia')
-app.controller('adminUserController', function(Please, $scope, $window, adminSrv, userServ) {
+app.controller('AdminUserController', function (Please, $scope, $window, AdminSrv, UserServ) {
 	let lastSearch = ''
 
 	const _sortNames = (userA, userB) => {
@@ -8,13 +8,13 @@ app.controller('adminUserController', function(Please, $scope, $window, adminSrv
 		return nameA.localeCompare(nameB)
 	}
 
-	const _getIconUrls = instances => {
-		instances.forEach(i => {
+	const _getIconUrls = (instances) => {
+		instances.forEach((i) => {
 			i.icon = Materia.Image.iconUrl(i.widget.dir, 60)
 		})
 	}
 
-	const _processPlayed = instances => {
+	const _processPlayed = (instances) => {
 		const _pre = []
 
 		for (let play of instances) {
@@ -24,17 +24,17 @@ app.controller('adminUserController', function(Please, $scope, $window, adminSrv
 					name: play.name,
 					widget: play.widget,
 					icon: Materia.Image.iconUrl(play.widget.dir, 60),
-					plays: []
+					plays: [],
 				}
 			}
 			_pre[play.id].plays.push(play)
 		}
 
 		// convert to an array
-		return Object.keys(_pre).map(i => _pre[i])
+		return Object.keys(_pre).map((i) => _pre[i])
 	}
 
-	const search = nameOrFragment => {
+	const _searchFor = (nameOrFragment) => {
 		if (nameOrFragment === lastSearch) {
 			return
 		}
@@ -54,7 +54,7 @@ app.controller('adminUserController', function(Please, $scope, $window, adminSrv
 		const inputArray = nameOrFragment.split(',')
 		nameOrFragment = inputArray[inputArray.length - 1]
 
-		adminSrv.searchUsers(nameOrFragment).then(result => {
+		AdminSrv.searchUsers(nameOrFragment).then((result) => {
 			$scope.searchResults.searching = false
 			if (result && result.halt) {
 				alert(result.msg)
@@ -67,8 +67,8 @@ app.controller('adminUserController', function(Please, $scope, $window, adminSrv
 				matches = result
 			}
 
-			matches.forEach(user => {
-				user.gravatar = userServ.getAvatar(user, 50)
+			matches.forEach((user) => {
+				user.gravatar = UserServ.getAvatar(user, 50)
 			})
 
 			matches = matches.sort(_sortNames)
@@ -79,8 +79,8 @@ app.controller('adminUserController', function(Please, $scope, $window, adminSrv
 		})
 	}
 
-	const searchMatchClick = user => {
-		adminSrv.lookupUser(user.id).then(data => {
+	const searchMatchClick = (user) => {
+		AdminSrv.lookupUser(user.id).then((data) => {
 			$scope.inputs.userSearchInput = ''
 			$scope.selectedUser = user
 			$scope.additionalData = data
@@ -97,10 +97,10 @@ app.controller('adminUserController', function(Please, $scope, $window, adminSrv
 			email: u.email,
 			is_student: u.is_student === 'true' || u.is_student === true,
 			notify: u.profile_fields.notify,
-			useGravatar: u.profile_fields.useGravatar === 'true' || u.profile_fields.useGravatar === true
+			useGravatar: u.profile_fields.useGravatar === 'true' || u.profile_fields.useGravatar === true,
 		}
 
-		adminSrv.saveUser(update).then(response => {
+		AdminSrv.saveUser(update).then((response) => {
 			let errors = []
 			for (let prop in response) {
 				const stat = response[prop]
@@ -125,14 +125,20 @@ app.controller('adminUserController', function(Please, $scope, $window, adminSrv
 		none: true,
 		show: false,
 		searching: false,
-		matches: []
+		matches: [],
 	}
 	$scope.deselectUser = deselectUser
 	$scope.save = save
 	$scope.searchMatchClick = searchMatchClick
-	$scope.search = search
+
+	/* develblock:start */
+	// these method are exposed for testing
+	$scope.jestTest = {
+		_searchFor,
+	}
+	/* develblock:end */
 
 	// initialize
 	deselectUser()
-	$scope.$watch('inputs.userSearchInput', input => $scope.search(input))
+	$scope.$watch('inputs.userSearchInput', (input) => _searchFor(input))
 })

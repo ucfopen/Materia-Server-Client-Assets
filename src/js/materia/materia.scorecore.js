@@ -3,7 +3,8 @@ Namespace('Materia').ScoreCore = (() => {
 	let _mediaUrl = null
 	let _widgetClass = null
 
-	const _onPostMessage = e => {
+	const _onPostMessage = (e) => {
+		if (typeof e.data !== 'string') return
 		const msg = JSON.parse(e.data)
 		switch (msg.type) {
 			case 'initWidget':
@@ -43,13 +44,13 @@ Namespace('Materia').ScoreCore = (() => {
 		_sendPostMessage('hideScoresOverview')
 	}
 
-	const getMediaUrl = mediaId => `${_mediaUrl}/${mediaId}`
+	const getMediaUrl = (mediaId) => `${_mediaUrl}/${mediaId}`
 
 	const requestScoreDistribution = () => {
 		_sendPostMessage('requestScoreDistribution')
 	}
 
-	const start = widgetClass => {
+	const start = (widgetClass) => {
 		// setup the postmessage listener
 		addEventListener('message', _onPostMessage, false)
 
@@ -57,7 +58,7 @@ Namespace('Materia').ScoreCore = (() => {
 		_sendPostMessage('start', null)
 	}
 
-	const setHeight = h => {
+	const setHeight = (h) => {
 		if (!h) {
 			h = parseInt(window.getComputedStyle(document.documentElement).height, 10)
 		}
@@ -73,6 +74,6 @@ Namespace('Materia').ScoreCore = (() => {
 		hideScoresOverview,
 		requestScoreDistribution,
 		setHeight,
-		start
+		start,
 	}
 })()

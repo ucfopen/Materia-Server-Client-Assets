@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`widgetCatalogController defines expected scope vars 1`] = `
+exports[`WidgetCatalogCtrl defines expected scope vars 1`] = `
 Array [
   "$watch",
   "$on",
@@ -23,7 +23,7 @@ Array [
 ]
 `;
 
-exports[`widgetCatalogController implements url based filters and search on initial load 1`] = `
+exports[`WidgetCatalogCtrl implements url based filters and search on initial load 1`] = `
 Array [
   "$watch",
   "$on",
@@ -46,7 +46,7 @@ Array [
 ]
 `;
 
-exports[`widgetCatalogController implements url based filters and search on initial load 2`] = `
+exports[`WidgetCatalogCtrl implements url based filters and search on initial load 2`] = `
 Object {
   "SuPpOrTeD FoUr!!": Object {
     "clean": "su_pp_or_te_d_fo_ur",
@@ -86,7 +86,7 @@ Object {
 }
 `;
 
-exports[`widgetCatalogController initializes with no filters and search on initial load 1`] = `
+exports[`WidgetCatalogCtrl initializes with no filters and search on initial load 1`] = `
 Array [
   "$watch",
   "$on",
@@ -109,7 +109,7 @@ Array [
 ]
 `;
 
-exports[`widgetCatalogController initializes with no filters and search on initial load 2`] = `
+exports[`WidgetCatalogCtrl initializes with no filters and search on initial load 2`] = `
 Object {
   "SuPpOrTeD FoUr!!": Object {
     "clean": "su_pp_or_te_d_fo_ur",
@@ -149,7 +149,7 @@ Object {
 }
 `;
 
-exports[`widgetCatalogController properly generates clean filter names 1`] = `
+exports[`WidgetCatalogCtrl properly generates clean filter names 1`] = `
 Array [
   "feature1",
   "feature3",
@@ -161,7 +161,7 @@ Array [
 ]
 `;
 
-exports[`widgetCatalogController toggling on a filter updates scope 1`] = `
+exports[`WidgetCatalogCtrl toggling on a filter updates scope 1`] = `
 Array [
   Object {
     "dir": "mockDir1",

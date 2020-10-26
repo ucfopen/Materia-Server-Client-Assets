@@ -14,21 +14,21 @@ Namespace('Materia.MyWidgets').Statistics = (() => {
 					shadow: false,
 					rendererOptions: {
 						animation: {
-							speed: 500
-						}
-					}
-				}
+							speed: 500,
+						},
+					},
+				},
 			],
 			title: {
 				text: 'Score Distribution',
-				fontFamily: 'Lato, Lucida Grande, Arial, sans'
+				fontFamily: 'Lato, Lucida Grande, Arial, sans',
 			},
 			axesDefaults: {
 				tickRenderer: $.jqplot.CanvasAxisTickRenderer,
 				tickOptions: {
 					angle: 0,
-					fontSize: '8pt'
-				}
+					fontSize: '8pt',
+				},
 			},
 			axes: {
 				xaxis: {
@@ -43,31 +43,31 @@ Namespace('Materia.MyWidgets').Statistics = (() => {
 						'60-69',
 						'70-79',
 						'80-89',
-						'90-100'
-					]
-				}
+						'90-100',
+					],
+				},
 			},
 			highlighter: {
 				show: true,
 				showMarker: false,
 				sizeAdjust: 7.5,
 				tooltipAxes: 'y',
-				formatString: '%s scores'
+				formatString: '%s scores',
 			},
 			cursor: {
-				show: false
+				show: false,
 			},
 			grid: {
 				background: '#FFFFFF',
-				shadow: false
+				shadow: false,
 			},
-			seriesColors: ['#1e91e1']
+			seriesColors: ['#1e91e1'],
 		}
 
 		$.jqplot(elementId, [data], jqOptions)
 	}
 
 	return {
-		createGraph
+		createGraph,
 	}
 })()

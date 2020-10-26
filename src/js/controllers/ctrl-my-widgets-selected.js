@@ -1,12 +1,12 @@
 const app = angular.module('materia')
-app.controller('SelectedWidgetController', function(
+app.controller('MyWidgetsSelectedController', function (
 	Please,
 	$rootScope,
 	$scope,
 	$q,
-	widgetSrv,
-	selectedWidgetSrv,
-	userServ,
+	WidgetSrv,
+	SelectedWidgetSrv,
+	UserServ,
 	$anchorScroll,
 	ACCESS,
 	Alert
@@ -18,7 +18,7 @@ app.controller('SelectedWidgetController', function(
 	}
 
 	// using 'function' here because this function is executed in another scope chain
-	const _hideModal = function() {
+	const _hideModal = function () {
 		this.$parent.hideModal()
 	}
 
@@ -29,15 +29,18 @@ app.controller('SelectedWidgetController', function(
 	}
 
 	const _copyWidget = () => {
-		widgetSrv
-			.copyWidget($scope.selected.widget.id, $scope.selected.copy_title)
-			.then(inst_id => {
+		WidgetSrv.copyWidget(
+			$scope.selected.widget.id,
+			$scope.selected.copy_title,
+			$scope.selected.copy_retain_access
+		)
+			.then((inst_id) => {
 				$scope.show.copyModal = false
-				return widgetSrv.getWidget(inst_id)
+				return WidgetSrv.getWidget(inst_id)
 			})
-			.then(widget => {
+			.then((widget) => {
 				$rootScope.$broadcast('widgetList.update')
-				widgetSrv.updateHashUrl(widget.id)
+				WidgetSrv.updateHashUrl(widget.id)
 			})
 			.catch(() => {
 				// @TODO show an alert?
@@ -45,10 +48,10 @@ app.controller('SelectedWidgetController', function(
 	}
 
 	const _deleteWidget = () => {
-		widgetSrv.deleteWidget($scope.selected.widget.id).then(results => {
+		WidgetSrv.deleteWidget($scope.selected.widget.id).then((results) => {
 			if (results) {
 				$scope.show.deleteDialog = false
-				widgetSrv.removeWidget($scope.selected.widget.id)
+				WidgetSrv.removeWidget($scope.selected.widget.id)
 				Please.$apply()
 			}
 		})
@@ -56,8 +59,8 @@ app.controller('SelectedWidgetController', function(
 
 	const _editWidgetPromise = () => {
 		return Materia.Coms.Json.send('widget_instance_edit_perms_verify', [
-			$scope.selected.widget.id
-		]).then(response => {
+			$scope.selected.widget.id,
+		]).then((response) => {
 			if (response.is_locked) {
 				$scope.alert.msg =
 					'This widget is currently locked, you will be able to edit this widget when it is no longer being edited by somebody else.'
@@ -110,13 +113,13 @@ app.controller('SelectedWidgetController', function(
 	}
 
 	const _showCopyDialog = () => {
-		if ($scope.selected.accessLevel != ACCESS.VISIBLE) {
+		if ($scope.selected.can.copy) {
 			$scope.show.copyModal = true
 		}
 	}
 
 	const _showDelete = () => {
-		if ($scope.selected.accessLevel != ACCESS.VISIBLE) {
+		if ($scope.selected.can.delete) {
 			$scope.show.deleteDialog = !$scope.show.deleteDialog
 		}
 	}
@@ -134,7 +137,7 @@ app.controller('SelectedWidgetController', function(
 		$scope.perms.collaborators = []
 		$scope.show.collaborationModal = true
 
-		Materia.Coms.Json.send('user_get', [user_ids]).then(users => {
+		Materia.Coms.Json.send('user_get', [user_ids]).then((users) => {
 			$scope.studentAccessible = false
 
 			if (users.length != null) {
@@ -159,7 +162,7 @@ app.controller('SelectedWidgetController', function(
 					const timestamp = parseInt($scope.perms.widget[user.id][1], 10)
 					user.expires = timestamp
 					user.expiresText = getExpiresText(timestamp)
-					user.gravatar = userServ.getAvatar(user, 50)
+					user.gravatar = UserServ.getAvatar(user, 50)
 				}
 
 				$scope.perms.collaborators = users
@@ -172,19 +175,16 @@ app.controller('SelectedWidgetController', function(
 
 	const _setupPickers = () =>
 		// fill in the expiration link text & setup click event
-		Array.from($scope.perms.collaborators).map(user =>
-			(user => {
+		Array.from($scope.perms.collaborators).map((user) =>
+			((user) => {
 				return $(`.exp-date.user${user.id}`).datepicker({
 					minDate: getDateForBeginningOfTomorrow(),
 					onSelect(dateText, inst) {
-						const timestamp =
-							$(this)
-								.datepicker('getDate')
-								.getTime() / 1000
+						const timestamp = $(this).datepicker('getDate').getTime() / 1000
 						user.expires = timestamp
 						user.expiresText = getExpiresText(timestamp)
 						Please.$apply()
-					}
+					},
 				})
 			})(user)
 		)
@@ -195,7 +195,7 @@ app.controller('SelectedWidgetController', function(
 		return new Date(d.getFullYear(), d.getMonth(), d.getDate())
 	}
 
-	const getExpiresText = timestamp => {
+	const getExpiresText = (timestamp) => {
 		timestamp = parseInt(timestamp, 10)
 		if (!timestamp) {
 			return 'Never'
@@ -204,7 +204,7 @@ app.controller('SelectedWidgetController', function(
 		}
 	}
 
-	const _removeExpires = user => {
+	const _removeExpires = (user) => {
 		user.expires = null
 		user.expiresText = getExpiresText(user.expires)
 	}
@@ -236,7 +236,7 @@ app.controller('SelectedWidgetController', function(
 	/* develblock:start */
 	// these method are exposed for testing
 	$scope.jestTest = {
-		_editWidgetPromise
+		_editWidgetPromise,
 	}
 	/* develblock:end */
 })

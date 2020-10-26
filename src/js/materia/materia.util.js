@@ -1,6 +1,6 @@
 Namespace('Materia').Util = (() => {
 	// Use for cross side scripting prevention.
-	const escapeUntrustedContent = text =>
+	const escapeUntrustedContent = (text) =>
 		text
 			.replace(/</g, '&lt;')
 			.replace(/>/g, '&gt;')

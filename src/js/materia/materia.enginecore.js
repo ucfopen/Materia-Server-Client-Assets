@@ -6,7 +6,7 @@ Namespace('Materia').Engine = (() => {
 	let _resizeInterval = null
 	let _widgetClass = null
 
-	const _onPostMessage = e => {
+	const _onPostMessage = (e) => {
 		if (typeof e.data !== 'string') return
 		const msg = JSON.parse(e.data)
 		switch (msg.type) {
@@ -31,7 +31,7 @@ Namespace('Materia').Engine = (() => {
 		_instance = instance
 	}
 
-	const start = widgetClass => {
+	const start = (widgetClass) => {
 		// setup the postmessage listener
 		addEventListener('message', _onPostMessage, false)
 
@@ -46,7 +46,7 @@ Namespace('Materia').Engine = (() => {
 		_sendPostMessage('start', null)
 	}
 
-	const sendStorage = args => {
+	const sendStorage = (args) => {
 		_sendPostMessage('sendStorage', args)
 	}
 
@@ -67,9 +67,9 @@ Namespace('Materia').Engine = (() => {
 		_sendPostMessage('alert', { title, msg, fatal })
 	}
 
-	const getMediaUrl = mediaId => `${_mediaUrl}/${mediaId}`
+	const getMediaUrl = (mediaId) => `${_mediaUrl}/${mediaId}`
 
-	const end = showScoreScreenAfter => {
+	const end = (showScoreScreenAfter) => {
 		if (showScoreScreenAfter == null) {
 			showScoreScreenAfter = true
 		}
@@ -80,7 +80,7 @@ Namespace('Materia').Engine = (() => {
 		_sendPostMessage('sendPendingLogs', {})
 	}
 
-	const setHeight = h => {
+	const setHeight = (h) => {
 		if (!h) {
 			h = parseInt(window.getComputedStyle(document.documentElement).height, 10)
 		}
@@ -90,7 +90,7 @@ Namespace('Materia').Engine = (() => {
 		}
 	}
 
-	const setVerticalScroll = location => {
+	const setVerticalScroll = (location) => {
 		_sendPostMessage('setVerticalScroll', [location])
 	}
 
@@ -98,7 +98,7 @@ Namespace('Materia').Engine = (() => {
 		clearInterval(_resizeInterval)
 	}
 
-	const escapeScriptTags = text => text.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+	const escapeScriptTags = (text) => text.replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
 	return {
 		start,
@@ -112,6 +112,6 @@ Namespace('Materia').Engine = (() => {
 		disableResizeInterval,
 		setHeight, // allows the widget to resize its iframe container to fit the height of its contents
 		setVerticalScroll, // allows the widget to scroll the page to a specific location
-		escapeScriptTags
+		escapeScriptTags,
 	}
 })()

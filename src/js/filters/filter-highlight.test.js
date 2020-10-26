@@ -1,10 +1,10 @@
-describe('hightlight filter', function() {
+describe('hightlight filter', function () {
 	var filter
 	var _$sce
 
 	beforeEach(() => {
 		filter = testGetFilter('highlight')
-		inject(function($sce) {
+		inject(function ($sce) {
 			_$sce = $sce
 		})
 	})

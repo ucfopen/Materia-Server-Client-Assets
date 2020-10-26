@@ -1,11 +1,11 @@
 'use strict'
 
 const app = angular.module('materia')
-app.directive('scoreTable', function(selectedWidgetSrv, $window) {
+app.directive('scoreTable', function (SelectedWidgetSrv, $window) {
 	return {
 		restrict: 'A',
 		link($scope, $element, $attrs) {
-			const widgetId = selectedWidgetSrv.getSelectedId()
+			const widgetId = SelectedWidgetSrv.getSelectedId()
 			const tableSort = 'desc'
 			const userCount = []
 			const users = {}
@@ -15,7 +15,7 @@ app.directive('scoreTable', function(selectedWidgetSrv, $window) {
 			$scope.users = {}
 			$scope.selectedUser = null
 
-			selectedWidgetSrv.getPlayLogsForSemester(term, year).then(data => {
+			SelectedWidgetSrv.getPlayLogsForSemester(term, year).then((data) => {
 				// process play logs into records for each user
 				angular.forEach(data, (log, index) => {
 					const uid = log.user_id
@@ -25,16 +25,14 @@ app.directive('scoreTable', function(selectedWidgetSrv, $window) {
 						users[uid] = {
 							uid,
 							name,
-							scores: {}
+							scores: {},
 						}
 					}
 
 					// make the score percentage readable
 					let percent = 0
 					if (log.done === '1') {
-						percent = parseFloat(log.perc)
-							.toFixed(2)
-							.replace('.00', '')
+						percent = parseFloat(log.perc).toFixed(2).replace('.00', '')
 					}
 
 					// make the play duration readable
@@ -53,23 +51,23 @@ app.directive('scoreTable', function(selectedWidgetSrv, $window) {
 						percent,
 						elapsed: duration,
 						complete: log.done,
-						id: log.id
+						id: log.id,
 					}
 				})
 
 				masterUserList = $scope.users = users
 			})
 
-			$scope.setSelectedUser = id => {
+			$scope.setSelectedUser = (id) => {
 				$scope.selectedUser = $scope.users[id]
 			}
 
-			$scope.showScorePage = function(scoreId) {
-				$window.open(`${BASE_URL}scores/${widgetId}/#single-${scoreId}`)
+			$scope.showScorePage = function (playId) {
+				$window.open(`${BASE_URL}scores/single/${playId}/${widgetId}`)
 				return true
 			}
 
-			$scope.searchStudentActivity = function(query) {
+			$scope.searchStudentActivity = function (query) {
 				if (query === '') {
 					$scope.users = masterUserList
 					return
@@ -81,9 +79,9 @@ app.directive('scoreTable', function(selectedWidgetSrv, $window) {
 				const terms = sanitized.split(' ')
 
 				// loop over mast users to check if any search word matches the user name
-				angular.forEach(masterUserList, user => {
+				angular.forEach(masterUserList, (user) => {
 					let name = user.name.toLowerCase()
-					terms.forEach(term => {
+					terms.forEach((term) => {
 						if (name.includes(term)) {
 							hits[user.uid] = user
 						}
@@ -92,6 +90,6 @@ app.directive('scoreTable', function(selectedWidgetSrv, $window) {
 
 				$scope.users = hits
 			}
-		}
+		},
 	}
 })

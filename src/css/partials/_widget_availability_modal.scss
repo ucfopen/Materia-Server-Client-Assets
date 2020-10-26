@@ -16,6 +16,16 @@
 		text-align: left;
 	}
 
+	.student-role-notice {
+		margin: 0 auto 15px auto;
+		padding: 10px;
+		font-size: 0.9em;
+		width: 90%;
+
+		background: rgb(238, 238, 238);
+		border-radius: 5px;
+	}
+
 	ul {
 		&.inline li {
 			list-style: none;
@@ -25,7 +35,7 @@
 		}
 
 		&.inline {
-			margin: 50px auto 20px auto;
+			margin: 20px auto 20px auto;
 			padding: 0;
 			width: 255px;
 		}
@@ -83,7 +93,10 @@
 
 	.disabled {
 		pointer-events: none;
-		opacity: 0.4;
+		label,
+		input {
+			opacity: 0.4;
+		}
 	}
 
 	h3 {
@@ -138,17 +151,20 @@
 		}
 	}
 
-	.data_explanation {
-		margin-left: 125px;
-		width: 450px;
-		font-size: 14px;
+	.input_desc {
+		padding: 10px;
+		margin-bottom: 0;
+		background: #f2f2f2;
+		border-radius: 5px;
+		margin: 0.5em 1em 1em;
+
+		.desc_notice {
+			margin-top: 1em;
+		}
 	}
 
-	.access_explanation {
-		margin-left: 15px;
-		width: 450px;
-		font-size: 14px;
-		margin: 5px 20px;
+	.data_explanation {
+		margin-left: 125px;
 	}
 
 	.ui-slider-handle.ui-state-default.ui-corner-all {

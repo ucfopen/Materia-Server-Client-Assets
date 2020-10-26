@@ -1,4 +1,4 @@
-describe('mediaImportCtrl', function() {
+describe('MediaImportCtrl', function () {
 	var setGatewayMock
 	var sendMock
 	var postMock
@@ -20,14 +20,14 @@ describe('mediaImportCtrl', function() {
 			remote_url: remote_asset ? idString + '.' + fileType : null,
 			status: status,
 			title: title,
-			type: fileType
+			type: fileType,
 		}
 	}
 
 	const XHR = {
 		open: jest.fn(),
 		send: jest.fn(),
-		setRequestHeader: jest.fn()
+		setRequestHeader: jest.fn(),
 	}
 
 	XMLHttpRequest = jest.fn().mockImplementation(() => XHR)
@@ -42,7 +42,7 @@ describe('mediaImportCtrl', function() {
 		createAssetObject(6, 'invalid1.exe'),
 		createAssetObject(7, 'image4.gif'),
 		// used to test names w/o extensions
-		createAssetObject(8, 'valid image without extension in title', 'jpg')
+		createAssetObject(8, 'valid image without extension in title', 'jpg'),
 	]
 
 	beforeEach(() => {
@@ -56,17 +56,17 @@ describe('mediaImportCtrl', function() {
 			location: {
 				reload: jest.fn(),
 				hash: {
-					substring: jest.fn()
-				}
+					substring: jest.fn(),
+				},
 			},
 			parent: {
-				postMessage: jest.fn()
-			}
+				postMessage: jest.fn(),
+			},
 		}
 		app.factory('$window', () => $window)
 
-		require('../materia-namespace')
-		require('../materia-constants')
+		require('../common/materia-namespace')
+		require('../common/materia-constants')
 		require('./ctrl-media-import')
 
 		global.MEDIA_UPLOAD_URL = 'https://mediauploadurl.com'
@@ -78,13 +78,13 @@ describe('mediaImportCtrl', function() {
 		})
 
 		Namespace('Materia.Coms.Json').setGateway = setGatewayMock = jest.fn()
-		Namespace('Materia.Coms.Json').send = sendMock = jest.fn().mockImplementation(target => {
+		Namespace('Materia.Coms.Json').send = sendMock = jest.fn().mockImplementation((target) => {
 			switch (target) {
 				case 'assets_get':
 					return {
-						then: jest.fn().mockImplementation(callback => {
+						then: jest.fn().mockImplementation((callback) => {
 							callback(useAssets)
-						})
+						}),
 					}
 				default:
 					break
@@ -105,10 +105,10 @@ describe('mediaImportCtrl', function() {
 		$window.location.hash.substring.mockReturnValueOnce('image')
 
 		var $scope = {
-			$apply: jest.fn()
+			$apply: jest.fn(),
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 
 		expect($scope.displayFiles).toHaveLength(0)
 	})
@@ -119,10 +119,10 @@ describe('mediaImportCtrl', function() {
 		$window.location.hash.substring.mockReturnValue('image')
 
 		var $scope = {
-			$apply: jest.fn()
+			$apply: jest.fn(),
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		$timeout.flush()
 		expect($scope.displayFiles).toHaveLength(5)
 		expect($scope.displayFiles).toMatchSnapshot()
@@ -134,10 +134,10 @@ describe('mediaImportCtrl', function() {
 		$window.location.hash.substring.mockReturnValueOnce('png,unk')
 
 		var $scope = {
-			$apply: jest.fn()
+			$apply: jest.fn(),
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		$timeout.flush()
 		expect($scope.displayFiles).toHaveLength(1)
 	})
@@ -145,16 +145,16 @@ describe('mediaImportCtrl', function() {
 	it('ignores remote assets that were not successfully migrated', () => {
 		useAssets = [
 			createAssetObject(1, 'image1.png', null, true),
-			createAssetObject(2, 'image2.png', null, true, 'migrated_asset')
+			createAssetObject(2, 'image2.png', null, true, 'migrated_asset'),
 		]
 
 		$window.location.hash.substring.mockReturnValueOnce('image')
 
 		var $scope = {
-			$apply: jest.fn()
+			$apply: jest.fn(),
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		$timeout.flush()
 		expect($scope.displayFiles).toHaveLength(1)
 	})
@@ -164,10 +164,10 @@ describe('mediaImportCtrl', function() {
 		$window.location.hash.substring.mockReturnValueOnce('image,audio')
 
 		var $scope = {
-			$apply: jest.fn()
+			$apply: jest.fn(),
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		$timeout.flush()
 		//case one - images should be MEDIA_URL/assetid/thumbnail
 		expect($scope.displayFiles[0].thumb).toEqual('https://mediaurl.com/00001/thumbnail')
@@ -178,16 +178,16 @@ describe('mediaImportCtrl', function() {
 	it('announces readyForDirectUpload via postmessage before loading media', () => {
 		useAssets = [
 			createAssetObject(1, 'image1.png', null, true),
-			createAssetObject(2, 'image2.png', null, true, 'migrated_asset')
+			createAssetObject(2, 'image2.png', null, true, 'migrated_asset'),
 		]
 
 		$window.location.hash.substring.mockReturnValueOnce('image')
 
 		var $scope = {
-			$apply: jest.fn()
+			$apply: jest.fn(),
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		expect($window.parent.postMessage).toHaveBeenCalledTimes(1)
 		expect($window.parent.postMessage.mock.calls[0]).toMatchSnapshot()
 	})
@@ -196,10 +196,10 @@ describe('mediaImportCtrl', function() {
 		$window.location.hash.substring.mockReturnValueOnce('image')
 
 		var $scope = {
-			$apply: jest.fn()
+			$apply: jest.fn(),
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		expect($window.addEventListener).toHaveBeenCalledWith('message', expect.any(Function), false)
 	})
 
@@ -207,7 +207,7 @@ describe('mediaImportCtrl', function() {
 		$window.location.hash.substring.mockReturnValueOnce('image')
 
 		var $scope = {
-			$apply: jest.fn()
+			$apply: jest.fn(),
 		}
 
 		// mock dom elements when diabling clicks
@@ -215,7 +215,7 @@ describe('mediaImportCtrl', function() {
 			.spyOn(document, 'getElementsByClassName')
 			.mockReturnValueOnce([{ setAttribute: jest.fn() }])
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		var _onPostMessage = $window.addEventListener.mock.calls[0][1]
 
 		// send a postmessage
@@ -224,8 +224,8 @@ describe('mediaImportCtrl', function() {
 				name: 'mock-file-name',
 				ext: '.png',
 				mime: 'image/png',
-				src: 'mock-image-data'
-			})
+				src: 'mock-image-data',
+			}),
 		})
 
 		expect(XHR.open).toHaveBeenCalledTimes(1)
@@ -244,7 +244,7 @@ describe('mediaImportCtrl', function() {
 		$window.location.hash.substring.mockReturnValueOnce('image')
 
 		var $scope = {
-			$apply: jest.fn()
+			$apply: jest.fn(),
 		}
 
 		// mock dom elements when diabling clicks
@@ -252,15 +252,15 @@ describe('mediaImportCtrl', function() {
 			.spyOn(document, 'getElementsByClassName')
 			.mockReturnValueOnce([{ setAttribute: jest.fn() }])
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 		var _onPostMessage = $window.addEventListener.mock.calls[0][1]
 
 		// send a postmessage
 		_onPostMessage({
 			data: JSON.stringify({
 				name: 'mock-file-name',
-				ext: '.png'
-			})
+				ext: '.png',
+			}),
 		})
 
 		expect(XHR.open).toHaveBeenCalledTimes(0)
@@ -270,19 +270,19 @@ describe('mediaImportCtrl', function() {
 	//jest starts malfunctioning in strange ways when it tries interacting with the upload code
 	//either it's an us issue or a jest issue, either way it's taking too long to figure out
 	//need to pick this back up at some point in the future
-	it('should upload files successfully', done => {
+	it('should upload files successfully', (done) => {
 		$window.location.hash.substring.mockReturnValueOnce('image,audio')
 
 		var $scope = {
-			$apply: jest.fn()
+			$apply: jest.fn(),
 		}
 
-		var controller = $controller('mediaImportCtrl', { $scope })
+		var controller = $controller('MediaImportCtrl', { $scope })
 
 		//create an approximation of a file for testing
 		let uploadFile = new File([''], 'audio1.mp3', {
 			type: 'audio/mp3',
-			lastModified: new Date(1500000000)
+			lastModified: new Date(1500000000),
 		})
 
 		//normally this would be handled by the browser
@@ -293,8 +293,8 @@ describe('mediaImportCtrl', function() {
 		//case one: a file was dropped on the interface
 		uploadEvent = {
 			target: {
-				files: [uploadFile]
-			}
+				files: [uploadFile],
+			},
 		}
 		$scope.uploadFile(uploadEvent)
 

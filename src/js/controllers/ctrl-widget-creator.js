@@ -1,15 +1,17 @@
 const app = angular.module('materia')
-app.controller('createCtrl', function(
+app.controller('WidgetCreatorCtrl', function (
 	Please,
 	$scope,
 	$q,
 	$sce,
 	$timeout,
 	$interval,
-	widgetSrv,
+	WidgetSrv,
 	Alert
 ) {
 	$scope.alert = Alert
+	$scope.embedDialogType = 'embed_dialog'
+	$scope.showActionBar = true
 
 	const HEARTBEAT_INTERVAL = 30000
 	// How far from the top of the window that the creator frame starts
@@ -30,7 +32,11 @@ app.controller('createCtrl', function(
 	let widgetType = null
 	let mediaFile = null
 
-	const _requestSave = mode => {
+	// qset storage for previous save feature
+	let qsetToBeCached = null // current working qset, temporarily cached to await confirm/cancel
+	let qsetToReload = null // qset selected to be loaded after requested reload
+
+	const _requestSave = (mode) => {
 		// hide dialogs
 		$scope.popup = ''
 
@@ -58,6 +64,17 @@ app.controller('createCtrl', function(
 		return null // else Safari will give the .swf data that it can't handle
 	}
 
+	const _showQsetHistoryImporter = () => {
+		showEmbedDialog(`${BASE_URL}qsets/import/?inst_id=${inst_id}`)
+		return null
+	}
+
+	const _showQsetHistoryConfirmation = () => {
+		$scope.embedDialogType = 'confirm_dialog'
+		showEmbedDialog(`${BASE_URL}qsets/confirm/?inst_id=${inst_id}`)
+		return null
+	}
+
 	const _onPublishPressed = () => {
 		if (inst_id != null && instance != null && !instance.is_draft) {
 			// Show the Update Dialog
@@ -68,16 +85,16 @@ app.controller('createCtrl', function(
 		}
 	}
 
-	const _cancelPublish = e => {
+	const _cancelPublish = (e) => {
 		$scope.popup = ''
 	}
 
-	const _cancelPreview = e => {
+	const _cancelPreview = (e) => {
 		$scope.popup = ''
 	}
 
 	// If Initialization Fails
-	const onInitFail = msg => {
+	const onInitFail = (msg) => {
 		stopHeartBeat()
 		if (msg.toLowerCase() !== 'flash player required.') {
 			_alert(msg, 'Failure', true, false)
@@ -88,7 +105,7 @@ app.controller('createCtrl', function(
 	const startHeartBeat = () => {
 		const deferred = $q.defer()
 		heartbeat = $interval(() => {
-			Materia.Coms.Json.send('session_author_verify', [null, false]).then(data => {
+			Materia.Coms.Json.send('session_author_verify', [null, false]).then((data) => {
 				if (data !== true) {
 					_alert('You have been logged out due to inactivity', 'Invalid Login', true, true)
 					Please.$apply()
@@ -107,7 +124,7 @@ app.controller('createCtrl', function(
 
 	// Gets the qset of a loaded instance
 	const getQset = () => {
-		return Materia.Coms.Json.send('question_set_get', [inst_id]).then(data => {
+		return Materia.Coms.Json.send('question_set_get', [inst_id]).then((data) => {
 			if (
 				(data != null ? data.title : undefined) === 'Permission Denied' ||
 				data.title === 'error'
@@ -158,7 +175,7 @@ app.controller('createCtrl', function(
 		}
 	}
 
-	const prePublishPermsCheck = widgetData => {
+	const prePublishPermsCheck = (widgetData) => {
 		const deferred = $q.defer()
 		checkUserPublishPerms(widgetData, true).then(() => deferred.resolve(widgetData))
 		return deferred.promise
@@ -166,7 +183,7 @@ app.controller('createCtrl', function(
 
 	const checkUserPublishPerms = (widgetData, newInstance) => {
 		const deferred = $q.defer()
-		widgetSrv.canBePublishedByCurrentUser(widget_id).then(canPublish => {
+		WidgetSrv.canBePublishedByCurrentUser(widget_id).then((canPublish) => {
 			$scope.canPublish = canPublish
 
 			// if the widget is published and the current user can not publish it, then they can not edit it
@@ -180,10 +197,10 @@ app.controller('createCtrl', function(
 	}
 
 	// build a my-widgets url to a specific widget
-	const getMyWidgetsUrl = instid => `${BASE_URL}my-widgets#${instid}`
+	const getMyWidgetsUrl = (instid) => `${BASE_URL}my-widgets#${instid}`
 
 	// Embeds the creator
-	const embed = widgetData => {
+	const embed = (widgetData) => {
 		const deferred = $q.defer()
 
 		let creatorPath
@@ -227,11 +244,11 @@ app.controller('createCtrl', function(
 		return deferred.promise
 	}
 
-	const embedHTML = htmlPath => {
+	const embedHTML = (htmlPath) => {
 		$scope.htmlPath = htmlPath + '?' + widget_info.created_at
 		Please.$apply()
 
-		const onPostMessage = e => {
+		const onPostMessage = (e) => {
 			const origin = `${e.origin}/`
 			if (origin === STATIC_CROSSDOMAIN || origin === BASE_URL) {
 				const msg = JSON.parse(e.data)
@@ -298,13 +315,13 @@ app.controller('createCtrl', function(
 				URL_WEB: BASE_URL,
 				URL_GET_ASSET: MEDIA_URL,
 				widget_id,
-				inst_id
+				inst_id,
 			}
 
 			const params = {
 				menu: 'false',
 				allowFullScreen: 'true',
-				AllowScriptAccess: 'always'
+				AllowScriptAccess: 'always',
 			}
 			const attributes = { id: EMBED_TARGET, wmode: 'opaque' }
 			const expressSwf = `${STATIC_CROSSDOMAIN}js/vendor/swfobject/expressInstall.swf`
@@ -357,7 +374,7 @@ app.controller('createCtrl', function(
 		Please.$apply()
 	}
 
-	const onPreviewPopupBlocked = url => {
+	const onPreviewPopupBlocked = (url) => {
 		$scope.popup = 'blocked'
 		$scope.previewUrl = url
 		Please.$apply()
@@ -368,16 +385,25 @@ app.controller('createCtrl', function(
 	const onCreatorReady = () => {
 		creator = document.querySelector('#container')
 		// resize swf now and when window resizes
+		if (qsetToReload != null) {
+			keepQSet = {
+				data: qsetToReload.data,
+				version: qsetToReload.version,
+			}
+			initCreator()
+			qsetToReload = null
+		}
 
 		return embedDonePromise.resolve() // used to keep events synchronous
 	}
 
 	// Show an embedded dialog, as opposed to a popup
-	const showEmbedDialog = url => ($scope.iframeUrl = url)
+	const showEmbedDialog = (url) => ($scope.iframeUrl = url)
 
 	// move the embed dialog off to invisibility
 	const hideEmbedDialog = () => {
 		$scope.iframeUrl = ''
+		$scope.embedDialogType = 'embed_dialog'
 		$scope.modal = false
 		$timeout(() => {
 			Please.$apply()
@@ -385,7 +411,7 @@ app.controller('createCtrl', function(
 	}
 
 	// Note this is psuedo public as it's exposed to flash
-	const showMediaImporter = types => {
+	const showMediaImporter = (types) => {
 		showEmbedDialog(`${BASE_URL}media/import#${types.join(',')}`)
 		$scope.modal = true
 		$timeout(() => {
@@ -396,7 +422,7 @@ app.controller('createCtrl', function(
 
 	// Called by the creator when a direct upload of media is requested - instead of asking user to select one themselves
 	// Displays the media importer (which dispatches 'readyForDirectUpload') and pre-selects the mediaFile to be uploaded
-	const directUploadMedia = media => {
+	const directUploadMedia = (media) => {
 		showMediaImporter(['jpg', 'gif', 'png', 'mp3'])
 		mediaFile = media
 	}
@@ -412,10 +438,20 @@ app.controller('createCtrl', function(
 			name: instanceName,
 			qset: { version, data: qset },
 			is_draft: saveMode !== 'publish',
-			inst_id
+			inst_id,
 		}
 
-		return widgetSrv.saveWidget(w).then(inst => {
+		// 'history' is sent from onQsetHistorySelectionComplete to request the current qset trait from the creator
+		// since the qset is all we need, no need to save to the DB
+		if (saveMode == 'history') {
+			qsetToBeCached = {
+				qset,
+				version,
+			}
+			return false
+		}
+
+		return WidgetSrv.saveWidget(w).then((inst) => {
 			// did we get back an error message?
 			if ((inst != null ? inst.msg : undefined) != null) {
 				onSaveCanceled(inst)
@@ -451,7 +487,7 @@ app.controller('createCtrl', function(
 							inst.name,
 							inst.widget,
 							inst.qset.data,
-							inst.qset.version
+							inst.qset.version,
 						])
 						inst_id = inst.id
 						instance = inst
@@ -471,7 +507,7 @@ app.controller('createCtrl', function(
 
 	// When the Creator cancels a save request
 	// Note this is psuedo public as it's exposed to flash
-	const onSaveCanceled = msg => {
+	const onSaveCanceled = (msg) => {
 		$scope.saveText = 'Can Not Save!'
 
 		if ((msg != null ? msg.msg : undefined) != null) {
@@ -498,7 +534,7 @@ ${msg.toLowerCase()}`,
 		}
 	}
 
-	const setHeight = h => {
+	const setHeight = (h) => {
 		creator.style.height = `${h}px`
 	}
 
@@ -508,6 +544,22 @@ ${msg.toLowerCase()}`,
 		$scope.alert.fatal = fatal
 		$scope.alert.enableLoginButton = enableLoginButton
 		Please.$apply()
+	}
+
+	const _qsetRollbackConfirmation = (confirm) => {
+		$scope.showActionBar = true
+		$scope.showRollbackConfirmBar = false
+
+		if (confirm) {
+			return false
+		} else {
+			// re-apply cached qset saved via onQsetHistorySelectionComplete
+			qsetToReload = {
+				data: qsetToBeCached.qset,
+				version: qsetToBeCached.version,
+			}
+			sendToCreator('reloadCreator')
+		}
 	}
 
 	// Exposed to the window object so that popups and frames can use this public functions
@@ -522,9 +574,9 @@ ${msg.toLowerCase()}`,
 			questions = JSON.parse(questions)
 
 			//strip id from all imported questions and answers to avoid collisions
-			questions.forEach(question => {
+			questions.forEach((question) => {
 				if (question.answers && question.answers.length > 0) {
-					question.answers.forEach(answer => {
+					question.answers.forEach((answer) => {
 						answer.id = null
 					})
 				}
@@ -546,7 +598,28 @@ ${msg.toLowerCase()}`,
 				}
 				return sendToCreator('onMediaImportComplete', [anArray])
 			}
-		}
+		},
+
+		// When a qset is selected from the prior saves list
+		onQsetHistorySelectionComplete(qset, version = 1) {
+			hideEmbedDialog()
+
+			if (!qset) return false
+
+			// request a save from the widget to grab the current qset state
+			// passing 'history' as the save mode short-circuits the save functionality so a new save isn't actually made in the database
+			_requestSave('history')
+
+			// use initExistingWidget to apply the selected qset
+			qsetToReload = {
+				data: JSON.parse(qset),
+				version: version,
+			}
+			sendToCreator('reloadCreator')
+
+			$scope.showActionBar = false
+			$scope.showRollbackConfirmBar = true
+		},
 	}
 
 	// expose to scope
@@ -560,9 +633,14 @@ ${msg.toLowerCase()}`,
 	$scope.modal = false
 	$scope.requestSave = _requestSave
 	$scope.showQuestionImporter = _showQuestionImporter
+	$scope.showQsetHistoryImporter = _showQsetHistoryImporter
+	$scope.showQsetHistoryConfirmation = _showQsetHistoryConfirmation
 	$scope.onPublishPressed = _onPublishPressed
 	$scope.cancelPublish = _cancelPublish
 	$scope.cancelPreview = _cancelPreview
+
+	$scope.rollbackConfirmation = _qsetRollbackConfirmation
+	$scope.showRollbackConfirmBar = false
 
 	// initialize
 
@@ -576,9 +654,9 @@ ${msg.toLowerCase()}`,
 		// load an existing widget
 		getQset().then(() => {
 			if (!$scope.invalid) {
-				$q(resolve => resolve(inst_id))
-					.then(widgetSrv.lockWidget)
-					.then(widgetSrv.getWidget)
+				$q((resolve) => resolve(inst_id))
+					.then(WidgetSrv.lockWidget)
+					.then(WidgetSrv.getWidget)
 					.then(checkUserPublishPerms)
 					.then(embed)
 					.then(initCreator)
@@ -589,8 +667,8 @@ ${msg.toLowerCase()}`,
 		})
 	} else {
 		// initialize a new creator
-		$q(resolve => resolve(widget_id))
-			.then(widgetSrv.getWidgetInfo)
+		$q((resolve) => resolve(widget_id))
+			.then(WidgetSrv.getWidgetInfo)
 			.then(prePublishPermsCheck)
 			.then(embed)
 			.then(initCreator)

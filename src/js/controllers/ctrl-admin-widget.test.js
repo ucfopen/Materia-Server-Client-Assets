@@ -1,5 +1,5 @@
-describe('adminWidgetController', () => {
-	var adminSrv
+describe('AdminWidgetController', () => {
+	var AdminSrv
 	var $controller
 	var mockPlease
 	var $q
@@ -20,15 +20,15 @@ describe('adminWidgetController', () => {
 		let app = angular.module('materia')
 		app.factory('Please', () => mockPlease)
 
-		require('../materia-namespace')
-		require('../materia-constants')
+		require('../common/materia-namespace')
+		require('../common/materia-constants')
 		require('../services/srv-admin')
 		require('./ctrl-admin-widget')
 
-		inject((_$controller_, _$q_, _adminSrv_, _$rootScope_) => {
+		inject((_$controller_, _$q_, _AdminSrv_, _$rootScope_) => {
 			$controller = _$controller_
 			$q = _$q_
-			adminSrv = _adminSrv_
+			AdminSrv = _AdminSrv_
 			$rootScope = _$rootScope_
 		})
 
@@ -38,12 +38,12 @@ describe('adminWidgetController', () => {
 		let getElementById = jest.spyOn(document, 'getElementById')
 		widgetUploaderChangeListener = jest.fn()
 		getElementById.mockReturnValueOnce({
-			addEventListener: widgetUploaderChangeListener
+			addEventListener: widgetUploaderChangeListener,
 		})
-		jest.spyOn(adminSrv, 'getWidgets')
-		mockPromiseOnce(adminSrv.getWidgets, ['sampleval'])
+		jest.spyOn(AdminSrv, 'getWidgets')
+		mockPromiseOnce(AdminSrv.getWidgets, ['sampleval'])
 		$scope = { $watch: jest.fn() }
-		var controller = $controller('adminWidgetController', { $scope })
+		var controller = $controller('AdminWidgetController', { $scope })
 	})
 
 	it('defines expected scope vars', () => {
@@ -74,11 +74,11 @@ describe('adminWidgetController', () => {
 			meta_data: {
 				about: 'f',
 				excerpt: 'f',
-				demo: 'f'
-			}
+				demo: 'f',
+			},
 		}
 		// tests
-		let saveWidget = jest.spyOn(adminSrv, 'saveWidget')
+		let saveWidget = jest.spyOn(AdminSrv, 'saveWidget')
 		mockPromiseOnce(saveWidget, { success: true })
 		$scope.save(w)
 		$rootScope.$digest()
