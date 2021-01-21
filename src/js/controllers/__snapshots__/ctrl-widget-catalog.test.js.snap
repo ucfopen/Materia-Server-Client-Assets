@@ -48,16 +48,6 @@ Array [
 
 exports[`WidgetCatalogCtrl implements url based filters and search on initial load 2`] = `
 Object {
-  "Keyboard Accessible": Object {
-    "clean": "keyboard_accessible",
-    "isActive": false,
-    "text": "Keyboard Accessible",
-  },
-  "Screen Reader Accessible": Object {
-    "clean": "screen_reader_accessible",
-    "isActive": false,
-    "text": "Screen Reader Accessible",
-  },
   "SuPpOrTeD FoUr!!": Object {
     "clean": "su_pp_or_te_d_fo_ur",
     "isActive": false,
@@ -121,16 +111,6 @@ Array [
 
 exports[`WidgetCatalogCtrl initializes with no filters and search on initial load 2`] = `
 Object {
-  "Keyboard Accessible": Object {
-    "clean": "keyboard_accessible",
-    "isActive": false,
-    "text": "Keyboard Accessible",
-  },
-  "Screen Reader Accessible": Object {
-    "clean": "screen_reader_accessible",
-    "isActive": false,
-    "text": "Screen Reader Accessible",
-  },
   "SuPpOrTeD FoUr!!": Object {
     "clean": "su_pp_or_te_d_fo_ur",
     "isActive": false,
@@ -176,8 +156,6 @@ Array [
   "supported1",
   "supported_three",
   "su_pp_or_te_d_fo_ur",
-  "keyboard_accessible",
-  "screen_reader_accessible",
   "feature2",
   "supported2",
 ]
@@ -192,10 +170,6 @@ Array [
     "in_catalog": "1",
     "meta_data": Object {
       "about": "information about the widget",
-      "accessibility_options": Array [
-        "Full",
-        "None",
-      ],
       "demo": "1",
       "excerpt": "more information about the widget",
       "features": Array [
