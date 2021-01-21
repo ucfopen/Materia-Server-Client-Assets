@@ -20,6 +20,7 @@ describe('WidgetCatalogCtrl', () => {
 			excerpt: 'more information about the widget',
 			features: ['feature1', 'feature3'],
 			supported_data: ['supported1', 'supported_three', 'SuPpOrTeD FoUr!!'],
+			accessibility_options: ['Full', 'None'],
 		},
 		name: 'widget1',
 	}
@@ -33,6 +34,7 @@ describe('WidgetCatalogCtrl', () => {
 			excerpt: 'more information about the widget',
 			features: ['feature2', 'feature3'],
 			supported_data: ['supported1', 'supported2'],
+			accessibility_options: ['None', 'Limited'],
 		},
 		name: 'widget2',
 	}
@@ -46,6 +48,7 @@ describe('WidgetCatalogCtrl', () => {
 			excerpt: 'more information about the widget',
 			features: [],
 			supported_data: [],
+			accessibility_options: [],
 		},
 		name: 'widget3',
 	}
