@@ -255,7 +255,7 @@ app.controller('MyWidgetsCollaborationController', function (
 		const accessLevel = String($scope.selected.accessLevel)
 		user.warning = false
 		user.remove = false
-		return (user.access = accessLevel)
+		user.access = accessLevel
 	}
 
 	$scope.inputs = { userSearchInput: '' }
