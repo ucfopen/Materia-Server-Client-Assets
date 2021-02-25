@@ -205,7 +205,7 @@ app.controller('MyWidgetsSettingsController', function (
 
 		for (let range of Array.from(ranges)) {
 			;({ date } = range)
-			const period = range.period ? range.period : 'am'
+			let period = range.period ? range.period : 'am'
 			;({ time } = range)
 			const { anytime } = range
 			// if anytime was selected, then the times value will be negative one.
@@ -233,7 +233,12 @@ app.controller('MyWidgetsSettingsController', function (
 				// Variables to check that the entered time is in a valid format.
 				const hourMinute = time.split(':')
 				if (hourMinute[0] !== '' && hourMinute[1] !== '') {
-					const hourValid = hourMinute[0].length < 3 && Number(hourMinute[0]) < 13
+					const hourValid = hourMinute[0].length < 3 && Number(hourMinute[0]) < 24
+					if (hourMinute[0].length < 3 && Number(hourMinute[0]) > 12) {
+						hourMinute[0] = (Number(hourMinute[0]) - 12).toString()
+						time = hourMinute.join(':')
+						period = 'pm'
+					}
 					const minuteValid = hourMinute[1].length < 3 && Number(hourMinute[1]) < 60
 					if (!hourValid || !minuteValid || !time.match(/[0-9]{1,2}:[0-9]{2}/)) {
 						errors.time++
