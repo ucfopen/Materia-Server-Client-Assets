@@ -41,6 +41,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		gif: ['image/gif'],
 		png: ['image/png'],
 		mp3: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
+		obj: ['image/obj'],
 	}
 
 	const REQUESTED_FILE_TYPES = $window.location.hash.substring(1).split(',')
@@ -195,6 +196,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 			case 'mp3': // intentional case fall-through
 			case 'wav': // intentional case fall-through
 			case 'ogg': // intentional case fall-through
+			case 'obj': // intentional case fall-through
 				return '/img/audio.png'
 		}
 	}
@@ -240,7 +242,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		if (mime == null || allowedFileExtensions.indexOf(mime) === -1) {
 			alert(
 				'This widget does not support the type of file provided. ' +
-					`The allowed types are: ${REQUESTED_FILE_TYPES.join(', ')}.`
+				`The allowed types are: ${REQUESTED_FILE_TYPES.join(', ')}.`
 			)
 			return null
 		}
