@@ -35,13 +35,15 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		image: ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'],
 		audio: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
 		video: [], //placeholder
+		model: ['application/octet-stream'],
+
 		//incompatibility prevention, not preferred
 		jpg: ['image/jpg'],
 		jpeg: ['image/jpeg'],
 		gif: ['image/gif'],
 		png: ['image/png'],
 		mp3: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
-		obj: ['image/obj'],
+		obj: ['application/octet-stream'], // ['text/plain'], ['application/object'], ***** ['model/obj'] *****, ['application/octet-steam']
 	}
 
 	const REQUESTED_FILE_TYPES = $window.location.hash.substring(1).split(',')
@@ -135,10 +137,16 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 					MIME_MAP[type].forEach((subtype) => {
 						extractedTypes = [...extractedTypes, subtype.split('/')[1]]
 					})
-
 					allowedFileExtensions = [...allowedFileExtensions, ...extractedTypes]
 				}
-			})
+			});
+			// obj file extensions MIME_TYPE change base upload or download.
+			// From user to server the MIME_TYPE is application/octet-stream.
+			// From server to user the MIME_TYPE is text/plain.
+			if (allowedFileExtensions.indexOf('octet-stream') > -1) {
+				allowedFileExtensions.push('obj');
+				allowedFileExtensions.shift();
+			}
 
 			const allowedResult = []
 			result.forEach((res) => {
@@ -237,7 +245,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 			}
 		})
 
-		const mime = dataUrl.split(';')[0].split(':')[1]
+		const mime = dataUrl.split(';')[0].split(':')[1];
 
 		if (mime == null || allowedFileExtensions.indexOf(mime) === -1) {
 			alert(

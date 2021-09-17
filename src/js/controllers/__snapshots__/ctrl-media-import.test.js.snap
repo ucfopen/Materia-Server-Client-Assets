@@ -10,7 +10,7 @@ Array [
 exports[`MediaImportCtrl grabs a list of valid image assets 1`] = `
 Array [
   Object {
-    "created": "6/14/2017",
+    "created": "6/13/2017",
     "id": "00003",
     "name": "image1",
     "thumb": "https://mediaurl.com/00003/thumbnail",
@@ -18,7 +18,7 @@ Array [
     "type": "png",
   },
   Object {
-    "created": "6/14/2017",
+    "created": "6/13/2017",
     "id": "00004",
     "name": "image2",
     "thumb": "https://mediaurl.com/00004/thumbnail",
@@ -26,7 +26,7 @@ Array [
     "type": "jpg",
   },
   Object {
-    "created": "6/14/2017",
+    "created": "6/13/2017",
     "id": "00005",
     "name": "image3",
     "thumb": "https://mediaurl.com/00005/thumbnail",
@@ -34,7 +34,7 @@ Array [
     "type": "jpg",
   },
   Object {
-    "created": "6/14/2017",
+    "created": "6/13/2017",
     "id": "00007",
     "name": "image4",
     "thumb": "https://mediaurl.com/00007/thumbnail",
@@ -42,7 +42,7 @@ Array [
     "type": "gif",
   },
   Object {
-    "created": "6/14/2017",
+    "created": "6/13/2017",
     "id": "00008",
     "name": "valid image without extension in title",
     "thumb": "https://mediaurl.com/00008/thumbnail",
