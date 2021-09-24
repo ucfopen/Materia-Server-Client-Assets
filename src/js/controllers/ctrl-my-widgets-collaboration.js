@@ -224,7 +224,7 @@ app.controller('MyWidgetsCollaborationController', function (
 		]).then((returnData) => {
 			if (returnData === true) {
 				$scope.$emit('collaborators.update', '')
-				$scope.show.collaborationModal = false
+				$scope.hideModal()
 				if (remove_widget) {
 					WidgetSrv.removeWidget(widget_id)
 				}
@@ -240,6 +240,8 @@ app.controller('MyWidgetsCollaborationController', function (
 					$scope.alert.fatal = true
 				}
 			}
+
+			if ($scope.pending_collaborator != undefined) $scope.pending_collaborator = null
 
 			Please.$apply()
 		})
@@ -283,4 +285,20 @@ app.controller('MyWidgetsCollaborationController', function (
 	//  Initialize
 
 	$scope.$watch('inputs.userSearchInput', (input) => _searchFor(input))
+
+	// once initilization is complete - check to see if a pending collaborator exists
+	// if so, grab info about collaborator and add them to the list via manually calling _searchMatchClick
+	$timeout(() => {
+		if ($scope.pending_collaborator && $scope.pending_collaborator != null) {
+			Materia.Coms.Json.send('user_get', [[$scope.pending_collaborator]]).then((result) => {
+				if (result) {
+					result[0].gravatar = UserServ.getAvatar(result[0], 50)
+
+					$scope.searchResults.matches.push(result[0])
+
+					_searchMatchClick(result[0])
+				}
+			})
+		}
+	})
 })

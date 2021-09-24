@@ -9,6 +9,7 @@ app.controller('MyWidgetsController', function (
 	$scope,
 	$q,
 	$window,
+	$location,
 	$timeout,
 	WidgetSrv,
 	UserServ,
@@ -52,6 +53,15 @@ app.controller('MyWidgetsController', function (
 			WidgetSrv.selectWidgetFromHashUrl()
 			firstRun = false
 			$window.addEventListener('hashchange', WidgetSrv.selectWidgetFromHashUrl, false)
+
+			if ($location.search()?.pending_collaborator) {
+				$scope.pending_collaborator = $location.search().pending_collaborator
+				var widgetId = $location.path().match(/\/([A-Za-z0-9]){5}/)
+					? $location.path().match(/\/([A-Za-z0-9]{5})/)[1]
+					: null
+				if (widgetId) $scope.setSelected(widgetId)
+				$location.search('pending_collaborator', null).replace()
+			}
 		}
 	}
 
@@ -189,6 +199,9 @@ app.controller('MyWidgetsController', function (
 
 		populateAvailability(sel.widget.open_at, sel.widget.close_at)
 		populateAttempts(sel.widget.attempts)
+
+		// announce that widget is done loading, in case a hook requires it
+		$rootScope.$broadcast('widget.loadingCompleted')
 	}
 
 	// count up the number of other users collaborating
