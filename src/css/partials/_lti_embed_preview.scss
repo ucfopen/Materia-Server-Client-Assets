@@ -24,8 +24,8 @@
 			margin-bottom: 2em;
 		}
 
-		.button {
-		}
+		// .button {
+		// }
 
 		.widget_info {
 			display: flex;
@@ -46,6 +46,31 @@
 				font-size: 1.2em;
 				text-align: left;
 			}
+		}
+	}
+
+	.container.not_an_owner {
+		width: 85%;
+
+		ul {
+			padding-left: 10px;
+			text-align: left;
+		}
+
+		.instance_owner {
+			font-weight: bold;
+			margin-bottom: 6px;
+		}
+
+		.button {
+			font-size: 15px;
+			padding: 4px 6px;
+		}
+
+		.button.disabled {
+			background: #a8a8a8;
+			border: solid 1px #6d6d6d;
+			cursor: default;
 		}
 	}
 }

@@ -230,7 +230,8 @@ app.controller('MyWidgetsSelectedController', function (
 	$scope.$on('notification.directAddPendingCollaborator', (event, broadcast) => {
 		$scope.pending_collaborator = broadcast.from_id
 
-		if ($scope.selected.widget.id != broadcast.item_id) $scope.setSelected(broadcast.item_id)
+		if (!$scope.selected.widget || $scope.selected.widget.id != broadcast.item_id)
+			$scope.setSelected(broadcast.item_id)
 		else _showCollaboration()
 	})
 
