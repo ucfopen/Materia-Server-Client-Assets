@@ -36,12 +36,9 @@ app.controller('UserNotificationCtrl', function (Please, $scope, $sce, $rootScop
 						notification.button_action_text = 'Add as Collaborator'
 						notification.button_action_callback = () => {
 							var url = new URL(window.location.href)
-
+							var pattern = /^(\/my-widgets)/
 							// already on the my-widgets page; don't need to redirect, just send a broadcast with relevant info
-							if (
-								url.pathname.match(/^(\/my-widgets)/) &&
-								url.pathname.match(/^(\/my-widgets)/).length
-							) {
+							if (url.pathname.match(pattern) && url.pathname.match(pattern).length) {
 								$rootScope.$broadcast('notification.directAddPendingCollaborator', {
 									from_id: notification.from_id,
 									item_id: notification.item_id,
@@ -63,7 +60,6 @@ app.controller('UserNotificationCtrl', function (Please, $scope, $sce, $rootScop
 			return notification
 		})
 
-		console.log($scope.notifications)
 		Please.$apply()
 	})
 })
