@@ -164,6 +164,7 @@ app.controller('MyWidgetsCollaborationController', function (
 			last: user.last,
 			gravatar: user.gravatar,
 			access: String(ACCESS.VISIBLE),
+			highlight: $scope.pending_collaborator ? true : false,
 		})
 
 		$timeout(() => {
