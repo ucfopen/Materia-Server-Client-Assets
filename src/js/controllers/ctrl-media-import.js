@@ -36,6 +36,8 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		audio: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
 		video: [], //placeholder
 		model: ['application/octet-stream'],
+		// model: ['text/plain'],
+		// model: ['model/obj'],
 
 		//incompatibility prevention, not preferred
 		jpg: ['image/jpg'],
@@ -43,7 +45,9 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		gif: ['image/gif'],
 		png: ['image/png'],
 		mp3: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
-		obj: ['application/octet-stream'], // ['text/plain'], ['application/object'], ***** ['model/obj'] *****, ['application/octet-steam']
+		obj: ['application/octet-stream'],
+		// obj: ['text/plain'],
+		// obj: ['model/obj'],
 	}
 
 	const REQUESTED_FILE_TYPES = $window.location.hash.substring(1).split(',')
@@ -120,11 +124,13 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 	const uploadFile = (e) => {
 		const file =
 			(e.target.files && e.target.files[0]) || (e.dataTransfer.files && e.dataTransfer.files[0])
+		console.log('file =>', file)
 		if (file) _getFileData(file, _upload)
 	}
 
+	// load and/or select file from list of previous uploads.
 	const _loadAllMedia = (file_id) => {
-		// load and/or select file for labelling
+		// result is a array of objects containing each assets information.
 		COMS.send('assets_get', []).then((result) => {
 			if (!result || result.msg || result.length == 0) return
 
@@ -140,9 +146,11 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 					allowedFileExtensions = [...allowedFileExtensions, ...extractedTypes]
 				}
 			});
+
 			// obj file extensions MIME_TYPE change base upload or download.
 			// From user to server the MIME_TYPE is application/octet-stream.
 			// From server to user the MIME_TYPE is text/plain.
+			// Statement allows for the seeing of obj files in the list of previously uploaded models.
 			if (allowedFileExtensions.indexOf('octet-stream') > -1) {
 				allowedFileExtensions.push('obj');
 				allowedFileExtensions.shift();
@@ -245,7 +253,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 			}
 		})
 
-		const mime = dataUrl.split(';')[0].split(':')[1];
+		const mime = dataUrl.split(';')[0].split(':')[1]
 
 		if (mime == null || allowedFileExtensions.indexOf(mime) === -1) {
 			alert(
@@ -276,8 +284,14 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 	}
 
 	// upload to either local server or s3
+	// ones uploaded and id is created it calls _loadAllMedia(res.id) which downloads
+	// the file from the server to the file.
 	const _upload = (fileData) => {
 		const fd = new FormData()
+
+		console.log('_upload() fileData =>', fileData)
+		console.log('fileData.mime =>', fileData.mime)
+
 		fd.append('name', fileData.name)
 		fd.append('Content-Type', fileData.mime)
 		fd.append('file', _dataURItoBlob(fileData.src, fileData.mime), fileData.name)
@@ -285,14 +299,20 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		const request = new XMLHttpRequest()
 
 		request.onload = (oEvent) => {
+
+			// res = {success: 'true', id:'f7gy0'} // example of content
 			const res = JSON.parse(request.response) //parse response string
+			console.log('res =>', res)
+
+			console.log('AM I RUNNING!!!')
 			if (res.error) {
 				alert(`Error code ${res.error.code}: ${res.error.message}`)
 				$window.parent.Materia.Creator.onMediaImportComplete(null)
 				return
 			}
-
-			// reload media to select newly uploaded file
+			// console.log(res)
+			// console.log(res.text())
+			// reload media to select newly uploaded file.
 			_loadAllMedia(res.id)
 		}
 
