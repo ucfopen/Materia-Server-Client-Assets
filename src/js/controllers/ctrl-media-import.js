@@ -36,8 +36,6 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		audio: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
 		video: [], //placeholder
 		model: ['application/octet-stream'],
-		// model: ['text/plain'],
-		// model: ['model/obj'],
 
 		//incompatibility prevention, not preferred
 		jpg: ['image/jpg'],
@@ -46,8 +44,6 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		png: ['image/png'],
 		mp3: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
 		obj: ['application/octet-stream'],
-		// obj: ['text/plain'],
-		// obj: ['model/obj'],
 	}
 
 	const REQUESTED_FILE_TYPES = $window.location.hash.substring(1).split(',')
@@ -124,7 +120,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 	const uploadFile = (e) => {
 		const file =
 			(e.target.files && e.target.files[0]) || (e.dataTransfer.files && e.dataTransfer.files[0])
-		console.log('file =>', file)
+
 		if (file) _getFileData(file, _upload)
 	}
 
@@ -289,9 +285,6 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 	const _upload = (fileData) => {
 		const fd = new FormData()
 
-		console.log('_upload() fileData =>', fileData)
-		console.log('fileData.mime =>', fileData.mime)
-
 		fd.append('name', fileData.name)
 		fd.append('Content-Type', fileData.mime)
 		fd.append('file', _dataURItoBlob(fileData.src, fileData.mime), fileData.name)
@@ -299,20 +292,15 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		const request = new XMLHttpRequest()
 
 		request.onload = (oEvent) => {
-
 			// res = {success: 'true', id:'f7gy0'} // example of content
 			const res = JSON.parse(request.response) //parse response string
-			console.log('res =>', res)
 
-			console.log('AM I RUNNING!!!')
 			if (res.error) {
 				alert(`Error code ${res.error.code}: ${res.error.message}`)
 				$window.parent.Materia.Creator.onMediaImportComplete(null)
 				return
 			}
-			// console.log(res)
-			// console.log(res.text())
-			// reload media to select newly uploaded file.
+
 			_loadAllMedia(res.id)
 		}
 
