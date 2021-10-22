@@ -4,6 +4,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 	const SORTING_NONE = false
 	const SORTING_ASC = 'asc'
 	const SORTING_DESC = 'desc'
+	let IS_HIDDEN_CLICK = false
 
 	const sortString = (field, a, b) => a[field].toLowerCase().localeCompare(b[field].toLowerCase())
 	const sortNumber = (field, a, b) => a[field] - b[field]
@@ -55,11 +56,21 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 	let _allFiles = []
 
 	const onMediaSelect = (media) => {
-		$window.parent.Materia.Creator.onMediaImportComplete([media])
+		setTimeout(() => {
+			if (IS_HIDDEN_CLICK == false) {
+				$window.parent.Materia.Creator.onMediaImportComplete([media])
+			}
+			IS_HIDDEN_CLICK = false
+		}, 10)
 	}
 
 	const onCancel = () => {
 		$window.parent.Materia.Creator.onMediaImportComplete(null)
+	}
+
+	const hidingOption = (file) => {
+		IS_HIDDEN_CLICK = true
+		alert('delete press')
 	}
 
 	const toggleSortOrder = (sortOption) => {
@@ -124,7 +135,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		if (file) _getFileData(file, _upload)
 	}
 
-	// load and/or select file from list of previous uploads.
+	// Load and/or select file from list of previous uploads.
 	const _loadAllMedia = (file_id) => {
 		// result is a array of objects containing each assets information.
 		COMS.send('assets_get', []).then((result) => {
@@ -187,6 +198,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 						created: dateString,
 						timestamp: res.created_at,
 						thumb: _thumbnailUrl(res.id, res.type),
+						// IF is_deleted it should not show up here
 					})
 				}
 			})
@@ -292,7 +304,6 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		const request = new XMLHttpRequest()
 
 		request.onload = (oEvent) => {
-			// res = {success: 'true', id:'f7gy0'} // example of content
 			const res = JSON.parse(request.response) //parse response string
 
 			if (res.error) {
@@ -341,6 +352,8 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 	$scope.sortBy = toggleSortOrder
 	$scope.filterFiles = filterDisplay
 	$scope.uploadFile = uploadFile
+	// write code func for deletion.
+	$scope.hidingOption = hidingOption
 	$scope.sortOptions = SORT_OPTIONS
 	$scope.displayFiles = []
 	$scope.currentSort = SORT_OPTIONS[0] // initialize using the first sort option
