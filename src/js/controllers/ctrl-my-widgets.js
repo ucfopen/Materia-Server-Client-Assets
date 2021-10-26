@@ -56,7 +56,7 @@ app.controller('MyWidgetsController', function (
 
 			if ($location.search()?.pending_collaborator) {
 				$scope.pending_collaborator = $location.search().pending_collaborator
-				var pattern = /\/([A-Za-z0-9]){5}/
+				var pattern = /\/([A-Za-z0-9]{5})/
 				var widgetId = $location.path().match(pattern) ? $location.path().match(pattern)[1] : null
 				if (widgetId) $scope.setSelected(widgetId)
 				$location.search('pending_collaborator', null).replace()
