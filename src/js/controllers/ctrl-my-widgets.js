@@ -54,7 +54,7 @@ app.controller('MyWidgetsController', function (
 			firstRun = false
 			$window.addEventListener('hashchange', WidgetSrv.selectWidgetFromHashUrl, false)
 
-			if ($location.search()?.pending_collaborator) {
+			if ($location.search() && $location.search().pending_collaborator) {
 				$scope.pending_collaborator = $location.search().pending_collaborator
 				var pattern = /\/([A-Za-z0-9]{5})/
 				var widgetId = $location.path().match(pattern) ? $location.path().match(pattern)[1] : null
