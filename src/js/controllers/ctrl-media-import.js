@@ -1,6 +1,6 @@
 const app = angular.module('materia')
 
-app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
+app.controller('MediaImportCtrl', function ($scope, $window, $timeout, AssetSrv) {
 	const SORTING_NONE = false
 	const SORTING_ASC = 'asc'
 	const SORTING_DESC = 'desc'
@@ -66,11 +66,6 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 
 	const onCancel = () => {
 		$window.parent.Materia.Creator.onMediaImportComplete(null)
-	}
-
-	const hidingOption = (file) => {
-		IS_HIDDEN_CLICK = true
-		alert('delete press')
 	}
 
 	const toggleSortOrder = (sortOption) => {
@@ -154,7 +149,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 				}
 			});
 
-			// obj file extensions MIME_TYPE change base upload or download.
+			// obj file extensions MIME_TYPE changes based on upload or download.
 			// From user to server the MIME_TYPE is application/octet-stream.
 			// From server to user the MIME_TYPE is text/plain.
 			// Statement allows for the seeing of obj files in the list of previously uploaded models.
@@ -207,6 +202,12 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 			$scope.displayFiles = _allFiles
 			$scope.$apply()
 		})
+	}
+
+	// In this case delete means hiding from the user.
+	const deleteOption = (media) => {
+		IS_HIDDEN_CLICK = true
+		AssetSrv.deleteAsset(media)
 	}
 
 	const _thumbnailUrl = (data, type) => {
@@ -353,7 +354,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 	$scope.filterFiles = filterDisplay
 	$scope.uploadFile = uploadFile
 	// write code func for deletion.
-	$scope.hidingOption = hidingOption
+	$scope.deleteOption = deleteOption
 	$scope.sortOptions = SORT_OPTIONS
 	$scope.displayFiles = []
 	$scope.currentSort = SORT_OPTIONS[0] // initialize using the first sort option

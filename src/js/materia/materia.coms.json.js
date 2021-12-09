@@ -32,6 +32,11 @@ Namespace('Materia.Coms').Json = (() => {
 	}
 
 	const _sendRequest = (method, url, body) => {
+		console.log(
+			'method:', method,
+			'url:', url,
+			'body:', body,
+		)
 		let deferred = _$q.defer()
 		const options = {
 			method,
@@ -111,6 +116,11 @@ Namespace('Materia.Coms').Json = (() => {
 		return _sendRequest('POST', url, JSON.stringify(dataObject))
 	}
 
+	// newer XMLHttpRequest json api
+	const del = (url, dataObject) => {
+		_sendRequest('DELETE', url, dataObject)
+	}
+
 	// return true if jsonResult is an error object
 	const isError = (jsonResult) => jsonResult != null && typeof jsonResult.errorID !== 'undefined'
 
@@ -120,6 +130,7 @@ Namespace('Materia.Coms').Json = (() => {
 		isError,
 		post,
 		get,
+		del,
 		setGateway,
 	}
 })()
