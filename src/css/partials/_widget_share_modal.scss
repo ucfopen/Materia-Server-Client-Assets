@@ -312,6 +312,19 @@
 		padding: 15px 0 0 0;
 	}
 
+	.user_perm.highlight {
+		animation: pulse 1s alternate infinite;
+	}
+
+	@keyframes pulse {
+		0% {
+			background-color: none;
+		}
+		100% {
+			background-color: #ffffff;
+		}
+	}
+
 	.user_perm .options {
 		position: absolute;
 		right: 0;

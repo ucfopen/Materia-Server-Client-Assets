@@ -21,7 +21,6 @@ app.controller('ScorePageController', function (Please, $scope, $q, $timeout, Wi
 	// scores embed URL this will need to be modified!
 	let isEmbedded = /embed\//i.test(document.URL) // /preview-embed/xxx and /embed/xxxx
 	let isPreview = /\/preview/i.test(document.URL) // /preview/xxx and /preview-embed/xxxx
-	console.log(isEmbedded, isPreview, 'isembed, is preview?')
 	let _graphData = []
 
 	// We don't want users who click the 'View more details' link via an LTI to play again, since at that point
@@ -553,6 +552,7 @@ app.controller('ScorePageController', function (Please, $scope, $q, $timeout, Wi
 					source: 'score-controller',
 					widget: widgetInstance,
 					score,
+					score_url: window.location.href,
 				}),
 				'*'
 			)
