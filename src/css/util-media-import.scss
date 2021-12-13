@@ -220,10 +220,21 @@ html {
 
 			&.green {
 				background: #c4dd61;
+				background-image: linear-gradient(#c0e195, #8dcb45);
 				color: #525252;
 
 				&:hover {
 					background: #d5ea7f;
+				}
+			}
+
+			&.orange {
+				background: #eca444;
+				background-image: linear-gradient(#ffa42a, #ffce8c);
+				color: #525252;
+
+				&:hover {
+					background: #ffd091;
 				}
 			}
 		}

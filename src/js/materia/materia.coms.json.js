@@ -32,11 +32,6 @@ Namespace('Materia.Coms').Json = (() => {
 	}
 
 	const _sendRequest = (method, url, body) => {
-		console.log(
-			'method:', method,
-			'url:', url,
-			'body:', body,
-		)
 		let deferred = _$q.defer()
 		const options = {
 			method,

@@ -186,15 +186,17 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout, AssetSrv)
 						creationDate.getFullYear(),
 					].join('/')
 
-					allowedResult.push({
-						id: res.id,
-						type: res.type,
-						name: fileName,
-						created: dateString,
-						timestamp: res.created_at,
-						thumb: _thumbnailUrl(res.id, res.type),
-						// IF is_deleted it should not show up here
-					})
+					if (res.is_deleted == 0) {
+						allowedResult.push({
+							id: res.id,
+							type: res.type,
+							name: fileName,
+							created: dateString,
+							timestamp: res.created_at,
+							thumb: _thumbnailUrl(res.id, res.type),
+							is_deleted: res.is_deleted,
+						})
+					}
 				}
 			})
 
@@ -204,10 +206,18 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout, AssetSrv)
 		})
 	}
 
-	// In this case delete means hiding from the user.
-	const deleteOption = (media) => {
+	const deleteAsset = (media) => {
 		IS_HIDDEN_CLICK = true
-		AssetSrv.deleteAsset(media)
+
+		// if is deleted update the local and server version.
+		if (media.is_deleted == 0) {
+			AssetSrv.deleteAsset(media)
+			media.is_deleted = '1'
+		}
+		else {
+			AssetSrv.restoreAsset(media)
+			media.is_deleted = '0'
+		}
 	}
 
 	const _thumbnailUrl = (data, type) => {
@@ -353,8 +363,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout, AssetSrv)
 	$scope.sortBy = toggleSortOrder
 	$scope.filterFiles = filterDisplay
 	$scope.uploadFile = uploadFile
-	// write code func for deletion.
-	$scope.deleteOption = deleteOption
+	$scope.deleteAsset = deleteAsset
 	$scope.sortOptions = SORT_OPTIONS
 	$scope.displayFiles = []
 	$scope.currentSort = SORT_OPTIONS[0] // initialize using the first sort option
