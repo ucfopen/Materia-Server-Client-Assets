@@ -35,12 +35,15 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		image: ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'],
 		audio: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
 		video: [], //placeholder
+		model: ['model/obj'],
+
 		//incompatibility prevention, not preferred
 		jpg: ['image/jpg'],
 		jpeg: ['image/jpeg'],
 		gif: ['image/gif'],
 		png: ['image/png'],
 		mp3: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
+		obj: ['application/octet-stream', 'model/obj'],
 	}
 
 	const REQUESTED_FILE_TYPES = $window.location.hash.substring(1).split(',')
@@ -117,11 +120,13 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 	const uploadFile = (e) => {
 		const file =
 			(e.target.files && e.target.files[0]) || (e.dataTransfer.files && e.dataTransfer.files[0])
+
 		if (file) _getFileData(file, _upload)
 	}
 
+	// load and/or select file from list of previous uploads.
 	const _loadAllMedia = (file_id) => {
-		// load and/or select file for labelling
+		// result is a array of objects containing each assets information.
 		COMS.send('assets_get', []).then((result) => {
 			if (!result || result.msg || result.length == 0) return
 
@@ -134,7 +139,6 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 					MIME_MAP[type].forEach((subtype) => {
 						extractedTypes = [...extractedTypes, subtype.split('/')[1]]
 					})
-
 					allowedFileExtensions = [...allowedFileExtensions, ...extractedTypes]
 				}
 			})
@@ -148,6 +152,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 				) {
 					return
 				}
+
 				if (allowedFileExtensions.indexOf(res.type) > -1) {
 					// the id used for asset url is actually remote_url
 					// if it exists, use it instead
@@ -191,7 +196,8 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 			case 'png': // intentional case fall-through
 			case 'gif': // intentional case fall-through
 				return `${MEDIA_URL}/${data}/thumbnail`
-
+			case 'obj': // intentional case fall-through
+				return '/img/model.png'
 			case 'mp3': // intentional case fall-through
 			case 'wav': // intentional case fall-through
 			case 'ogg': // intentional case fall-through
@@ -266,8 +272,11 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 	}
 
 	// upload to either local server or s3
+	// ones uploaded and id is created it calls _loadAllMedia(res.id) which downloads
+	// the file from the server to the file.
 	const _upload = (fileData) => {
 		const fd = new FormData()
+
 		fd.append('name', fileData.name)
 		fd.append('Content-Type', fileData.mime)
 		fd.append('file', _dataURItoBlob(fileData.src, fileData.mime), fileData.name)
@@ -275,14 +284,15 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		const request = new XMLHttpRequest()
 
 		request.onload = (oEvent) => {
+			// res = {success: 'true', id:'f7gy0'} // example of content
 			const res = JSON.parse(request.response) //parse response string
+
 			if (res.error) {
 				alert(`Error code ${res.error.code}: ${res.error.message}`)
 				$window.parent.Materia.Creator.onMediaImportComplete(null)
 				return
 			}
 
-			// reload media to select newly uploaded file
 			_loadAllMedia(res.id)
 		}
 
