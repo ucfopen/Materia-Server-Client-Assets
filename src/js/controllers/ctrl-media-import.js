@@ -35,7 +35,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		image: ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'],
 		audio: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
 		video: [], //placeholder
-		model: ['application/octet-stream'],
+		model: ['model/obj'],
 
 		//incompatibility prevention, not preferred
 		jpg: ['image/jpg'],
@@ -43,7 +43,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		gif: ['image/gif'],
 		png: ['image/png'],
 		mp3: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
-		obj: ['application/octet-stream'],
+		obj: ['application/octet-stream', 'model/obj'],
 	}
 
 	const REQUESTED_FILE_TYPES = $window.location.hash.substring(1).split(',')
@@ -141,16 +141,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 					})
 					allowedFileExtensions = [...allowedFileExtensions, ...extractedTypes]
 				}
-			});
-
-			// obj file extensions MIME_TYPE change base upload or download.
-			// From user to server the MIME_TYPE is application/octet-stream.
-			// From server to user the MIME_TYPE is text/plain.
-			// Statement allows for the seeing of obj files in the list of previously uploaded models.
-			if (allowedFileExtensions.indexOf('octet-stream') > -1) {
-				allowedFileExtensions.push('obj');
-				allowedFileExtensions.shift();
-			}
+			})
 
 			const allowedResult = []
 			result.forEach((res) => {
@@ -161,6 +152,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 				) {
 					return
 				}
+
 				if (allowedFileExtensions.indexOf(res.type) > -1) {
 					// the id used for asset url is actually remote_url
 					// if it exists, use it instead
@@ -204,11 +196,11 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 			case 'png': // intentional case fall-through
 			case 'gif': // intentional case fall-through
 				return `${MEDIA_URL}/${data}/thumbnail`
-
+			case 'obj': // intentional case fall-through
+				return '/img/model.png'
 			case 'mp3': // intentional case fall-through
 			case 'wav': // intentional case fall-through
 			case 'ogg': // intentional case fall-through
-			case 'obj': // intentional case fall-through
 				return '/img/audio.png'
 		}
 	}
@@ -254,7 +246,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		if (mime == null || allowedFileExtensions.indexOf(mime) === -1) {
 			alert(
 				'This widget does not support the type of file provided. ' +
-				`The allowed types are: ${REQUESTED_FILE_TYPES.join(', ')}.`
+					`The allowed types are: ${REQUESTED_FILE_TYPES.join(', ')}.`
 			)
 			return null
 		}
