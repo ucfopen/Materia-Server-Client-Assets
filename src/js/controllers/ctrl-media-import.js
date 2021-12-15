@@ -272,8 +272,6 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 	}
 
 	// upload to either local server or s3
-	// ones uploaded and id is created it calls _loadAllMedia(res.id) which downloads
-	// the file from the server to the file.
 	const _upload = (fileData) => {
 		const fd = new FormData()
 
@@ -284,7 +282,6 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		const request = new XMLHttpRequest()
 
 		request.onload = (oEvent) => {
-			// res = {success: 'true', id:'f7gy0'} // example of content
 			const res = JSON.parse(request.response) //parse response string
 
 			if (res.error) {
@@ -293,6 +290,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 				return
 			}
 
+			// reload media to select newly uploaded file
 			_loadAllMedia(res.id)
 		}
 
