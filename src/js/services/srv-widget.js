@@ -244,7 +244,15 @@ app.service('WidgetSrv', function (SelectedWidgetSrv, DateTimeServ, $q, $rootSco
 			if (selID.substr(0, 1) === '/') {
 				selID = selID.substr(1)
 			}
-			getWidget(selID)
+			Materia.Coms.Json.send('widget_instance_access_perms_verify', [[selID]])
+				.then((status) => {
+					if (!status) {
+						throw new Error('You do not have permission to see this widget!')
+					}
+				})
+				.then(() => {
+					return getWidget(selID)
+				})
 				.then((widget) => {
 					SelectedWidgetSrv.set(widget)
 				})

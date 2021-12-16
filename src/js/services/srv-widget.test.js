@@ -379,6 +379,8 @@ describe('WidgetSrv', () => {
 	})
 
 	it('selectWidgetFromHashUrl loads widget and sets selection', () => {
+		// have to pretend the API verifies that this user can see this widget
+		mockSendPromiseOnce(true)
 		mockHashGet.mockImplementation(() => '/0UNM0')
 		mockSendPromiseOnce(getMockApiData('widget_instances_get'))
 		_service.selectWidgetFromHashUrl()
@@ -386,6 +388,18 @@ describe('WidgetSrv', () => {
 
 		expect(_SelectedWidgetSrv.set).toHaveBeenCalled()
 		expect(_SelectedWidgetSrv.set.mock.calls[0][0].id).toBe('0UNM0')
+	})
+
+	it('selectWidgetFromHashUrl does not load widget when user lacks access', () => {
+		// have to pretend the API verifies that this user can see this widget
+		mockSendPromiseOnce(false)
+		mockHashGet.mockImplementation(() => '/0UNM0')
+		mockSendPromiseOnce(getMockApiData('widget_instances_get'))
+		_service.selectWidgetFromHashUrl()
+		$scope.$digest() // processes promise
+
+		expect(_SelectedWidgetSrv.set).not.toHaveBeenCalled()
+		// expect(_SelectedWidgetSrv.set.mock.calls[0][0].id).toBe('0UNM0')
 	})
 
 	it('selectWidgetFromHashUrl warns about not having access', () => {
