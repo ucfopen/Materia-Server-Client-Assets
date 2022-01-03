@@ -31,13 +31,13 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 
 	// generic media type definitions and substitutions for compatibility
 	const MIME_MAP = {
-		//generic types, preferred
+		// generic types, preferred
 		image: ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'],
 		audio: ['audio/mp3', 'audio/mpeg', 'audio/mpeg3'],
-		video: [], //placeholder
+		video: [], // placeholder
 		model: ['model/obj'],
 
-		//incompatibility prevention, not preferred
+		// incompatibility prevention, not preferred
 		jpg: ['image/jpg'],
 		jpeg: ['image/jpeg'],
 		gif: ['image/gif'],
@@ -191,17 +191,17 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 
 	const _thumbnailUrl = (data, type) => {
 		switch (type) {
-			case 'jpg': // intentional case fall-through
-			case 'jpeg': // intentional case fall-through
-			case 'png': // intentional case fall-through
-			case 'gif': // intentional case fall-through
-				return `${MEDIA_URL}/${data}/thumbnail`
-			case 'obj': // intentional case fall-through
-				return '/img/model.png'
-			case 'mp3': // intentional case fall-through
-			case 'wav': // intentional case fall-through
-			case 'ogg': // intentional case fall-through
-				return '/img/audio.png'
+			case 'jpg':
+			case 'jpeg':
+			case 'png':
+			case 'gif':
+				return `${MEDIA_URL}/${data}/thumbnail` // image types return a thumbnail version of the image
+			case 'obj':
+				return '/img/model.png' // model formats return the placeholder model thumbnail
+			case 'mp3':
+			case 'wav':
+			case 'ogg':
+				return '/img/audio.png' // audio formats return the placeholder audio thumbnail
 		}
 	}
 
