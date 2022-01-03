@@ -22,6 +22,10 @@ app.controller('MyWidgetsSelectedController', function (
 		this.$parent.hideModal()
 	}
 
+	$scope.handleDialogClose = () => {
+		if ($scope.pending_collaborator != undefined) $scope.pending_collaborator = null
+	}
+
 	const _exportPopup = () => {
 		// Do not show modal disabled
 		$scope.show.exportModal = true
@@ -215,6 +219,20 @@ app.controller('MyWidgetsSelectedController', function (
 	$scope.$on('selectedWidget.notifyAccessDenied', () => {
 		$scope.perms.error = true
 		Please.$apply()
+	})
+
+	// is widget done loading? check to see if there's a pending collaborator
+	$scope.$on('widget.loadingCompleted', () => {
+		if ($scope.pending_collaborator) _showCollaboration()
+	})
+
+	// notification has announced that we should add a collaborator, but we're already on the my widgets page
+	$scope.$on('notification.directAddPendingCollaborator', (event, broadcast) => {
+		$scope.pending_collaborator = broadcast.from_id
+
+		if (!$scope.selected.widget || $scope.selected.widget.id != broadcast.item_id)
+			$scope.setSelected(broadcast.item_id)
+		else _showCollaboration()
 	})
 
 	$scope.removeExpires = _removeExpires

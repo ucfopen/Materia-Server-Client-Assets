@@ -3,8 +3,8 @@
 		[
 			"@babel/preset-env",
 			{
-				useBuiltIns: "usage",
-				corejs: 3,
+				"useBuiltIns": "usage",
+				"corejs": 3
 				// debug: true, // outputs polyfills and browserlist
 				// targets: 'defaults' // allows .browserslistrc to work
 			}
@@ -12,6 +12,7 @@
 		"jest"
 	],
 	"plugins": [
-		'babel-plugin-angularjs-annotate'
+		"@babel/plugin-proposal-optional-chaining",
+		"babel-plugin-angularjs-annotate"
 	]
 }
