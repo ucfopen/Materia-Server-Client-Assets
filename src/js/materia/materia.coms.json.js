@@ -113,7 +113,10 @@ Namespace('Materia.Coms').Json = (() => {
 
 	// newer XMLHttpRequest json api
 	const del = (url, dataObject) => {
-		_sendRequest('DELETE', url, dataObject)
+		if (dataObject == null) {
+			dataObject = {}
+		}
+		_sendRequest('DELETE', url, JSON.stringify(dataObject))
 	}
 
 	// return true if jsonResult is an error object
