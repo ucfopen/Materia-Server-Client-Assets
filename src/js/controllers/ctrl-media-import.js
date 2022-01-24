@@ -54,7 +54,6 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout, AssetSrv)
 
 	// all files before filtering
 	let _allFiles = []
-	let _allHiddenFiles = []
 
 	const onMediaSelect = (media) => {
 		if (isHiddenClick === false) {
@@ -69,6 +68,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout, AssetSrv)
 
 	const toggleSortOrder = (sortOption) => {
 		if (!sortOption) return
+
 
 		const currentStatus = sortOption.status
 
@@ -105,9 +105,20 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout, AssetSrv)
 		if ($scope.currentSort.status === SORTING_DESC) $scope.displayFiles.reverse()
 	}
 
-	const filterDisplay = () => {
-		$scope.displayFiles = _allFiles
+	const showDeleted = () => {
+
+		if ($scope.isDeleted === true) {
+			$scope.displayFiles = _allFiles
+		}
+		else {
+			$scope.displayFiles = _allFiles.filter((asset) => asset.is_deleted === '0')
+		}
+
 		_sortFiles()
+	}
+
+	const filterDisplay = () => {
+		showDeleted()
 
 		const search = $scope.filter.toLowerCase().trim()
 		if (!search) return
@@ -152,7 +163,6 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout, AssetSrv)
 			// From user to server the MIME_TYPE is application/octet-stream.
 			// From server to user the MIME_TYPE is text/plain.
 			// Statement allows for the seeing of obj files in the list of previously uploaded models.
-
 			const findOctet = (element) => element === 'octet-stream'
 			const octetIndex = allowedFileExtensions.findIndex(findOctet)
 
@@ -162,7 +172,6 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout, AssetSrv)
 			}
 
 			const allowedResult = []
-			const hiddenResult = []
 			result.forEach((res) => {
 				if (
 					res.remote_url != null &&
@@ -190,34 +199,20 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout, AssetSrv)
 						creationDate.getFullYear(),
 					].join('/')
 
-					if (res.is_deleted === '0') {
-						allowedResult.push({
-							id: res.id,
-							type: res.type,
-							name: fileName,
-							created: dateString,
-							timestamp: res.created_at,
-							thumb: _thumbnailUrl(res.id, res.type),
-							is_deleted: res.is_deleted,
-						})
-					}
-					else {
-						hiddenResult.push({
-							id: res.id,
-							type: res.type,
-							name: fileName,
-							created: dateString,
-							timestamp: res.created_at,
-							thumb: _thumbnailUrl(res.id, res.type),
-							is_deleted: res.is_deleted,
-						})
-					}
+					allowedResult.push({
+						id: res.id,
+						type: res.type,
+						name: fileName,
+						created: dateString,
+						timestamp: res.created_at,
+						thumb: _thumbnailUrl(res.id, res.type),
+						is_deleted: res.is_deleted,
+					})
 				}
 			})
 
 			_allFiles = allowedResult
-			_allHiddenFiles = hiddenResult
-			$scope.displayFiles = _allFiles
+			showDeleted()
 			$scope.$apply()
 		})
 	}
@@ -384,6 +379,8 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout, AssetSrv)
 	$scope.displayFiles = []
 	$scope.currentSort = SORT_OPTIONS[0] // initialize using the first sort option
 	$scope.filter = null
+	$scope.isDeleted = false
+	$scope.showDeleted = showDeleted
 
 	// initialize
 	$window.addEventListener('message', _onPostMessage, false)
