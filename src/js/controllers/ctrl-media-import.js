@@ -159,18 +159,6 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout, AssetSrv)
 				}
 			});
 
-			// obj file extensions MIME_TYPE changes based on upload or download.
-			// From user to server the MIME_TYPE is application/octet-stream.
-			// From server to user the MIME_TYPE is text/plain.
-			// Statement allows for the seeing of obj files in the list of previously uploaded models.
-			const findOctet = (element) => element === 'octet-stream'
-			const octetIndex = allowedFileExtensions.findIndex(findOctet)
-
-			if (allowedFileExtensions[octetIndex] === 'octet-stream') {
-				allowedFileExtensions.splice(octetIndex, 1)
-				allowedFileExtensions.push('obj')
-			}
-
 			const allowedResult = []
 			result.forEach((res) => {
 				if (
