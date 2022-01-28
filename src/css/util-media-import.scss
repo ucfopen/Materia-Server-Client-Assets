@@ -100,20 +100,25 @@ html {
 	flex-flow: row;
 	margin-left: 20px;
 
-	:last-child {
-		display: flex;
-		flex-grow: 1;
+	label {
+		margin-left: 60px;
 	}
+}
+
+.sort-bar {
+	display: flex;
+	flex-flow: row;
+	margin-left: 20px;
+	padding-top: 7px;
 
 	input {
-		margin-right: 20px;
-
+		padding-right: 200px;
+		padding-left: 25px;
 		height: 20px;
 		background: #fff;
 		border: 1px solid #b0b0b0;
 		border-radius: 12px;
 
-		padding-left: 18px;
 		background-image: url(../img/magnifyingglass.png);
 		background-repeat: no-repeat;
 		background-position: left;
@@ -191,6 +196,51 @@ html {
 			strong {
 				display: block;
 				color: #484848;
+			}
+		}
+
+		.delete-btn {
+			font-family: 'Lato', arial, serif;
+			margin-top: 10px;
+			padding: 4px 13px 4px 13px;
+			background: #ffba5d;
+			background-image: linear-gradient(#ffce8c, #ffa42a);
+
+			font-weight: 700;
+			color: #694d28;
+			text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+			box-shadow: 1px 2px 4px #888;
+			font-size: 18px;
+			position: relative;
+			cursor: pointer;
+			display: inline-block;
+			user-select: none;
+
+			border: 1px solid #525252;
+			border-radius: 4px;
+
+			.ng-modal & {
+				margin: 5px auto;
+			}
+
+			&.green {
+				background: #c4dd61;
+				background-image: linear-gradient(#c0e195, #8dcb45);
+				color: #525252;
+
+				&:hover {
+					background: #d5ea7f;
+				}
+			}
+
+			&.orange {
+				background: #eca444;
+				background-image: linear-gradient(#ffa42a, #ffce8c);
+				color: #525252;
+
+				&:hover {
+					background: #ffd091;
+				}
 			}
 		}
 	}

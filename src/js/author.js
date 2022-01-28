@@ -24,5 +24,6 @@ require('./materia/materia.mywidgets.statistics')
 require('./services/srv-api')
 require('./services/srv-beard')
 require('./services/srv-scores')
+require('./services/srv-asset')
 
 // Materia Server scripts for creating content: my widgets, widget authoring, lti picker

@@ -1,9 +1,10 @@
 const app = angular.module('materia')
 
-app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
+app.controller('MediaImportCtrl', function ($scope, $window, $timeout, AssetSrv) {
 	const SORTING_NONE = false
 	const SORTING_ASC = 'asc'
 	const SORTING_DESC = 'desc'
+	let isHiddenClick = false
 
 	const sortString = (field, a, b) => a[field].toLowerCase().localeCompare(b[field].toLowerCase())
 	const sortNumber = (field, a, b) => a[field] - b[field]
@@ -55,7 +56,10 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 	let _allFiles = []
 
 	const onMediaSelect = (media) => {
-		$window.parent.Materia.Creator.onMediaImportComplete([media])
+		if (isHiddenClick === false) {
+			$window.parent.Materia.Creator.onMediaImportComplete([media])
+		}
+		isHiddenClick = false
 	}
 
 	const onCancel = () => {
@@ -64,6 +68,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 
 	const toggleSortOrder = (sortOption) => {
 		if (!sortOption) return
+
 
 		const currentStatus = sortOption.status
 
@@ -100,9 +105,20 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		if ($scope.currentSort.status === SORTING_DESC) $scope.displayFiles.reverse()
 	}
 
-	const filterDisplay = () => {
-		$scope.displayFiles = _allFiles
+	const showDeleted = () => {
+
+		if ($scope.isDeleted === true) {
+			$scope.displayFiles = _allFiles
+		}
+		else {
+			$scope.displayFiles = _allFiles.filter((asset) => asset.is_deleted === '0')
+		}
+
 		_sortFiles()
+	}
+
+	const filterDisplay = () => {
+		showDeleted()
 
 		const search = $scope.filter.toLowerCase().trim()
 		if (!search) return
@@ -124,7 +140,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		if (file) _getFileData(file, _upload)
 	}
 
-	// load and/or select file from list of previous uploads.
+	// Load and/or select file from list of previous uploads.
 	const _loadAllMedia = (file_id) => {
 		// result is a array of objects containing each assets information.
 		COMS.send('assets_get', []).then((result) => {
@@ -141,7 +157,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 					})
 					allowedFileExtensions = [...allowedFileExtensions, ...extractedTypes]
 				}
-			})
+			});
 
 			const allowedResult = []
 			result.forEach((res) => {
@@ -179,14 +195,29 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 						created: dateString,
 						timestamp: res.created_at,
 						thumb: _thumbnailUrl(res.id, res.type),
+						is_deleted: res.is_deleted,
 					})
 				}
 			})
 
 			_allFiles = allowedResult
-			$scope.displayFiles = _allFiles
+			showDeleted()
 			$scope.$apply()
 		})
+	}
+
+	const deleteAsset = (media) => {
+		isHiddenClick = true
+
+		// if is deleted update the local and server version.
+		if (media.is_deleted == 0) {
+			AssetSrv.deleteAsset(media)
+			media.is_deleted = '1'
+		}
+		else {
+			AssetSrv.restoreAsset(media)
+			media.is_deleted = '0'
+		}
 	}
 
 	const _thumbnailUrl = (data, type) => {
@@ -246,7 +277,7 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 		if (mime == null || allowedFileExtensions.indexOf(mime) === -1) {
 			alert(
 				'This widget does not support the type of file provided. ' +
-					`The allowed types are: ${REQUESTED_FILE_TYPES.join(', ')}.`
+				`The allowed types are: ${REQUESTED_FILE_TYPES.join(', ')}.`
 			)
 			return null
 		}
@@ -331,10 +362,13 @@ app.controller('MediaImportCtrl', function ($scope, $window, $timeout) {
 	$scope.sortBy = toggleSortOrder
 	$scope.filterFiles = filterDisplay
 	$scope.uploadFile = uploadFile
+	$scope.deleteAsset = deleteAsset
 	$scope.sortOptions = SORT_OPTIONS
 	$scope.displayFiles = []
 	$scope.currentSort = SORT_OPTIONS[0] // initialize using the first sort option
 	$scope.filter = null
+	$scope.isDeleted = false
+	$scope.showDeleted = showDeleted
 
 	// initialize
 	$window.addEventListener('message', _onPostMessage, false)

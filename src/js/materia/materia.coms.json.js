@@ -111,6 +111,14 @@ Namespace('Materia.Coms').Json = (() => {
 		return _sendRequest('POST', url, JSON.stringify(dataObject))
 	}
 
+	// newer XMLHttpRequest json api
+	const del = (url, dataObject) => {
+		if (dataObject == null) {
+			dataObject = {}
+		}
+		_sendRequest('DELETE', url, JSON.stringify(dataObject))
+	}
+
 	// return true if jsonResult is an error object
 	const isError = (jsonResult) => jsonResult != null && typeof jsonResult.errorID !== 'undefined'
 
@@ -120,6 +128,7 @@ Namespace('Materia.Coms').Json = (() => {
 		isError,
 		post,
 		get,
+		del,
 		setGateway,
 	}
 })()
