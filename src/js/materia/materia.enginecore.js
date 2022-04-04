@@ -3,6 +3,7 @@ Namespace('Materia').Engine = (() => {
 	let _instance = null
 	let _lastHeight = -1
 	let _mediaUrl = null
+	let _h5pUrl = null
 	let _resizeInterval = null
 	let _widgetClass = null
 
@@ -13,6 +14,7 @@ Namespace('Materia').Engine = (() => {
 			case 'initWidget':
 				_baseUrl = msg.data[2]
 				_mediaUrl = msg.data[3]
+				_h5pUrl = msg.data[4]
 				_initWidget(msg.data[0], msg.data[1])
 				break
 			default:
@@ -67,6 +69,10 @@ Namespace('Materia').Engine = (() => {
 		_sendPostMessage('alert', { title, msg, fatal })
 	}
 
+	const getH5PUrl = () => {
+		return _h5pUrl
+	}
+
 	const getMediaUrl = (mediaId) => `${_mediaUrl}/${mediaId}`
 
 	const end = (showScoreScreenAfter) => {
@@ -106,6 +112,7 @@ Namespace('Materia').Engine = (() => {
 		alert,
 		getImageAssetUrl: getMediaUrl, // will be deprecated - use getMediaUrl
 		getMediaUrl: getMediaUrl,
+		getH5PUrl,
 		end,
 		sendPendingLogs,
 		sendStorage,
