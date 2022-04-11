@@ -3,6 +3,7 @@ Namespace('Materia').CreatorCore = (() => {
 	let _creatorClass = null
 	let _lastHeight = -1
 	let _mediaUrl = null
+	let _h5pUrl = null
 	let _resizeInterval = null
 
 	const _onPostMessage = (e) => {
@@ -13,7 +14,8 @@ Namespace('Materia').CreatorCore = (() => {
 				_initNewWidget(
 					msg.data[0], // widget
 					msg.data[1], // baseUrl
-					msg.data[2] // mediaUrl
+					msg.data[2], // mediaUrl,
+					msg.data[3]  // h5pUrl
 				)
 				break
 			case 'initExistingWidget':
@@ -23,7 +25,8 @@ Namespace('Materia').CreatorCore = (() => {
 					msg.data[2], // qset
 					msg.data[3], // qsetVersion
 					msg.data[4], // baseUrl
-					msg.data[5] // mediaUrl
+					msg.data[5], // mediaUrl
+					msg.data[6]  // h5pUrl
 				)
 				break
 			case 'onRequestSave':
@@ -58,15 +61,17 @@ Namespace('Materia').CreatorCore = (() => {
 	const _sendPostMessage = (type, data) =>
 		parent.postMessage(JSON.stringify({ type, source: 'creator-core', data }), '*')
 
-	const _initNewWidget = (widget, baseUrl, mediaUrl) => {
+	const _initNewWidget = (widget, baseUrl, mediaUrl, h5pUrl) => {
 		_baseurl = baseUrl
 		_mediaUrl = mediaUrl
+		_h5pUrl = h5pUrl
 		_tellCreator('initNewWidget', [widget])
 	}
 
-	const _initExistingWidget = (widget, title, qset, qsetVersion, baseUrl, mediaUrl) => {
+	const _initExistingWidget = (widget, title, qset, qsetVersion, baseUrl, mediaUrl, h5pUrl) => {
 		_baseurl = baseUrl
 		_mediaUrl = mediaUrl
+		_h5pUrl = h5pUrl
 		_tellCreator('initExistingWidget', [widget, title, qset, qsetVersion])
 	}
 
@@ -90,6 +95,10 @@ Namespace('Materia').CreatorCore = (() => {
 
 	const alert = (msg, title = null, fatal = false) => {
 		_sendPostMessage('alert', { msg, title, fatal })
+	}
+
+	const getH5PUrl = () => {
+		return _h5pUrl
 	}
 
 	const getMediaUrl = (mediaId) => `${_mediaUrl}/${mediaId}`
@@ -136,6 +145,7 @@ Namespace('Materia').CreatorCore = (() => {
 		start,
 		alert,
 		getMediaUrl,
+		getH5PUrl,
 		showMediaImporter,
 		directUploadMedia,
 		cancelSave,

@@ -142,21 +142,8 @@ app.controller('WidgetCreatorCtrl', function (
 		let args
 		const deferred = $q.defer()
 
-		if (inst_id != null) {
-			args = [instance.name, instance.widget, keepQSet.data, keepQSet.version, BASE_URL]
-			if (widgetType !== '.swf') {
-				args.push(MEDIA_URL)
-			} // Passing MEDIA_URL breaks the SWF, so omit it for Flash widgets! The intent is to sunset Flash support relatively soon after this code is committed.
-
-			sendToCreator('initExistingWidget', args)
-		} else {
-			args = [widget_info, BASE_URL]
-			if (widgetType !== '.swf') {
-				args.push(MEDIA_URL)
-			} //  Passing MEDIA_URL breaks the SWF, so omit it for Flash widgets! The intent is to sunset Flash support relatively soon after this code is committed.
-
-			sendToCreator('initNewWidget', args)
-		}
+		if (inst_id != null) sendToCreator('initExistingWidget', [instance.name, instance.widget, keepQSet.data, keepQSet.version,  BASE_URL, MEDIA_URL, H5P_URL])
+		else args = sendToCreator('initNewWidget', [widget_info, BASE_URL, MEDIA_URL, H5P_URL])
 
 		deferred.resolve()
 		return deferred.promise
