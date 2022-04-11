@@ -139,11 +139,10 @@ app.controller('WidgetCreatorCtrl', function (
 
 	// Starts the Creator, sending required widget data
 	const initCreator = () => {
-		let args
 		const deferred = $q.defer()
 
 		if (inst_id != null) sendToCreator('initExistingWidget', [instance.name, instance.widget, keepQSet.data, keepQSet.version,  BASE_URL, MEDIA_URL, H5P_URL])
-		else args = sendToCreator('initNewWidget', [widget_info, BASE_URL, MEDIA_URL, H5P_URL])
+		else sendToCreator('initNewWidget', [widget_info, BASE_URL, MEDIA_URL, H5P_URL])
 
 		deferred.resolve()
 		return deferred.promise
