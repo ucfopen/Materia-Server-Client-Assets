@@ -151,7 +151,7 @@ app.controller('WidgetPlayerCtrl', function (
 			'initWidget',
 			widgetType === '.swf'
 				? [qset, convertedInstance]
-				: [qset, convertedInstance, BASE_URL, MEDIA_URL]
+				: [qset, convertedInstance, BASE_URL, MEDIA_URL, H5P_URL]
 		)
 		if (!$scope.isPreview) {
 			heartbeatInterval = $interval(_sendAllPendingLogs, PLAYER.LOG_INTERVAL) // if not in preview mode, set the interval to send logs
