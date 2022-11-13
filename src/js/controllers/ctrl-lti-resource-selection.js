@@ -16,6 +16,8 @@ app.controller('LTIResourceSelectionCtrl', function (
 		$scope.showRefreshArrow = true
 	}
 
+
+
 	const loadWidgets = (fakeDelay) => {
 		if (fakeDelay == null) {
 			fakeDelay = 1
@@ -71,6 +73,28 @@ app.controller('LTIResourceSelectionCtrl', function (
 		setDisplayState('progress')
 	}
 
+	const buildAndSubmitForm = (url, method, params) => {
+		method = method || "post";
+
+		const form = document.createElement("form");
+		form.setAttribute("method", method);
+		form.setAttribute("action", url);
+		form.setAttribute("enctype", "application/x-www-form-urlencoded");
+
+		for(const key in params) {
+			if(params.hasOwnProperty(key)) {
+				const hiddenField = document.createElement("input");
+				hiddenField.setAttribute("type", "hidden");
+				hiddenField.setAttribute("name", key);
+				hiddenField.setAttribute("value", params[key]);
+				form.appendChild(hiddenField);
+			}
+		}
+
+		document.body.appendChild(form);
+		form.submit();
+	}
+
 	const finishProgressBarAndSetLocation = () => {
 		let pg = document.querySelector('.progress-container')
 		let pgSpan = document.querySelector('.progress-container span')
@@ -84,12 +108,48 @@ app.controller('LTIResourceSelectionCtrl', function (
 			// provided by launch_presentation_return_url or content_item_return_url
 			// if RETURN_URL is set, we'll use it to inform the LTI Tool consumer of our choice
 			if (typeof RETURN_URL !== 'undefined' && RETURN_URL !== null) {
+
+				// encode the widget launch url
+				const launchUrl = encodeURI(selectedWidget.embed_url)
+
+				// LTI_MESSAGE_TYPE is defined globally from the value of lti_message_type sent to the server
+				if(LTI_MESSAGE_TYPE === 'ContentItemSelectionRequest'){
+
+					// construct the ContentItem message to send
+					const title = selectedWidget.name
+					const text = `A Materia ${selectedWidget.widget.name} Activity`
+					const content_items = {
+						"@context" : "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",
+						"@graph" : [
+							{
+								"@type": "LtiLinkItem",
+								mediaType: "application/vnd.ims.lti.v1.ltilink",
+								"@id": launchUrl,
+								url: launchUrl,
+								title,
+								text,
+								placementAdvice: {
+									presentationDocumentTarget: "frame",
+								},
+							}
+						]
+					}
+
+					WidgetSrv.signLtiContentItemSelection(RETURN_URL, JSON.stringify(content_items), LTI_KEY).then((signedParams) => {
+						buildAndSubmitForm(RETURN_URL, 'post', signedParams)
+					});
+
+					return
+				}
+
+				// Instructure Canvas & Obojobo compatible selection
+
 				// add a ? or & depending on RETURN_URL already containing query params
 				const seperator = RETURN_URL.includes('?') ? '&' : '?'
-				// endode the url
-				const url = encodeURI(selectedWidget.embed_url)
+
+				const params = `embed_type=basic_lti&url=${launchUrl}`
 				// redirect the client to the return url with our new variables
-				window.location = `${RETURN_URL}${seperator}embed_type=basic_lti&url=${url}`
+				window.location = `${RETURN_URL}${seperator}${params}`
 			}
 		}, 1000)
 	}
