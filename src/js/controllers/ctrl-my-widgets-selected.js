@@ -169,7 +169,9 @@ app.controller('MyWidgetsSelectedController', function (
 					user.gravatar = UserServ.getAvatar(user, 50)
 				}
 
-				$scope.perms.collaborators = users
+				$scope.perms.collaborators = users.map((user) => {
+					return { ...user, access: String(user.access) }
+				})
 			}
 
 			Please.$apply()
