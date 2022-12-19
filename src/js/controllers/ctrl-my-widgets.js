@@ -85,6 +85,8 @@ app.controller('MyWidgetsController', function (
 				return
 			}
 
+			console.log(data)
+
 			$scope.user = data[0]
 			$scope.perms = data[1]
 			populateAccess()
@@ -207,7 +209,7 @@ app.controller('MyWidgetsController', function (
 	const _countCollaborators = () => {
 		let count = 0
 		for (let id in $scope.perms.widget) {
-			if (id !== $scope.user.id) {
+			if (id != $scope.user.id) {
 				count++
 			}
 		}
