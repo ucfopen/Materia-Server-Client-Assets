@@ -207,7 +207,7 @@ app.controller('MyWidgetsController', function (
 	const _countCollaborators = () => {
 		let count = 0
 		for (let id in $scope.perms.widget) {
-			if (id !== $scope.user.id) {
+			if (id != $scope.user.id) {
 				count++
 			}
 		}
