@@ -85,8 +85,6 @@ app.controller('MyWidgetsController', function (
 				return
 			}
 
-			console.log(data)
-
 			$scope.user = data[0]
 			$scope.perms = data[1]
 			populateAccess()
