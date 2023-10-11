@@ -1,5 +1,11 @@
 # Materia Client Assets
 
+## This repository is now deprecated. No additional commits to this repo are expected.
+
+As of Materia v10.0.0, all static assets - JS and CSS - have been re-authored and re-integrated into the main repository. This repository will persist, but only for archival purposes.
+
+---
+
 This repository contains all the javascript and css needed for the Materia Server and some assets needed for the Materia Widget Development Kit.
 
 Visit the [Materia Documentation](https://ucfopen.github.io/Materia-Docs) for more information.
