@@ -45,6 +45,7 @@ app.controller('WidgetCatalogDetailsController', function (
 			creatorurl: document.location.pathname + '/create',
 			supported_data: widget.meta_data['supported_data'].map(_tooltipObject),
 			features: widget.meta_data['features'].map(_tooltipObject),
+			accessibility: getAccessibilityData(widget.meta_data['accessibility_options']),
 			creators_guide: document.location.pathname + '/creators-guide',
 			players_guide: document.location.pathname + '/players-guide',
 			created: date.toLocaleDateString(),
@@ -74,6 +75,69 @@ app.controller('WidgetCatalogDetailsController', function (
 		$scope.demoScreenshot = `url(${$scope.widget.screenshots[0].full})`
 
 		Please.$apply()
+	}
+
+	const getAccessibilityData = (list) => {
+		let score1 = 0
+		let score2 = 0
+		let data = {
+			keyboard: 'Unavailable',
+			screen_reader: 'Unavailable',
+			description: 'Unavailable keyboard and screen reader support',
+			score: 0,
+		}
+
+		// Checks if widgets don't have accessibility options
+		if (list == undefined) return data
+
+		list.forEach((val, index) => {
+			let entry = getValidAccessData(val)
+
+			index == 0 ? (data.keyboard = entry.text) : (data.screen_reader = entry.text)
+			index == 0 ? (score1 = entry.score) : (score2 = entry.score)
+		})
+
+		data.score = score1 + score2
+		data.description = getAccessDescription(score1, score2)
+
+		return data
+	}
+
+	// Gets the description of the accessibility indicator
+	const getAccessDescription = (score1, score2) => {
+		let validEntry = ['unavailable', 'no', 'limited', 'full']
+
+		if (score1 < 0 || score1 >= validEntry.length || score2 < 0 || score2 >= validEntry.length)
+			return 'Unavailable keyboard and screen reader support'
+
+		if (score1 == score2) {
+			let entry = validEntry[score1].charAt(0).toUpperCase() + validEntry[score1].slice(1)
+
+			return entry + ' keyboard and screen reader support'
+		} else {
+			let entry1 = validEntry[score1].charAt(0).toUpperCase() + validEntry[score1].slice(1)
+			let entry2 = validEntry[score2]
+
+			return entry1 + ' keyboard support and ' + entry2 + ' screen reader support'
+		}
+	}
+
+	// Validates the accessibility data and formats it
+	const getValidAccessData = (entry) => {
+		const scores = { unavailable: 0, none: 1, limited: 2, full: 3 }
+		const validEntry = ['full', 'limited', 'none']
+		let score = 0
+
+		// Tests for invalid accessibility descriptor
+		if (validEntry.includes(entry.toLowerCase()) == false) {
+			return { text: 'Unavailable', score: score }
+		}
+
+		if (scores.hasOwnProperty(entry.toLowerCase())) {
+			score = scores[entry.toLowerCase()]
+		}
+
+		return { text: entry, score: score }
 	}
 
 	const isWideEnough = () => {

@@ -84,6 +84,15 @@ app.controller('WidgetCatalogCtrl', function (Please, $scope, $window, $location
 					if (!filterList.hasOwnProperty(data)) _registerFilter(data, ' Questions')
 				})
 			}
+
+			if (widget.meta_data.hasOwnProperty('accessibility_options')) {
+				widget.meta_data.accessibility_options.forEach((option, index) => {
+					if (!filterList.hasOwnProperty(option) && index == 0)
+						_registerFilter('Keyboard Accessible')
+					if (!filterList.hasOwnProperty(option) && index == 1)
+						_registerFilter('Screen Reader Accessible')
+				})
+			}
 		})
 	}
 
@@ -91,15 +100,17 @@ app.controller('WidgetCatalogCtrl', function (Please, $scope, $window, $location
 	const _isWidgetVisible = (widget) => {
 		const wFeatures = widget.meta_data.features
 		const wSupport = widget.meta_data.supported_data
+		const wAccessibility = _accessOptionsToFilters(widget.meta_data.accessibility_options)
 
 		// check for filter matches
 		for (let filterName in filterList) {
 			// this filter is active
 			if (filterList[filterName].isActive) {
-				// widget has features/support and the feature isn't in either
+				// widget has features/support/accessibility and the feature isn't in either
 				if (
 					(!wFeatures || !wFeatures.includes(filterName)) &&
-					(!wSupport || !wSupport.includes(filterName))
+					(!wSupport || !wSupport.includes(filterName)) &&
+					(!wAccessibility || !wAccessibility.includes(filterName))
 				) {
 					return false
 				}
@@ -147,6 +158,8 @@ app.controller('WidgetCatalogCtrl', function (Please, $scope, $window, $location
 			}
 			allWidgets = loaded
 
+			allWidgets.forEach(_getAccessibilityOptions)
+
 			$scope.noWidgetsInstalled = allWidgets.length == 0
 
 			_getFiltersFromWidgets(allWidgets)
@@ -182,6 +195,36 @@ app.controller('WidgetCatalogCtrl', function (Please, $scope, $window, $location
 				$scope.isShowingFilters = true
 			}
 		}
+	}
+
+	// Makes sure accessibility rating is valid
+	const _getAccessibilityOptions = (widget, index) => {
+		const valid_options = ['none', 'limited', 'full']
+
+		if (widget.meta_data.hasOwnProperty('accessibility_options')) {
+			widget.meta_data.accessibility_options.forEach((val, index, arr) => {
+				if (!valid_options.includes(val.toLowerCase())) {
+					arr[index] = 'None'
+				}
+			})
+		}
+	}
+
+	const _accessOptionsToFilters = (data) => {
+		const valid_options = ['limited', 'full']
+		let valid_filters = []
+
+		if (data == undefined) return valid_filters
+
+		for (let i = 0; i < 2; i++) {
+			if (i >= data.length) break
+
+			if (valid_options.includes(data[i].toLowerCase())) {
+				valid_filters.push(i == 0 ? 'Keyboard Accessible' : 'Screen Reader Accessible')
+			}
+		}
+
+		return valid_filters
 	}
 
 	$scope.search = ''
