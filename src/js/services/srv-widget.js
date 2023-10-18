@@ -7,6 +7,14 @@ app.service('WidgetSrv', function (SelectedWidgetSrv, DateTimeServ, $q, $rootSco
 
 	const sortWidgets = () => _widgets.sort((a, b) => b.created_at - a.created_at)
 
+	const signLtiContentItemSelection = (url, params, ltiKey) => {
+		const deferred = $q.defer()
+		Materia.Coms.Json.send('lti_sign_content_item_selection', [url, params, ltiKey]).then((results) => {
+			deferred.resolve(results)
+		})
+		return deferred.promise
+	}
+
 	const getWidgets = (force = false) => {
 		const deferred = $q.defer()
 
@@ -286,5 +294,6 @@ app.service('WidgetSrv', function (SelectedWidgetSrv, DateTimeServ, $q, $rootSco
 		copyWidget,
 		deleteWidget,
 		canBePublishedByCurrentUser,
+		signLtiContentItemSelection,
 	}
 })
